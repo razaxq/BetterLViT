@@ -1,17 +1,16 @@
+import cv2
+import math
 import numpy as np
 import pandas as pd
 import torch
-from sklearn.metrics import roc_auc_score, jaccard_score
-import cv2
-from torch import nn
 import torch.nn.functional as F
-import math
-from functools import wraps
 import warnings
 import weakref
 from PIL import Image
+from functools import wraps
 from numpy import average, dot, linalg
-
+from sklearn.metrics import roc_auc_score, jaccard_score
+from torch import nn
 from torch.autograd import Variable
 from torch.optim.optimizer import Optimizer
 
@@ -203,10 +202,13 @@ class WeightedDiceBCE(nn.Module):
         return hard_dice_coeff
 
     def forward(self, inputs, targets):
+        import Config as config
         dice = self.dice_loss(inputs, targets)
         BCE = self.BCE_loss(inputs, targets)
         dice_BCE_loss = self.dice_weight * dice + self.BCE_weight * BCE
 
+        if getattr(config, 'print_loss_components', False):
+            return dice_BCE_loss, dice, BCE
         return dice_BCE_loss
 
 

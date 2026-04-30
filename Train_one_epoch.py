@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-import torch.optim
 import os
 import time
-from utils import *
-import Config as config
+import torch.optim
 import warnings
-from torchinfo import summary
 from sklearn.metrics.pairwise import cosine_similarity
+from torchinfo import summary
+
+import Config as config
+from utils import *
+
 warnings.filterwarnings("ignore")
 
 
@@ -68,6 +70,14 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
 
         preds = model(images, text)
         out_loss = criterion(preds, masks.float())  # Loss
+
+        if isinstance(out_loss, tuple):
+            loss_val, dice_comp, bce_comp = out_loss
+            if getattr(config, 'print_loss_components', False) and (i % config.print_frequency == 0):
+                logger.info(
+                    f'   [{logging_mode}] Loss Components: Dice={dice_comp.item():.4f}, BCE={bce_comp.item():.4f}')
+            out_loss = loss_val
+
         # print(model.training)
 
 

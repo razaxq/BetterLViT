@@ -1,34 +1,35 @@
 # -*- coding: utf-8 -*-
-import os
-import torch
-import time
 import ml_collections
+import os
+import time
+import torch
 
 ## PARAMETERS OF THE MODEL
 save_model = True
 tensorboard = True
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 use_cuda = torch.cuda.is_available()
-seed = 666
+seed = 1219
 os.environ['PYTHONHASHSEED'] = str(seed)
 
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
-epochs = 2000
+epochs = 1000
 img_size = 224
 print_frequency = 1
 save_frequency = 5000
 vis_frequency = 10
-early_stopping_patience = 50
+early_stopping_patience = 80
+print_loss_components = False  # Toggle to print individual loss components
 
 pretrain = False
-task_name = 'MoNuSeg' 
-# task_name = 'Covid19'
-learning_rate = 1e-3  # MoNuSeg: 1e-3, Covid19: 3e-4
-batch_size = 2  # For LViT-T, 2 is better than 4
+# task_name = 'MoNuSeg'
+task_name = 'Covid19'
+learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
+batch_size = 16  # For LViT-T, 2 is better than 4
 
-model_name = 'LViT'
+model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
@@ -62,5 +63,4 @@ def get_CTranS_config():
     return config
 
 
-# used in testing phase, copy the session name in training phase
-# test_session = "Test_session_05.23_14h19"  # dice=79.98, IoU=66.83
+test_session = ""
