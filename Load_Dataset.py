@@ -7,8 +7,6 @@ import os
 import random
 import torch
 from bert_embedding import BertEmbedding
-from bert_embedding import BertEmbedding
-from scipy import ndimage
 from scipy import ndimage
 from scipy.ndimage.interpolation import zoom
 from torch.utils.data import Dataset
