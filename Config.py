@@ -32,6 +32,14 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
 
+# Text encoder (replaces legacy bert-embedding / bert-base-uncased)
+text_encoder_name = 'microsoft/BiomedVLP-CXR-BERT-specialized'
+text_max_len = 10  # must match nets/Vit.py CTBN3 in_channels
+text_use_lora = True
+text_lora_r = 8
+text_lora_alpha = 16
+text_lora_dropout = 0.05
+
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'
 test_dataset = './datasets/' + task_name + '/Test_Folder/'

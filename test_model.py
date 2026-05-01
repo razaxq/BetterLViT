@@ -8,7 +8,7 @@ import Config as config
 import matplotlib.pyplot as plt
 from tqdm import tqdm
 import os
-from nets.LViT import LViT
+from nets.BetterLViT import BetterLViT
 from utils import *
 import cv2
 
@@ -44,10 +44,10 @@ def show_image_with_dice(predict_save, labs, save_path):
     return dice_pred, iou_pred
 
 
-def vis_and_save_heatmap(model, input_img, text, img_RGB, labs, vis_save_path, dice_pred, dice_ens):
+def vis_and_save_heatmap(model, input_img, input_ids, attention_mask, img_RGB, labs, vis_save_path, dice_pred, dice_ens):
     model.eval()
 
-    output = model(input_img.cuda(), text.cuda())
+    output = model(input_img.cuda(), input_ids.cuda(), attention_mask.cuda())
     pred_class = torch.where(output > 0.5, torch.ones_like(output), torch.zeros_like(output))
     predict_save = pred_class[0].cpu().data.numpy()
     predict_save = np.reshape(predict_save, (config.img_size, config.img_size))
@@ -60,14 +60,13 @@ if __name__ == '__main__':
     os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     test_session = config.test_session
 
+    model_type = config.model_name
     if config.task_name == "MoNuSeg":
         test_num = 14
-        model_type = config.model_name
         model_path = "./MoNuSeg/" + model_type + "/" + test_session + "/models/best_model-" + model_type + ".pth.tar"
 
     elif config.task_name == "Covid19":
         test_num = 2113
-        model_type = config.model_name
         model_path = "./Covid19/" + model_type + "/" + test_session + "/models/best_model-" + model_type + ".pth.tar"
     
     save_path = config.task_name + '/' + model_type + '/' + test_session + '/'
@@ -77,13 +76,32 @@ if __name__ == '__main__':
 
     checkpoint = torch.load(model_path, map_location='cuda')
 
-    if model_type == 'LViT':
+    if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
-        model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
+        use_lora = config.text_use_lora and (model_type == 'BetterLViT')
+        model = BetterLViT(
+            config_vit,
+            n_channels=config.n_channels,
+            n_classes=config.n_labels,
+            text_encoder_name=config.text_encoder_name,
+            use_lora=use_lora,
+            lora_r=config.text_lora_r,
+            lora_alpha=config.text_lora_alpha,
+            lora_dropout=config.text_lora_dropout,
+        )
 
     elif model_type == 'LViT_pretrain':
         config_vit = config.get_CTranS_config()
-        model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
+        model = BetterLViT(
+            config_vit,
+            n_channels=config.n_channels,
+            n_classes=config.n_labels,
+            text_encoder_name=config.text_encoder_name,
+            use_lora=config.text_use_lora,
+            lora_r=config.text_lora_r,
+            lora_alpha=config.text_lora_alpha,
+            lora_dropout=config.text_lora_dropout,
+        )
 
 
     else:
@@ -107,7 +125,9 @@ if __name__ == '__main__':
     with tqdm(total=test_num, desc='Test visualize', unit='img', ncols=70, leave=True) as pbar:
         for i, (sampled_batch, names) in enumerate(test_loader, 1):
             # print(names)
-            test_data, test_label, test_text = sampled_batch['image'], sampled_batch['label'], sampled_batch['text']
+            test_data, test_label = sampled_batch['image'], sampled_batch['label']
+            test_input_ids = sampled_batch['input_ids']
+            test_attention_mask = sampled_batch['attention_mask']
             arr = test_data.numpy()
             arr = arr.astype(np.float32())
             lab = test_label.data.numpy()
@@ -124,7 +144,8 @@ if __name__ == '__main__':
             plt.savefig(vis_path + str(names) + "_lab.jpg", dpi=300)
             plt.close()
             input_img = torch.from_numpy(arr)
-            dice_pred_t, iou_pred_t = vis_and_save_heatmap(model, input_img, test_text, None, lab,
+            dice_pred_t, iou_pred_t = vis_and_save_heatmap(model, input_img, test_input_ids, test_attention_mask,
+                                                           None, lab,
                                                            vis_path + str(names),
                                                            dice_pred=dice_pred, dice_ens=dice_ens)
             dice_pred += dice_pred_t

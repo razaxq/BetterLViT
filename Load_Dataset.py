@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
-import cv2
-import cv2
-import numpy as np
-import os
 import os
 import random
+from typing import Callable
+
+import cv2
+import numpy as np
 import torch
-from bert_embedding import BertEmbedding
 from scipy import ndimage
 from scipy.ndimage.interpolation import zoom
 from torch.utils.data import Dataset
 from torchvision import transforms as T
 from torchvision.transforms import functional as F
-from typing import Callable
+from transformers import AutoTokenizer
+
+import Config as config
+
+os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
 
 
 def random_rot_flip(image, label):
@@ -37,7 +40,7 @@ class RandomGenerator(object):
         self.output_size = output_size
 
     def __call__(self, sample):
-        image, label, text = sample['image'], sample['label'], sample['text']
+        image, label = sample['image'], sample['label']
         image, label = image.astype(np.uint8), label.astype(np.uint8)
         image, label = F.to_pil_image(image), F.to_pil_image(label)
         x, y = image.size
@@ -47,13 +50,14 @@ class RandomGenerator(object):
             image, label = random_rotate(image, label)
 
         if x != self.output_size[0] or y != self.output_size[1]:
-            image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)  # why not 3?
+            image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)
             label = zoom(label, (self.output_size[0] / x, self.output_size[1] / y), order=0)
         image = F.to_tensor(image)
         label = to_long_tensor(label)
-        text = torch.Tensor(text)
-        sample = {'image': image, 'label': label, 'text': text}
-        return sample
+        out = {'image': image, 'label': label,
+               'input_ids': sample['input_ids'],
+               'attention_mask': sample['attention_mask']}
+        return out
 
 
 class ValGenerator(object):
@@ -61,24 +65,23 @@ class ValGenerator(object):
         self.output_size = output_size
 
     def __call__(self, sample):
-        image, label, text = sample['image'], sample['label'], sample['text']
-        image, label = image.astype(np.uint8), label.astype(np.uint8)  # OSIC
+        image, label = sample['image'], sample['label']
+        image, label = image.astype(np.uint8), label.astype(np.uint8)
         image, label = F.to_pil_image(image), F.to_pil_image(label)
         x, y = image.size
         if x != self.output_size[0] or y != self.output_size[1]:
-            image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)  # why not 3?
+            image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)
             label = zoom(label, (self.output_size[0] / x, self.output_size[1] / y), order=0)
         image = F.to_tensor(image)
         label = to_long_tensor(label)
-        text = torch.Tensor(text)
-        sample = {'image': image, 'label': label, 'text': text}
-        return sample
+        out = {'image': image, 'label': label,
+               'input_ids': sample['input_ids'],
+               'attention_mask': sample['attention_mask']}
+        return out
 
 
 def to_long_tensor(pic):
-    # handle numpy array
     img = torch.from_numpy(np.array(pic, np.uint8))
-    # backward compatibility
     return img.long()
 
 
@@ -96,6 +99,21 @@ def correct_dims(*images):
         return corr_images
 
 
+def _build_tokenizer():
+    return AutoTokenizer.from_pretrained(config.text_encoder_name, trust_remote_code=True)
+
+
+def _tokenize(tokenizer, text, max_len):
+    encoded = tokenizer(
+        text,
+        max_length=max_len,
+        padding='max_length',
+        truncation=True,
+        return_tensors='pt',
+    )
+    return encoded['input_ids'].squeeze(0), encoded['attention_mask'].squeeze(0)
+
+
 class LV2D(Dataset):
     def __init__(self, dataset_path: str, task_name: str, row_text: str, joint_transform: Callable = None,
                  one_hot_mask: int = False,
@@ -107,7 +125,8 @@ class LV2D(Dataset):
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
-        self.bert_embedding = BertEmbedding()
+        self.tokenizer = _build_tokenizer()
+        self.text_max_len = config.text_max_len
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -120,23 +139,19 @@ class LV2D(Dataset):
 
     def __getitem__(self, idx):
 
-        mask_filename = self.mask_list[idx]  # Co
+        mask_filename = self.mask_list[idx]
         mask = cv2.imread(os.path.join(self.output_path, mask_filename), 0)
         mask = cv2.resize(mask, (self.image_size, self.image_size))
         mask[mask <= 0] = 0
         mask[mask > 0] = 1
         mask = correct_dims(mask)
         text = self.rowtext[mask_filename]
-        text = text.split('\n')
-        text_token = self.bert_embedding(text)
-        text = np.array(text_token[0][1])
-        if text.shape[0] > 14:
-            text = text[:14, :]
+        input_ids, attention_mask = _tokenize(self.tokenizer, text, self.text_max_len)
         if self.one_hot_mask:
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
             mask = torch.zeros((self.one_hot_mask, mask.shape[1], mask.shape[2])).scatter_(0, mask.long(), 1)
 
-        sample = {'label': mask, 'text': text}
+        sample = {'label': mask, 'input_ids': input_ids, 'attention_mask': attention_mask}
 
         return sample, mask_filename
 
@@ -155,7 +170,8 @@ class ImageToImage2D(Dataset):
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
-        self.bert_embedding = BertEmbedding()
+        self.tokenizer = _build_tokenizer()
+        self.text_max_len = config.text_max_len
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -184,17 +200,14 @@ class ImageToImage2D(Dataset):
         # correct dimensions if needed
         image, mask = correct_dims(image, mask)
         text = self.rowtext[mask_filename]
-        text = text.split('\n')
-        text_token = self.bert_embedding(text)
-        text = np.array(text_token[0][1])
-        if text.shape[0] > 10:
-            text = text[:10, :]
+        input_ids, attention_mask = _tokenize(self.tokenizer, text, self.text_max_len)
 
         if self.one_hot_mask:
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
             mask = torch.zeros((self.one_hot_mask, mask.shape[1], mask.shape[2])).scatter_(0, mask.long(), 1)
 
-        sample = {'image': image, 'label': mask, 'text': text}
+        sample = {'image': image, 'label': mask,
+                  'input_ids': input_ids, 'attention_mask': attention_mask}
 
         if self.joint_transform:
             sample = self.joint_transform(sample)

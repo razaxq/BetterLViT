@@ -15,7 +15,7 @@ from torchvision import transforms
 import Config as config
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
-from nets.LViT import LViT
+from nets.BetterLViT import BetterLViT
 from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
 
 
@@ -104,14 +104,34 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
         logger.info('transformer expand ratio: {}'.format(config_vit.expand_ratio))
-        model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
+        # 'LViT' = frozen CXR-BERT baseline, 'BetterLViT' = LoRA-tuned CXR-BERT
+        use_lora = config.text_use_lora and (model_type == 'BetterLViT')
+        model = BetterLViT(
+            config_vit,
+            n_channels=config.n_channels,
+            n_classes=config.n_labels,
+            text_encoder_name=config.text_encoder_name,
+            use_lora=use_lora,
+            lora_r=config.text_lora_r,
+            lora_alpha=config.text_lora_alpha,
+            lora_dropout=config.text_lora_dropout,
+        )
 
     elif model_type == 'LViT_pretrain':
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
         logger.info('transformer expand ratio: {}'.format(config_vit.expand_ratio))
-        model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
+        model = BetterLViT(
+            config_vit,
+            n_channels=config.n_channels,
+            n_classes=config.n_labels,
+            text_encoder_name=config.text_encoder_name,
+            use_lora=config.text_use_lora,
+            lora_r=config.text_lora_r,
+            lora_alpha=config.text_lora_alpha,
+            lora_dropout=config.text_lora_dropout,
+        )
         pretrained_UNet_model_path = "MoNuSeg/LViT/Test_session_05.23_10h55/models/best_model-LViT.pth.tar"
         pretrained_UNet = torch.load(pretrained_UNet_model_path, map_location='cuda')
         pretrained_UNet = pretrained_UNet['state_dict']
@@ -124,11 +144,19 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
     else:
         raise TypeError('Please enter a valid name for the model type')
-    input = torch.randn(2, 3, 224, 224)
-    text = torch.randn(2, 10, 768)
-    flops, params = profile(model, inputs=(input, text, ))
-    print('flops:{}'.format(flops))
-    print('params:{}'.format(params))
+    dummy_image = torch.randn(2, 3, 224, 224)
+    dummy_input_ids = torch.zeros(2, config.text_max_len, dtype=torch.long)
+    dummy_attention_mask = torch.ones(2, config.text_max_len, dtype=torch.long)
+    try:
+        flops, params = profile(model, inputs=(dummy_image, dummy_input_ids, dummy_attention_mask, ))
+        print('flops:{}'.format(flops))
+        print('params:{}'.format(params))
+    except Exception as e:
+        print('thop profile skipped ({}); reporting param counts directly'.format(e))
+        total = sum(p.numel() for p in model.parameters())
+        trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+        print('total params: {}'.format(total))
+        print('trainable params: {}'.format(trainable))
     model = model.cuda()
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))

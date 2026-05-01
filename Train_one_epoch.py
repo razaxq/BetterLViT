@@ -55,18 +55,19 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             loss_name = criterion.__name__
 
         # Take variable and put them to GPU
-        images, masks, text = sampled_batch['image'], sampled_batch['label'], sampled_batch['text']
-        if text.shape[1] > 10:
-            text = text[ :, :10, :]
-        
-        images, masks, text = images.cuda(), masks.cuda(), text.cuda()
+        images, masks = sampled_batch['image'], sampled_batch['label']
+        input_ids = sampled_batch['input_ids']
+        attention_mask = sampled_batch['attention_mask']
+
+        images, masks = images.cuda(), masks.cuda()
+        input_ids, attention_mask = input_ids.cuda(), attention_mask.cuda()
 
 
         # ====================================================
         #             Compute loss
         # ====================================================
 
-        preds = model(images, text)
+        preds = model(images, input_ids, attention_mask)
         out_loss = criterion(preds, masks.float())  # Loss
         # print(model.training)
 
