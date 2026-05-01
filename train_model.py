@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-import torch.optim
-import torch.nn as nn
-import time
-from tensorboardX import SummaryWriter
-import os
-import numpy as np
-import random
-from torch.backends import cudnn
-import Config
-from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D, LV2D
-from nets.LViT import LViT
-from torch.utils.data import DataLoader
 import logging
-from Train_one_epoch import train_one_epoch, print_summary
-import Config as config
-from torchvision import transforms
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, WeightedDiceCE, read_text, read_text_LV, save_on_batch
+import numpy as np
+import os
+import random
+import time
+import torch.nn as nn
+import torch.optim
+from tensorboardX import SummaryWriter
 from thop import profile
+from torch.backends import cudnn
+from torch.utils.data import DataLoader
+from torchvision import transforms
+
+import Config as config
+from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
+from Train_one_epoch import train_one_epoch
+from nets.LViT import LViT
+from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
+
 
 def logger_config(log_path):
     loggerr = logging.getLogger()
@@ -98,7 +99,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     lr = config.learning_rate
     logger.info(model_type)
 
-    if model_type == 'LViT':
+    if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
@@ -149,13 +150,15 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
     max_dice = 0.0
     best_epoch = 1
+    epoch_history = []
     for epoch in range(config.epochs):  # loop over the dataset multiple times
         logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs + 1))
         logger.info(config.session_name)
         # train for one epoch
         model.train(True)
         logger.info('Training with batch size : {}'.format(batch_size))
-        train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None, model_type, logger)  # sup
+        train_loss, train_dice = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
+                                                 model_type, logger)  # sup
 
         # evaluate on validation set
         logger.info('Validation')
@@ -183,6 +186,21 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         'the best is still: {:.4f} in epoch {}'.format(val_dice, max_dice, best_epoch))
         early_stopping_count = epoch - best_epoch + 1
         logger.info('\t early_stopping_count: {}/{}'.format(early_stopping_count, config.early_stopping_patience))
+
+        epoch_history.append({
+            'epoch': epoch + 1,
+            'train_loss': float(train_loss),
+            'train_dice': float(train_dice),
+            'val_loss': float(val_loss),
+            'val_dice': float(val_dice),
+        })
+        logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
+        logger.info('{:>5} | {:>10} | {:>10} | {:>10} | {:>10} | {:>4}'.format(
+            'Epoch', 'TrainLoss', 'TrainDice', 'ValLoss', 'ValDice', 'Best'))
+        for h in epoch_history:
+            marker = '*' if h['epoch'] == best_epoch else ''
+            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>10.4f} | {:>10.4f} | {:>4}'.format(
+                h['epoch'], h['train_loss'], h['train_dice'], h['val_loss'], h['val_dice'], marker))
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')

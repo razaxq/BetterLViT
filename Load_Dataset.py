@@ -1,16 +1,18 @@
 # -*- coding: utf-8 -*-
+import cv2
+import cv2
 import numpy as np
-import torch
+import os
+import os
 import random
+import torch
+from bert_embedding import BertEmbedding
+from scipy import ndimage
 from scipy.ndimage.interpolation import zoom
 from torch.utils.data import Dataset
 from torchvision import transforms as T
 from torchvision.transforms import functional as F
 from typing import Callable
-import os
-import cv2
-from scipy import ndimage
-from bert_embedding import BertEmbedding
 
 
 def random_rot_flip(image, label):
@@ -166,10 +168,10 @@ class ImageToImage2D(Dataset):
 
     def __getitem__(self, idx):
 
-        image_filename = self.images_list[idx]  # MoNuSeg
-        mask_filename = image_filename[: -3] + "png"  # MoNuSeg
-        # mask_filename = self.mask_list[idx]  # Covid19
-        # image_filename = mask_filename.replace('mask_', '')  # Covid19
+        # image_filename = self.images_list[idx]  # MoNuSeg
+        # mask_filename = image_filename[: -3] + "png"  # MoNuSeg
+        mask_filename = self.mask_list[idx]  # Covid19
+        image_filename = mask_filename.replace('mask_', '')  # Covid19
         image = cv2.imread(os.path.join(self.input_path, image_filename))
         image = cv2.resize(image, (self.image_size, self.image_size))
 
