@@ -6,13 +6,14 @@ import os
 import os
 import random
 import torch
-from bert_embedding import BertEmbedding
 from scipy import ndimage
 from scipy.ndimage.interpolation import zoom
 from torch.utils.data import Dataset
 from torchvision import transforms as T
 from torchvision.transforms import functional as F
 from typing import Callable
+
+from nets.cxr_bert_encoder import CXRBertEncoder
 
 
 def random_rot_flip(image, label):
@@ -107,7 +108,7 @@ class LV2D(Dataset):
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
-        self.bert_embedding = BertEmbedding()
+        self.text_embeddings = CXRBertEncoder(max_length=14).encode_dict(row_text)
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -126,12 +127,7 @@ class LV2D(Dataset):
         mask[mask <= 0] = 0
         mask[mask > 0] = 1
         mask = correct_dims(mask)
-        text = self.rowtext[mask_filename]
-        text = text.split('\n')
-        text_token = self.bert_embedding(text)
-        text = np.array(text_token[0][1])
-        if text.shape[0] > 14:
-            text = text[:14, :]
+        text = self.text_embeddings[mask_filename].numpy()
         if self.one_hot_mask:
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
             mask = torch.zeros((self.one_hot_mask, mask.shape[1], mask.shape[2])).scatter_(0, mask.long(), 1)
@@ -155,7 +151,7 @@ class ImageToImage2D(Dataset):
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
-        self.bert_embedding = BertEmbedding()
+        self.text_embeddings = CXRBertEncoder(max_length=10).encode_dict(row_text)
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -183,12 +179,7 @@ class ImageToImage2D(Dataset):
 
         # correct dimensions if needed
         image, mask = correct_dims(image, mask)
-        text = self.rowtext[mask_filename]
-        text = text.split('\n')
-        text_token = self.bert_embedding(text)
-        text = np.array(text_token[0][1])
-        if text.shape[0] > 10:
-            text = text[:10, :]
+        text = self.text_embeddings[mask_filename].numpy()
 
         if self.one_hot_mask:
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
