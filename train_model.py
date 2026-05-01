@@ -2,6 +2,7 @@
 import logging
 import numpy as np
 import os
+import requests
 import random
 import time
 import torch.nn as nn
@@ -17,6 +18,13 @@ from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
 from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
 
+def bark_notify(body, number, title="训练通知"):
+    bark_key = "uAnJRvt7pxbzE9KK6bCVva"
+    url = f"https://api.day.app/{bark_key}/{title}/{body}"
+    try:
+        requests.get(url, params=number)
+    except Exception as e:
+        print(f"推送失败: {e}") # 防止断网导致程序报错卡住
 
 def logger_config(log_path):
     loggerr = logging.getLogger()
@@ -203,6 +211,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                  'state_dict': model.state_dict(),
                                  'val_loss': val_loss,
                                  'optimizer': optimizer.state_dict()}, config.model_path)
+                bark_notify(f"发现更好模型，Dice: {max_dice}。", max_dice, title="nb 兄弟")
         else:
             logger.info('\t Mean dice:{:.4f} does not increase, '
                         'the best is still: {:.4f} in epoch {}'.format(val_dice, max_dice, best_epoch))
@@ -232,6 +241,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
 
 if __name__ == '__main__':
+    bark_notify("模型开始训练了，请耐心等待！",0, title="🚀 训练开始")
     deterministic = True
     if not deterministic:
         cudnn.benchmark = True
@@ -249,3 +259,6 @@ if __name__ == '__main__':
 
     logger = logger_config(log_path=config.logger_path)
     model = main_loop(model_type=config.model_name, tensorboard=True)
+    bark_notify("训练完成！服务器即将自动关机 💤",0, title="✅ 训练结束")
+    print("正在执行关机程序...")
+    os.system("shutdown")
