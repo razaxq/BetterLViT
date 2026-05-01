@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-import torch.optim
-import torch.nn as nn
-import time
-from tensorboardX import SummaryWriter
-import os
-import numpy as np
-import random
-from torch.backends import cudnn
-import Config
-from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D, LV2D
-from nets.LViT import LViT
-from torch.utils.data import DataLoader
 import logging
-from Train_one_epoch import train_one_epoch, print_summary
-import Config as config
-from torchvision import transforms
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, WeightedDiceCE, read_text, read_text_LV, save_on_batch
+import numpy as np
+import os
+import random
+import time
+import torch.nn as nn
+import torch.optim
+from tensorboardX import SummaryWriter
 from thop import profile
+from torch.backends import cudnn
+from torch.utils.data import DataLoader
+from torchvision import transforms
+
+import Config as config
+from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
+from Train_one_epoch import train_one_epoch
+from nets.LViT import LViT
+from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
+
 
 def logger_config(log_path):
     loggerr = logging.getLogger()
@@ -98,7 +99,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     lr = config.learning_rate
     logger.info(model_type)
 
-    if model_type == 'LViT':
+    if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))

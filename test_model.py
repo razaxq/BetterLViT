@@ -1,7 +1,8 @@
 import torch.optim
-from Load_Dataset import ValGenerator, ImageToImage2D
-from torch.utils.data import DataLoader
 import warnings
+from torch.utils.data import DataLoader
+
+from Load_Dataset import ValGenerator, ImageToImage2D
 
 warnings.filterwarnings("ignore")
 import Config as config
@@ -77,7 +78,7 @@ if __name__ == '__main__':
 
     checkpoint = torch.load(model_path, map_location='cuda')
 
-    if model_type == 'LViT':
+    if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
         model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
 
