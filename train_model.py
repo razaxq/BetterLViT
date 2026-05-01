@@ -7,7 +7,6 @@ import time
 import torch.nn as nn
 import torch.optim
 from tensorboardX import SummaryWriter
-from thop import profile
 from torch.backends import cudnn
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -144,19 +143,14 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
     else:
         raise TypeError('Please enter a valid name for the model type')
-    dummy_image = torch.randn(2, 3, 224, 224)
-    dummy_input_ids = torch.zeros(2, config.text_max_len, dtype=torch.long)
-    dummy_attention_mask = torch.ones(2, config.text_max_len, dtype=torch.long)
-    try:
-        flops, params = profile(model, inputs=(dummy_image, dummy_input_ids, dummy_attention_mask, ))
-        print('flops:{}'.format(flops))
-        print('params:{}'.format(params))
-    except Exception as e:
-        print('thop profile skipped ({}); reporting param counts directly'.format(e))
-        total = sum(p.numel() for p in model.parameters())
-        trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-        print('total params: {}'.format(total))
-        print('trainable params: {}'.format(trainable))
+    # thop is incompatible with PEFT-wrapped modules (double-registration
+    # leaves stale CPU hooks that break training after .cuda()). Report
+    # parameter counts directly — FLOPs aren't needed for the LoRA setup.
+    total = sum(p.numel() for p in model.parameters())
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print('total params: {} ({:.2f}M)'.format(total, total / 1e6))
+    print('trainable params: {} ({:.2f}M, {:.2%})'.format(
+        trainable, trainable / 1e6, trainable / max(total, 1)))
     model = model.cuda()
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
