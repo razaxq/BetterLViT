@@ -24,7 +24,8 @@ def bark_notify(body, title="训练通知"):
     bark_key = "uAnJRvt7pxbzE9KK6bCVva"
     url = f"https://api.day.app/{bark_key}/{title}/{body}"
     try:
-        requests.get(url)  # 删掉了复杂的 params
+        # 短 timeout: 网络不可达时直接放过，避免训练脚本被 Bark 阻塞
+        requests.get(url, timeout=3)
     except Exception as e:
         print(f"推送失败: {e}")
 
@@ -245,7 +246,9 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
 
 if __name__ == '__main__':
+    print("[boot] entered __main__, sending Bark start notification...", flush=True)
     bark_notify("模型开始训练了，请耐心等待！", title="🚀 训练开始")
+    print("[boot] Bark call returned, continuing setup...", flush=True)
     deterministic = True
     if not deterministic:
         cudnn.benchmark = True
