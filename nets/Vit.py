@@ -184,7 +184,8 @@ class VisionTransformer(nn.Module):  # Transformer-branch
         if not reconstruct:
             x = self.embeddings(x)
             if self.cross_attn is not None:
-                # Gated residual; gate inits at 0 so first forward leaves x unchanged
+                # Residual; cross_attn proj is zero-initialised, so first forward
+                # leaves x unchanged but every weight still receives gradient.
                 x = x + self.cross_attn(x, text, text_mask)
             x = self.Encoder_blocks(x)
         else:

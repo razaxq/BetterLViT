@@ -7,9 +7,11 @@ class CrossAttention(nn.Module):
     """Multi-head cross-attention: image patches as Q, text tokens as K/V.
 
     PAD positions in `ctx_mask` are masked out before softmax so they
-    contribute zero weight. A learnable scalar Flamingo-style tanh gate
-    (init 0) scales the output so the module is a no-op at the start of
-    training and gradually opens as gradients flow into the gate.
+    contribute zero weight. The output projection is zero-initialised, so the
+    module is an exact no-op at training start (output ≡ 0) but every weight
+    receives meaningful gradient through the residual connection — this avoids
+    the cold-start trap of a tanh gate (whose gradient depends on the random
+    cross-attn output and can stay near zero indefinitely).
     """
 
     def __init__(self, dim, num_heads=8, qkv_bias=False,
@@ -29,8 +31,11 @@ class CrossAttention(nn.Module):
         self.proj = nn.Linear(dim, dim)
         self.proj_drop = nn.Dropout(proj_drop)
 
-        # Flamingo-style gate: tanh(0) = 0, so cross-attn output starts at zero
-        self.gate = nn.Parameter(torch.zeros(1))
+        # Zero-init the output projection: cross-attn output starts at exactly 0,
+        # so the residual `x = x + cross_attn(...)` is identity at init, and the
+        # weights grow organically as the network finds them useful.
+        nn.init.zeros_(self.proj.weight)
+        nn.init.zeros_(self.proj.bias)
 
     def forward(self, x, ctx, ctx_mask=None):
         """
@@ -39,7 +44,7 @@ class CrossAttention(nn.Module):
             ctx:      [B, M, C]   key/value (text tokens, M=text_seq_len)
             ctx_mask: [B, M] long/bool   1 (or True) = valid, 0 (or False) = PAD
         Returns:
-            [B, N, C]   gated cross-attended output (already scaled by tanh(gate))
+            [B, N, C]   cross-attended output (caller is expected to add as residual)
         """
         B, N, C = x.shape
         M = ctx.shape[1]
@@ -64,7 +69,6 @@ class CrossAttention(nn.Module):
 
         out = attn @ V                                       # [B, H, N, hd]
         out = out.transpose(1, 2).reshape(B, N, C)           # [B, N, C]
-        out = self.proj(out)
+        out = self.proj(out)                                 # zero at init
         out = self.proj_drop(out)
-
-        return torch.tanh(self.gate) * out
+        return out
