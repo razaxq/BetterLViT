@@ -205,6 +205,30 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     epoch_history = []
     start_epoch = 0
 
+    # ----- Forward-hook tracking of cross_attn output magnitudes -----
+    # Records per-element RMS of each cross_attn module's output every forward
+    # call; averaged per epoch and dumped into the Epoch History (CA0..CA3).
+    # 0 means cross_attn isn't contributing (proj weights still near zero or
+    # module never fired). Single-GPU only — DataParallel replicas would need
+    # per-replica buffers.
+    ca_norm_buffers = [[] for _ in range(4)]
+    _ca_target = model.module if isinstance(model, nn.DataParallel) else model
+    for _idx, _vit_name in enumerate(('downVit', 'downVit1', 'downVit2', 'downVit3')):
+        _vit = getattr(_ca_target, _vit_name, None)
+        if _vit is None or getattr(_vit, 'cross_attn', None) is None:
+            continue
+
+        def _make_hook(idx):
+            def _hook(module, _inp, output):
+                if isinstance(output, torch.Tensor):
+                    with torch.no_grad():
+                        ca_norm_buffers[idx].append(
+                            output.detach().pow(2).mean().sqrt().item()
+                        )
+            return _hook
+
+        _vit.cross_attn.register_forward_hook(_make_hook(_idx))
+
     # ------------------------- Resume from checkpoint -------------------------
     if config.resume_path:
         if os.path.isfile(config.resume_path):
@@ -275,6 +299,13 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         early_stopping_count = epoch - best_epoch + 1
         logger.info('\t early_stopping_count: {}/{}'.format(early_stopping_count, config.early_stopping_patience))
 
+        # Average per-element RMS of cross_attn outputs over all forward calls
+        # in this epoch (train + val), then reset the buffer for the next epoch.
+        ca_avg = []
+        for _buf in ca_norm_buffers:
+            ca_avg.append(sum(_buf) / len(_buf) if _buf else 0.0)
+            _buf.clear()
+
         epoch_history.append({
             'epoch': epoch + 1,
             'train_loss': float(train_loss),
@@ -284,6 +315,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'val_dice': float(val_dice),
             'val_iou': float(val_iou),
             'lr': float(epoch_lr),
+            'ca_norms': ca_avg,
         })
 
         # Always save last_model (rolling) so future runs can resume from any
@@ -293,13 +325,18 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             val_loss, max_dice, best_epoch, epoch_history, is_best=False)
         save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
-        logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
-            'Epoch', 'TrainLoss', 'TrainDice', 'TrainIoU', 'ValLoss', 'ValDice', 'ValIoU', 'LR', 'Best'))
+        logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>7} | {:>7} | {:>7} | {:>7} | {:>4}'.format(
+            'Epoch', 'TrainLoss', 'TrainDice', 'TrainIoU', 'ValLoss', 'ValDice', 'ValIoU', 'LR',
+            'CA0', 'CA1', 'CA2', 'CA3', 'Best'))
         for h in epoch_history:
             marker = '*' if h['epoch'] == best_epoch else ''
-            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.2e} | {:>4}'.format(
+            # Pad ca_norms to length 4 for old-format rows resumed from a ckpt
+            # that predates this column.
+            ca = (list(h.get('ca_norms', [])) + [0.0, 0.0, 0.0, 0.0])[:4]
+            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.2e} | {:>7.4f} | {:>7.4f} | {:>7.4f} | {:>7.4f} | {:>4}'.format(
                 h['epoch'], h['train_loss'], h['train_dice'], h['train_iou'],
-                h['val_loss'], h['val_dice'], h['val_iou'], h['lr'], marker))
+                h['val_loss'], h['val_dice'], h['val_iou'], h['lr'],
+                ca[0], ca[1], ca[2], ca[3], marker))
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')
