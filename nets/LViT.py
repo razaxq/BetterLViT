@@ -108,18 +108,26 @@ class LViT(nn.Module):
         self.pix_module2 = PixLevelModule(128)
         self.pix_module3 = PixLevelModule(256)
         self.pix_module4 = PixLevelModule(512)
-        self.text_module4 = nn.Conv1d(in_channels=768, out_channels=512, kernel_size=3, padding=1)
-        self.text_module3 = nn.Conv1d(in_channels=512, out_channels=256, kernel_size=3, padding=1)
-        self.text_module2 = nn.Conv1d(in_channels=256, out_channels=128, kernel_size=3, padding=1)
-        self.text_module1 = nn.Conv1d(in_channels=128, out_channels=64, kernel_size=3, padding=1)
+        # Parallel text projections: each scale gets the FULL 768-dim CXR-BERT
+        # output projected independently to its channel dim. This replaces the
+        # legacy serial Conv1d cascade (768→512→256→128→64) which discarded
+        # too much semantic info by the shallowest scale, starving the cross-attn
+        # at dim=64 and dim=128 of useful text features.
+        # 768 = CXR-BERT hidden size (BertModel.config.hidden_size).
+        self.text_proj_512 = nn.Linear(768, 512)
+        self.text_proj_256 = nn.Linear(768, 256)
+        self.text_proj_128 = nn.Linear(768, 128)
+        self.text_proj_64  = nn.Linear(768,  64)
 
     def forward(self, x, text, text_mask=None):
-        x = x.float()  # x [4,3,224,224]
-        x1 = self.inc(x)  # x1 [4, 64, 224, 224]
-        text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2)
-        text3 = self.text_module3(text4.transpose(1, 2)).transpose(1, 2)
-        text2 = self.text_module2(text3.transpose(1, 2)).transpose(1, 2)
-        text1 = self.text_module1(text2.transpose(1, 2)).transpose(1, 2)
+        x = x.float()  # x [B,3,224,224]
+        x1 = self.inc(x)  # x1 [B, 64, 224, 224]
+        # Parallel text projections — each scale sees the full CXR-BERT output.
+        # text shape: [B, M, 768] where M = text_seq_len
+        text4 = self.text_proj_512(text)  # [B, M, 512]
+        text3 = self.text_proj_256(text)  # [B, M, 256]
+        text2 = self.text_proj_128(text)  # [B, M, 128]
+        text1 = self.text_proj_64(text)   # [B, M,  64]
         y1 = self.downVit(x1, x1, text1, text_mask=text_mask)
         x2 = self.down1(x1)
         y2 = self.downVit1(x2, y1, text2, text_mask=text_mask)

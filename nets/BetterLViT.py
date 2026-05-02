@@ -9,12 +9,12 @@ from .LViT import LViT
 class BetterLViT(LViT):
     """LViT with a modern medical text encoder (CXR-BERT-specialized) replacing
     the legacy bert-embedding pipeline. The text encoder produces
-    [B, seq_len, 768] sequence embeddings that flow into the existing
-    text_module4 -> text_module1 channel-reduction stack unchanged.
+    [B, seq_len, 768] sequence embeddings that are projected to four scales by
+    parallel `LViT.text_proj_{64,128,256,512}` linear layers, then injected into
+    each down-path ViT via gated cross-attention (see nets/cross_attn.py).
 
-    seq_len is configurable via text_seq_len (threaded into Vit.CTBN3.in_channels)
-    and must match Config.text_max_len so the tokenizer output aligns with the
-    Conv1d input. Embedding dim is fixed at 768 by LViT.text_module4.
+    Embedding dim is fixed at 768 by CXR-BERT's BertModel hidden size; cross-attn
+    handles arbitrary seq_len so text_max_len in Config can be tuned freely.
     """
 
     def __init__(
