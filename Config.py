@@ -44,7 +44,7 @@ resume_max_dice = 0.0
 
 # Text encoder (replaces legacy bert-embedding / bert-base-uncased)
 text_encoder_name = 'microsoft/BiomedVLP-CXR-BERT-specialized'
-text_max_len = 32  # threaded into Vit.CTBN3.in_channels via LViT __init__
+text_max_len = 32  # tokenizer max_length; cross-attn handles arbitrary seq_len
 text_use_lora = True
 text_lora_r = 8
 text_lora_alpha = 16

@@ -7,6 +7,8 @@ from timm.models.layers import DropPath
 from torch.nn import Dropout, Conv2d
 from torch.nn.modules.utils import _pair
 
+from .cross_attn import CrossAttention
+
 class Reconstruct(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, scale_factor):
         super(Reconstruct, self).__init__()
@@ -150,7 +152,7 @@ class ConvTransBN(nn.Module):  # (convolution => [BN] => ReLU)
 class VisionTransformer(nn.Module):  # Transformer-branch
     def __init__(self, config, vis, img_size, channel_num, patch_size, embed_dim, depth=1, num_heads=8,
                  mlp_ratio=4., qkv_bias=True, num_classes=1, drop_rate=0., attn_drop_rate=0., drop_path_rate=0.,
-                 text_seq_len=10):
+                 text_seq_len=10, use_cross_attn=False):
         super(VisionTransformer, self).__init__()
         self.config = config
         self.vis = vis
@@ -170,14 +172,20 @@ class VisionTransformer(nn.Module):  # Transformer-branch
         self.head = nn.Linear(embed_dim, num_classes) if num_classes > 0 else nn.Identity()
         self.CTBN = ConvTransBN(in_channels=embed_dim, out_channels=embed_dim//2)
         self.CTBN2 = ConvTransBN(in_channels=embed_dim*2, out_channels=embed_dim)
-        # CTBN3 maps text seq_len (treated as in_channels by Conv1d) to 196 patch tokens
-        self.CTBN3 = ConvTransBN(in_channels=text_seq_len, out_channels=196)
+        # Down-path ViTs replace the legacy CTBN3 additive injection with a
+        # gated cross-attention from patches to text tokens. Up-path (reconstruct)
+        # ViTs leave cross_attn=None so the legacy reconstruct flow is unchanged.
+        if use_cross_attn:
+            self.cross_attn = CrossAttention(dim=embed_dim, num_heads=num_heads)
+        else:
+            self.cross_attn = None
 
-    def forward(self, x, skip_x, text, reconstruct=False):
+    def forward(self, x, skip_x, text, reconstruct=False, text_mask=None):
         if not reconstruct:
             x = self.embeddings(x)
-            if self.dim == 64:
-                x = x+self.CTBN3(text)  # [B, num_patches, embed_dim]
+            if self.cross_attn is not None:
+                # Gated residual; gate inits at 0 so first forward leaves x unchanged
+                x = x + self.cross_attn(x, text, text_mask)
             x = self.Encoder_blocks(x)
         else:
             x = self.Encoder_blocks(x)

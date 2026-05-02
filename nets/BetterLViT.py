@@ -67,4 +67,5 @@ class BetterLViT(LViT):
 
     def forward(self, x, input_ids, attention_mask):
         text = self.encode_text(input_ids, attention_mask)
-        return super().forward(x, text)
+        # Forward attention_mask so down-path cross-attn can mask [PAD] tokens.
+        return super().forward(x, text, text_mask=attention_mask)
