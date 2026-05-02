@@ -15,7 +15,7 @@ os.environ['PYTHONHASHSEED'] = str(seed)
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
-epochs = 100
+epochs = 200
 img_size = 224
 print_frequency = 1
 save_frequency = 5000
@@ -27,6 +27,7 @@ pretrain = False
 # task_name = 'MoNuSeg'
 task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
+weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
 batch_size = 16  # For LViT-T, 2 is better than 4
 
 model_name = 'BetterLViT'
@@ -47,7 +48,7 @@ text_max_len = 32  # threaded into Vit.CTBN3.in_channels via LViT __init__
 text_use_lora = True
 text_lora_r = 8
 text_lora_alpha = 16
-text_lora_dropout = 0.05
+text_lora_dropout = 0.15
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'

@@ -182,7 +182,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
     criterion = WeightedDiceBCE(dice_weight=0.5, BCE_weight=0.5)
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)  # Choose optimize
+    optimizer = torch.optim.Adam(
+        filter(lambda p: p.requires_grad, model.parameters()),
+        lr=lr,
+        weight_decay=getattr(config, 'weight_decay', 0.0),
+    )
     if config.cosineLR is True:
         lr_scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4)
     else:
