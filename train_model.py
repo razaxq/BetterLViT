@@ -189,18 +189,21 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     for epoch in range(config.epochs):  # loop over the dataset multiple times
         logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs + 1))
         logger.info(config.session_name)
+        # Capture LR used for this epoch (scheduler steps inside the val call, so
+        # snapshotting before train gives the actual learning rate this epoch ran on)
+        epoch_lr = min(g["lr"] for g in optimizer.param_groups)
         # train for one epoch
         model.train(True)
         logger.info('Training with batch size : {}'.format(batch_size))
-        train_loss, train_dice = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
-                                                 model_type, logger)  # sup
+        train_loss, train_dice, train_iou = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
+                                                            model_type, logger)  # sup
 
         # evaluate on validation set
         logger.info('Validation')
         with torch.no_grad():
             model.eval()
-            val_loss, val_dice = train_one_epoch(val_loader, model, criterion,
-                                                 optimizer, writer, epoch, lr_scheduler, model_type, logger)
+            val_loss, val_dice, val_iou = train_one_epoch(val_loader, model, criterion,
+                                                          optimizer, writer, epoch, lr_scheduler, model_type, logger)
         # =============================================================
         #       Save best model
         # =============================================================
@@ -227,16 +230,20 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'epoch': epoch + 1,
             'train_loss': float(train_loss),
             'train_dice': float(train_dice),
+            'train_iou': float(train_iou),
             'val_loss': float(val_loss),
             'val_dice': float(val_dice),
+            'val_iou': float(val_iou),
+            'lr': float(epoch_lr),
         })
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
-        logger.info('{:>5} | {:>10} | {:>10} | {:>10} | {:>10} | {:>4}'.format(
-            'Epoch', 'TrainLoss', 'TrainDice', 'ValLoss', 'ValDice', 'Best'))
+        logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
+            'Epoch', 'TrainLoss', 'TrainDice', 'TrainIoU', 'ValLoss', 'ValDice', 'ValIoU', 'LR', 'Best'))
         for h in epoch_history:
             marker = '*' if h['epoch'] == best_epoch else ''
-            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>10.4f} | {:>10.4f} | {:>4}'.format(
-                h['epoch'], h['train_loss'], h['train_dice'], h['val_loss'], h['val_dice'], marker))
+            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.2e} | {:>4}'.format(
+                h['epoch'], h['train_loss'], h['train_dice'], h['train_iou'],
+                h['val_loss'], h['val_dice'], h['val_iou'], h['lr'], marker))
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')

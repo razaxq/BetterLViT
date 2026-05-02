@@ -130,4 +130,4 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     if lr_scheduler is not None:
         lr_scheduler.step()
 
-    return average_loss, train_dice_avg
+    return average_loss, train_dice_avg, train_iou_average
