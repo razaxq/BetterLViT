@@ -12,8 +12,9 @@ class BetterLViT(LViT):
     [B, seq_len, 768] sequence embeddings that flow into the existing
     text_module4 -> text_module1 channel-reduction stack unchanged.
 
-    seq_len is fixed by Vit.CTBN3 (in_channels=10). Embedding dim is fixed by
-    LViT.text_module4 (in_channels=768). Both align with CXR-BERT defaults.
+    seq_len is configurable via text_seq_len (threaded into Vit.CTBN3.in_channels)
+    and must match Config.text_max_len so the tokenizer output aligns with the
+    Conv1d input. Embedding dim is fixed at 768 by LViT.text_module4.
     """
 
     def __init__(
@@ -24,6 +25,7 @@ class BetterLViT(LViT):
         img_size=224,
         vis=False,
         text_encoder_name='microsoft/BiomedVLP-CXR-BERT-specialized',
+        text_seq_len=32,
         use_lora=True,
         lora_r=8,
         lora_alpha=16,
@@ -35,6 +37,7 @@ class BetterLViT(LViT):
             n_classes=n_classes,
             img_size=img_size,
             vis=vis,
+            text_seq_len=text_seq_len,
         )
 
         self.text_encoder = AutoModel.from_pretrained(

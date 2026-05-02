@@ -72,21 +72,21 @@ class UpblockAttention(nn.Module):
 
 
 class LViT(nn.Module):
-    def __init__(self, config, n_channels=3, n_classes=1, img_size=224, vis=False):
+    def __init__(self, config, n_channels=3, n_classes=1, img_size=224, vis=False, text_seq_len=10):
         super().__init__()
         self.vis = vis
         self.n_channels = n_channels
         self.n_classes = n_classes
         in_channels = config.base_channel
         self.inc = ConvBatchNorm(n_channels, in_channels)
-        self.downVit = VisionTransformer(config, vis, img_size=224, channel_num=64, patch_size=16, embed_dim=64)
-        self.downVit1 = VisionTransformer(config, vis, img_size=112, channel_num=128, patch_size=8, embed_dim=128)
-        self.downVit2 = VisionTransformer(config, vis, img_size=56, channel_num=256, patch_size=4, embed_dim=256)
-        self.downVit3 = VisionTransformer(config, vis, img_size=28, channel_num=512, patch_size=2, embed_dim=512)
-        self.upVit = VisionTransformer(config, vis, img_size=224, channel_num=64, patch_size=16, embed_dim=64)
-        self.upVit1 = VisionTransformer(config, vis, img_size=112, channel_num=128, patch_size=8, embed_dim=128)
-        self.upVit2 = VisionTransformer(config, vis, img_size=56, channel_num=256, patch_size=4, embed_dim=256)
-        self.upVit3 = VisionTransformer(config, vis, img_size=28, channel_num=512, patch_size=2, embed_dim=512)
+        self.downVit = VisionTransformer(config, vis, img_size=224, channel_num=64, patch_size=16, embed_dim=64, text_seq_len=text_seq_len)
+        self.downVit1 = VisionTransformer(config, vis, img_size=112, channel_num=128, patch_size=8, embed_dim=128, text_seq_len=text_seq_len)
+        self.downVit2 = VisionTransformer(config, vis, img_size=56, channel_num=256, patch_size=4, embed_dim=256, text_seq_len=text_seq_len)
+        self.downVit3 = VisionTransformer(config, vis, img_size=28, channel_num=512, patch_size=2, embed_dim=512, text_seq_len=text_seq_len)
+        self.upVit = VisionTransformer(config, vis, img_size=224, channel_num=64, patch_size=16, embed_dim=64, text_seq_len=text_seq_len)
+        self.upVit1 = VisionTransformer(config, vis, img_size=112, channel_num=128, patch_size=8, embed_dim=128, text_seq_len=text_seq_len)
+        self.upVit2 = VisionTransformer(config, vis, img_size=56, channel_num=256, patch_size=4, embed_dim=256, text_seq_len=text_seq_len)
+        self.upVit3 = VisionTransformer(config, vis, img_size=28, channel_num=512, patch_size=2, embed_dim=512, text_seq_len=text_seq_len)
         self.down1 = DownBlock(in_channels, in_channels * 2, nb_Conv=2)
         self.down2 = DownBlock(in_channels * 2, in_channels * 4, nb_Conv=2)
         self.down3 = DownBlock(in_channels * 4, in_channels * 8, nb_Conv=2)

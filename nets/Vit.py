@@ -149,7 +149,8 @@ class ConvTransBN(nn.Module):  # (convolution => [BN] => ReLU)
 
 class VisionTransformer(nn.Module):  # Transformer-branch
     def __init__(self, config, vis, img_size, channel_num, patch_size, embed_dim, depth=1, num_heads=8,
-                 mlp_ratio=4., qkv_bias=True, num_classes=1, drop_rate=0., attn_drop_rate=0., drop_path_rate=0.):
+                 mlp_ratio=4., qkv_bias=True, num_classes=1, drop_rate=0., attn_drop_rate=0., drop_path_rate=0.,
+                 text_seq_len=10):
         super(VisionTransformer, self).__init__()
         self.config = config
         self.vis = vis
@@ -169,7 +170,8 @@ class VisionTransformer(nn.Module):  # Transformer-branch
         self.head = nn.Linear(embed_dim, num_classes) if num_classes > 0 else nn.Identity()
         self.CTBN = ConvTransBN(in_channels=embed_dim, out_channels=embed_dim//2)
         self.CTBN2 = ConvTransBN(in_channels=embed_dim*2, out_channels=embed_dim)
-        self.CTBN3 = ConvTransBN(in_channels=10, out_channels=196)
+        # CTBN3 maps text seq_len (treated as in_channels by Conv1d) to 196 patch tokens
+        self.CTBN3 = ConvTransBN(in_channels=text_seq_len, out_channels=196)
 
     def forward(self, x, skip_x, text, reconstruct=False):
         if not reconstruct:

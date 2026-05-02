@@ -526,14 +526,14 @@ class CosineAnnealingWarmRestarts(_LRScheduler):
 
 
 def read_text(filename):
+    # Padding is handled downstream by the HF tokenizer ([PAD] + attention_mask=0).
+    # The legacy ' EOF XXX' word-padding existed only because bert-embedding had
+    # no PAD token; with subword tokenizers it would burn real seq_len slots.
     df = pd.read_excel(filename)
     text = {}
-    for i in df.index.values:  # Gets the index of the row number and traverses it
-        count = len(df.Description[i].split())
-        if count < 9:
-            df.Description[i] = df.Description[i] + ' EOF XXX' * (9 - count)
+    for i in df.index.values:
         text[df.Image[i]] = df.Description[i]
-    return text  # return dict (key: values)
+    return text
 
 
 def read_text_LV(filename):
