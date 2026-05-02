@@ -43,27 +43,40 @@ def logger_config(log_path):
     return loggerr
 
 
-def save_checkpoint(state, save_path):
+def save_checkpoint(state, save_path, verbose=True):
     '''
-        Save the current model.
-        If the model is the best model since beginning of the training
-        it will be copy
+        Save model checkpoint. best_model=True writes best_model-{model}.pth.tar;
+        otherwise writes last_model-{model}.pth.tar (rolling, overwrites each call).
     '''
-    logger.info('\t Saving to {}'.format(save_path))
     if not os.path.isdir(save_path):
         os.makedirs(save_path)
 
-    epoch = state['epoch']  # epoch no
     best_model = state['best_model']  # bool
     model = state['model']  # model type
 
     if best_model:
-        filename = save_path + '/' + \
-                   'best_model-{}.pth.tar'.format(model)
+        filename = save_path + '/' + 'best_model-{}.pth.tar'.format(model)
     else:
-        filename = save_path + '/' + \
-                   'model-{}-{:02d}.pth.tar'.format(model, epoch)
+        filename = save_path + '/' + 'last_model-{}.pth.tar'.format(model)
+    if verbose:
+        logger.info('\t Saving to {}'.format(filename))
     torch.save(state, filename)
+
+
+def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
+                           val_loss, max_dice, best_epoch, epoch_history, is_best):
+    return {
+        'epoch': epoch,
+        'best_model': is_best,
+        'model': model_type,
+        'state_dict': model.state_dict(),
+        'val_loss': val_loss,
+        'optimizer': optimizer.state_dict(),
+        'lr_scheduler': lr_scheduler.state_dict() if lr_scheduler is not None else None,
+        'max_dice': float(max_dice),
+        'best_epoch': int(best_epoch),
+        'epoch_history': epoch_history,
+    }
 
 
 def worker_init_fn(worker_id):
@@ -186,7 +199,41 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     max_dice = 0.0
     best_epoch = 1
     epoch_history = []
-    for epoch in range(config.epochs):  # loop over the dataset multiple times
+    start_epoch = 0
+
+    # ------------------------- Resume from checkpoint -------------------------
+    if config.resume_path:
+        if os.path.isfile(config.resume_path):
+            logger.info('Resuming from {}'.format(config.resume_path))
+            ckpt = torch.load(config.resume_path, map_location='cuda')
+
+            target = model.module if isinstance(model, nn.DataParallel) else model
+            target.load_state_dict(ckpt['state_dict'], strict=False)
+            optimizer.load_state_dict(ckpt['optimizer'])
+
+            start_epoch = ckpt['epoch'] + 1
+
+            if lr_scheduler is not None:
+                if ckpt.get('lr_scheduler') is not None:
+                    lr_scheduler.load_state_dict(ckpt['lr_scheduler'])
+                else:
+                    # Old-format ckpt: fast-forward scheduler. In our codebase scheduler.step()
+                    # runs inside the val pass, so by the time we save with epoch=N, the
+                    # scheduler has already stepped to last_epoch=N+1 (== start_epoch).
+                    lr_scheduler.step(start_epoch)
+
+            max_dice = float(ckpt.get('max_dice', config.resume_max_dice))
+            best_epoch = int(ckpt.get('best_epoch', start_epoch))
+            epoch_history = ckpt.get('epoch_history', []) or []
+
+            logger.info('Resumed at epoch {}, max_dice={:.4f}, best_epoch={}, history rows={}'.format(
+                start_epoch + 1, max_dice, best_epoch, len(epoch_history)))
+        else:
+            logger.info('resume_path set but file not found: {}; training from scratch'.format(
+                config.resume_path))
+    # --------------------------------------------------------------------------
+
+    for epoch in range(start_epoch, config.epochs):  # loop over the dataset multiple times
         logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs + 1))
         logger.info(config.session_name)
         # Capture LR used for this epoch (scheduler steps inside the val call, so
@@ -213,12 +260,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     '\t Saving best model, mean dice increased from: {:.4f} to {:.4f}'.format(max_dice, val_dice))
                 max_dice = val_dice
                 best_epoch = epoch + 1
-                save_checkpoint({'epoch': epoch,
-                                 'best_model': True,
-                                 'model': model_type,
-                                 'state_dict': model.state_dict(),
-                                 'val_loss': val_loss,
-                                 'optimizer': optimizer.state_dict()}, config.model_path)
+                best_state = build_checkpoint_state(
+                    model, optimizer, lr_scheduler, model_type, epoch,
+                    val_loss, max_dice, best_epoch, epoch_history, is_best=True)
+                save_checkpoint(best_state, config.model_path)
                 bark_notify(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
         else:
             logger.info('\t Mean dice:{:.4f} does not increase, '
@@ -236,6 +281,13 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'val_iou': float(val_iou),
             'lr': float(epoch_lr),
         })
+
+        # Always save last_model (rolling) so future runs can resume from any
+        # interruption point, not just from the best.
+        last_state = build_checkpoint_state(
+            model, optimizer, lr_scheduler, model_type, epoch,
+            val_loss, max_dice, best_epoch, epoch_history, is_best=False)
+        save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
         logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
             'Epoch', 'TrainLoss', 'TrainDice', 'TrainIoU', 'ValLoss', 'ValDice', 'ValIoU', 'LR', 'Best'))

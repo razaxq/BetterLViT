@@ -32,6 +32,15 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
 
+# Resume training
+# Set resume_path to a .pth.tar checkpoint to continue from there. New session
+# (and its log / checkpoint folder) is still created on each run, so the
+# original best_model is not overwritten in the source session.
+# resume_max_dice is only used as a fallback when the loaded checkpoint
+# predates this resume infrastructure (no 'max_dice' field).
+resume_path = ''
+resume_max_dice = 0.0
+
 # Text encoder (replaces legacy bert-embedding / bert-base-uncased)
 text_encoder_name = 'microsoft/BiomedVLP-CXR-BERT-specialized'
 text_max_len = 32  # threaded into Vit.CTBN3.in_channels via LViT __init__
