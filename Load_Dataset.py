@@ -1,83 +1,19 @@
 # -*- coding: utf-8 -*-
 import os
-import random
 from typing import Callable
 
+import albumentations as A
 import cv2
 import numpy as np
 import torch
-from scipy import ndimage
-from scipy.ndimage.interpolation import zoom
+from albumentations.pytorch import ToTensorV2
 from torch.utils.data import Dataset
 from torchvision import transforms as T
-from torchvision.transforms import functional as F
 from transformers import AutoTokenizer
 
 import Config as config
 
 os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
-
-
-def random_rot_flip(image, label):
-    k = np.random.randint(0, 4)
-    image = np.rot90(image, k)
-    label = np.rot90(label, k)
-    axis = np.random.randint(0, 2)
-    image = np.flip(image, axis=axis).copy()
-    label = np.flip(label, axis=axis).copy()
-    return image, label
-
-
-def random_rotate(image, label):
-    angle = np.random.randint(-20, 20)
-    image = ndimage.rotate(image, angle, order=0, reshape=False)
-    label = ndimage.rotate(label, angle, order=0, reshape=False)
-    return image, label
-
-
-class RandomGenerator(object):
-    def __init__(self, output_size):
-        self.output_size = output_size
-
-    def __call__(self, sample):
-        image, label = sample['image'], sample['label']
-        image, label = image.astype(np.uint8), label.astype(np.uint8)
-        image, label = F.to_pil_image(image), F.to_pil_image(label)
-        x, y = image.size
-        if random.random() > 0.5:
-            image, label = random_rot_flip(image, label)
-        elif random.random() > 0.5:
-            image, label = random_rotate(image, label)
-
-        if x != self.output_size[0] or y != self.output_size[1]:
-            image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)
-            label = zoom(label, (self.output_size[0] / x, self.output_size[1] / y), order=0)
-        image = F.to_tensor(image)
-        label = to_long_tensor(label)
-        out = {'image': image, 'label': label,
-               'input_ids': sample['input_ids'],
-               'attention_mask': sample['attention_mask']}
-        return out
-
-
-class ValGenerator(object):
-    def __init__(self, output_size):
-        self.output_size = output_size
-
-    def __call__(self, sample):
-        image, label = sample['image'], sample['label']
-        image, label = image.astype(np.uint8), label.astype(np.uint8)
-        image, label = F.to_pil_image(image), F.to_pil_image(label)
-        x, y = image.size
-        if x != self.output_size[0] or y != self.output_size[1]:
-            image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)
-            label = zoom(label, (self.output_size[0] / x, self.output_size[1] / y), order=0)
-        image = F.to_tensor(image)
-        label = to_long_tensor(label)
-        out = {'image': image, 'label': label,
-               'input_ids': sample['input_ids'],
-               'attention_mask': sample['attention_mask']}
-        return out
 
 
 def to_long_tensor(pic):
@@ -112,6 +48,98 @@ def _tokenize(tokenizer, text, max_len):
         return_tensors='pt',
     )
     return encoded['input_ids'].squeeze(0), encoded['attention_mask'].squeeze(0)
+
+
+def _to_chw_float(image_uint8_tensor):
+    """ToTensorV2 returns uint8 [C, H, W]; convert to float in [0, 1]."""
+    return image_uint8_tensor.float() / 255.0
+
+
+class RandomGenerator(object):
+    """Strong-augmentation training transform built on albumentations.
+
+    Geometric ops are applied jointly to image and mask so the spatial
+    correspondence is preserved (mask uses nearest-neighbour interpolation
+    where supported). Intensity / noise / blur ops only touch the image.
+
+    Augmentation budget is calibrated for chest-X-ray style medical images:
+    flips and 90-deg rotations are kept (matching the legacy LViT pipeline),
+    plus elastic deformation, brightness/contrast/gamma jitter, gaussian blur
+    and gaussian noise.
+    """
+
+    def __init__(self, output_size):
+        h, w = output_size[0], output_size[1]
+        self.transform = A.Compose([
+            # ----- Geometric (sync to mask) -----
+            A.HorizontalFlip(p=0.5),
+            A.VerticalFlip(p=0.5),
+            A.RandomRotate90(p=0.5),
+            A.Affine(
+                rotate=(-20, 20),
+                scale=(0.9, 1.1),
+                translate_percent=(0.0, 0.05),
+                interpolation=cv2.INTER_LINEAR,
+                mask_interpolation=cv2.INTER_NEAREST,
+                fit_output=False,
+                p=0.5,
+            ),
+            A.ElasticTransform(
+                alpha=120,
+                sigma=120 * 0.05,
+                interpolation=cv2.INTER_LINEAR,
+                p=0.3,
+            ),
+            # ----- Intensity (image only) -----
+            A.RandomBrightnessContrast(
+                brightness_limit=0.2, contrast_limit=0.2, p=0.5,
+            ),
+            A.RandomGamma(gamma_limit=(80, 120), p=0.3),
+            # ----- Noise / blur (image only) -----
+            A.GaussianBlur(blur_limit=(3, 5), p=0.3),
+            A.GaussNoise(var_limit=(10.0, 50.0), p=0.3),
+            # ----- Final size lock + tensor conversion -----
+            A.Resize(height=h, width=w, interpolation=cv2.INTER_LINEAR),
+            ToTensorV2(),
+        ])
+
+    def __call__(self, sample):
+        image = np.ascontiguousarray(sample['image'].astype(np.uint8))
+        mask = sample['label'].astype(np.uint8)
+        # mask is (H, W, 1) from correct_dims; albumentations wants (H, W) for binary mask
+        if mask.ndim == 3 and mask.shape[-1] == 1:
+            mask = mask.squeeze(-1)
+
+        out = self.transform(image=image, mask=mask)
+        image_t = _to_chw_float(out['image'])
+        mask_t = out['mask'].long()
+        return {'image': image_t, 'label': mask_t,
+                'input_ids': sample['input_ids'],
+                'attention_mask': sample['attention_mask']}
+
+
+class ValGenerator(object):
+    """Validation/test transform: only enforce target size + tensor convert."""
+
+    def __init__(self, output_size):
+        h, w = output_size[0], output_size[1]
+        self.transform = A.Compose([
+            A.Resize(height=h, width=w, interpolation=cv2.INTER_LINEAR),
+            ToTensorV2(),
+        ])
+
+    def __call__(self, sample):
+        image = np.ascontiguousarray(sample['image'].astype(np.uint8))
+        mask = sample['label'].astype(np.uint8)
+        if mask.ndim == 3 and mask.shape[-1] == 1:
+            mask = mask.squeeze(-1)
+
+        out = self.transform(image=image, mask=mask)
+        image_t = _to_chw_float(out['image'])
+        mask_t = out['mask'].long()
+        return {'image': image_t, 'label': mask_t,
+                'input_ids': sample['input_ids'],
+                'attention_mask': sample['attention_mask']}
 
 
 class LV2D(Dataset):
