@@ -56,16 +56,17 @@ def _to_chw_float(image_uint8_tensor):
 
 
 class RandomGenerator(object):
-    """Strong-augmentation training transform built on albumentations.
+    """Mild-augmentation training transform built on albumentations.
 
     Geometric ops are applied jointly to image and mask so the spatial
     correspondence is preserved (mask uses nearest-neighbour interpolation
     where supported). Intensity / noise / blur ops only touch the image.
 
-    Augmentation budget is calibrated for chest-X-ray style medical images:
-    flips and 90-deg rotations are kept (matching the legacy LViT pipeline),
-    plus elastic deformation, brightness/contrast/gamma jitter, gaussian blur
-    and gaussian noise.
+    Strengths and probabilities are roughly half of the original strong
+    pipeline. The strong version capped val Dice ~0.806 with train Dice
+    stuck at ~0.79 — clear underfitting from over-aggressive augmentation.
+    This milder budget keeps the regularisation benefit while letting the
+    model actually fit the training distribution.
     """
 
     def __init__(self, output_size):
@@ -73,31 +74,31 @@ class RandomGenerator(object):
         self.transform = A.Compose([
             # ----- Geometric (sync to mask) -----
             A.HorizontalFlip(p=0.5),
-            A.VerticalFlip(p=0.5),
-            A.RandomRotate90(p=0.5),
+            A.VerticalFlip(p=0.3),
+            A.RandomRotate90(p=0.3),
             A.Affine(
-                rotate=(-20, 20),
-                scale=(0.9, 1.1),
-                translate_percent=(0.0, 0.05),
+                rotate=(-15, 15),
+                scale=(0.95, 1.05),
+                translate_percent=(0.0, 0.02),
                 interpolation=cv2.INTER_LINEAR,
                 mask_interpolation=cv2.INTER_NEAREST,
                 fit_output=False,
                 p=0.5,
             ),
             A.ElasticTransform(
-                alpha=120,
-                sigma=120 * 0.05,
+                alpha=60,
+                sigma=6,
                 interpolation=cv2.INTER_LINEAR,
-                p=0.3,
+                p=0.2,
             ),
             # ----- Intensity (image only) -----
             A.RandomBrightnessContrast(
-                brightness_limit=0.2, contrast_limit=0.2, p=0.5,
+                brightness_limit=0.15, contrast_limit=0.15, p=0.5,
             ),
-            A.RandomGamma(gamma_limit=(80, 120), p=0.3),
+            A.RandomGamma(gamma_limit=(85, 115), p=0.3),
             # ----- Noise / blur (image only) -----
-            A.GaussianBlur(blur_limit=(3, 5), p=0.3),
-            A.GaussNoise(var_limit=(10.0, 50.0), p=0.3),
+            A.GaussianBlur(blur_limit=(3, 3), p=0.2),
+            A.GaussNoise(var_limit=(5.0, 25.0), p=0.2),
             # ----- Final size lock + tensor conversion -----
             A.Resize(height=h, width=w, interpolation=cv2.INTER_LINEAR),
             ToTensorV2(),
