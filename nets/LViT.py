@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 from .Vit import VisionTransformer, Reconstruct
 from .pixlevel import PixLevelModule
+from .eppa import EPPA
 
 
 def get_activation(activation_type):
@@ -58,15 +59,17 @@ class Flatten(nn.Module):
 
 
 class UpblockAttention(nn.Module):
-    def __init__(self, in_channels, out_channels, nb_Conv, activation='ReLU'):
+    def __init__(self, in_channels, out_channels, nb_Conv, activation='ReLU', text_dim=None):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
-        self.pixModule = PixLevelModule(in_channels // 2)
+        # EPPA replaces PixLevelModule on the skip connection.
+        # text_dim=None falls back to text-free EPPA (still functional).
+        self.eppa = EPPA(in_channels // 2, text_dim=text_dim, reduction=8)
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
-    def forward(self, x, skip_x):
+    def forward(self, x, skip_x, text=None):
         up = self.up(x)
-        skip_x_att = self.pixModule(skip_x)
+        skip_x_att = self.eppa(skip_x, text)
         x = torch.cat([skip_x_att, up], dim=1)  # dim 1 is the channel dimension
         return self.nConvs(x)
 
@@ -91,10 +94,11 @@ class LViT(nn.Module):
         self.down2 = DownBlock(in_channels * 2, in_channels * 4, nb_Conv=2)
         self.down3 = DownBlock(in_channels * 4, in_channels * 8, nb_Conv=2)
         self.down4 = DownBlock(in_channels * 8, in_channels * 8, nb_Conv=2)
-        self.up4 = UpblockAttention(in_channels * 16, in_channels * 4, nb_Conv=2)
-        self.up3 = UpblockAttention(in_channels * 8, in_channels * 2, nb_Conv=2)
-        self.up2 = UpblockAttention(in_channels * 4, in_channels, nb_Conv=2)
-        self.up1 = UpblockAttention(in_channels * 2, in_channels, nb_Conv=2)
+        TEXT_DIM = 768
+        self.up4 = UpblockAttention(in_channels * 16, in_channels * 4, nb_Conv=2, text_dim=TEXT_DIM)
+        self.up3 = UpblockAttention(in_channels * 8, in_channels * 2, nb_Conv=2, text_dim=TEXT_DIM)
+        self.up2 = UpblockAttention(in_channels * 4, in_channels, nb_Conv=2, text_dim=TEXT_DIM)
+        self.up1 = UpblockAttention(in_channels * 2, in_channels, nb_Conv=2, text_dim=TEXT_DIM)
         self.outc = nn.Conv2d(in_channels, n_classes, kernel_size=(1, 1), stride=(1, 1))
         self.last_activation = nn.Sigmoid()  # if using BCELoss
         self.multi_activation = nn.Softmax()
@@ -134,10 +138,10 @@ class LViT(nn.Module):
         x2 = self.reconstruct2(y2) + x2
         x3 = self.reconstruct3(y3) + x3
         x4 = self.reconstruct4(y4) + x4
-        x = self.up4(x5, x4)
-        x = self.up3(x, x3)
-        x = self.up2(x, x2)
-        x = self.up1(x, x1)
+        x = self.up4(x5, x4, text)
+        x = self.up3(x, x3, text)
+        x = self.up2(x, x2, text)
+        x = self.up1(x, x1, text)
         if self.n_classes == 1:
             logits = self.last_activation(self.outc(x))
         else:
