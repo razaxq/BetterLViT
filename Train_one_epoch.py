@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-import torch.optim
 import os
 import time
-from utils import *
-import Config as config
+import torch.optim
 import warnings
-from torchinfo import summary
 from sklearn.metrics.pairwise import cosine_similarity
+from torchinfo import summary
+
+import Config as config
+from utils import *
+
 warnings.filterwarnings("ignore")
 
 
@@ -45,6 +47,7 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     logging_mode = 'Train' if model.training else 'Val'
     end = time.time()
     time_sum, loss_sum = 0, 0
+    tv_sum, bce_sum, bd_sum = 0, 0, 0
     dice_sum, iou_sum, acc_sum = 0.0, 0.0, 0.0
     dices = []
     for i, (sampled_batch, names) in enumerate(loader, 1):
@@ -68,8 +71,13 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         # ====================================================
 
         preds = model(images, input_ids, attention_mask)
-        out_loss = criterion(preds, masks.float())  # Loss
-        # print(model.training)
+        loss_output = criterion(preds, masks.float())  # Loss
+
+        if isinstance(loss_output, tuple):
+            out_loss, l_tv, l_bce, l_bd = loss_output
+        else:
+            out_loss = loss_output
+            l_tv, l_bce, l_bd = torch.tensor(0.0).cuda(), torch.tensor(0.0).cuda(), torch.tensor(0.0).cuda()
 
 
         if model.training:
@@ -90,22 +98,25 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
 
         time_sum += len(images) * batch_time
         loss_sum += len(images) * out_loss
+        tv_sum += len(images) * l_tv
+        bce_sum += len(images) * l_bce
+        bd_sum += len(images) * l_bd
         iou_sum += len(images) * train_iou
         # acc_sum += len(images) * train_acc
         dice_sum += len(images) * train_dice
 
         if i == len(loader):
-            average_loss = loss_sum / (config.batch_size*(i-1) + len(images))
-            average_time = time_sum / (config.batch_size*(i-1) + len(images))
-            train_iou_average = iou_sum / (config.batch_size*(i-1) + len(images))
-            # train_acc_average = acc_sum / (config.batch_size*(i-1) + len(images))
-            train_dice_avg = dice_sum / (config.batch_size*(i-1) + len(images))
+            avg_div = (config.batch_size * (i - 1) + len(images))
         else:
-            average_loss = loss_sum / (i * config.batch_size)
-            average_time = time_sum / (i * config.batch_size)
-            train_iou_average = iou_sum / (i * config.batch_size)
-            # train_acc_average = acc_sum / (i * config.batch_size)
-            train_dice_avg = dice_sum / (i * config.batch_size)
+            avg_div = (i * config.batch_size)
+
+        average_loss = loss_sum / avg_div
+        average_tv = tv_sum / avg_div
+        average_bce = bce_sum / avg_div
+        average_bd = bd_sum / avg_div
+        average_time = time_sum / avg_div
+        train_iou_average = iou_sum / avg_div
+        train_dice_avg = dice_sum / avg_div
 
         end = time.time()
         torch.cuda.empty_cache()
@@ -119,6 +130,10 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         if config.tensorboard:
             step = epoch * len(loader) + i
             writer.add_scalar(logging_mode + '_' + loss_name, out_loss.item(), step)
+            if isinstance(loss_output, tuple):
+                writer.add_scalar(logging_mode + '_' + loss_name + '_tv', l_tv.item(), step)
+                writer.add_scalar(logging_mode + '_' + loss_name + '_bce', l_bce.item(), step)
+                writer.add_scalar(logging_mode + '_' + loss_name + '_bd', l_bd.item(), step)
 
             # plot metrics in tensorboard
             writer.add_scalar(logging_mode + '_iou', train_iou, step)
@@ -130,4 +145,4 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     if lr_scheduler is not None:
         lr_scheduler.step()
 
-    return average_loss, train_dice_avg, train_iou_average
+    return average_loss, train_dice_avg, train_iou_average, average_tv, average_bce, average_bd
