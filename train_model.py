@@ -257,14 +257,16 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # train for one epoch
         model.train(True)
         logger.info('Training with batch size : {}'.format(batch_size))
-        train_loss, train_dice, train_iou = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
+        train_loss, train_dice, train_iou, train_tv, train_bce, train_bd = train_one_epoch(train_loader, model,
+                                                                                           criterion, optimizer, writer,
+                                                                                           epoch, None,
                                                             model_type, logger)  # sup
 
         # evaluate on validation set
         logger.info('Validation')
         with torch.no_grad():
             model.eval()
-            val_loss, val_dice, val_iou = train_one_epoch(val_loader, model, criterion,
+            val_loss, val_dice, val_iou, val_tv, val_bce, val_bd = train_one_epoch(val_loader, model, criterion,
                                                           optimizer, writer, epoch, lr_scheduler, model_type, logger)
         # =============================================================
         #       Save best model
@@ -289,9 +291,15 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         epoch_history.append({
             'epoch': epoch + 1,
             'train_loss': float(train_loss),
+            'train_tv': float(train_tv),
+            'train_bce': float(train_bce),
+            'train_bd': float(train_bd),
             'train_dice': float(train_dice),
             'train_iou': float(train_iou),
             'val_loss': float(val_loss),
+            'val_tv': float(val_tv),
+            'val_bce': float(val_bce),
+            'val_bd': float(val_bd),
             'val_dice': float(val_dice),
             'val_iou': float(val_iou),
             'lr': float(epoch_lr),
