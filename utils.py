@@ -210,6 +210,141 @@ class WeightedDiceBCE(nn.Module):
         return dice_BCE_loss
 
 
+class TverskyLoss(nn.Module):
+    """Asymmetric Dice generalisation: Tversky = TP / (TP + alpha*FN + beta*FP).
+
+    For alpha=beta=0.5 this equals soft Dice. For beta > alpha, FP is penalised
+    more than FN -> the model learns to be conservative (counters
+    over-segmentation). Salehi et al. 2017 recommends alpha=0.3, beta=0.7 for
+    highly imbalanced medical segmentation; we default to a milder alpha=0.4,
+    beta=0.6 (FP penalty 1.5x of FN).
+    """
+
+    def __init__(self, alpha=0.4, beta=0.6, smooth=1e-5):
+        super().__init__()
+        self.alpha = alpha
+        self.beta = beta
+        self.smooth = smooth
+
+    def forward(self, pred, target):
+        # pred: [B, 1, H, W] in [0, 1] (sigmoid output)
+        # target: [B, 1, H, W] binary in {0, 1}
+        pred_flat = pred.reshape(-1)
+        target_flat = target.reshape(-1).float()
+        TP = (pred_flat * target_flat).sum()
+        FN = ((1 - pred_flat) * target_flat).sum()
+        FP = (pred_flat * (1 - target_flat)).sum()
+        tversky = (TP + self.smooth) / (TP + self.alpha * FN + self.beta * FP + self.smooth)
+        return 1.0 - tversky
+
+
+class BoundaryLoss(nn.Module):
+    """Kervadec et al. 2019 "Boundary loss for highly unbalanced segmentation".
+
+    Loss = mean(pred * SDT_gt) where SDT_gt is the signed distance transform
+    of the GT mask: negative inside the lesion, positive outside, zero on the
+    boundary. Penalises predictions that wander far from the GT boundary on
+    the wrong side, in proportion to the distance.
+
+    Operates on the soft sigmoid output but supervises the level set at 0.5
+    to track the GT boundary geometry directly (not the gradient sharpness).
+    SDT is computed on-the-fly via scipy on CPU per batch (~1ms / image at
+    224x224); the result is detached so no gradients flow into scipy.
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, pred, target):
+        # pred: [B, 1, H, W] in [0, 1]
+        # target: [B, 1, H, W] binary {0, 1}
+        with torch.no_grad():
+            sdt = self._compute_sdt_batch(target)
+        return (pred * sdt).mean()
+
+    @staticmethod
+    def _compute_sdt_batch(target):
+        # Lazy-import scipy to keep utils.py importable in env w/o scipy
+        from scipy.ndimage import distance_transform_edt
+
+        gt_np = target.detach().cpu().numpy().astype(np.uint8)
+        B, C, H, W = gt_np.shape
+        sdt = np.zeros_like(gt_np, dtype=np.float32)
+        for b in range(B):
+            for c in range(C):
+                m = gt_np[b, c].astype(bool)
+                if m.any() and not m.all():
+                    pos = distance_transform_edt(~m).astype(np.float32)   # outside: positive
+                    neg = -distance_transform_edt(m).astype(np.float32)   # inside: negative
+                    sdt[b, c] = pos + neg
+                # If mask is all zero or all one, leave sdt as zeros (no boundary).
+        return torch.from_numpy(sdt).to(target.device)
+
+
+class WeightedTverskyBCEBoundary(nn.Module):
+    """Composite boundary-aware loss for chest X-ray segmentation.
+
+    L = tversky_weight * Tversky(alpha, beta)
+      + bce_weight     * WeightedBCE
+      + lambda(epoch)  * BoundaryLoss(Kervadec)
+
+    Where lambda ramps linearly from 0 to lambda_max over the first
+    lambda_warmup_epochs (Kervadec 2021 "rebalance schedule"). This avoids
+    boundary loss disrupting early-stage convergence when Tversky has not yet
+    reached a reasonable region overlap.
+
+    Set the current epoch via .set_epoch(e) at the start of each epoch loop.
+    Falls back to lambda=lambda_max if set_epoch is never called.
+
+    _show_dice() preserves the original WeightedDiceBCE._show_dice semantics
+    so the train loop's metric reporting works without changes.
+    """
+
+    def __init__(self, tversky_weight=0.4, bce_weight=0.4,
+                 alpha=0.4, beta=0.6,
+                 lambda_max=0.1, lambda_warmup_epochs=50):
+        super().__init__()
+        self.tversky = TverskyLoss(alpha=alpha, beta=beta)
+        self.bce = WeightedBCE(weights=[0.5, 0.5])
+        self.boundary = BoundaryLoss()
+        # Keep a symmetric Dice for hard-Dice metric reporting (matches
+        # WeightedDiceBCE._show_dice behaviour exactly so the Epoch History
+        # numbers remain comparable across runs).
+        self._dice_for_metric = WeightedDiceLoss(weights=[0.5, 0.5])
+
+        self.tversky_weight = tversky_weight
+        self.bce_weight = bce_weight
+        self.lambda_max = lambda_max
+        self.lambda_warmup_epochs = lambda_warmup_epochs
+        self._current_epoch = lambda_warmup_epochs  # default to fully-ramped
+
+    def set_epoch(self, epoch: int):
+        self._current_epoch = int(epoch)
+
+    @property
+    def boundary_lambda(self) -> float:
+        if self.lambda_warmup_epochs <= 0:
+            return float(self.lambda_max)
+        ramp = min(1.0, max(0.0, self._current_epoch / float(self.lambda_warmup_epochs)))
+        return float(self.lambda_max) * ramp
+
+    def _show_dice(self, inputs, targets):
+        inputs[inputs >= 0.5] = 1
+        inputs[inputs < 0.5] = 0
+        targets[targets > 0] = 1
+        targets[targets <= 0] = 0
+        hard_dice_coeff = 1.0 - self._dice_for_metric(inputs, targets)
+        return hard_dice_coeff
+
+    def forward(self, inputs, targets):
+        l_tv = self.tversky(inputs, targets)
+        l_bce = self.bce(inputs, targets)
+        l_bd = self.boundary(inputs, targets)
+        return (self.tversky_weight * l_tv
+                + self.bce_weight * l_bce
+                + self.boundary_lambda * l_bd)
+
+
 def auc_on_batch(masks, pred):
     '''Computes the mean Area Under ROC Curve over a batch during training'''
     aucs = []

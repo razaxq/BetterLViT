@@ -16,7 +16,7 @@ import Config as config
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
+from utils import CosineAnnealingWarmRestarts, WeightedTverskyBCEBoundary, read_text
 
 
 def bark_notify(body, title="训练通知"):
@@ -181,7 +181,14 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
-    criterion = WeightedDiceBCE(dice_weight=0.5, BCE_weight=0.5)
+    # Boundary-aware composite loss: Tversky (asym, FP-penalising) + WeightedBCE
+    # + Boundary loss (Kervadec). lambda for the boundary term ramps from 0 to
+    # 0.1 over the first 50 epochs (rebalance schedule).
+    criterion = WeightedTverskyBCEBoundary(
+        tversky_weight=0.4, bce_weight=0.4,
+        alpha=0.4, beta=0.6,
+        lambda_max=0.1, lambda_warmup_epochs=50,
+    )
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=lr,
@@ -240,6 +247,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     for epoch in range(start_epoch, config.epochs):  # loop over the dataset multiple times
         logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs + 1))
         logger.info(config.session_name)
+        # Update the boundary-loss lambda for this epoch (rebalance schedule).
+        # Safe no-op for criteria that don't define set_epoch.
+        if hasattr(criterion, 'set_epoch'):
+            criterion.set_epoch(epoch)
         # Capture LR used for this epoch (scheduler steps inside the val call, so
         # snapshotting before train gives the actual learning rate this epoch ran on)
         epoch_lr = min(g["lr"] for g in optimizer.param_groups)
