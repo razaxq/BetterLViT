@@ -268,6 +268,13 @@ class BoundaryLoss(nn.Module):
         from scipy.ndimage import distance_transform_edt
 
         gt_np = target.detach().cpu().numpy().astype(np.uint8)
+        # Accept both [B, H, W] (mask straight from dataloader) and [B, 1, H, W];
+        # normalise to [B, 1, H, W] so the result broadcasts cleanly against
+        # pred which is always [B, 1, H, W] (Conv2d(out=n_classes=1) output).
+        # We do NOT squeeze back to 3D: [B, 1, H, W] x [B, H, W] would otherwise
+        # broadcast to [B, B, H, W] (outer product) — element-wise needs both 4D.
+        if gt_np.ndim == 3:
+            gt_np = gt_np[:, None]
         B, C, H, W = gt_np.shape
         sdt = np.zeros_like(gt_np, dtype=np.float32)
         for b in range(B):
