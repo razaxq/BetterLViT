@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import time
+
 import torch.optim
-import warnings
-from sklearn.metrics.pairwise import cosine_similarity
-from torchinfo import summary
 
 import Config as config
 from utils import *
@@ -47,7 +45,7 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     logging_mode = 'Train' if model.training else 'Val'
     end = time.time()
     time_sum, loss_sum = 0, 0
-    tv_sum, bce_sum, bd_sum = 0, 0, 0
+    tv_sum, focal_sum, bd_sum = 0, 0, 0
     dice_sum, iou_sum, acc_sum = 0.0, 0.0, 0.0
     dices = []
     for i, (sampled_batch, names) in enumerate(loader, 1):
@@ -74,10 +72,10 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         loss_output = criterion(preds, masks.float())  # Loss
 
         if isinstance(loss_output, tuple):
-            out_loss, l_tv, l_bce, l_bd = loss_output
+            out_loss, l_tv, l_focal, l_bd = loss_output
         else:
             out_loss = loss_output
-            l_tv, l_bce, l_bd = torch.tensor(0.0).cuda(), torch.tensor(0.0).cuda(), torch.tensor(0.0).cuda()
+            l_tv, l_focal, l_bd = torch.tensor(0.0).cuda(), torch.tensor(0.0).cuda(), torch.tensor(0.0).cuda()
 
 
         if model.training:
@@ -99,7 +97,7 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         time_sum += len(images) * batch_time
         loss_sum += len(images) * out_loss
         tv_sum += len(images) * l_tv
-        bce_sum += len(images) * l_bce
+        focal_sum += len(images) * l_focal
         bd_sum += len(images) * l_bd
         iou_sum += len(images) * train_iou
         # acc_sum += len(images) * train_acc
@@ -112,7 +110,7 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
 
         average_loss = loss_sum / avg_div
         average_tv = tv_sum / avg_div
-        average_bce = bce_sum / avg_div
+        average_focal = focal_sum / avg_div
         average_bd = bd_sum / avg_div
         average_time = time_sum / avg_div
         train_iou_average = iou_sum / avg_div
@@ -132,7 +130,7 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             writer.add_scalar(logging_mode + '_' + loss_name, out_loss.item(), step)
             if isinstance(loss_output, tuple):
                 writer.add_scalar(logging_mode + '_' + loss_name + '_tv', l_tv.item(), step)
-                writer.add_scalar(logging_mode + '_' + loss_name + '_bce', l_bce.item(), step)
+                writer.add_scalar(logging_mode + '_' + loss_name + '_focal', l_focal.item(), step)
                 writer.add_scalar(logging_mode + '_' + loss_name + '_bd', l_bd.item(), step)
 
             # plot metrics in tensorboard
@@ -145,4 +143,4 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     if lr_scheduler is not None:
         lr_scheduler.step()
 
-    return average_loss, train_dice_avg, train_iou_average, average_tv, average_bce, average_bd
+    return average_loss, train_dice_avg, train_iou_average, average_tv, average_focal, average_bd

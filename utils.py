@@ -1,17 +1,17 @@
+import warnings
+import weakref
+from functools import wraps
+
 import cv2
 import math
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
-import warnings
-import weakref
 from PIL import Image
-from functools import wraps
 from numpy import average, dot, linalg
 from sklearn.metrics import roc_auc_score, jaccard_score
 from torch import nn
-from torch.autograd import Variable
 from torch.optim.optimizer import Optimizer
 
 
@@ -287,11 +287,41 @@ class BoundaryLoss(nn.Module):
         return torch.from_numpy(sdt).to(target.device)
 
 
-class WeightedTverskyBCEBoundary(nn.Module):
+class BinaryFocalLoss(nn.Module):
+    """Lin et al. 2017 Focal loss for binary segmentation on sigmoid probs.
+
+    FL = -alpha_t * (1 - pt)^gamma * log(pt)
+      pt      = p     if y==1 else (1 - p)
+      alpha_t = alpha if y==1 else (1 - alpha)
+
+    Operates on probabilities in [0, 1] (LViT.last_activation already applies
+    sigmoid). Using BCEWithLogits-style focal here would double-sigmoid.
+
+    Compared to WeightedBCE, focal down-weights easy pixels (high pt) by
+    (1 - pt)^gamma and concentrates gradient on hard pixels — typically
+    near the lesion boundary, complementing the BoundaryLoss term.
+    """
+
+    def __init__(self, alpha=0.25, gamma=2.0, eps=1e-6):
+        super().__init__()
+        self.alpha = alpha
+        self.gamma = gamma
+        self.eps = eps
+
+    def forward(self, pred, target):
+        p = pred.clamp(self.eps, 1.0 - self.eps)
+        t = target.float()
+        pt = p * t + (1 - p) * (1 - t)
+        alpha_t = self.alpha * t + (1 - self.alpha) * (1 - t)
+        loss = -alpha_t * (1 - pt).pow(self.gamma) * torch.log(pt)
+        return loss.mean()
+
+
+class WeightedTverskyFocalBoundary(nn.Module):
     """Composite boundary-aware loss for chest X-ray segmentation.
 
     L = tversky_weight * Tversky(alpha, beta)
-      + bce_weight     * WeightedBCE
+      + focal_weight   * BinaryFocalLoss(focal_alpha, focal_gamma)
       + lambda(epoch)  * BoundaryLoss(Kervadec)
 
     Where lambda ramps linearly from 0 to lambda_max over the first
@@ -299,19 +329,26 @@ class WeightedTverskyBCEBoundary(nn.Module):
     boundary loss disrupting early-stage convergence when Tversky has not yet
     reached a reasonable region overlap.
 
+    Focal replaces the previous WeightedBCE term: instead of reweighting by
+    overall positive/negative frequency, it focuses gradient on per-pixel
+    hard cases (low pt) — the regime where BoundaryLoss also operates.
+
     Set the current epoch via .set_epoch(e) at the start of each epoch loop.
     Falls back to lambda=lambda_max if set_epoch is never called.
 
     _show_dice() preserves the original WeightedDiceBCE._show_dice semantics
-    so the train loop's metric reporting works without changes.
+    so the train loop's metric reporting works without changes. forward()
+    returns a 4-tuple (loss, l_tv, l_focal, l_bd) — drop-in compatible with
+    the unpacking in Train_one_epoch.py.
     """
 
-    def __init__(self, tversky_weight=0.4, bce_weight=0.4,
-                 alpha=0.4, beta=0.6,
+    def __init__(self, tversky_weight=0.5, focal_weight=0.5,
+                 alpha=0.45, beta=0.55,
+                 focal_alpha=0.25, focal_gamma=2.0,
                  lambda_max=0.1, lambda_warmup_epochs=50):
         super().__init__()
         self.tversky = TverskyLoss(alpha=alpha, beta=beta)
-        self.bce = WeightedBCE(weights=[0.5, 0.5])
+        self.focal = BinaryFocalLoss(alpha=focal_alpha, gamma=focal_gamma)
         self.boundary = BoundaryLoss()
         # Keep a symmetric Dice for hard-Dice metric reporting (matches
         # WeightedDiceBCE._show_dice behaviour exactly so the Epoch History
@@ -319,7 +356,7 @@ class WeightedTverskyBCEBoundary(nn.Module):
         self._dice_for_metric = WeightedDiceLoss(weights=[0.5, 0.5])
 
         self.tversky_weight = tversky_weight
-        self.bce_weight = bce_weight
+        self.focal_weight = focal_weight
         self.lambda_max = lambda_max
         self.lambda_warmup_epochs = lambda_warmup_epochs
         self._current_epoch = lambda_warmup_epochs  # default to fully-ramped
@@ -344,12 +381,12 @@ class WeightedTverskyBCEBoundary(nn.Module):
 
     def forward(self, inputs, targets):
         l_tv = self.tversky(inputs, targets)
-        l_bce = self.bce(inputs, targets)
+        l_focal = self.focal(inputs, targets)
         l_bd = self.boundary(inputs, targets)
         loss = (self.tversky_weight * l_tv
-                + self.bce_weight * l_bce
+                + self.focal_weight * l_focal
                 + self.boundary_lambda * l_bd)
-        return loss, l_tv, l_bce, l_bd
+        return loss, l_tv, l_focal, l_bd
 
 
 def auc_on_batch(masks, pred):

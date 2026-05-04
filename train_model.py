@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
-import numpy as np
 import os
 import random
+
+import numpy as np
 import requests
-import time
 import torch.nn as nn
 import torch.optim
 from tensorboardX import SummaryWriter
@@ -16,7 +16,7 @@ import Config as config
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
-from utils import CosineAnnealingWarmRestarts, WeightedTverskyBCEBoundary, read_text
+from utils import CosineAnnealingWarmRestarts, WeightedTverskyFocalBoundary, read_text
 
 
 def bark_notify(body, title="训练通知"):
@@ -109,14 +109,14 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                               batch_size=config.batch_size,
                               shuffle=True,
                               worker_init_fn=worker_init_fn,
-                              num_workers=8,
+                              num_workers=12,
                               pin_memory=True)
 
     val_loader = DataLoader(val_dataset,
                             batch_size=config.batch_size,
                             shuffle=True,
                             worker_init_fn=worker_init_fn,
-                            num_workers=8,
+                            num_workers=12,
                             pin_memory=True)
                              
     lr = config.learning_rate
@@ -181,12 +181,13 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
-    # Boundary-aware composite loss: Tversky (asym, FP-penalising) + WeightedBCE
-    # + Boundary loss (Kervadec). lambda for the boundary term ramps from 0 to
-    # 0.1 over the first 50 epochs (rebalance schedule).
-    criterion = WeightedTverskyBCEBoundary(
-        tversky_weight=0.4, bce_weight=0.4,
-        alpha=0.4, beta=0.6,
+    # Boundary-aware composite loss: Tversky (asym, FP-penalising) + Focal
+    # (hard-pixel focus) + Boundary loss (Kervadec). lambda for the boundary
+    # term ramps from 0 to 0.1 over the first 50 epochs (rebalance schedule).
+    criterion = WeightedTverskyFocalBoundary(
+        tversky_weight=0.5, focal_weight=0.5,
+        alpha=0.45, beta=0.55,
+        focal_alpha=0.25, focal_gamma=2.0,
         lambda_max=0.1, lambda_warmup_epochs=50,
     )
     optimizer = torch.optim.Adam(
@@ -257,7 +258,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # train for one epoch
         model.train(True)
         logger.info('Training with batch size : {}'.format(batch_size))
-        train_loss, train_dice, train_iou, train_tv, train_bce, train_bd = train_one_epoch(train_loader, model,
+        train_loss, train_dice, train_iou, train_tv, train_focal, train_bd = train_one_epoch(train_loader, model,
                                                                                            criterion, optimizer, writer,
                                                                                            epoch, None,
                                                             model_type, logger)  # sup
@@ -266,7 +267,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         logger.info('Validation')
         with torch.no_grad():
             model.eval()
-            val_loss, val_dice, val_iou, val_tv, val_bce, val_bd = train_one_epoch(val_loader, model, criterion,
+            val_loss, val_dice, val_iou, val_tv, val_focal, val_bd = train_one_epoch(val_loader, model, criterion,
                                                           optimizer, writer, epoch, lr_scheduler, model_type, logger)
         # =============================================================
         #       Save best model
@@ -292,13 +293,13 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'epoch': epoch + 1,
             'train_loss': float(train_loss),
             'train_tv': float(train_tv),
-            'train_bce': float(train_bce),
+            'train_focal': float(train_focal),
             'train_bd': float(train_bd),
             'train_dice': float(train_dice),
             'train_iou': float(train_iou),
             'val_loss': float(val_loss),
             'val_tv': float(val_tv),
-            'val_bce': float(val_bce),
+            'val_focal': float(val_focal),
             'val_bd': float(val_bd),
             'val_dice': float(val_dice),
             'val_iou': float(val_iou),
@@ -313,21 +314,22 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
         logger.info(
-            '{:>5} | {:>9} ({:>4},{:>4},{:>5}) | {:>9} | {:>8} | {:>9} ({:>4},{:>4},{:>5}) | {:>9} | {:>8} | {:>9} | {:>4}'.format(
-                'Epoch', 'TrainLoss', 'Tv', 'BCE', 'Bound', 'TrainDice', 'TrainIoU', 'ValLoss', 'Tv', 'BCE', 'Bound',
+            '{:>5} | {:>9} ({:>4},{:>5},{:>5}) | {:>9} | {:>8} | {:>9} ({:>4},{:>5},{:>5}) | {:>9} | {:>8} | {:>9} | {:>4}'.format(
+                'Epoch', 'TrainLoss', 'Tv', 'Focal', 'Bound', 'TrainDice', 'TrainIoU', 'ValLoss', 'Tv', 'Focal',
+                'Bound',
                 'ValDice', 'ValIoU', 'LR', 'Best'))
         for h in epoch_history:
             marker = '*' if h['epoch'] == best_epoch else ''
             t_tv = h.get('train_tv', 0.0)
-            t_bce = h.get('train_bce', 0.0)
+            t_focal = h.get('train_focal', 0.0)
             t_bd = h.get('train_bd', 0.0)
             v_tv = h.get('val_tv', 0.0)
-            v_bce = h.get('val_bce', 0.0)
+            v_focal = h.get('val_focal', 0.0)
             v_bd = h.get('val_bd', 0.0)
             logger.info(
-                '{:>5d} | {:>9.4f} ({:>4.2f},{:>4.2f},{:>5.3f}) | {:>9.4f} | {:>8.4f} | {:>9.4f} ({:>4.2f},{:>4.2f},{:>5.3f}) | {:>9.4f} | {:>8.4f} | {:>9.2e} | {:>4}'.format(
-                    h['epoch'], h['train_loss'], t_tv, t_bce, t_bd, h['train_dice'], h['train_iou'],
-                    h['val_loss'], v_tv, v_bce, v_bd, h['val_dice'], h['val_iou'], h['lr'], marker))
+                '{:>5d} | {:>9.4f} ({:>4.2f},{:>5.3f},{:>5.3f}) | {:>9.4f} | {:>8.4f} | {:>9.4f} ({:>4.2f},{:>5.3f},{:>5.3f}) | {:>9.4f} | {:>8.4f} | {:>9.2e} | {:>4}'.format(
+                    h['epoch'], h['train_loss'], t_tv, t_focal, t_bd, h['train_dice'], h['train_iou'],
+                    h['val_loss'], v_tv, v_focal, v_bd, h['val_dice'], h['val_iou'], h['lr'], marker))
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')
