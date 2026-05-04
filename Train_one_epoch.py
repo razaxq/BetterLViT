@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
-import torch.optim
 import os
 import time
-from utils import *
-import Config as config
+import torch.optim
 import warnings
-from torchinfo import summary
 from sklearn.metrics.pairwise import cosine_similarity
+from torchinfo import summary
+
+import Config as config
+from utils import *
+
 warnings.filterwarnings("ignore")
 
 
@@ -124,6 +126,17 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             writer.add_scalar(logging_mode + '_iou', train_iou, step)
             # writer.add_scalar(logging_mode + '_acc', train_acc, step)
             writer.add_scalar(logging_mode + '_dice', train_dice, step)
+
+        torch.cuda.empty_cache()
+
+    if lr_scheduler is not None:
+        lr_scheduler.step()
+
+    return average_loss, train_dice_avg, train_iou_average, average_tv, average_bce, average_bd
+
+
+writer.add_scalar(logging_mode + '_acc', train_acc, step)
+writer.add_scalar(logging_mode + '_dice', train_dice, step)
 
         torch.cuda.empty_cache()
 

@@ -2,8 +2,8 @@
 import logging
 import numpy as np
 import os
-import requests
 import random
+import requests
 import time
 import torch.nn as nn
 import torch.optim
@@ -304,13 +304,22 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             val_loss, max_dice, best_epoch, epoch_history, is_best=False)
         save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
-        logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
-            'Epoch', 'TrainLoss', 'TrainDice', 'TrainIoU', 'ValLoss', 'ValDice', 'ValIoU', 'LR', 'Best'))
+        logger.info(
+            '{:>5} | {:>9} ({:>4},{:>4},{:>5}) | {:>9} | {:>8} | {:>9} ({:>4},{:>4},{:>5}) | {:>9} | {:>8} | {:>9} | {:>4}'.format(
+                'Epoch', 'TrainLoss', 'Tv', 'BCE', 'Bound', 'TrainDice', 'TrainIoU', 'ValLoss', 'Tv', 'BCE', 'Bound',
+                'ValDice', 'ValIoU', 'LR', 'Best'))
         for h in epoch_history:
             marker = '*' if h['epoch'] == best_epoch else ''
-            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.2e} | {:>4}'.format(
-                h['epoch'], h['train_loss'], h['train_dice'], h['train_iou'],
-                h['val_loss'], h['val_dice'], h['val_iou'], h['lr'], marker))
+            t_tv = h.get('train_tv', 0.0)
+            t_bce = h.get('train_bce', 0.0)
+            t_bd = h.get('train_bd', 0.0)
+            v_tv = h.get('val_tv', 0.0)
+            v_bce = h.get('val_bce', 0.0)
+            v_bd = h.get('val_bd', 0.0)
+            logger.info(
+                '{:>5d} | {:>9.4f} ({:>4.2f},{:>4.2f},{:>5.3f}) | {:>9.4f} | {:>8.4f} | {:>9.4f} ({:>4.2f},{:>4.2f},{:>5.3f}) | {:>9.4f} | {:>8.4f} | {:>9.2e} | {:>4}'.format(
+                    h['epoch'], h['train_loss'], t_tv, t_bce, t_bd, h['train_dice'], h['train_iou'],
+                    h['val_loss'], v_tv, v_bce, v_bd, h['val_dice'], h['val_iou'], h['lr'], marker))
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')

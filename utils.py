@@ -1,17 +1,16 @@
+import cv2
+import math
 import numpy as np
 import pandas as pd
 import torch
-from sklearn.metrics import roc_auc_score, jaccard_score
-import cv2
-from torch import nn
 import torch.nn.functional as F
-import math
-from functools import wraps
 import warnings
 import weakref
 from PIL import Image
+from functools import wraps
 from numpy import average, dot, linalg
-
+from sklearn.metrics import roc_auc_score, jaccard_score
+from torch import nn
 from torch.autograd import Variable
 from torch.optim.optimizer import Optimizer
 
@@ -347,9 +346,10 @@ class WeightedTverskyBCEBoundary(nn.Module):
         l_tv = self.tversky(inputs, targets)
         l_bce = self.bce(inputs, targets)
         l_bd = self.boundary(inputs, targets)
-        return (self.tversky_weight * l_tv
+        loss = (self.tversky_weight * l_tv
                 + self.bce_weight * l_bce
                 + self.boundary_lambda * l_bd)
+        return loss, l_tv, l_bce, l_bd
 
 
 def auc_on_batch(masks, pred):
