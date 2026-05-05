@@ -14,6 +14,10 @@ class EPPA(nn.Module):
     - Channel attention: GAP -> shared MLP -> broadcast (CBAM-style, cheap).
       Per-pixel granularity is recovered via factorisation with spatial attention:
       the final per-pixel-per-channel weight is ca[c] * sa[h, w].
+    - Channel-attention bottleneck floor: c_red = max(C // reduction,
+      min(C, min_bottleneck_channels)). The floor (default 8) is an absolute
+      minimum channel count, NOT a compression ratio. Raising it (e.g. 32)
+      prevents shallow stages from collapsing to a handful of dimensions.
     - Spatial attention: 3x3 conv on [avg, max] over channels. 3x3 is the
       classic edge-detector kernel size (Sobel / Laplacian); RF = +-1 pixel
       is large enough to detect adjacent-pixel intensity gradients but
@@ -36,9 +40,11 @@ class EPPA(nn.Module):
     unmodulated skip features).
     """
 
-    def __init__(self, in_channels, text_dim=None, reduction=8):
+    def __init__(self, in_channels, text_dim=None, reduction=8,
+                 min_bottleneck_channels=8):
         super().__init__()
-        c_red = max(in_channels // reduction, 8)
+        c_red = max(in_channels // reduction,
+                    min(in_channels, min_bottleneck_channels))
 
         # Channel attention: GAP -> shared MLP. avg and max pool both pass
         # through the SAME MLP; results are summed (CBAM convention).

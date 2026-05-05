@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
 from .Vit import VisionTransformer, Reconstruct
-from .pixlevel import PixLevelModule
 from .eppa import EPPA
+from .pixlevel import PixLevelModule
 
 
 def get_activation(activation_type):
@@ -59,12 +58,14 @@ class Flatten(nn.Module):
 
 
 class UpblockAttention(nn.Module):
-    def __init__(self, in_channels, out_channels, nb_Conv, activation='ReLU', text_dim=None):
+    def __init__(self, in_channels, out_channels, nb_Conv,
+                 activation='ReLU', text_dim=None, min_bottleneck_channels=8):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # EPPA replaces PixLevelModule on the skip connection.
         # text_dim=None falls back to text-free EPPA (still functional).
-        self.eppa = EPPA(in_channels // 2, text_dim=text_dim, reduction=8)
+        self.eppa = EPPA(in_channels // 2, text_dim=text_dim, reduction=8,
+                         min_bottleneck_channels=min_bottleneck_channels)
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
     def forward(self, x, skip_x, text=None):
@@ -95,10 +96,26 @@ class LViT(nn.Module):
         self.down3 = DownBlock(in_channels * 4, in_channels * 8, nb_Conv=2)
         self.down4 = DownBlock(in_channels * 8, in_channels * 8, nb_Conv=2)
         TEXT_DIM = 768
-        self.up4 = UpblockAttention(in_channels * 16, in_channels * 4, nb_Conv=2, text_dim=TEXT_DIM)
-        self.up3 = UpblockAttention(in_channels * 8, in_channels * 2, nb_Conv=2, text_dim=TEXT_DIM)
-        self.up2 = UpblockAttention(in_channels * 4, in_channels, nb_Conv=2, text_dim=TEXT_DIM)
-        self.up1 = UpblockAttention(in_channels * 2, in_channels, nb_Conv=2, text_dim=TEXT_DIM)
+        # Per-stage EPPA bottleneck floor, in (up4, up3, up2, up1) order.
+        # Default 8 reproduces the legacy EPPA c_red formula; 32 widens the
+        # bottleneck for shallow stages where channel discrimination matters most.
+        # WARNING: changing any element triggers Linear shape mismatches against
+        # checkpoints trained with a different value. EPPA is train-from-scratch
+        # only (CLAUDE.md) -- do not set Config.resume_path to an EPPA checkpoint
+        # trained with a different EPPA_MIN_BOTTLENECK_CHANNELS.
+        EPPA_MIN_BOTTLENECK_CHANNELS = (32, 32, 32, 32)
+        self.up4 = UpblockAttention(in_channels * 16, in_channels * 4, nb_Conv=2,
+                                    text_dim=TEXT_DIM,
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[0])
+        self.up3 = UpblockAttention(in_channels * 8, in_channels * 2, nb_Conv=2,
+                                    text_dim=TEXT_DIM,
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[1])
+        self.up2 = UpblockAttention(in_channels * 4, in_channels, nb_Conv=2,
+                                    text_dim=TEXT_DIM,
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[2])
+        self.up1 = UpblockAttention(in_channels * 2, in_channels, nb_Conv=2,
+                                    text_dim=TEXT_DIM,
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[3])
         self.outc = nn.Conv2d(in_channels, n_classes, kernel_size=(1, 1), stride=(1, 1))
         self.last_activation = nn.Sigmoid()  # if using BCELoss
         self.multi_activation = nn.Softmax()
