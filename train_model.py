@@ -90,6 +90,12 @@ def compute_eppa_gate_stats(model):
         block = getattr(target, stage, None)
         if block is None or not hasattr(block, 'eppa'):
             continue
+        # FreqEPPA has no .gate (replaced by structural identity-init via
+        # zero-init of final layers); silently skip so the diagnostic is
+        # forward-compatible. The gate sub-table will not print when no
+        # stage produces stats.
+        if not hasattr(block.eppa, 'gate'):
+            continue
         g = block.eppa.gate.detach()
         stats[stage] = {
             'mean': float(g.mean().item()),
