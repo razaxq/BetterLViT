@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-import ml_collections
 import os
 import time
+
+import ml_collections
 import torch
 
 ## PARAMETERS OF THE MODEL
@@ -46,9 +47,9 @@ resume_max_dice = 0.0
 text_encoder_name = 'microsoft/BiomedVLP-CXR-BERT-specialized'
 text_max_len = 32  # threaded into Vit.CTBN3.in_channels via LViT __init__
 text_use_lora = True
-text_lora_r = 8
-text_lora_alpha = 16
-text_lora_dropout = 0.15
+text_lora_r = 16
+text_lora_alpha = 32
+text_lora_dropout = 0.1
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'
