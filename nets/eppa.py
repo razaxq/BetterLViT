@@ -30,14 +30,16 @@ class EPPA(nn.Module):
       is image-text contrastive aligned during pretraining and is by
       construction free of [PAD] pollution.
     - Residual: per-channel LayerScale-style learnable parameter
-      (1, C, 1, 1), init = 0 -> exact identity at training start. Each
-      channel learns its own positive or negative contribution; no activation
-      function on the gate so gradient flow is direct.
+      (1, C, 1, 1), init = 0.1 (NOT 0; see __init__ comment for the
+      diagnostic that motivated this). Each channel still learns its
+      own positive or negative contribution; no activation function on
+      the gate so gradient flow is direct.
 
     Resume policy: train from scratch only. Loading a PLAM checkpoint into
     an EPPA model causes decoder distribution shift (decoder was trained
-    expecting PLAM-modulated skip features; EPPA at init produces
-    unmodulated skip features).
+    expecting PLAM-modulated skip features; EPPA at init produces a
+    small random perturbation -- gate=0.1 amplifies untrained ch_mlp /
+    sp_proj output by 10% and adds it to the skip).
     """
 
     def __init__(self, in_channels, text_dim=None, reduction=8,
@@ -62,8 +64,14 @@ class EPPA(nn.Module):
         # Spatial attention: 3x3 conv on [avg, max] over channels.
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
 
-        # Per-channel LayerScale-style residual gate, init = 0 (identity).
-        self.gate = nn.Parameter(torch.zeros(1, in_channels, 1, 1))
+        # Per-channel LayerScale-style residual gate, init = 0.1 (NOT 0).
+        # init=0 was diagnosed dead in epoch 1-9 (see train_model.py gate
+        # sub-table): abs_mean < 0.01 and trending DOWN, mean systematically
+        # negative -- Adam was actively closing the gate. 0.1 forces a
+        # non-trivial x_sa residual contribution from step 1 so inner
+        # ch_mlp / sp_proj receive learnable-magnitude gradients before
+        # the cold-start coupling traps them at zero.
+        self.gate = nn.Parameter(torch.full((1, in_channels, 1, 1), 0.1))
 
     def forward(self, x, text=None):
         # Channel attention via global avg / max pool through shared MLP.
