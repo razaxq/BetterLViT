@@ -50,6 +50,16 @@ text_use_lora = True
 text_lora_r = 16
 text_lora_alpha = 32
 text_lora_dropout = 0.1
+# LoRA target modules. PEFT does suffix matching, so 'output.dense' matches
+# BOTH attention.output.dense (attention "o" projection) AND the FFN
+# output.dense (3072->768). Default below covers all 6 linears per BERT
+# block: query, key, value, attention.output.dense, intermediate.dense
+# (FFN up 768->3072), output.dense (FFN down). Reduce to ('query', 'value')
+# for the legacy q+v-only ablation comparison.
+text_lora_target_modules = (
+    'query', 'key', 'value',
+    'intermediate.dense', 'output.dense',
+)
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'

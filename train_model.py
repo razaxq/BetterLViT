@@ -166,6 +166,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             lora_r=config.text_lora_r,
             lora_alpha=config.text_lora_alpha,
             lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
         )
 
     elif model_type == 'LViT_pretrain':
@@ -183,6 +184,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             lora_r=config.text_lora_r,
             lora_alpha=config.text_lora_alpha,
             lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
         )
         pretrained_UNet_model_path = "MoNuSeg/LViT/Test_session_05.23_10h55/models/best_model-LViT.pth.tar"
         pretrained_UNet = torch.load(pretrained_UNet_model_path, map_location='cuda')

@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import torch.nn as nn
 from peft import LoraConfig, get_peft_model
 from transformers import AutoModel
 
@@ -30,6 +29,7 @@ class BetterLViT(LViT):
         lora_r=8,
         lora_alpha=16,
         lora_dropout=0.05,
+            lora_target_modules=('query', 'value'),
     ):
         super().__init__(
             config,
@@ -48,7 +48,7 @@ class BetterLViT(LViT):
             lora_cfg = LoraConfig(
                 r=lora_r,
                 lora_alpha=lora_alpha,
-                target_modules=['query', 'value'],
+                target_modules=list(lora_target_modules),
                 lora_dropout=lora_dropout,
                 bias='none',
             )
