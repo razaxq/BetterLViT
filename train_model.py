@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import logging
-import numpy as np
 import os
-import requests
 import random
-import time
+
+import numpy as np
+import requests
 import torch.nn as nn
 import torch.optim
 from tensorboardX import SummaryWriter
@@ -77,6 +77,27 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'best_epoch': int(best_epoch),
         'epoch_history': epoch_history,
     }
+
+
+def compute_eppa_gate_stats(model):
+    """Snapshot EPPA gate stats from each decoder stage (up4..up1).
+    Returns dict[stage -> {mean, abs_mean, max, min}] of Python floats,
+    or empty dict if no EPPA-equipped UpblockAttention is found.
+    """
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    stats = {}
+    for stage in ('up4', 'up3', 'up2', 'up1'):
+        block = getattr(target, stage, None)
+        if block is None or not hasattr(block, 'eppa'):
+            continue
+        g = block.eppa.gate.detach()
+        stats[stage] = {
+            'mean': float(g.mean().item()),
+            'abs_mean': float(g.abs().mean().item()),
+            'max': float(g.max().item()),
+            'min': float(g.min().item()),
+        }
+    return stats
 
 
 def worker_init_fn(worker_id):
@@ -255,6 +276,22 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             model.eval()
             val_loss, val_dice, val_iou = train_one_epoch(val_loader, model, criterion,
                                                           optimizer, writer, epoch, lr_scheduler, model_type, logger)
+        # Append current epoch to history BEFORE saving any checkpoint, so that
+        # both best_model and last_model serialise an epoch_history that
+        # includes the just-finished epoch (the best_model path used to drop
+        # its own row otherwise).
+        epoch_history.append({
+            'epoch': epoch + 1,
+            'train_loss': float(train_loss),
+            'train_dice': float(train_dice),
+            'train_iou': float(train_iou),
+            'val_loss': float(val_loss),
+            'val_dice': float(val_dice),
+            'val_iou': float(val_iou),
+            'lr': float(epoch_lr),
+            'gate_stats': compute_eppa_gate_stats(model),
+        })
+
         # =============================================================
         #       Save best model
         # =============================================================
@@ -275,17 +312,6 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         early_stopping_count = epoch - best_epoch + 1
         logger.info('\t early_stopping_count: {}/{}'.format(early_stopping_count, config.early_stopping_patience))
 
-        epoch_history.append({
-            'epoch': epoch + 1,
-            'train_loss': float(train_loss),
-            'train_dice': float(train_dice),
-            'train_iou': float(train_iou),
-            'val_loss': float(val_loss),
-            'val_dice': float(val_dice),
-            'val_iou': float(val_iou),
-            'lr': float(epoch_lr),
-        })
-
         # Always save last_model (rolling) so future runs can resume from any
         # interruption point, not just from the best.
         last_state = build_checkpoint_state(
@@ -300,6 +326,30 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.2e} | {:>4}'.format(
                 h['epoch'], h['train_loss'], h['train_dice'], h['train_iou'],
                 h['val_loss'], h['val_dice'], h['val_iou'], h['lr'], marker))
+
+        # --- EPPA Gate Sub-Table ---
+        # Skipped silently if no entry has gate_stats (e.g., resumed from a
+        # pre-diagnostic checkpoint -- those rows render as "--" so the table
+        # does not crash).
+        if any(h.get('gate_stats') for h in epoch_history):
+            logger.info('--- EPPA Gate History (mean / abs_mean / max / min per stage) ---')
+            group_hdr = '{:>5} | '.format('Epoch') + ' | '.join(
+                '{:^31}'.format(s.capitalize()) for s in ('up4', 'up3', 'up2', 'up1'))
+            stat_hdr = '{:>5} | '.format('') + ' | '.join(
+                ['{:>7} {:>7} {:>7} {:>7}'.format('mean', 'abs', 'max', 'min')] * 4)
+            logger.info(group_hdr)
+            logger.info(stat_hdr)
+            for h in epoch_history:
+                gs = h.get('gate_stats') or {}
+                cells = []
+                for stage in ('up4', 'up3', 'up2', 'up1'):
+                    s = gs.get(stage)
+                    if not s:
+                        cells.append('{:>31}'.format('--'))
+                    else:
+                        cells.append('{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}'.format(
+                            s['mean'], s['abs_mean'], s['max'], s['min']))
+                logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')
