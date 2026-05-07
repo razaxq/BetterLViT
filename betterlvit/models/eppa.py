@@ -107,6 +107,16 @@ class EPPA(nn.Module):
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
         nn.init.zeros_(self.sp_proj.weight)
 
+        # B1: text-conditioned spatial bias.  Project [CLS] (text_dim=768)
+        # to a scalar that broadcasts across all H x W of this layer's
+        # sp_logit.  Zero-init weight AND bias keeps identity-at-init:
+        # sp_logit_with_bias == sp_logit at step 0, so sa = 1 + tanh(0) = 1.
+        # 4 stages x 769 = 3076 added params total, negligible.
+        if text_dim is not None:
+            self.text_sp_proj = nn.Linear(text_dim, 1)
+            nn.init.zeros_(self.text_sp_proj.weight)
+            nn.init.zeros_(self.text_sp_proj.bias)
+
         # Diagnostic snapshot of last forward's ca/sa distribution.
         # Not a buffer/parameter so it stays out of state_dict (no checkpoint
         # bloat, no strict-load issue). Populated unconditionally on every
@@ -133,9 +143,15 @@ class EPPA(nn.Module):
         edge = x_high.abs()
         sp_avg = edge.mean(dim=1, keepdim=True)  # [B, 1, H, W]
         sp_max = edge.amax(dim=1, keepdim=True)
-        sa = 1.0 + torch.tanh(
-            self.sp_proj(torch.cat([sp_avg, sp_max], dim=1))
-        )                                                                  # [B, 1, H, W]
+        sp_logit = self.sp_proj(torch.cat([sp_avg, sp_max], dim=1))  # [B, 1, H, W]
+
+        # B1: text-conditioned global spatial bias (broadcast across H x W).
+        # At init the projection is zero, so sp_logit is unchanged -> sa = 1.
+        if text is not None and self.text_dim is not None:
+            text_sp_bias = self.text_sp_proj(text[:, 0, :])              # [B, 1]
+            sp_logit = sp_logit + text_sp_bias[:, :, None, None]         # broadcast
+
+        sa = 1.0 + torch.tanh(sp_logit)                                  # [B, 1, H, W]
 
         # Diagnostic: stash a 5-scalar summary of ca/sa for the EPPA CA/SA
         # Sub-Table.  Runs unconditionally; cost is ~1ms/batch (negligible
