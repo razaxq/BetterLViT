@@ -2,9 +2,9 @@
 import torch
 import torch.nn as nn
 
-from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
 from .pixlevel import PixLevelModule
+from .vit import VisionTransformer, Reconstruct
 
 
 def get_activation(activation_type):
@@ -135,7 +135,7 @@ class LViT(nn.Module):
     def forward(self, x, text):
         x = x.float()  # x [4,3,224,224]
         x1 = self.inc(x)  # x1 [4, 64, 224, 224]
-        text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2) 
+        text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2)
         text3 = self.text_module3(text4.transpose(1, 2)).transpose(1, 2)
         text2 = self.text_module2(text3.transpose(1, 2)).transpose(1, 2)
         text1 = self.text_module1(text2.transpose(1, 2)).transpose(1, 2)

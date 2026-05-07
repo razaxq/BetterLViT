@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-import os
-import random
-from typing import Callable
-
 import cv2
 import numpy as np
+import os
+import random
 import torch
 from scipy import ndimage
 from scipy.ndimage.interpolation import zoom
@@ -12,8 +10,9 @@ from torch.utils.data import Dataset
 from torchvision import transforms as T
 from torchvision.transforms import functional as F
 from transformers import AutoTokenizer
+from typing import Callable
 
-import Config as config
+from .. import config as config
 
 os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
 

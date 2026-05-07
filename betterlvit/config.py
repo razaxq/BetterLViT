@@ -1,17 +1,19 @@
 # -*- coding: utf-8 -*-
-import os
-import time
+"""Pure-data configuration module.
 
+All values are kept byte-identical with the legacy root-level Config.py so
+training results stay bit-exact across the refactor. Side-effects that used
+to live here (CUDA_VISIBLE_DEVICES / PYTHONHASHSEED env writes, eager
+torch.cuda.is_available() probe) have been moved to the entry scripts so
+they fire before any torch import — see scripts/train.py and scripts/test.py.
+"""
 import ml_collections
-import torch
+import time
 
 ## PARAMETERS OF THE MODEL
 save_model = True
 tensorboard = True
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-use_cuda = torch.cuda.is_available()
 seed = 1219
-os.environ['PYTHONHASHSEED'] = str(seed)
 
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
@@ -60,6 +62,10 @@ text_lora_target_modules = (
     'query', 'key', 'value',
     'intermediate.dense', 'output.dense',
 )
+
+# Side-effect switches (default values reproduce legacy behavior).
+enable_bark = True
+shutdown_after_train = True
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'

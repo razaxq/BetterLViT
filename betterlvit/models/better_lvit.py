@@ -2,7 +2,7 @@
 from peft import LoraConfig, get_peft_model
 from transformers import AutoModel
 
-from .LViT import LViT
+from .lvit import LViT
 
 
 class BetterLViT(LViT):

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import torch
 import torch.nn as nn
-import numpy as np
 from timm.models.layers import DropPath
 from torch.nn import Dropout, Conv2d
 from torch.nn.modules.utils import _pair
+
 
 class Reconstruct(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, scale_factor):
@@ -104,7 +105,8 @@ class Attention(nn.Module):
         qkv = self.qkv(x)  # [B, num_patches, 3*embed_dim]
         qkv = qkv.reshape(B, N, 3, self.num_heads, C // self.num_heads)  # [B, num_patches, 3, num_heads, per_HeadDim]
         qkv = qkv.permute(2, 0, 3, 1, 4)  # [3, B, num_heads, num_patches, per_HeadDim]
-        q, k, v = qkv[0], qkv[1], qkv[2]  # [B, num_heads, num_patches, per_HeadDim] [4, 8, 196, 8/16/32/64] easy to use tensor 
+        q, k, v = qkv[0], qkv[1], qkv[
+            2]  # [B, num_heads, num_patches, per_HeadDim] [4, 8, 196, 8/16/32/64] easy to use tensor
 
         attn = (q @ k.transpose(-2, -1)) * self.scale  # [B, num_heads, num_patches, num_patches]
         attn = attn.softmax(dim=-1)

@@ -1,10 +1,25 @@
 # -*- coding: utf-8 -*-
-import logging
+"""BetterLViT training entry script.
+
+Run from the project root after `pip install -e .` (recommended) so the
+`betterlvit` package resolves from a single source. Alternatively invoke as
+`python -m scripts.train` so Python adds the project root to sys.path
+without us mutating it manually (avoids module-aliasing between an installed
+copy and a cwd copy).
+"""
+# CUDA_VISIBLE_DEVICES and PYTHONHASHSEED MUST be set before any torch import
+# or any betterlvit.* import that might transitively touch CUDA. Mirroring the
+# legacy hard-overwrite from Config.py.
 import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+os.environ['PYTHONHASHSEED'] = "1219"  # mirrors betterlvit.config.seed
+
+import logging
 import random
 
 import numpy as np
-import requests
+import torch
 import torch.nn as nn
 import torch.optim
 from tensorboardX import SummaryWriter
@@ -12,22 +27,21 @@ from torch.backends import cudnn
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
-import Config as config
-from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
-from Train_one_epoch import train_one_epoch
-from nets.BetterLViT import BetterLViT
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
+from betterlvit import config as config
+from betterlvit.data.dataset import RandomGenerator, ValGenerator, ImageToImage2D
+from betterlvit.engine.train_loop import train_one_epoch
+from betterlvit.io import read_text
+from betterlvit.losses import WeightedDiceBCE
+from betterlvit.models.better_lvit import BetterLViT
+from betterlvit.notify import bark_notify
+from betterlvit.schedulers import CosineAnnealingWarmRestarts
 
 
-def bark_notify(body, title="训练通知"):
-    """极简版：只发送标题和文字内容"""
-    bark_key = "uAnJRvt7pxbzE9KK6bCVva"
-    url = f"https://api.day.app/{bark_key}/{title}/{body}"
-    try:
-        # 短 timeout: 网络不可达时直接放过，避免训练脚本被 Bark 阻塞
-        requests.get(url, timeout=3)
-    except Exception as e:
-        print(f"推送失败: {e}")
+def _maybe_bark(body, title="训练通知"):
+    """Bark push gated on config.enable_bark."""
+    if config.enable_bark:
+        bark_notify(body, title)
+
 
 def logger_config(log_path):
     loggerr = logging.getLogger()
@@ -139,13 +153,16 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                               num_workers=8,
                               pin_memory=True)
 
+    # val_loader shuffle=True is preserved verbatim from upstream LViT.
+    # Changing it shifts CPU RNG consumption and breaks bit-exact reproduction
+    # of pre-refactor runs. Address as a separate, baseline-rerun-required change.
     val_loader = DataLoader(val_dataset,
                             batch_size=config.batch_size,
                             shuffle=True,
                             worker_init_fn=worker_init_fn,
                             num_workers=8,
                             pin_memory=True)
-                             
+
     lr = config.learning_rate
     logger.info(model_type)
 
@@ -313,7 +330,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     model, optimizer, lr_scheduler, model_type, epoch,
                     val_loss, max_dice, best_epoch, epoch_history, is_best=True)
                 save_checkpoint(best_state, config.model_path)
-                bark_notify(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
+                _maybe_bark(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
         else:
             logger.info('\t Mean dice:{:.4f} does not increase, '
                         'the best is still: {:.4f} in epoch {}'.format(val_dice, max_dice, best_epoch))
@@ -368,7 +385,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
 if __name__ == '__main__':
     print("[boot] entered __main__, sending Bark start notification...", flush=True)
-    bark_notify("模型开始训练了，请耐心等待！", title="🚀 训练开始")
+    _maybe_bark("模型开始训练了，请耐心等待！", title="🚀 训练开始")
     print("[boot] Bark call returned, continuing setup...", flush=True)
     deterministic = True
     if not deterministic:
@@ -387,6 +404,7 @@ if __name__ == '__main__':
 
     logger = logger_config(log_path=config.logger_path)
     model = main_loop(model_type=config.model_name, tensorboard=True)
-    bark_notify("训练完成！服务器即将自动关机 💤", title="✅ 训练结束")
-    print("正在执行关机程序...")
-    os.system("shutdown")
+    _maybe_bark("训练完成！服务器即将自动关机 💤", title="✅ 训练结束")
+    if config.shutdown_after_train:
+        print("正在执行关机程序...")
+        os.system("shutdown")

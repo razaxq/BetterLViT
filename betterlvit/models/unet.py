@@ -1,5 +1,6 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
+
 
 def get_activation(activation_type):
     activation_type = activation_type.lower()
@@ -101,5 +102,3 @@ class UNet(nn.Module):
         else:
             logits = self.outc(x)
         return logits
-
-

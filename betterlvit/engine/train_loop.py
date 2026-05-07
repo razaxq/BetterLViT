@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-import torch.optim
 import os
 import time
-from utils import *
-import Config as config
+import torch
+import torch.optim
 import warnings
-from torchinfo import summary
-from sklearn.metrics.pairwise import cosine_similarity
+
+from .. import config as config
+from ..metrics import iou_on_batch, save_on_batch
+
 warnings.filterwarnings("ignore")
 
 

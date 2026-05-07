@@ -1,16 +1,33 @@
-import torch.optim
-from Load_Dataset import ValGenerator, ImageToImage2D
-from torch.utils.data import DataLoader
+# -*- coding: utf-8 -*-
+"""BetterLViT inference / visualization entry script.
+
+Set `betterlvit.config.test_session` (via Config edit) to the session folder
+containing the checkpoint to evaluate. Run from project root after
+`pip install -e .` or via `python -m scripts.test`.
+"""
+# CUDA_VISIBLE_DEVICES must be set before any torch import.
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 import warnings
 
-warnings.filterwarnings("ignore")
-import Config as config
-import matplotlib.pyplot as plt
-from tqdm import tqdm
-import os
-from nets.BetterLViT import BetterLViT
-from utils import *
 import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim
+from sklearn.metrics import jaccard_score
+from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from betterlvit import config as config
+from betterlvit.data.dataset import ValGenerator, ImageToImage2D
+from betterlvit.io import read_text
+from betterlvit.models.better_lvit import BetterLViT
+
+warnings.filterwarnings("ignore")
 
 
 def show_image_with_dice(predict_save, labs, save_path):
@@ -29,18 +46,6 @@ def show_image_with_dice(predict_save, labs, save_path):
         cv2.imwrite(save_path, predict_save * 255)
     else:
         cv2.imwrite(save_path, predict_save * 255)
-    # plt.imshow(predict_save * 255,cmap='gray')
-    # plt.text(x=10, y=24, s="Dice:" + str(dice_show), fontsize=5)
-    # plt.axis("off")
-    # remove the white borders
-    # height, width = predict_save.shape
-    # fig.set_size_inches(width / 100.0 / 3.0, height / 100.0 / 3.0)
-    # plt.gca().xaxis.set_major_locator(plt.NullLocator())
-    # plt.gca().yaxis.set_major_locator(plt.NullLocator())
-    # plt.subplots_adjust(top=1, bottom=0, left=0, right=1, hspace=0, wspace=0)
-    # plt.margins(0, 0)
-    # plt.savefig(save_path, dpi=2000)
-    # plt.close()
     return dice_pred, iou_pred
 
 
@@ -57,7 +62,6 @@ def vis_and_save_heatmap(model, input_img, input_ids, attention_mask, img_RGB, l
 
 
 if __name__ == '__main__':
-    os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     test_session = config.test_session
 
     model_type = config.model_name
@@ -68,7 +72,7 @@ if __name__ == '__main__':
     elif config.task_name == "Covid19":
         test_num = 2113
         model_path = "./Covid19/" + model_type + "/" + test_session + "/models/best_model-" + model_type + ".pth.tar"
-    
+
     save_path = config.task_name + '/' + model_type + '/' + test_session + '/'
     vis_path = "./" + config.task_name + '_visualize_test/'
     if not os.path.exists(vis_path):

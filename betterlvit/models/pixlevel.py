@@ -9,7 +9,7 @@ import torch.nn as nn
 class PixLevelModule(nn.Module):
     def __init__(self, in_channels):
         super(PixLevelModule, self).__init__()
-        self.middle_layer_size_ratio = 2 
+        self.middle_layer_size_ratio = 2
         self.conv_avg = nn.Conv2d(in_channels, out_channels=in_channels, kernel_size=1, bias=False)
         self.relu_avg = nn.ReLU(inplace=True)
         self.conv_max = nn.Conv2d(in_channels, out_channels=in_channels, kernel_size=1, bias=False)
@@ -27,8 +27,8 @@ class PixLevelModule(nn.Module):
     '''forward'''
 
     def forward(self, x):
-        x_avg = self.conv_avg(x)  
-        x_avg = self.relu_avg(x_avg) 
+        x_avg = self.conv_avg(x)
+        x_avg = self.relu_avg(x_avg)
         x_avg = torch.mean(x_avg, dim=1)
         x_avg = x_avg.unsqueeze(dim=1)
         x_max = self.conv_max(x)
@@ -36,9 +36,9 @@ class PixLevelModule(nn.Module):
         x_max = torch.max(x_max, dim=1).values
         x_max = x_max.unsqueeze(dim=1)
         x_out = x_max+x_avg
-        x_output = torch.cat((x_avg, x_max, x_out), dim=1) 
-        x_output = x_output.transpose(1, 3) 
+        x_output = torch.cat((x_avg, x_max, x_out), dim=1)
+        x_output = x_output.transpose(1, 3)
         x_output = self.bottleneck(x_output)
-        x_output = x_output.transpose(1, 3) 
+        x_output = x_output.transpose(1, 3)
         y = x_output * x
         return y
