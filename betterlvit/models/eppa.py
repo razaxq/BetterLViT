@@ -107,6 +107,11 @@ class EPPA(nn.Module):
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
         nn.init.zeros_(self.sp_proj.weight)
 
+        # Diagnostic snapshot of last validation forward's ca/sa distribution.
+        # Not a buffer/parameter so it stays out of state_dict (no checkpoint
+        # bloat, no strict-load issue). Populated only during eval forwards.
+        self._last_stats = None
+
     def forward(self, x, text=None):
         # 1. Frequency decomposition.
         x_low = self.low_pass(x)
@@ -127,6 +132,20 @@ class EPPA(nn.Module):
         sa = 1.0 + torch.tanh(
             self.sp_proj(torch.cat([sp_avg, sp_max], dim=1))
         )                                                                  # [B, 1, H, W]
+
+        # Diagnostic: stash a 5-scalar summary of ca/sa during val forwards
+        # only.  Gating on not-training avoids the .item() host-device syncs
+        # during training; during val we are already inside torch.no_grad()
+        # and one extra sync per layer per batch is negligible (~1ms total).
+        if not self.training:
+            with torch.no_grad():
+                self._last_stats = {
+                    'ca_mean': float(ca.mean().item()),
+                    'ca_std': float(ca.std().item()),
+                    'sa_mean': float(sa.mean().item()),
+                    'sa_std': float(sa.std().item()),
+                    'sa_gt_11_ratio': float((sa > 1.1).float().mean().item()),
+                }
 
         # 4. Recomposition: low-freq channel-modulated, high-freq spatially
         #    sharpened.  sa > 1 in boundary regions = unsharp-masking-style

@@ -15,6 +15,7 @@ save_model = True
 tensorboard = True
 seed = 1219
 
+test_session = ""
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
@@ -35,6 +36,7 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
+
 
 # Resume training
 # Set resume_path to a .pth.tar checkpoint to continue from there. New session
@@ -98,4 +100,3 @@ def get_CTranS_config():
     return config
 
 
-test_session = ""
