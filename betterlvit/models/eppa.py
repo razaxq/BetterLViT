@@ -107,6 +107,15 @@ class EPPA(nn.Module):
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
         nn.init.zeros_(self.sp_proj.weight)
 
+        # Diagnostic snapshot of last forward's ca/sa distribution.
+        # Not a buffer/parameter so it stays out of state_dict (no checkpoint
+        # bloat, no strict-load issue). Populated unconditionally on every
+        # forward -- gating on `not self.training` was tried in a prior
+        # attempt and silently failed to fire (root cause unresolved; .pyc
+        # cache and partial syncthing sync are leading suspects). Cost: ~5
+        # .item() calls per layer per batch ~= 1ms/batch, < 0.5% overhead.
+        self._last_stats = None
+
     def forward(self, x, text=None):
         # 1. Frequency decomposition.
         x_low = self.low_pass(x)
@@ -127,6 +136,18 @@ class EPPA(nn.Module):
         sa = 1.0 + torch.tanh(
             self.sp_proj(torch.cat([sp_avg, sp_max], dim=1))
         )                                                                  # [B, 1, H, W]
+
+        # Diagnostic: stash a 5-scalar summary of ca/sa for the EPPA CA/SA
+        # Sub-Table.  Runs unconditionally; cost is ~1ms/batch (negligible
+        # against ~300ms forward) so training speed is unaffected.
+        with torch.no_grad():
+            self._last_stats = {
+                'ca_mean': float(ca.mean().item()),
+                'ca_std':  float(ca.std().item()),
+                'sa_mean': float(sa.mean().item()),
+                'sa_std':  float(sa.std().item()),
+                'sa_gt_11_ratio': float((sa > 1.1).float().mean().item()),
+            }
 
         # 4. Recomposition: low-freq channel-modulated, high-freq spatially
         #    sharpened.  sa > 1 in boundary regions = unsharp-masking-style

@@ -120,6 +120,27 @@ def compute_eppa_gate_stats(model):
     return stats
 
 
+def compute_eppa_ca_sa_stats(model):
+    """Snapshot FreqEPPA ca/sa distribution from each decoder stage (up4..up1).
+    Reads the per-EPPA `_last_stats` populated during the last forward.
+    Returns dict[stage -> {ca_mean, ca_std, sa_mean, sa_std, sa_gt_11_ratio}]
+    of Python floats, or empty dict if no FreqEPPA-equipped block has
+    populated stats yet.
+    """
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    stats = {}
+    for stage in ('up4', 'up3', 'up2', 'up1'):
+        block = getattr(target, stage, None)
+        if block is None or not hasattr(block, 'eppa'):
+            continue
+        # CBAM-style EPPA (legacy) has no _last_stats attribute either.
+        s = getattr(block.eppa, '_last_stats', None)
+        if s is None:
+            continue
+        stats[stage] = dict(s)
+    return stats
+
+
 def worker_init_fn(worker_id):
     random.seed(config.seed + worker_id)
 
@@ -318,6 +339,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'val_iou': float(val_iou),
             'lr': float(epoch_lr),
             'gate_stats': compute_eppa_gate_stats(model),
+            'ca_sa_stats': compute_eppa_ca_sa_stats(model),
         })
 
         # =============================================================
@@ -377,6 +399,32 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     else:
                         cells.append('{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}'.format(
                             s['mean'], s['abs_mean'], s['max'], s['min']))
+                logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
+
+        # --- EPPA CA/SA Sub-Table ---
+        # FreqEPPA's analogue of the gate sub-table.  Skipped silently if no
+        # row has ca_sa_stats (resumed from a pre-A2 checkpoint, or model is
+        # not FreqEPPA).  Mirrors the gate sub-table's stale-row tolerance.
+        if any(h.get('ca_sa_stats') for h in epoch_history):
+            logger.info('--- EPPA CA/SA History (ca_mean ca_std sa_mean sa_std sa>1.1% per stage) ---')
+            group_hdr = '{:>5} | '.format('Epoch') + ' | '.join(
+                '{:^39}'.format(s.capitalize()) for s in ('up4', 'up3', 'up2', 'up1'))
+            stat_hdr = '{:>5} | '.format('') + ' | '.join(
+                ['{:>7} {:>7} {:>7} {:>7} {:>7}'.format(
+                    'ca_m', 'ca_s', 'sa_m', 'sa_s', 'sa>1.1')] * 4)
+            logger.info(group_hdr)
+            logger.info(stat_hdr)
+            for h in epoch_history:
+                ss = h.get('ca_sa_stats') or {}
+                cells = []
+                for stage in ('up4', 'up3', 'up2', 'up1'):
+                    s = ss.get(stage)
+                    if not s:
+                        cells.append('{:>39}'.format('--'))
+                    else:
+                        cells.append('{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f} {:>7.1%}'.format(
+                            s['ca_mean'], s['ca_std'], s['sa_mean'], s['sa_std'],
+                            s['sa_gt_11_ratio']))
                 logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
 
         if early_stopping_count > config.early_stopping_patience:
