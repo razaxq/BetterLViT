@@ -424,6 +424,36 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                             s['sa_gt_11_ratio']))
                 logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
 
+        # --- EPPA Threshold Sub-Table ---
+        # Surfaces the soft-thresholding diagnostic (tau_mean, frac_zeroed)
+        # separately from the CA/SA table to keep the legacy 5-column format
+        # unchanged for back-compat.  Renders "--" for stages/epochs without
+        # threshold stats (older logs, or non-FreqEPPA models).
+        if any(
+            (h.get('ca_sa_stats') or {}).get(stage, {}).get('tau_mean') is not None
+            for h in epoch_history
+            for stage in ('up4', 'up3', 'up2', 'up1')
+        ):
+            logger.info('--- EPPA Threshold History (tau_mean / frac_zeroed per stage) ---')
+            group_hdr = '{:>5} | '.format('Epoch') + ' | '.join(
+                '{:^17}'.format(s.capitalize()) for s in ('up4', 'up3', 'up2', 'up1'))
+            stat_hdr = '{:>5} | '.format('') + ' | '.join(
+                ['{:>8} {:>8}'.format('tau_m', 'zero%')] * 4)
+            logger.info(group_hdr)
+            logger.info(stat_hdr)
+            for h in epoch_history:
+                ss = h.get('ca_sa_stats') or {}
+                cells = []
+                for stage in ('up4', 'up3', 'up2', 'up1'):
+                    s = ss.get(stage) or {}
+                    tm = s.get('tau_mean')
+                    fz = s.get('frac_zeroed')
+                    if tm is None or fz is None:
+                        cells.append('{:>17}'.format('--'))
+                    else:
+                        cells.append('{:>8.4f} {:>8.1%}'.format(tm, fz))
+                logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
+
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')
             break
