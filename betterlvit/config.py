@@ -68,6 +68,7 @@ text_lora_target_modules = (
 # Side-effect switches (default values reproduce legacy behavior).
 enable_bark = True
 shutdown_after_train = True
+enable_post_best_hook = True  # Each new best fires test.py + HF bucket sync in background
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'

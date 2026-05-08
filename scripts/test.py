@@ -10,6 +10,7 @@ import os
 
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
+import argparse
 import warnings
 
 import cv2
@@ -62,6 +63,12 @@ def vis_and_save_heatmap(model, input_img, input_ids, attention_mask, img_RGB, l
 
 
 if __name__ == '__main__':
+    _ap = argparse.ArgumentParser()
+    _ap.add_argument('--session', type=str, default=None,
+                     help='Override config.test_session for one-off invocations.')
+    _args = _ap.parse_args()
+    if _args.session:
+        config.test_session = _args.session
     test_session = config.test_session
 
     model_type = config.model_name

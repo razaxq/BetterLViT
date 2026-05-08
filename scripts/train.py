@@ -17,6 +17,9 @@ os.environ['PYTHONHASHSEED'] = "1219"  # mirrors betterlvit.config.seed
 
 import logging
 import random
+import subprocess
+import sys
+from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 import torch
@@ -41,6 +44,43 @@ def _maybe_bark(body, title="训练通知"):
     """Bark push gated on config.enable_bark."""
     if config.enable_bark:
         bark_notify(body, title)
+
+
+# Single-worker executor: each new best submits a (test + sync) job that runs
+# off the training thread. max_workers=1 serializes jobs so two tests never
+# fight for GPU memory at once; new bests during an in-flight job queue up.
+_post_best_executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix='post-best')
+
+
+def _run_post_best_hook(session_name):
+    """Run scripts/test.py then HF bucket sync as subprocesses; never raise."""
+    try:
+        logger.info('[post-best-hook] testing session={}'.format(session_name))
+        r = subprocess.run(
+            [sys.executable, 'scripts/test.py', '--session', session_name],
+            check=False)
+        if r.returncode != 0:
+            logger.warning('[post-best-hook] test.py exit={}, skip sync'.format(r.returncode))
+            return
+        src = './{}/{}/'.format(config.task_name, config.model_name)
+        logger.info('[post-best-hook] syncing {} -> hf://buckets/razaxq/BetterLViT/'.format(src))
+        r = subprocess.run(
+            [sys.executable, '-m', 'huggingface_hub.cli.hf', 'sync',
+             src, 'hf://buckets/razaxq/BetterLViT/',
+             '--delete', '--exclude', '*.jpg'],
+            check=False)
+        if r.returncode != 0:
+            logger.warning('[post-best-hook] hf sync exit={}'.format(r.returncode))
+        else:
+            logger.info('[post-best-hook] sync done')
+    except Exception as e:
+        logger.warning('[post-best-hook] error: {}'.format(e))
+
+
+def _submit_post_best_hook(session_name):
+    if not getattr(config, 'enable_post_best_hook', True):
+        return
+    _post_best_executor.submit(_run_post_best_hook, session_name)
 
 
 def logger_config(log_path):
@@ -353,6 +393,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     val_loss, max_dice, best_epoch, epoch_history, is_best=True)
                 save_checkpoint(best_state, config.model_path)
                 _maybe_bark(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
+                _submit_post_best_hook(config.session_name)
         else:
             logger.info('\t Mean dice:{:.4f} does not increase, '
                         'the best is still: {:.4f} in epoch {}'.format(val_dice, max_dice, best_epoch))
@@ -453,6 +494,9 @@ if __name__ == '__main__':
     logger = logger_config(log_path=config.logger_path)
     model = main_loop(model_type=config.model_name, tensorboard=True)
     _maybe_bark("训练完成！服务器即将自动关机 💤", title="✅ 训练结束")
+    # Drain pending test+sync jobs so the final best gets evaluated and pushed
+    # before we let the OS shutdown proceed.
+    _post_best_executor.shutdown(wait=True)
     if config.shutdown_after_train:
         print("正在执行关机程序...")
         os.system("shutdown")
