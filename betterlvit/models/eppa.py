@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 
 class EPPA(nn.Module):
@@ -36,9 +37,16 @@ class EPPA(nn.Module):
       signal that is large where boundaries are and ~0 elsewhere by
       construction. sa range (0, 2) allows edge SHARPENING (sa > 1) --
       classic unsharp masking is x_low + (1 + alpha) * x_high.
-    - Recomposition: x_low * ca + x_high * sa.  This is NOT bounded by x:
-      sa > 1 amplifies edges; ca and sa together reshape low and high
-      components independently.
+    - Soft thresholding on x_high (Donoho 1995 wavelet-shrinkage analogue):
+      x_high_clean = sign(x_high) * relu(|x_high| - tau), with the threshold
+      tau = relu(tau_scale) * mean(|x_high|, spatial) per channel.  This
+      makes the model's emergent "shallow-stage sa < 1" denoising policy
+      explicit and learnable as a per-channel shrinkage parameter, freeing
+      sa for boundary modulation.  See commit msg / docs/Findings-2026-05.md
+      for the diagnostic that motivated this.
+    - Recomposition: x_low * ca + x_high_clean * sa.  Not bounded by x:
+      sa > 1 amplifies edges; the shrinkage attenuates high-frequency
+      content below the per-channel threshold.
 
     Identity at init (no gate needed):
     - low_pass.weight initialised to a Gaussian kernel (sums to 1) so x_low
@@ -46,6 +54,7 @@ class EPPA(nn.Module):
     - ch_mlp[-1].weight zero-initialised -> ch_logit = 0 -> ca = 1.
     - text_proj zero-initialised (weight + bias) -> no contribution at init.
     - sp_proj.weight zero-initialised -> sp_logit = 0 -> sa = 1.
+    - tau_scale zero-initialised -> tau = 0 -> x_high_clean == x_high.
     - Output at init: x_low * 1 + x_high * 1 = x_low + (x - x_low) = x.
 
     The zero-init of the FINAL layers is the standard "safe-init" trick used
@@ -107,6 +116,14 @@ class EPPA(nn.Module):
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
         nn.init.zeros_(self.sp_proj.weight)
 
+        # Soft thresholding on x_high (Donoho 1995 wavelet denoising analogue).
+        # Per-channel learnable scale; threshold tau = relu(tau_scale) * sigma_hat
+        # where sigma_hat = mean(|x_high|, spatial) is the per-batch, per-channel
+        # noise-magnitude estimate.  Zero-init -> tau = 0 at step 0 -> shrink op
+        # is the identity -> output equals x exactly (identity-at-init preserved).
+        # 4 stages x C channels = 512+256+128+64 = 960 added params total.
+        self.tau_scale = nn.Parameter(torch.zeros(in_channels))
+
         # Diagnostic snapshot of last forward's ca/sa distribution.
         # Not a buffer/parameter so it stays out of state_dict (no checkpoint
         # bloat, no strict-load issue). Populated unconditionally on every
@@ -137,9 +154,19 @@ class EPPA(nn.Module):
             self.sp_proj(torch.cat([sp_avg, sp_max], dim=1))
         )                                                                  # [B, 1, H, W]
 
-        # Diagnostic: stash a 5-scalar summary of ca/sa for the EPPA CA/SA
-        # Sub-Table.  Runs unconditionally; cost is ~1ms/batch (negligible
-        # against ~300ms forward) so training speed is unaffected.
+        # 4. Soft thresholding on x_high.  sigma_hat is a per-batch,
+        #    per-channel noise-magnitude estimate; tau is non-negative and
+        #    broadcasts to [B, C, 1, 1].  At init tau_scale = 0 -> tau = 0
+        #    -> x_high_clean == x_high (identity-at-init preserved).
+        sigma_hat = x_high.abs().mean(dim=(2, 3))                         # [B, C]
+        tau = F.relu(self.tau_scale)[None, :] * sigma_hat                 # [B, C]
+        tau = tau[:, :, None, None]                                       # [B, C, 1, 1]
+        x_high_abs = x_high.abs()
+        x_high_clean = torch.sign(x_high) * F.relu(x_high_abs - tau)
+
+        # Diagnostic: stash 5 original ca/sa scalars + 2 threshold scalars.
+        # Runs unconditionally; cost is ~1ms/batch (negligible against ~300ms
+        # forward) so training speed is unaffected.
         with torch.no_grad():
             self._last_stats = {
                 'ca_mean': float(ca.mean().item()),
@@ -147,9 +174,11 @@ class EPPA(nn.Module):
                 'sa_mean': float(sa.mean().item()),
                 'sa_std':  float(sa.std().item()),
                 'sa_gt_11_ratio': float((sa > 1.1).float().mean().item()),
+                'tau_mean':    float(tau.mean().item()),
+                'frac_zeroed': float((x_high_abs < tau).float().mean().item()),
             }
 
-        # 4. Recomposition: low-freq channel-modulated, high-freq spatially
-        #    sharpened.  sa > 1 in boundary regions = unsharp-masking-style
-        #    edge enhancement.  Output at init = x exactly.
-        return x_low * ca + x_high * sa
+        # 5. Recomposition: low-freq channel-modulated + thresholded high-freq
+        #    spatially modulated.  At init tau = 0 so x_high_clean == x_high
+        #    and output reduces to x_low + x_high = x exactly.
+        return x_low * ca + x_high_clean * sa
