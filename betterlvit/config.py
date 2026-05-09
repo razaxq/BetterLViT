@@ -31,7 +31,7 @@ pretrain = False
 task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
 weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
-batch_size = 16  # For LViT-T, 2 is better than 4
+batch_size = 32  # For LViT-T, 2 is better than 4
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -71,17 +71,13 @@ train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'
 test_dataset = './datasets/' + task_name + '/Test_Folder/'
 task_dataset = './datasets/' + task_name + '/Train_Folder/'
-session_name = 'Test_session' + '_' + time.strftime('%m.%d_%Hh%M')
-save_path = task_name + '/' + model_name + '/' + session_name + '/'
-model_path = save_path + 'models/'
-tensorboard_folder = save_path + 'tensorboard_logs/'
-logger_path = save_path + session_name + ".log"
-visualize_path = save_path + 'visualize_val/'
 
 
 ##########################################################################
 # CTrans configs
 ##########################################################################
+# Defined BEFORE the run-dir resolver so resolve_run_dir's globals() snapshot
+# can call it and include CTrans structural hyper-params in the config hash.
 def get_CTranS_config():
     config = ml_collections.ConfigDict()
     config.transformer = ml_collections.ConfigDict()
@@ -97,5 +93,23 @@ def get_CTranS_config():
     config.n_classes = 1
     return config
 
+
+# Folder is keyed by git commit short hash (+ config hash on collision).
+# Snapshot globals AFTER all training-relevant fields/factories are defined
+# but BEFORE deriving path fields, so paths are not part of the config hash.
+# resolve_run_dir mkdirs the folder and atomically writes config_hash.txt.
+from betterlvit.run_dir import resolve_run_dir as _resolve_run_dir
+_run_info = _resolve_run_dir(task_name, model_name, dict(globals()))
+session_name = _run_info.session_name
+save_path = _run_info.save_path
+_config_hash = _run_info.config_hash
+_auto_resume_path = _run_info.auto_resume_path
+model_path = save_path + 'models/'
+tensorboard_folder = save_path + 'tensorboard_logs/'
+logger_path = save_path + session_name + ".log"
+visualize_path = save_path + 'visualize_val/'
+
+if not resume_path and _auto_resume_path:
+    resume_path = _auto_resume_path
 
 test_session = ""

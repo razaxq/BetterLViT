@@ -130,6 +130,9 @@ def worker_init_fn(worker_id):
 # =================================================================================
 ##################################################################################
 def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
+    logger.info('Run dir: {} (config_hash={})'.format(config.save_path, config._config_hash))
+    if config.resume_path:
+        logger.info('resume_path -> {}'.format(config.resume_path))
     # Load train and val data
     train_tf = transforms.Compose([RandomGenerator(output_size=[config.img_size, config.img_size])])
     val_tf = ValGenerator(output_size=[config.img_size, config.img_size])
