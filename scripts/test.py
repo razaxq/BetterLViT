@@ -93,6 +93,7 @@ if __name__ == '__main__':
             lora_r=config.text_lora_r,
             lora_alpha=config.text_lora_alpha,
             lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
         )
 
     elif model_type == 'LViT_pretrain':
@@ -107,6 +108,7 @@ if __name__ == '__main__':
             lora_r=config.text_lora_r,
             lora_alpha=config.text_lora_alpha,
             lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
         )
 
 
