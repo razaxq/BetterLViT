@@ -37,16 +37,24 @@ class EPPA(nn.Module):
       signal that is large where boundaries are and ~0 elsewhere by
       construction. sa range (0, 2) allows edge SHARPENING (sa > 1) --
       classic unsharp masking is x_low + (1 + alpha) * x_high.
-    - Soft thresholding on x_high (Donoho 1995 wavelet-shrinkage analogue):
+    - Soft thresholding on x_high (Donoho 1995 wavelet-shrinkage analogue
+      when tau > 0):
       x_high_clean = sign(x_high) * relu(|x_high| - tau), with the threshold
-      tau = relu(tau_scale) * mean(|x_high|, spatial) per channel.  This
-      makes the model's emergent "shallow-stage sa < 1" denoising policy
-      explicit and learnable as a per-channel shrinkage parameter, freeing
-      sa for boundary modulation.  See commit msg / docs/Findings-2026-05.md
-      for the diagnostic that motivated this.
+      tau = tau_scale * mean(|x_high|, spatial) per channel.  Signed tau is
+      intentional -- wrapping tau in relu(tau_scale) creates a zero-gradient
+      saddle at the zero-init point (relu'(0) = 0 in PyTorch), and we
+      observed across 3+ epochs that tau_scale never left 0.  Allowing
+      tau_scale to take either sign restores gradient flow from step 1
+      (d(tau)/d(tau_scale) = sigma_hat != 0); the cost is that tau < 0 means
+      x_high_clean = sign(x_high) * (|x_high| + |tau|), i.e. per-channel
+      uniform amplification of x_high before sa is applied.  In effect
+      tau_scale becomes a signed "high-frequency level adjuster" rather
+      than a strict shrinkage threshold.  Initial intent (make the
+      "shallow-stage sa < 1" denoising explicit, free sa for boundary
+      modulation) still holds when tau learns positive.
     - Recomposition: x_low * ca + x_high_clean * sa.  Not bounded by x:
-      sa > 1 amplifies edges; the shrinkage attenuates high-frequency
-      content below the per-channel threshold.
+      sa > 1 amplifies edges; tau > 0 attenuates high-frequency content
+      below the per-channel threshold; tau < 0 boosts it uniformly.
 
     Identity at init (no gate needed):
     - low_pass.weight initialised to a Gaussian kernel (sums to 1) so x_low
@@ -116,11 +124,16 @@ class EPPA(nn.Module):
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
         nn.init.zeros_(self.sp_proj.weight)
 
-        # Soft thresholding on x_high (Donoho 1995 wavelet denoising analogue).
-        # Per-channel learnable scale; threshold tau = relu(tau_scale) * sigma_hat
-        # where sigma_hat = mean(|x_high|, spatial) is the per-batch, per-channel
-        # noise-magnitude estimate.  Zero-init -> tau = 0 at step 0 -> shrink op
-        # is the identity -> output equals x exactly (identity-at-init preserved).
+        # Soft thresholding on x_high.  Per-channel learnable scale; threshold
+        # tau = tau_scale * sigma_hat where sigma_hat = mean(|x_high|, spatial)
+        # is the per-batch, per-channel magnitude estimate.  tau is SIGNED on
+        # purpose: an earlier version wrapped in F.relu(tau_scale) following
+        # the "last-layer-zero" precedent of ch_mlp[-1] / sp_proj, but that
+        # precedent only holds for linear-in-parameter layers -- relu wraps
+        # tau_scale in a nonlinearity whose derivative at the zero-init point
+        # is 0, locking the parameter at exactly 0 forever (verified empirically
+        # across 3 epochs).  Dropping the relu lets the gradient flow from
+        # step 1 while preserving identity-at-init via zero-init alone.
         # 4 stages x C channels = 512+256+128+64 = 960 added params total.
         self.tau_scale = nn.Parameter(torch.zeros(in_channels))
 
@@ -155,11 +168,11 @@ class EPPA(nn.Module):
         )                                                                  # [B, 1, H, W]
 
         # 4. Soft thresholding on x_high.  sigma_hat is a per-batch,
-        #    per-channel noise-magnitude estimate; tau is non-negative and
-        #    broadcasts to [B, C, 1, 1].  At init tau_scale = 0 -> tau = 0
-        #    -> x_high_clean == x_high (identity-at-init preserved).
+        #    per-channel magnitude estimate; tau is SIGNED (see __init__
+        #    docstring) and broadcasts to [B, C, 1, 1].  At init tau_scale = 0
+        #    -> tau = 0 -> x_high_clean == x_high (identity-at-init preserved).
         sigma_hat = x_high.abs().mean(dim=(2, 3))                         # [B, C]
-        tau = F.relu(self.tau_scale)[None, :] * sigma_hat                 # [B, C]
+        tau = self.tau_scale[None, :] * sigma_hat                         # [B, C]
         tau = tau[:, :, None, None]                                       # [B, C, 1, 1]
         x_high_abs = x_high.abs()
         x_high_clean = torch.sign(x_high) * F.relu(x_high_abs - tau)
