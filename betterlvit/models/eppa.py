@@ -22,10 +22,15 @@ class EPPA(nn.Module):
 
     Architecture:
     - Frequency decomposition: depthwise 3x3 conv (one independent kernel
-      per channel) initialised as a Gaussian low-pass [1,2,1;2,4,2;1,2,1]/16.
-      Output x_low; high-frequency residual x_high = x - x_low.  Per-channel
-      adaptation lets the low-pass cutoff differ across channels if needed,
-      but it starts as a textbook Gaussian filter.
+      per channel) FIXED to the Gaussian low-pass [1,2,1;2,4,2;1,2,1]/16.
+      Output x_low; high-frequency residual x_high = x - x_low.  Frozen
+      by design: a 181-epoch diagnostic on the learnable variant (cd2903c)
+      showed the per-channel kernel sum collapsed from 1.0 to ~0 across
+      every stage, i.e. the conv stopped acting as a low-pass filter at
+      all and x_high lost its "high-frequency residual" meaning -- which
+      invalidated the sa-edge / tau-shrinkage premises this module is
+      built around.  Stored as a buffer (not a Parameter), so it is not in
+      `model.parameters()` / optimizer state and cannot drift.
     - Channel attention from x_low: GAP + GMP -> shared MLP -> text-CLS
       logit added pre-tanh -> ca = 1 + 0.5 * tanh(ch_logit), range (0.5, 1.5).
       x_low carries semantic / region-level information that is the right
@@ -57,8 +62,8 @@ class EPPA(nn.Module):
       below the per-channel threshold; tau < 0 boosts it uniformly.
 
     Identity at init (no gate needed):
-    - low_pass.weight initialised to a Gaussian kernel (sums to 1) so x_low
-      is a low-pass-filtered x, x_high is the corresponding high-pass.
+    - low_pass_kernel buffer is a fixed Gaussian (sums to 1) so x_low is
+      a low-pass-filtered x and x_high is the corresponding high-pass.
     - ch_mlp[-1].weight zero-initialised -> ch_logit = 0 -> ca = 1.
     - text_proj zero-initialised (weight + bias) -> no contribution at init.
     - sp_proj.weight zero-initialised -> sp_logit = 0 -> sa = 1.
@@ -84,22 +89,23 @@ class EPPA(nn.Module):
         c_red = max(in_channels // reduction,
                     min(in_channels, min_bottleneck_channels))
 
-        # Depthwise low-pass conv, initialised to a Gaussian kernel.
-        # Each channel has its own 3x3 kernel; sum=1 at init so x_low has the
-        # same magnitude scale as x.  Letting it train allows per-channel
-        # cutoff adaptation; we accept that the paper must argue (or verify
-        # post-hoc) that the learned filters remain predominantly low-pass.
-        self.low_pass = nn.Conv2d(
-            in_channels, in_channels, kernel_size=3, padding=1,
-            groups=in_channels, bias=False)
+        # Depthwise low-pass kernel, FROZEN to the Gaussian
+        # [1,2,1;2,4,2;1,2,1]/16.  Stored as a buffer (not a Parameter) so
+        # it never enters the optimizer's param list and cannot drift.  The
+        # 181-epoch diagnostic on cd2903c showed the original learnable
+        # variant collapsed its per-channel kernel sum from 1.0 to ~0
+        # across every decoder stage (i.e. it stopped being a low-pass
+        # filter), which invalidated the x_low / x_high premise the rest
+        # of EPPA is built on; freezing restores that premise.
         gaussian = torch.tensor([
             [1.0, 2.0, 1.0],
             [2.0, 4.0, 2.0],
             [1.0, 2.0, 1.0],
         ]) / 16.0
-        with torch.no_grad():
-            self.low_pass.weight.copy_(
-                gaussian.expand(in_channels, 1, 3, 3).contiguous())
+        self.register_buffer(
+            'low_pass_kernel',
+            gaussian.expand(in_channels, 1, 3, 3).contiguous(),
+        )
 
         # Channel attention on x_low: shared MLP applied to GAP and GMP.
         # Last linear zero-initialised so ch_logit = 0 at init.
@@ -147,8 +153,11 @@ class EPPA(nn.Module):
         self._last_stats = None
 
     def forward(self, x, text=None):
-        # 1. Frequency decomposition.
-        x_low = self.low_pass(x)
+        # 1. Frequency decomposition (low_pass is the FROZEN Gaussian buffer).
+        x_low = F.conv2d(
+            x, self.low_pass_kernel,
+            padding=1, groups=self.low_pass_kernel.shape[0],
+        )
         x_high = x - x_low
 
         # 2. Channel attention from x_low (semantic, region-level).
