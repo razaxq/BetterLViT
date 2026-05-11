@@ -42,24 +42,19 @@ class EPPA(nn.Module):
       signal that is large where boundaries are and ~0 elsewhere by
       construction. sa range (0, 2) allows edge SHARPENING (sa > 1) --
       classic unsharp masking is x_low + (1 + alpha) * x_high.
-    - Soft thresholding on x_high (Donoho 1995 wavelet-shrinkage analogue
-      when tau > 0):
-      x_high_clean = sign(x_high) * relu(|x_high| - tau), with the threshold
-      tau = tau_scale * mean(|x_high|, spatial) per channel.  Signed tau is
-      intentional -- wrapping tau in relu(tau_scale) creates a zero-gradient
-      saddle at the zero-init point (relu'(0) = 0 in PyTorch), and we
-      observed across 3+ epochs that tau_scale never left 0.  Allowing
-      tau_scale to take either sign restores gradient flow from step 1
-      (d(tau)/d(tau_scale) = sigma_hat != 0); the cost is that tau < 0 means
-      x_high_clean = sign(x_high) * (|x_high| + |tau|), i.e. per-channel
-      uniform amplification of x_high before sa is applied.  In effect
-      tau_scale becomes a signed "high-frequency level adjuster" rather
-      than a strict shrinkage threshold.  Initial intent (make the
-      "shallow-stage sa < 1" denoising explicit, free sa for boundary
-      modulation) still holds when tau learns positive.
-    - Recomposition: x_low * ca + x_high_clean * sa.  Not bounded by x:
-      sa > 1 amplifies edges; tau > 0 attenuates high-frequency content
-      below the per-channel threshold; tau < 0 boosts it uniformly.
+    - Recomposition: x_low * ca + x_high * sa.  Not bounded by x: sa > 1
+      amplifies edges (unsharp-masking-style sharpening); sa < 1 attenuates
+      high-frequency content.
+
+    Soft-thresholding on x_high (a Donoho-1995 wavelet-shrinkage analogue
+    via a learnable per-channel tau_scale) was prototyped on the
+    exp/eppa-smart-soft-threshold and exp/eppa-smart-st-frozen-lowpass
+    branches but ablated out: with the frozen Gaussian low_pass (so x_high
+    is genuine high-frequency residual), sa > 1 already takes over the
+    sharpening role and sa < 1 the attenuation role -- tau_scale empirically
+    settled to ~1e-4 magnitudes across all stages and was structurally
+    redundant with sa.  Kept here as historical context; the live design is
+    just ca + sa.
 
     Identity at init (no gate needed):
     - low_pass_kernel buffer is a fixed Gaussian (sums to 1) so x_low is
@@ -67,7 +62,6 @@ class EPPA(nn.Module):
     - ch_mlp[-1].weight zero-initialised -> ch_logit = 0 -> ca = 1.
     - text_proj zero-initialised (weight + bias) -> no contribution at init.
     - sp_proj.weight zero-initialised -> sp_logit = 0 -> sa = 1.
-    - tau_scale zero-initialised -> tau = 0 -> x_high_clean == x_high.
     - Output at init: x_low * 1 + x_high * 1 = x_low + (x - x_low) = x.
 
     The zero-init of the FINAL layers is the standard "safe-init" trick used
@@ -130,19 +124,6 @@ class EPPA(nn.Module):
         self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
         nn.init.zeros_(self.sp_proj.weight)
 
-        # Soft thresholding on x_high.  Per-channel learnable scale; threshold
-        # tau = tau_scale * sigma_hat where sigma_hat = mean(|x_high|, spatial)
-        # is the per-batch, per-channel magnitude estimate.  tau is SIGNED on
-        # purpose: an earlier version wrapped in F.relu(tau_scale) following
-        # the "last-layer-zero" precedent of ch_mlp[-1] / sp_proj, but that
-        # precedent only holds for linear-in-parameter layers -- relu wraps
-        # tau_scale in a nonlinearity whose derivative at the zero-init point
-        # is 0, locking the parameter at exactly 0 forever (verified empirically
-        # across 3 epochs).  Dropping the relu lets the gradient flow from
-        # step 1 while preserving identity-at-init via zero-init alone.
-        # 4 stages x C channels = 512+256+128+64 = 960 added params total.
-        self.tau_scale = nn.Parameter(torch.zeros(in_channels))
-
         # Diagnostic snapshot of last forward's ca/sa distribution.
         # Not a buffer/parameter so it stays out of state_dict (no checkpoint
         # bloat, no strict-load issue). Populated unconditionally on every
@@ -176,19 +157,9 @@ class EPPA(nn.Module):
             self.sp_proj(torch.cat([sp_avg, sp_max], dim=1))
         )                                                                  # [B, 1, H, W]
 
-        # 4. Soft thresholding on x_high.  sigma_hat is a per-batch,
-        #    per-channel magnitude estimate; tau is SIGNED (see __init__
-        #    docstring) and broadcasts to [B, C, 1, 1].  At init tau_scale = 0
-        #    -> tau = 0 -> x_high_clean == x_high (identity-at-init preserved).
-        sigma_hat = x_high.abs().mean(dim=(2, 3))                         # [B, C]
-        tau = self.tau_scale[None, :] * sigma_hat                         # [B, C]
-        tau = tau[:, :, None, None]                                       # [B, C, 1, 1]
-        x_high_abs = x_high.abs()
-        x_high_clean = torch.sign(x_high) * F.relu(x_high_abs - tau)
-
-        # Diagnostic: stash 5 original ca/sa scalars + 2 threshold scalars.
-        # Runs unconditionally; cost is ~1ms/batch (negligible against ~300ms
-        # forward) so training speed is unaffected.
+        # Diagnostic: stash 5-scalar ca/sa summary for the EPPA CA/SA
+        # sub-table.  Runs unconditionally; cost is ~1ms/batch (negligible
+        # against ~300ms forward) so training speed is unaffected.
         with torch.no_grad():
             self._last_stats = {
                 'ca_mean': float(ca.mean().item()),
@@ -196,11 +167,8 @@ class EPPA(nn.Module):
                 'sa_mean': float(sa.mean().item()),
                 'sa_std':  float(sa.std().item()),
                 'sa_gt_11_ratio': float((sa > 1.1).float().mean().item()),
-                'tau_mean':    float(tau.mean().item()),
-                'frac_zeroed': float((x_high_abs < tau).float().mean().item()),
             }
 
-        # 5. Recomposition: low-freq channel-modulated + thresholded high-freq
-        #    spatially modulated.  At init tau = 0 so x_high_clean == x_high
-        #    and output reduces to x_low + x_high = x exactly.
-        return x_low * ca + x_high_clean * sa
+        # 4. Recomposition: low-freq channel-modulated, high-freq spatially
+        #    modulated.  At init ca = sa = 1 so output = x_low + x_high = x.
+        return x_low * ca + x_high * sa
