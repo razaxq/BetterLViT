@@ -1,53 +1,27 @@
-absl-py==0.13.0
-albumentations==0.5.2
-bert-embedding
-cached-property==1.5.2
-certifi==2021.5.30
-contextlib2==21.6.0
-cssselect==1.1.0
-cycler==0.10.0
-decorator==4.4.2
-einops==0.3.0
-entmax==1.0
-h5py==3.3.0
-imageio==2.9.0
-imgaug==0.4.0
-joblib==1.0.1
-kiwisolver==1.3.1
-matplotlib==3.3.4
-mkl-fft==1.3.1
-mkl-random==1.2.2
-mkl-service==2.4.0
-ml-collections==0.1.0
-munch==2.5.0
-networkx==2.6.3
-numpy==1.17.5
-opencv-python==4.5.5.62
-opencv-python-headless==4.5.5.62
-pandas==1.1.5
-Pillow==8.3.1
-pretrainedmodels==0.7.4
-protobuf==3.17.3
-pyparsing==3.0.7
-pyquery
-python-dateutil==2.8.2
-pytz==2021.3
-PyWavelets==1.2.0
-pyyaml==6.0
-scikit-image==0.19.1
-scikit-learn==1.0.2
-scipy==1.7.3
-seaborn==0.11.2
-Shapely==1.8.0
-SimpleITK==2.0.2
-tensorboardX==2.4
-threadpoolctl==3.0.0
-thop
-tifffile==2021.7.2
-timm==0.4.12
-torch==1.8.0
-torchvision==0.9.0
+# LViT baseline (QaTa-COV19) — RTX 5090 / CUDA 12 compatible.
+#
+# The legacy mxnet `bert-embedding` package has been removed; text features are
+# precomputed with HuggingFace bert-base-uncased (see tools/precompute_text_emb.py).
+#
+# Install PyTorch from the CUDA 12.8 wheel index first, e.g.:
+#   pip install --index-url https://download.pytorch.org/whl/cu128 torch torchvision
+# then:  pip install -r requirements.txt
+
+torch>=2.6
+torchvision>=0.21
+transformers>=4.40        # bert-base-uncased via AutoModel/BertModel
+
+numpy
+scipy
+pandas
+openpyxl                  # required by pandas.read_excel for the *.xlsx text files
+opencv-python
+scikit-image
+scikit-learn              # utils.py: jaccard_score, roc_auc_score
+matplotlib                # test_model.py visualisation
+ml-collections            # Config.get_CTranS_config()
+Pillow
+timm                      # nets: timm.models.layers.DropPath (pin if the import path moves)
+tensorboardX              # train_model.py: SummaryWriter
 torchinfo
-tqdm==4.61.2
-xlrd==1.2.0
-yacs==0.1.8
+tqdm

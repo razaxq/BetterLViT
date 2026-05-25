@@ -96,7 +96,7 @@ if __name__ == '__main__':
     model.load_state_dict(checkpoint['state_dict'], strict=False)
     print('Model loaded !')
     tf_test = ValGenerator(output_size=[config.img_size, config.img_size])
-    test_text = read_text(config.test_dataset + 'Test_text.xlsx')
+    test_text = read_text_emb(config.test_dataset + 'Test_text.xlsx')
     test_dataset = ImageToImage2D(config.test_dataset, config.task_name, test_text, tf_test, image_size=config.img_size)
     test_loader = DataLoader(test_dataset, batch_size=1, shuffle=False)
 

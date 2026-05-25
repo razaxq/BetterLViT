@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 import torch
@@ -545,6 +546,24 @@ def read_text_LV(filename):
             df.Description[i] = df.Description[i] + ' EOF XXX' * (20 - count)  # LV_loss: 24
         text[df.Image[i]] = df.Description[i]
     return text  # return dict (key: values)
+
+
+def read_text_emb(filename, max_len=10):
+    """Load precomputed frozen text embeddings instead of running BERT in-loop.
+
+    Drop-in replacement for read_text(): given the SAME ``*_text.xlsx`` path the
+    original code passed, it loads the sibling cache written by
+    ``tools/precompute_text_emb.py`` (``<name>.emb<max_len>.pt``) and returns a
+    dict ``{image_key: ndarray (max_len, 768)}``, keyed exactly like read_text()
+    so ``self.rowtext[mask_filename]`` in Load_Dataset works unchanged.
+    """
+    base = os.path.splitext(filename)[0]
+    cache_path = '{0}.emb{1}.pt'.format(base, max_len)
+    if not os.path.exists(cache_path):
+        raise FileNotFoundError(
+            'Text-embedding cache not found: {0}\n'
+            'Run: python tools/precompute_text_emb.py --xlsx {1}'.format(cache_path, filename))
+    return torch.load(cache_path)
 
 
 # Unification images processing

@@ -15,20 +15,26 @@ os.environ['PYTHONHASHSEED'] = str(seed)
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
-epochs = 2000
+epochs = 2000  # upper bound; early stopping below governs in practice
 img_size = 224
 print_frequency = 1
 save_frequency = 5000
 vis_frequency = 10
 early_stopping_patience = 50
 
+# --- QaTa-COV19 baseline reproduction (HF bert-base-uncased, frozen) ---
+# Goal: reproduce official LViT-T (Dice 83.66 / IoU 75.11). Original LViT
+# architecture (PLAM) and recipe are kept; only the text-embedding *source*
+# changed from the mxnet bert_embedding package to precomputed HF features.
+# Adam uses NO weight decay (matches upstream; train_model.py passes no wd).
+# TODO(verify): confirm batch_size / epochs against the official Covid19 config.
 pretrain = False
-task_name = 'MoNuSeg' 
-# task_name = 'Covid19'
-learning_rate = 1e-3  # MoNuSeg: 1e-3, Covid19: 3e-4
-batch_size = 2  # For LViT-T, 2 is better than 4
+# task_name = 'MoNuSeg'
+task_name = 'Covid19'
+learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
+batch_size = 4  # For LViT-T, small batch is recommended (upstream note: 2 > 4)
 
-model_name = 'LViT'
+model_name = 'LViT'  # original LViT-T (NOT BetterLViT / EPPA / LoRA)
 # model_name = 'LViT_pretrain'
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'

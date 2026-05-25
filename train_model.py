@@ -15,7 +15,7 @@ import logging
 from Train_one_epoch import train_one_epoch, print_summary
 import Config as config
 from torchvision import transforms
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, WeightedDiceCE, read_text, read_text_LV, save_on_batch
+from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, WeightedDiceCE, read_text, read_text_LV, read_text_emb, save_on_batch
 from thop import profile
 
 def logger_config(log_path):
@@ -69,13 +69,13 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     train_tf = transforms.Compose([RandomGenerator(output_size=[config.img_size, config.img_size])])
     val_tf = ValGenerator(output_size=[config.img_size, config.img_size])
     if config.task_name == 'MoNuSeg':
-        train_text = read_text(config.train_dataset + 'Train_text.xlsx')
-        val_text = read_text(config.val_dataset + 'Val_text.xlsx')
+        train_text = read_text_emb(config.train_dataset + 'Train_text.xlsx')
+        val_text = read_text_emb(config.val_dataset + 'Val_text.xlsx')
         train_dataset = ImageToImage2D(config.train_dataset, config.task_name, train_text, train_tf,
                                        image_size=config.img_size)
         val_dataset = ImageToImage2D(config.val_dataset, config.task_name, val_text, val_tf, image_size=config.img_size)
     elif config.task_name == 'Covid19':
-        text = read_text(config.task_dataset + 'Train_Val_text.xlsx')
+        text = read_text_emb(config.task_dataset + 'Train_Val_text.xlsx')
         train_dataset = ImageToImage2D(config.train_dataset, config.task_name, text, train_tf,
                                        image_size=config.img_size)
         val_dataset = ImageToImage2D(config.val_dataset, config.task_name, text, val_tf, image_size=config.img_size)
