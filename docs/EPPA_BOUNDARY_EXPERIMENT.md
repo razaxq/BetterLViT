@@ -55,3 +55,14 @@ checkpoint session in a threshold-named directory such as
 `test_predictions_threshold_0.500/`. The directory also contains a manifest
 recording the checkpoint, export threshold, validation-selected threshold, and
 image count.
+
+To compare predictions with test ground truth, run:
+
+```powershell
+python tools/compare_segmentation_masks.py
+```
+
+The script automatically selects the newest complete prediction directory and
+creates one colour-coded comparison per test image. Green is overlap (TP), red
+is prediction only (FP), blue is ground truth only (FN), and black is
+background. It also writes per-image metrics, a legend, and a summary JSON.
