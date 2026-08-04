@@ -30,9 +30,20 @@ task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
 weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
 batch_size = 16  # For LViT-T, 2 is better than 4
+num_workers = 4
+persistent_workers = True
+
+# Boundary-aware supervision. The total objective remains normalised:
+# (1 - boundary_loss_weight) * (Dice + BCE) + boundary_loss_weight * boundary.
+boundary_loss_weight = 0.10
+boundary_kernel_size = 3
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
+
+# Local workstation safety.
+enable_bark_notifications = False
+shutdown_after_training = False
 
 # Resume training
 # Set resume_path to a .pth.tar checkpoint to continue from there. New session

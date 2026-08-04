@@ -21,6 +21,8 @@ from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
 
 def bark_notify(body, title="训练通知"):
     """极简版：只发送标题和文字内容"""
+    if not getattr(config, 'enable_bark_notifications', False):
+        return
     bark_key = "uAnJRvt7pxbzE9KK6bCVva"
     url = f"https://api.day.app/{bark_key}/{title}/{body}"
     try:
@@ -136,15 +138,23 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                               batch_size=config.batch_size,
                               shuffle=True,
                               worker_init_fn=worker_init_fn,
-                              num_workers=8,
-                              pin_memory=True)
+                              num_workers=config.num_workers,
+                              pin_memory=True,
+                              persistent_workers=(
+                                  config.persistent_workers
+                                  and config.num_workers > 0
+                              ))
 
     val_loader = DataLoader(val_dataset,
                             batch_size=config.batch_size,
-                            shuffle=True,
+                            shuffle=False,
                             worker_init_fn=worker_init_fn,
-                            num_workers=8,
-                            pin_memory=True)
+                            num_workers=config.num_workers,
+                            pin_memory=True,
+                            persistent_workers=(
+                                config.persistent_workers
+                                and config.num_workers > 0
+                            ))
                              
     lr = config.learning_rate
     logger.info(model_type)
@@ -210,7 +220,12 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
-    criterion = WeightedDiceBCE(dice_weight=0.5, BCE_weight=0.5)
+    criterion = WeightedDiceBCE(
+        dice_weight=0.5,
+        BCE_weight=0.5,
+        boundary_weight=config.boundary_loss_weight,
+        boundary_kernel_size=config.boundary_kernel_size,
+    )
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
         lr=lr,
@@ -267,7 +282,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     # --------------------------------------------------------------------------
 
     for epoch in range(start_epoch, config.epochs):  # loop over the dataset multiple times
-        logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs + 1))
+        logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs))
         logger.info(config.session_name)
         # Capture LR used for this epoch (scheduler steps inside the val call, so
         # snapshotting before train gives the actual learning rate this epoch ran on)
@@ -277,6 +292,9 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         logger.info('Training with batch size : {}'.format(batch_size))
         train_loss, train_dice, train_iou = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
                                                             model_type, logger)  # sup
+        train_loss_components = dict(
+            getattr(criterion, 'last_epoch_components', {})
+        )
 
         # evaluate on validation set
         logger.info('Validation')
@@ -284,6 +302,9 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             model.eval()
             val_loss, val_dice, val_iou = train_one_epoch(val_loader, model, criterion,
                                                           optimizer, writer, epoch, lr_scheduler, model_type, logger)
+        val_loss_components = dict(
+            getattr(criterion, 'last_epoch_components', {})
+        )
         # Append current epoch to history BEFORE saving any checkpoint, so that
         # both best_model and last_model serialise an epoch_history that
         # includes the just-finished epoch (the best_model path used to drop
@@ -297,6 +318,8 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'val_dice': float(val_dice),
             'val_iou': float(val_iou),
             'lr': float(epoch_lr),
+            'train_loss_components': train_loss_components,
+            'val_loss_components': val_loss_components,
             'gate_stats': compute_eppa_gate_stats(model),
         })
 
@@ -387,6 +410,7 @@ if __name__ == '__main__':
 
     logger = logger_config(log_path=config.logger_path)
     model = main_loop(model_type=config.model_name, tensorboard=True)
-    bark_notify("训练完成！服务器即将自动关机 💤", title="✅ 训练结束")
-    print("正在执行关机程序...")
-    os.system("shutdown")
+    bark_notify("训练完成！", title="✅ 训练结束")
+    if getattr(config, 'shutdown_after_training', False):
+        print("Training complete. Shutting down in 60 seconds...")
+        os.system("shutdown /s /t 60")

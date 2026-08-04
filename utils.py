@@ -186,13 +186,74 @@ class WeightedDiceBCE_unsup(nn.Module):
         return dice_BCE_loss
 
 
+class BoundaryDiceLoss(nn.Module):
+    """Dice loss on differentiable morphological boundary maps."""
+
+    def __init__(self, kernel_size=3):
+        super().__init__()
+        if kernel_size < 3 or kernel_size % 2 == 0:
+            raise ValueError("boundary kernel_size must be an odd value >= 3")
+        self.kernel_size = kernel_size
+
+    def _boundary_map(self, tensor):
+        padding = self.kernel_size // 2
+        dilated = F.max_pool2d(
+            tensor,
+            kernel_size=self.kernel_size,
+            stride=1,
+            padding=padding,
+        )
+        eroded = -F.max_pool2d(
+            -tensor,
+            kernel_size=self.kernel_size,
+            stride=1,
+            padding=padding,
+        )
+        return (dilated - eroded).clamp(0.0, 1.0)
+
+    def forward(self, inputs, targets, smooth=1e-5):
+        if targets.ndim == inputs.ndim - 1:
+            targets = targets.unsqueeze(1)
+        if inputs.shape != targets.shape:
+            raise ValueError(
+                "boundary loss shape mismatch: "
+                f"{tuple(inputs.shape)} != {tuple(targets.shape)}"
+            )
+        predicted_boundary = self._boundary_map(inputs)
+        target_boundary = self._boundary_map(targets)
+        predicted_boundary = predicted_boundary.flatten(1)
+        target_boundary = target_boundary.flatten(1)
+        intersection = (
+            predicted_boundary * target_boundary
+        ).sum(dim=1)
+        denominator = (
+            predicted_boundary.sum(dim=1)
+            + target_boundary.sum(dim=1)
+        )
+        boundary_dice = (
+            2.0 * intersection + smooth
+        ) / (denominator + smooth)
+        return 1.0 - boundary_dice.mean()
+
+
 class WeightedDiceBCE(nn.Module):
-    def __init__(self, dice_weight=1, BCE_weight=1):
+    def __init__(
+        self,
+        dice_weight=1,
+        BCE_weight=1,
+        boundary_weight=0.0,
+        boundary_kernel_size=3,
+    ):
         super(WeightedDiceBCE, self).__init__()
         self.BCE_loss = WeightedBCE(weights=[0.5, 0.5])
         self.dice_loss = WeightedDiceLoss(weights=[0.5, 0.5])
+        self.boundary_loss = BoundaryDiceLoss(boundary_kernel_size)
         self.BCE_weight = BCE_weight
         self.dice_weight = dice_weight
+        if not 0.0 <= boundary_weight < 1.0:
+            raise ValueError("boundary_weight must be in [0, 1)")
+        self.boundary_weight = boundary_weight
+        self.last_components = {}
 
     def _show_dice(self, inputs, targets):
         inputs[inputs >= 0.5] = 1
@@ -205,7 +266,17 @@ class WeightedDiceBCE(nn.Module):
     def forward(self, inputs, targets):
         dice = self.dice_loss(inputs, targets)
         BCE = self.BCE_loss(inputs, targets)
-        dice_BCE_loss = self.dice_weight * dice + self.BCE_weight * BCE
+        region_loss = self.dice_weight * dice + self.BCE_weight * BCE
+        boundary = self.boundary_loss(inputs, targets)
+        dice_BCE_loss = (
+            (1.0 - self.boundary_weight) * region_loss
+            + self.boundary_weight * boundary
+        )
+        self.last_components = {
+            'region': float(region_loss.detach().item()),
+            'boundary': float(boundary.detach().item()),
+            'total': float(dice_BCE_loss.detach().item()),
+        }
 
         return dice_BCE_loss
 

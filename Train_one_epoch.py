@@ -46,6 +46,8 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     end = time.time()
     time_sum, loss_sum = 0, 0
     dice_sum, iou_sum, acc_sum = 0.0, 0.0, 0.0
+    sample_count = 0
+    component_sums = {}
     dices = []
     for i, (sampled_batch, names) in enumerate(loader, 1):
 
@@ -77,8 +79,14 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             out_loss.backward()
             optimizer.step()
 
-        train_dice = criterion._show_dice(preds, masks.float())
-        train_iou = iou_on_batch(masks,preds)
+        with torch.no_grad():
+            train_dice = float(
+                criterion._show_dice(
+                    preds.detach().clone(),
+                    masks.float(),
+                ).item()
+            )
+            train_iou = float(iou_on_batch(masks, preds))
 
         batch_time = time.time() - end
         if epoch % config.vis_frequency == 0 and logging_mode == 'Val':
@@ -88,30 +96,32 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             save_on_batch(images,masks,preds,names,vis_path)
         dices.append(train_dice)
 
+        batch_size = len(images)
+        sample_count += batch_size
         time_sum += len(images) * batch_time
-        loss_sum += len(images) * out_loss
+        loss_sum += batch_size * float(out_loss.detach().item())
         iou_sum += len(images) * train_iou
         # acc_sum += len(images) * train_acc
         dice_sum += len(images) * train_dice
+        for name, value in getattr(
+            criterion,
+            'last_components',
+            {},
+        ).items():
+            component_sums[name] = (
+                component_sums.get(name, 0.0)
+                + batch_size * float(value)
+            )
 
-        if i == len(loader):
-            average_loss = loss_sum / (config.batch_size*(i-1) + len(images))
-            average_time = time_sum / (config.batch_size*(i-1) + len(images))
-            train_iou_average = iou_sum / (config.batch_size*(i-1) + len(images))
-            # train_acc_average = acc_sum / (config.batch_size*(i-1) + len(images))
-            train_dice_avg = dice_sum / (config.batch_size*(i-1) + len(images))
-        else:
-            average_loss = loss_sum / (i * config.batch_size)
-            average_time = time_sum / (i * config.batch_size)
-            train_iou_average = iou_sum / (i * config.batch_size)
-            # train_acc_average = acc_sum / (i * config.batch_size)
-            train_dice_avg = dice_sum / (i * config.batch_size)
+        average_loss = loss_sum / sample_count
+        average_time = time_sum / sample_count
+        train_iou_average = iou_sum / sample_count
+        train_dice_avg = dice_sum / sample_count
 
         end = time.time()
-        torch.cuda.empty_cache()
 
         if i % config.print_frequency == 0:
-            print_summary(epoch + 1, i, len(loader), out_loss, loss_name, batch_time,
+            print_summary(epoch + 1, i, len(loader), out_loss.item(), loss_name, batch_time,
                           average_loss, average_time, train_iou, train_iou_average,
                           train_dice, train_dice_avg, 0, 0,  logging_mode,
                           lr=min(g["lr"] for g in optimizer.param_groups),logger=logger)
@@ -124,10 +134,34 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             writer.add_scalar(logging_mode + '_iou', train_iou, step)
             # writer.add_scalar(logging_mode + '_acc', train_acc, step)
             writer.add_scalar(logging_mode + '_dice', train_dice, step)
-
-        torch.cuda.empty_cache()
+            for name, value in getattr(
+                criterion,
+                'last_components',
+                {},
+            ).items():
+                writer.add_scalar(
+                    f"{logging_mode}_loss_{name}",
+                    value,
+                    step,
+                )
 
     if lr_scheduler is not None:
         lr_scheduler.step()
+
+    criterion.last_epoch_components = {
+        name: value / sample_count
+        for name, value in component_sums.items()
+    }
+    if criterion.last_epoch_components:
+        logger.info(
+            '   [{}] Loss components: {}'.format(
+                logging_mode,
+                ', '.join(
+                    '{}={:.6f}'.format(name, value)
+                    for name, value
+                    in criterion.last_epoch_components.items()
+                ),
+            )
+        )
 
     return average_loss, train_dice_avg, train_iou_average
