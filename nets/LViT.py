@@ -4,7 +4,6 @@ import torch.nn as nn
 
 from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
-from .pixlevel import PixLevelModule
 
 
 def get_activation(activation_type):
@@ -59,18 +58,25 @@ class Flatten(nn.Module):
 
 class UpblockAttention(nn.Module):
     def __init__(self, in_channels, out_channels, nb_Conv,
-                 activation='ReLU', text_dim=None, min_bottleneck_channels=8):
+                 activation='ReLU', text_dim=None, min_bottleneck_channels=8,
+                 use_decoder_guide=True, use_dilated_edge=True):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
-        # EPPA replaces PixLevelModule on the skip connection.
-        # text_dim=None falls back to text-free EPPA (still functional).
+        # DG-EPPA uses the upsampled decoder feature as a top-down semantic
+        # guide for frequency-routed skip refinement.
         self.eppa = EPPA(in_channels // 2, text_dim=text_dim, reduction=8,
-                         min_bottleneck_channels=min_bottleneck_channels)
+                         min_bottleneck_channels=min_bottleneck_channels,
+                         use_decoder_guide=use_decoder_guide,
+                         use_dilated_edge=use_dilated_edge)
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
     def forward(self, x, skip_x, text=None):
         up = self.up(x)
-        skip_x_att = self.eppa(skip_x, text)
+        skip_x_att = self.eppa(
+            skip_x,
+            decoder=up,
+            text=text,
+        )
         x = torch.cat([skip_x_att, up], dim=1)  # dim 1 is the channel dimension
         return self.nConvs(x)
 
@@ -104,18 +110,36 @@ class LViT(nn.Module):
         # only (CLAUDE.md) -- do not set Config.resume_path to an EPPA checkpoint
         # trained with a different EPPA_MIN_BOTTLENECK_CHANNELS.
         EPPA_MIN_BOTTLENECK_CHANNELS = (32, 32, 32, 32)
+        EPPA_USE_DECODER_GUIDE = getattr(
+            config,
+            'eppa_use_decoder_guide',
+            True,
+        )
+        EPPA_USE_DILATED_EDGE = getattr(
+            config,
+            'eppa_use_dilated_edge',
+            True,
+        )
         self.up4 = UpblockAttention(in_channels * 16, in_channels * 4, nb_Conv=2,
                                     text_dim=TEXT_DIM,
-                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[0])
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[0],
+                                    use_decoder_guide=EPPA_USE_DECODER_GUIDE,
+                                    use_dilated_edge=EPPA_USE_DILATED_EDGE)
         self.up3 = UpblockAttention(in_channels * 8, in_channels * 2, nb_Conv=2,
                                     text_dim=TEXT_DIM,
-                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[1])
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[1],
+                                    use_decoder_guide=EPPA_USE_DECODER_GUIDE,
+                                    use_dilated_edge=EPPA_USE_DILATED_EDGE)
         self.up2 = UpblockAttention(in_channels * 4, in_channels, nb_Conv=2,
                                     text_dim=TEXT_DIM,
-                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[2])
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[2],
+                                    use_decoder_guide=EPPA_USE_DECODER_GUIDE,
+                                    use_dilated_edge=EPPA_USE_DILATED_EDGE)
         self.up1 = UpblockAttention(in_channels * 2, in_channels, nb_Conv=2,
                                     text_dim=TEXT_DIM,
-                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[3])
+                                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[3],
+                                    use_decoder_guide=EPPA_USE_DECODER_GUIDE,
+                                    use_dilated_edge=EPPA_USE_DILATED_EDGE)
         self.outc = nn.Conv2d(in_channels, n_classes, kernel_size=(1, 1), stride=(1, 1))
         self.last_activation = nn.Sigmoid()  # if using BCELoss
         self.multi_activation = nn.Softmax()
@@ -123,10 +147,6 @@ class LViT(nn.Module):
         self.reconstruct2 = Reconstruct(in_channels=128, out_channels=128, kernel_size=1, scale_factor=(8, 8))
         self.reconstruct3 = Reconstruct(in_channels=256, out_channels=256, kernel_size=1, scale_factor=(4, 4))
         self.reconstruct4 = Reconstruct(in_channels=512, out_channels=512, kernel_size=1, scale_factor=(2, 2))
-        self.pix_module1 = PixLevelModule(64)
-        self.pix_module2 = PixLevelModule(128)
-        self.pix_module3 = PixLevelModule(256)
-        self.pix_module4 = PixLevelModule(512)
         self.text_module4 = nn.Conv1d(in_channels=768, out_channels=512, kernel_size=3, padding=1)
         self.text_module3 = nn.Conv1d(in_channels=512, out_channels=256, kernel_size=3, padding=1)
         self.text_module2 = nn.Conv1d(in_channels=256, out_channels=128, kernel_size=3, padding=1)

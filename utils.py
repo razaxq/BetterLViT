@@ -267,11 +267,15 @@ class WeightedDiceBCE(nn.Module):
         dice = self.dice_loss(inputs, targets)
         BCE = self.BCE_loss(inputs, targets)
         region_loss = self.dice_weight * dice + self.BCE_weight * BCE
-        boundary = self.boundary_loss(inputs, targets)
-        dice_BCE_loss = (
-            (1.0 - self.boundary_weight) * region_loss
-            + self.boundary_weight * boundary
-        )
+        if self.boundary_weight > 0.0:
+            boundary = self.boundary_loss(inputs, targets)
+            dice_BCE_loss = (
+                (1.0 - self.boundary_weight) * region_loss
+                + self.boundary_weight * boundary
+            )
+        else:
+            boundary = inputs.new_zeros(())
+            dice_BCE_loss = region_loss
         self.last_components = {
             'region': float(region_loss.detach().item()),
             'boundary': float(boundary.detach().item()),

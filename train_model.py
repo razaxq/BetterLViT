@@ -81,30 +81,18 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
     }
 
 
-def compute_eppa_gate_stats(model):
-    """Snapshot EPPA gate stats from each decoder stage (up4..up1).
-    Returns dict[stage -> {mean, abs_mean, max, min}] of Python floats,
-    or empty dict if no EPPA-equipped UpblockAttention is found.
-    """
+def compute_eppa_stats(model):
+    """Snapshot the latest validation-time DG-EPPA statistics."""
     target = model.module if isinstance(model, nn.DataParallel) else model
     stats = {}
     for stage in ('up4', 'up3', 'up2', 'up1'):
         block = getattr(target, stage, None)
         if block is None or not hasattr(block, 'eppa'):
             continue
-        # FreqEPPA has no .gate (replaced by structural identity-init via
-        # zero-init of final layers); silently skip so the diagnostic is
-        # forward-compatible. The gate sub-table will not print when no
-        # stage produces stats.
-        if not hasattr(block.eppa, 'gate'):
+        stage_stats = getattr(block.eppa, '_last_stats', None)
+        if not stage_stats:
             continue
-        g = block.eppa.gate.detach()
-        stats[stage] = {
-            'mean': float(g.mean().item()),
-            'abs_mean': float(g.abs().mean().item()),
-            'max': float(g.max().item()),
-            'min': float(g.min().item()),
-        }
+        stats[stage] = dict(stage_stats)
     return stats
 
 
@@ -320,7 +308,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'lr': float(epoch_lr),
             'train_loss_components': train_loss_components,
             'val_loss_components': val_loss_components,
-            'gate_stats': compute_eppa_gate_stats(model),
+            'eppa_stats': compute_eppa_stats(model),
         })
 
         # =============================================================
@@ -358,29 +346,28 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 h['epoch'], h['train_loss'], h['train_dice'], h['train_iou'],
                 h['val_loss'], h['val_dice'], h['val_iou'], h['lr'], marker))
 
-        # --- EPPA Gate Sub-Table ---
-        # Skipped silently if no entry has gate_stats (e.g., resumed from a
-        # pre-diagnostic checkpoint -- those rows render as "--" so the table
-        # does not crash).
-        if any(h.get('gate_stats') for h in epoch_history):
-            logger.info('--- EPPA Gate History (mean / abs_mean / max / min per stage) ---')
-            group_hdr = '{:>5} | '.format('Epoch') + ' | '.join(
-                '{:^31}'.format(s.capitalize()) for s in ('up4', 'up3', 'up2', 'up1'))
-            stat_hdr = '{:>5} | '.format('') + ' | '.join(
-                ['{:>7} {:>7} {:>7} {:>7}'.format('mean', 'abs', 'max', 'min')] * 4)
-            logger.info(group_hdr)
-            logger.info(stat_hdr)
-            for h in epoch_history:
-                gs = h.get('gate_stats') or {}
-                cells = []
-                for stage in ('up4', 'up3', 'up2', 'up1'):
-                    s = gs.get(stage)
-                    if not s:
-                        cells.append('{:>31}'.format('--'))
-                    else:
-                        cells.append('{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}'.format(
-                            s['mean'], s['abs_mean'], s['max'], s['min']))
-                logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
+        # Current validation snapshot is persisted in epoch_history while the
+        # log stays compact instead of reprinting an O(epoch^2) stats table.
+        current_eppa_stats = epoch_history[-1].get('eppa_stats') or {}
+        if current_eppa_stats:
+            logger.info('--- DG-EPPA validation statistics ---')
+            for stage in ('up4', 'up3', 'up2', 'up1'):
+                stage_stats = current_eppa_stats.get(stage)
+                if not stage_stats:
+                    continue
+                logger.info(
+                    '{}: ca={:.4f}+/-{:.4f}, sa={:.4f}+/-{:.4f}, '
+                    'amp={:.4f}, suppress={:.4f}, guide_abs={:.4f}'.format(
+                        stage,
+                        stage_stats['channel_mean'],
+                        stage_stats['channel_std'],
+                        stage_stats['spatial_mean'],
+                        stage_stats['spatial_std'],
+                        stage_stats['spatial_amplify_ratio'],
+                        stage_stats['spatial_suppress_ratio'],
+                        stage_stats['guide_abs_mean'],
+                    )
+                )
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')

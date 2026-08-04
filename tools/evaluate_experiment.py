@@ -61,7 +61,7 @@ def latest_best_checkpoint():
         )
     )
     if not candidates:
-        raise FileNotFoundError("No boundary experiment checkpoint found.")
+        raise FileNotFoundError("No DG-EPPA experiment checkpoint found.")
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
 
@@ -304,19 +304,33 @@ def main():
         prediction_threshold=prediction_threshold,
     )
 
-    baseline = {
-        "threshold_0_5": {
-            "dice": 0.837091,
-            "iou": 0.750527,
+    baselines = {
+        "839752": {
+            "threshold_0_5": {
+                "dice": 0.837091,
+                "iou": 0.750527,
+            },
+            "validation_selected": {
+                "threshold": 0.58,
+                "dice": 0.839025,
+                "iou": 0.754068,
+            },
         },
-        "validation_selected": {
-            "threshold": 0.58,
-            "dice": 0.839025,
-            "iou": 0.754068,
+        "boundary_loss": {
+            "threshold_0_5": {
+                "dice": 0.841424,
+                "iou": 0.756196,
+            },
+            "validation_selected": {
+                "threshold": 0.608,
+                "dice": 0.842278,
+                "iou": 0.758155,
+            },
         },
     }
     result = {
         "checkpoint": str(checkpoint_path),
+        "architecture": "Decoder-Guided Multi-Scale EPPA",
         "best_epoch": int(checkpoint.get("best_epoch", -1)),
         "boundary_loss_weight": config.boundary_loss_weight,
         "validation": {
@@ -353,21 +367,24 @@ def main():
                 "iou": float(test_iou[1]),
             },
         },
-        "baseline_to_beat": baseline,
+        "baselines_to_beat": baselines,
         "calibrated_delta": {
-            "dice": float(
-                test_dice[1]
-                - baseline["validation_selected"]["dice"]
-            ),
-            "iou": float(
-                test_iou[1]
-                - baseline["validation_selected"]["iou"]
-            ),
+            name: {
+                "dice": float(
+                    test_dice[1]
+                    - values["validation_selected"]["dice"]
+                ),
+                "iou": float(
+                    test_iou[1]
+                    - values["validation_selected"]["iou"]
+                ),
+            }
+            for name, values in baselines.items()
         },
     }
     output_path = (
         checkpoint_path.parent.parent
-        / "boundary_evaluation.json"
+        / "crossgate_evaluation.json"
     )
     output_path.write_text(
         json.dumps(result, indent=2),
