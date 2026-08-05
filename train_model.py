@@ -82,7 +82,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
 
 
 def compute_eppa_stats(model):
-    """Snapshot the latest validation-time DG-EPPA statistics."""
+    """Snapshot the latest validation-time BR-DG-EPPA statistics."""
     target = model.module if isinstance(model, nn.DataParallel) else model
     stats = {}
     for stage in ('up4', 'up3', 'up2', 'up1'):
@@ -350,7 +350,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # log stays compact instead of reprinting an O(epoch^2) stats table.
         current_eppa_stats = epoch_history[-1].get('eppa_stats') or {}
         if current_eppa_stats:
-            logger.info('--- DG-EPPA validation statistics ---')
+            logger.info('--- BR-DG-EPPA validation statistics ---')
             for stage in ('up4', 'up3', 'up2', 'up1'):
                 stage_stats = current_eppa_stats.get(stage)
                 if not stage_stats:
@@ -366,6 +366,34 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         stage_stats['spatial_amplify_ratio'],
                         stage_stats['spatial_suppress_ratio'],
                         stage_stats['guide_abs_mean'],
+                    )
+                )
+                logger.info(
+                    '{} residuals: local_mean={:.3e}, global_mean={:.4f}, '
+                    'local_strength={:.4f}, global_strength={:.4f}, '
+                    'gain=[{:.4f},{:.4f}], saturation={:.4f}, '
+                    'text_film={:.4f}'.format(
+                        stage,
+                        stage_stats['spatial_local_mean'],
+                        stage_stats['spatial_global_mean'],
+                        stage_stats['local_strength_mean'],
+                        stage_stats['global_strength_mean'],
+                        stage_stats['spatial_min'],
+                        stage_stats['spatial_max'],
+                        stage_stats['spatial_saturation_ratio'],
+                        stage_stats['text_film_abs_mean'],
+                    )
+                )
+                logger.info(
+                    '{} guide_mix: entropy={:.4f}, skip={:.4f}, '
+                    'decoder={:.4f}, local_edge={:.4f}, '
+                    'context_edge={:.4f}'.format(
+                        stage,
+                        stage_stats['guide_branch_entropy'],
+                        stage_stats['guide_skip_weight'],
+                        stage_stats['guide_decoder_weight'],
+                        stage_stats['guide_local_edge_weight'],
+                        stage_stats['guide_context_edge_weight'],
                     )
                 )
 

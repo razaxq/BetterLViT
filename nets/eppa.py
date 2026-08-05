@@ -1,25 +1,26 @@
 # -*- coding: utf-8 -*-
-"""Decoder-guided frequency-routed attention for LViT skip connections."""
+"""Balanced residual decoder-guided attention for LViT skip connections."""
 
+import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
 
-class DecoderGuidedEPPA(nn.Module):
-    """Decoder-Guided Multi-Scale Edge-Preserving Pixel Attention.
+class BalancedResidualDGEPPA(nn.Module):
+    """Balanced-Residual Decoder-Guided EPPA.
 
-    Vanilla PLAM refines an encoder skip from that skip alone. FreqEPPA adds a
-    useful frequency prior, but its spatial gain still cannot distinguish a
-    task-relevant boundary from an irrelevant high-frequency structure. This
-    module injects the corresponding decoder feature as a coarse semantic
-    gating signal while retaining the frequency-routed EPPA decomposition.
+    The first DG-EPPA experiment improved over tag 839752, but its spatial
+    branch converged to near-global high-frequency suppression at three of the
+    four decoder stages. This version retains the useful frequency routing and
+    decoder semantics while constraining the attention to a residual highway.
 
-    The spatial branch fuses four signals at the skip resolution:
-    low-frequency skip semantics, decoder semantics, local edge evidence, and
-    dilated edge context. A zero-initialised output projection makes the
-    spatial gain exactly one at initialisation, so the whole module remains an
-    identity mapping at step zero.
+    A zero-mean local mask can redistribute high-frequency evidence without
+    changing its spatial mean. A separate, tightly bounded global mask can
+    still suppress noisy high frequencies when justified. Both paths use
+    learnable per-channel strengths and preserve the unmodified skip as the
+    main information highway. The spatial and channel heads are
+    zero-initialised, making the complete module an identity at step zero.
     """
 
     def __init__(
@@ -32,8 +33,23 @@ class DecoderGuidedEPPA(nn.Module):
         min_guide_channels=16,
         use_decoder_guide=True,
         use_dilated_edge=True,
+        balance_spatial=True,
+        use_text_spatial_film=True,
+        normalize_channel_descriptors=True,
+        local_strength_max=0.5,
+        global_strength_max=0.15,
+        local_strength_init=0.1,
+        global_strength_init=0.05,
     ):
         super().__init__()
+        if not 0.0 < local_strength_init < local_strength_max:
+            raise ValueError(
+                "local_strength_init must be between zero and its maximum"
+            )
+        if not 0.0 < global_strength_init < global_strength_max:
+            raise ValueError(
+                "global_strength_init must be between zero and its maximum"
+            )
         channel_bottleneck = max(
             in_channels // reduction,
             min(in_channels, min_bottleneck_channels),
@@ -86,6 +102,11 @@ class DecoderGuidedEPPA(nn.Module):
         self.text_dim = text_dim
         self.use_decoder_guide = use_decoder_guide
         self.use_dilated_edge = use_dilated_edge
+        self.balance_spatial = balance_spatial
+        self.use_text_spatial_film = use_text_spatial_film
+        self.normalize_channel_descriptors = normalize_channel_descriptors
+        self.local_strength_max = float(local_strength_max)
+        self.global_strength_max = float(global_strength_max)
         if text_dim is not None:
             self.text_channel_proj = nn.Linear(
                 text_dim,
@@ -121,10 +142,20 @@ class DecoderGuidedEPPA(nn.Module):
             dilation=2,
             bias=False,
         )
+        self.guide_branch_logits = nn.Parameter(
+            torch.zeros(4, guide_channels)
+        )
         self.guide_norm = nn.GroupNorm(
             num_groups=1,
             num_channels=guide_channels,
         )
+        if text_dim is not None:
+            self.text_spatial_film = nn.Linear(
+                text_dim,
+                guide_channels * 2,
+            )
+            nn.init.zeros_(self.text_spatial_film.weight)
+            nn.init.zeros_(self.text_spatial_film.bias)
         self.guide_activation = nn.SiLU(inplace=True)
         self.spatial_out = nn.Conv2d(
             guide_channels,
@@ -134,6 +165,21 @@ class DecoderGuidedEPPA(nn.Module):
         )
         nn.init.zeros_(self.spatial_out.weight)
         nn.init.zeros_(self.spatial_out.bias)
+
+        local_ratio = local_strength_init / local_strength_max
+        global_ratio = global_strength_init / global_strength_max
+        self.local_strength_logit = nn.Parameter(
+            torch.full(
+                (1, in_channels, 1, 1),
+                math.log(local_ratio / (1.0 - local_ratio)),
+            )
+        )
+        self.global_strength_logit = nn.Parameter(
+            torch.full(
+                (1, in_channels, 1, 1),
+                math.log(global_ratio / (1.0 - global_ratio)),
+            )
+        )
 
         self._last_stats = None
 
@@ -165,6 +211,20 @@ class DecoderGuidedEPPA(nn.Module):
 
         average_pool = skip_low.mean(dim=(2, 3))
         maximum_pool = skip_low.amax(dim=(2, 3))
+        if self.normalize_channel_descriptors:
+            descriptor_scale = math.sqrt(skip.shape[1])
+            average_pool = F.normalize(
+                average_pool,
+                p=2,
+                dim=1,
+                eps=1e-6,
+            ) * descriptor_scale
+            maximum_pool = F.normalize(
+                maximum_pool,
+                p=2,
+                dim=1,
+                eps=1e-6,
+            ) * descriptor_scale
         channel_logit = (
             self.channel_mlp(average_pool)
             + self.channel_mlp(maximum_pool)
@@ -186,29 +246,94 @@ class DecoderGuidedEPPA(nn.Module):
             ],
             dim=1,
         )
-        guide_features = (
-            self.skip_semantic_proj(skip_low)
-            + self.edge_local(edge_statistics)
+        skip_guide = self.skip_semantic_proj(skip_low)
+        decoder_guide = self.decoder_semantic_proj(decoder)
+        if not self.use_decoder_guide:
+            decoder_guide = torch.zeros_like(decoder_guide)
+        edge_local = self.edge_local(edge_statistics)
+        edge_context = self.edge_context(edge_statistics)
+        if not self.use_dilated_edge:
+            edge_context = torch.zeros_like(edge_context)
+        guide_branch_weights = torch.softmax(
+            self.guide_branch_logits,
+            dim=0,
         )
-        if self.use_decoder_guide:
+        guide_features = torch.zeros_like(skip_guide)
+        for branch_index, branch_features in enumerate(
+            (
+                skip_guide,
+                decoder_guide,
+                edge_local,
+                edge_context,
+            )
+        ):
             guide_features = (
                 guide_features
-                + self.decoder_semantic_proj(decoder)
+                + branch_features
+                * guide_branch_weights[
+                    branch_index
+                ][None, :, None, None]
             )
-        if self.use_dilated_edge:
-            guide_features = (
-                guide_features
-                + self.edge_context(edge_statistics)
-            )
-        guide_features = self.guide_activation(
-            self.guide_norm(guide_features)
-        )
-        spatial_logit = self.spatial_out(guide_features)
-        spatial_gain = 1.0 + torch.tanh(spatial_logit)
+        guide_features = self.guide_norm(guide_features)
 
+        text_film_magnitude = None
+        if (
+            text is not None
+            and self.text_dim is not None
+            and self.use_text_spatial_film
+        ):
+            film = self.text_spatial_film(text[:, 0, :])
+            film_scale, film_bias = film.chunk(2, dim=1)
+            film_scale = 0.25 * torch.tanh(film_scale)
+            film_bias = 0.25 * torch.tanh(film_bias)
+            guide_features = (
+                guide_features
+                * (1.0 + film_scale[:, :, None, None])
+                + film_bias[:, :, None, None]
+            )
+            if not self.training:
+                text_film_magnitude = (
+                    torch.cat([film_scale, film_bias], dim=1)
+                    .abs()
+                    .mean()
+                )
+
+        guide_features = self.guide_activation(guide_features)
+        spatial_logit = self.spatial_out(guide_features)
+        signed_spatial = torch.tanh(spatial_logit)
+        spatial_global = signed_spatial.mean(
+            dim=(2, 3),
+            keepdim=True,
+        )
+        if self.balance_spatial:
+            # Multiplication by 0.5 keeps the exactly zero-mean local residual
+            # in [-1, 1] because signed_spatial itself lies in [-1, 1].
+            spatial_local = 0.5 * (
+                signed_spatial - spatial_global
+            )
+        else:
+            spatial_local = signed_spatial
+
+        local_strength = (
+            self.local_strength_max
+            * torch.sigmoid(self.local_strength_logit)
+        )
+        global_strength = (
+            self.global_strength_max
+            * torch.sigmoid(self.global_strength_logit)
+        )
+        spatial_residual = (
+            spatial_local * local_strength
+            + spatial_global * global_strength
+        )
+        spatial_gain = 1.0 + spatial_residual
+
+        # Written as a residual update to make the unmodified skip an explicit
+        # information highway. At initialisation both residuals are zero.
         output = (
-            skip_low * channel_gain
-            + skip_high * spatial_gain
+            skip
+            + skip_low * (channel_gain - 1.0)
+            + skip_high * spatial_residual
         )
 
         if not self.training:
@@ -226,6 +351,12 @@ class DecoderGuidedEPPA(nn.Module):
                     "spatial_std": float(
                         spatial_gain.std().item()
                     ),
+                    "spatial_min": float(
+                        spatial_gain.amin().item()
+                    ),
+                    "spatial_max": float(
+                        spatial_gain.amax().item()
+                    ),
                     "spatial_amplify_ratio": float(
                         (spatial_gain > 1.1).float().mean().item()
                     ),
@@ -235,9 +366,56 @@ class DecoderGuidedEPPA(nn.Module):
                     "guide_abs_mean": float(
                         guide_features.abs().mean().item()
                     ),
+                    "spatial_local_mean": float(
+                        spatial_local.mean().item()
+                    ),
+                    "spatial_global_mean": float(
+                        spatial_global.mean().item()
+                    ),
+                    "local_strength_mean": float(
+                        local_strength.mean().item()
+                    ),
+                    "global_strength_mean": float(
+                        global_strength.mean().item()
+                    ),
+                    "spatial_saturation_ratio": float(
+                        (signed_spatial.abs() > 0.95)
+                        .float()
+                        .mean()
+                        .item()
+                    ),
+                    "text_film_abs_mean": (
+                        float(text_film_magnitude.item())
+                        if text_film_magnitude is not None
+                        else 0.0
+                    ),
+                    "guide_branch_entropy": float(
+                        (
+                            -guide_branch_weights
+                            * torch.log(
+                                guide_branch_weights.clamp_min(1e-8)
+                            )
+                        )
+                        .sum(dim=0)
+                        .mean()
+                        .div(math.log(4.0))
+                        .item()
+                    ),
+                    "guide_skip_weight": float(
+                        guide_branch_weights[0].mean().item()
+                    ),
+                    "guide_decoder_weight": float(
+                        guide_branch_weights[1].mean().item()
+                    ),
+                    "guide_local_edge_weight": float(
+                        guide_branch_weights[2].mean().item()
+                    ),
+                    "guide_context_edge_weight": float(
+                        guide_branch_weights[3].mean().item()
+                    ),
                 }
         return output
 
 
 # Keep the public name used by the existing LViT import path.
-EPPA = DecoderGuidedEPPA
+EPPA = BalancedResidualDGEPPA

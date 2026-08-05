@@ -61,7 +61,7 @@ def latest_best_checkpoint():
         )
     )
     if not candidates:
-        raise FileNotFoundError("No DG-EPPA experiment checkpoint found.")
+        raise FileNotFoundError("No BR-DG-EPPA experiment checkpoint found.")
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
 
@@ -330,7 +330,7 @@ def main():
     }
     result = {
         "checkpoint": str(checkpoint_path),
-        "architecture": "Decoder-Guided Multi-Scale EPPA",
+        "architecture": "Balanced-Residual Decoder-Guided EPPA",
         "best_epoch": int(checkpoint.get("best_epoch", -1)),
         "boundary_loss_weight": config.boundary_loss_weight,
         "validation": {
@@ -384,7 +384,7 @@ def main():
     }
     output_path = (
         checkpoint_path.parent.parent
-        / "crossgate_evaluation.json"
+        / "balanced_crossgate_evaluation.json"
     )
     output_path.write_text(
         json.dumps(result, indent=2),
