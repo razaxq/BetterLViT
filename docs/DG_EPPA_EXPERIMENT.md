@@ -79,6 +79,32 @@ evaluates all 2,113 test images. The architecture must first beat tag `839752`
 secondary target is the boundary-loss model (`Dice 0.842278`,
 `IoU 0.758155`).
 
+## Final result
+
+Training stopped normally at epoch 181 after 81 validation epochs without a
+new best score. The best checkpoint was epoch 100. Boundary supervision
+remained disabled for the complete run.
+
+| Split | Threshold | Dice | IoU |
+| --- | ---: | ---: | ---: |
+| Validation | 0.500 | 0.821840 | 0.724290 |
+| Validation | 0.512 (selected on validation) | 0.821923 | 0.724485 |
+| Test | 0.500 | 0.841424 | 0.755901 |
+| Test | 0.512 (locked before test) | 0.841512 | 0.756163 |
+
+At the default threshold, DG-EPPA improves over tag `839752` by `+0.004333`
+Dice and `+0.005374` IoU. At the validation-selected threshold, it improves
+over the calibrated `839752` result by `+0.002487` Dice and `+0.002095` IoU.
+It does not surpass the boundary-loss model: the calibrated result is lower by
+`0.000766` Dice and `0.001992` IoU.
+
+The final diagnostics show that the first design mainly learned spatial
+suppression. The suppression ratios for `up4`, `up3`, and `up1` were 0.9281,
+0.9035, and 0.9923, while their amplification ratios were only 0.0332, 0.0473,
+and 0.0000. `up2` remained close to an identity spatial gate. This motivates a
+second version with explicitly bounded residual modulation and independent
+per-scale gate strength.
+
 ## Commands
 
 ```powershell
