@@ -37,6 +37,80 @@ class WeightedBCE(nn.Module):
         return loss
 
 
+class BalancedBinaryFocalLoss(nn.Module):
+    """Binary focal loss with independent foreground/background averaging."""
+
+    def __init__(
+        self,
+        gamma=2.0,
+        positive_weight=0.5,
+        negative_weight=0.5,
+        eps=1e-6,
+    ):
+        super().__init__()
+        if gamma < 0.0:
+            raise ValueError("focal gamma must be non-negative")
+        if positive_weight < 0.0 or negative_weight < 0.0:
+            raise ValueError("focal class weights must be non-negative")
+        if positive_weight + negative_weight <= 0.0:
+            raise ValueError("at least one focal class weight is required")
+        self.gamma = float(gamma)
+        self.positive_weight = float(positive_weight)
+        self.negative_weight = float(negative_weight)
+        self.eps = float(eps)
+
+    def forward(self, inputs, targets):
+        if targets.ndim == inputs.ndim - 1:
+            targets = targets.unsqueeze(1)
+        if inputs.shape != targets.shape:
+            raise ValueError(
+                "focal loss shape mismatch: "
+                f"{tuple(inputs.shape)} != {tuple(targets.shape)}"
+            )
+        probabilities = inputs.clamp(
+            min=self.eps,
+            max=1.0 - self.eps,
+        )
+        targets = targets.float()
+        cross_entropy = F.binary_cross_entropy(
+            probabilities,
+            targets,
+            reduction="none",
+        )
+        correct_class_probability = (
+            probabilities * targets
+            + (1.0 - probabilities) * (1.0 - targets)
+        )
+        focal = (
+            (1.0 - correct_class_probability).pow(self.gamma)
+            * cross_entropy
+        )
+
+        positive_mask = targets > 0.5
+        negative_mask = ~positive_mask
+        positive_count = positive_mask.sum()
+        negative_count = negative_mask.sum()
+        positive_mean = (
+            (focal * positive_mask).sum()
+            / positive_count.clamp_min(1)
+        )
+        negative_mean = (
+            (focal * negative_mask).sum()
+            / negative_count.clamp_min(1)
+        )
+        positive_active = (positive_count > 0).to(focal.dtype)
+        negative_active = (negative_count > 0).to(focal.dtype)
+        weighted_loss = (
+            self.positive_weight * positive_active * positive_mean
+            + self.negative_weight * negative_active * negative_mean
+        )
+        active_weight = (
+            self.positive_weight * positive_active
+            + self.negative_weight * negative_active
+        )
+        return weighted_loss / active_weight.clamp_min(self.eps)
+
+
 class WeightedDiceLoss(nn.Module):
     def __init__(self, weights=[0.5, 0.5]):  # W_pos=0.8, W_neg=0.2
         super(WeightedDiceLoss, self).__init__()
@@ -184,6 +258,56 @@ class WeightedDiceBCE_unsup(nn.Module):
         dice_BCE_loss = self.dice_weight * dice + self.BCE_weight * BCE + 0.1 * LV_loss
 
         return dice_BCE_loss
+
+
+class WeightedDiceFocal(nn.Module):
+    """Dice overlap plus focal hard-pixel supervision; no boundary term."""
+
+    def __init__(
+        self,
+        dice_weight=0.5,
+        focal_weight=0.5,
+        focal_gamma=2.0,
+        focal_positive_weight=0.5,
+        focal_negative_weight=0.5,
+    ):
+        super().__init__()
+        if dice_weight < 0.0 or focal_weight < 0.0:
+            raise ValueError("loss weights must be non-negative")
+        if dice_weight + focal_weight <= 0.0:
+            raise ValueError("at least one loss term is required")
+        weight_sum = dice_weight + focal_weight
+        self.dice_weight = float(dice_weight / weight_sum)
+        self.focal_weight = float(focal_weight / weight_sum)
+        self.dice_loss = WeightedDiceLoss(weights=[0.5, 0.5])
+        self.focal_loss = BalancedBinaryFocalLoss(
+            gamma=focal_gamma,
+            positive_weight=focal_positive_weight,
+            negative_weight=focal_negative_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        predictions = (inputs >= 0.5).float()
+        binary_targets = (targets > 0.0).float()
+        return 1.0 - self.dice_loss(
+            predictions,
+            binary_targets,
+        )
+
+    def forward(self, inputs, targets):
+        dice = self.dice_loss(inputs, targets)
+        focal = self.focal_loss(inputs, targets)
+        total = (
+            self.dice_weight * dice
+            + self.focal_weight * focal
+        )
+        self.last_components = {
+            "dice": float(dice.detach().item()),
+            "focal": float(focal.detach().item()),
+            "total": float(total.detach().item()),
+        }
+        return total
 
 
 class BoundaryDiceLoss(nn.Module):

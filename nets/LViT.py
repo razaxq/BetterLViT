@@ -60,9 +60,10 @@ class UpblockAttention(nn.Module):
     def __init__(self, in_channels, out_channels, nb_Conv,
                  activation='ReLU', text_dim=None, min_bottleneck_channels=8,
                  use_decoder_guide=True, use_dilated_edge=True,
-                 balance_spatial=True, use_text_spatial_film=True,
+                 use_text_pixel_film=True,
                  normalize_channel_descriptors=True,
-                 local_strength_max=0.5, global_strength_max=0.15):
+                 channel_strength_max=0.5,
+                 pixel_strength_max=0.35, edge_strength_max=0.5):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -74,13 +75,13 @@ class UpblockAttention(nn.Module):
             min_bottleneck_channels=min_bottleneck_channels,
             use_decoder_guide=use_decoder_guide,
             use_dilated_edge=use_dilated_edge,
-            balance_spatial=balance_spatial,
-            use_text_spatial_film=use_text_spatial_film,
+            use_text_pixel_film=use_text_pixel_film,
             normalize_channel_descriptors=(
                 normalize_channel_descriptors
             ),
-            local_strength_max=local_strength_max,
-            global_strength_max=global_strength_max,
+            channel_strength_max=channel_strength_max,
+            pixel_strength_max=pixel_strength_max,
+            edge_strength_max=edge_strength_max,
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
@@ -134,14 +135,9 @@ class LViT(nn.Module):
             'eppa_use_dilated_edge',
             True,
         )
-        EPPA_BALANCE_SPATIAL = getattr(
+        EPPA_USE_TEXT_PIXEL_FILM = getattr(
             config,
-            'eppa_balance_spatial',
-            True,
-        )
-        EPPA_USE_TEXT_SPATIAL_FILM = getattr(
-            config,
-            'eppa_use_text_spatial_film',
+            'eppa_use_text_pixel_film',
             True,
         )
         EPPA_NORMALIZE_CHANNEL_DESCRIPTORS = getattr(
@@ -149,27 +145,32 @@ class LViT(nn.Module):
             'eppa_normalize_channel_descriptors',
             True,
         )
-        EPPA_LOCAL_STRENGTH_MAX = getattr(
+        EPPA_CHANNEL_STRENGTH_MAX = getattr(
             config,
-            'eppa_local_strength_max',
+            'eppa_channel_strength_max',
             0.5,
         )
-        EPPA_GLOBAL_STRENGTH_MAX = getattr(
+        EPPA_PIXEL_STRENGTH_MAX = getattr(
             config,
-            'eppa_global_strength_max',
-            0.15,
+            'eppa_pixel_strength_max',
+            0.35,
+        )
+        EPPA_EDGE_STRENGTH_MAX = getattr(
+            config,
+            'eppa_edge_strength_max',
+            0.5,
         )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
             'use_dilated_edge': EPPA_USE_DILATED_EDGE,
-            'balance_spatial': EPPA_BALANCE_SPATIAL,
-            'use_text_spatial_film': EPPA_USE_TEXT_SPATIAL_FILM,
+            'use_text_pixel_film': EPPA_USE_TEXT_PIXEL_FILM,
             'normalize_channel_descriptors': (
                 EPPA_NORMALIZE_CHANNEL_DESCRIPTORS
             ),
-            'local_strength_max': EPPA_LOCAL_STRENGTH_MAX,
-            'global_strength_max': EPPA_GLOBAL_STRENGTH_MAX,
+            'channel_strength_max': EPPA_CHANNEL_STRENGTH_MAX,
+            'pixel_strength_max': EPPA_PIXEL_STRENGTH_MAX,
+            'edge_strength_max': EPPA_EDGE_STRENGTH_MAX,
         }
         self.up4 = UpblockAttention(
             in_channels * 16,

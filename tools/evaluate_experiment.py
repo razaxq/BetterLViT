@@ -61,7 +61,7 @@ def latest_best_checkpoint():
         )
     )
     if not candidates:
-        raise FileNotFoundError("No BR-DG-EPPA experiment checkpoint found.")
+        raise FileNotFoundError("No BetterLViT experiment checkpoint found.")
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
 
@@ -327,12 +327,39 @@ def main():
                 "iou": 0.758155,
             },
         },
+        "dg_eppa_v1": {
+            "threshold_0_5": {
+                "dice": 0.841424,
+                "iou": 0.755901,
+            },
+            "validation_selected": {
+                "threshold": 0.512,
+                "dice": 0.841512,
+                "iou": 0.756163,
+            },
+        },
+        "br_dg_eppa_v2": {
+            "threshold_0_5": {
+                "dice": 0.8363975942502839,
+                "iou": 0.7501020239160945,
+            },
+            "validation_selected": {
+                "threshold": 0.542,
+                "dice": 0.8370015853060114,
+                "iou": 0.7514141235748568,
+            },
+        },
     }
     result = {
         "checkpoint": str(checkpoint_path),
-        "architecture": "Balanced-Residual Decoder-Guided EPPA",
+        "architecture": getattr(
+            config,
+            "experiment_architecture",
+            "EPPA",
+        ),
         "best_epoch": int(checkpoint.get("best_epoch", -1)),
         "boundary_loss_weight": config.boundary_loss_weight,
+        "loss_name": getattr(config, "loss_name", "dice_bce"),
         "validation": {
             "samples": len(validation_dataset),
             "threshold_0_5": {
@@ -384,7 +411,11 @@ def main():
     }
     output_path = (
         checkpoint_path.parent.parent
-        / "balanced_crossgate_evaluation.json"
+        / getattr(
+            config,
+            "experiment_output_name",
+            "experiment_evaluation.json",
+        )
     )
     output_path.write_text(
         json.dumps(result, indent=2),

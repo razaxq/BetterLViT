@@ -1,4 +1,4 @@
-"""Run identity, balance, gradient, and AMD checks for BR-DG-EPPA."""
+"""Run identity, focal-loss, gradient, and AMD checks for PLAM-EPPA."""
 
 import os
 import sys
@@ -15,7 +15,7 @@ from torchvision import transforms
 import Config as config
 from Load_Dataset import ImageToImage2D, RandomGenerator
 from nets.BetterLViT import BetterLViT
-from utils import WeightedDiceBCE, read_text
+from utils import WeightedDiceFocal, read_text
 
 
 def build_model():
@@ -53,15 +53,17 @@ def check_identity_initialisation(model):
     maximum_error = (refined - skip).abs().max().item()
     if maximum_error > 1e-6:
         raise RuntimeError(
-            "BR-DG-EPPA is not identity-initialised: "
+            "PLAM-guided EPPA is not identity-initialised: "
             f"max error={maximum_error}"
         )
     stats = module._last_stats
     if stats is None:
-        raise RuntimeError("BR-DG-EPPA did not expose evaluation statistics")
+        raise RuntimeError(
+            "PLAM-guided EPPA did not expose evaluation statistics"
+        )
     if abs(stats["spatial_local_mean"]) > 1e-6:
         raise RuntimeError(
-            "Balanced spatial residual is not zero mean: "
+            "Initial pixel residual is not zero: "
             f"{stats['spatial_local_mean']}"
         )
     if abs(stats["spatial_mean"] - 1.0) > 1e-6:
@@ -73,7 +75,7 @@ def check_identity_initialisation(model):
     return maximum_error, stats
 
 
-def check_balanced_invariants(model):
+def check_normalized_invariants(model):
     module = model.up1.eppa.cuda().eval()
     skip = torch.randn(2, 64, 24, 24, device="cuda")
     decoder = torch.randn_like(skip)
@@ -81,19 +83,19 @@ def check_balanced_invariants(model):
     with torch.inference_mode():
         module(skip, decoder=decoder, text=text)
     stats = module._last_stats
-    if abs(stats["spatial_local_mean"]) > 1e-6:
+    if abs(stats["low_pass_kernel_sum"] - 1.0) > 1e-6:
         raise RuntimeError(
-            "Trained local spatial residual lost its zero-mean invariant"
+            "Normalized low-pass kernel does not sum to one"
         )
     theoretical_minimum = (
         1.0
-        - module.local_strength_max
-        - module.global_strength_max
+        - module.pixel_strength_max
+        - module.edge_strength_max
     )
     theoretical_maximum = (
         1.0
-        + module.local_strength_max
-        + module.global_strength_max
+        + module.pixel_strength_max
+        + module.edge_strength_max
     )
     if (
         stats["spatial_min"] < theoretical_minimum - 1e-6
@@ -124,8 +126,12 @@ def main():
         raise RuntimeError("An AMD ROCm PyTorch environment is required.")
     if config.boundary_loss_weight != 0.0:
         raise RuntimeError(
-            "Architecture experiment must disable boundary loss."
+            "PLAM-focal experiment must disable boundary loss."
         )
+    if config.loss_name != "dice_focal":
+        raise RuntimeError("PLAM-focal experiment must use dice_focal.")
+    if config.resume_path:
+        raise RuntimeError("New architecture must train from scratch.")
 
     text = read_text(
         os.path.join(config.task_dataset, "Train_Val_text.xlsx")
@@ -163,11 +169,12 @@ def main():
         raise RuntimeError("Dead PLAM modules are still registered.")
     identity_error, initial_stats = check_identity_initialisation(model)
 
-    criterion = WeightedDiceBCE(
-        dice_weight=0.5,
-        BCE_weight=0.5,
-        boundary_weight=config.boundary_loss_weight,
-        boundary_kernel_size=config.boundary_kernel_size,
+    criterion = WeightedDiceFocal(
+        dice_weight=config.dice_loss_weight,
+        focal_weight=config.focal_loss_weight,
+        focal_gamma=config.focal_gamma,
+        focal_positive_weight=config.focal_positive_weight,
+        focal_negative_weight=config.focal_negative_weight,
     )
     optimizer = torch.optim.Adam(
         (
@@ -191,37 +198,41 @@ def main():
             model.outc.weight,
         )
         require_finite_nonzero_gradient(
-            "BR-DG-EPPA spatial head",
-            model.up1.eppa.spatial_out.weight,
+            "PLAM pixel head",
+            model.up1.eppa.pixel_mlp[-1].weight,
         )
         require_finite_nonzero_gradient(
-            "BR-DG-EPPA channel head",
+            "EPPA edge head",
+            model.up1.eppa.edge_out.weight,
+        )
+        require_finite_nonzero_gradient(
+            "EPPA channel head",
             model.up1.eppa.channel_mlp[-1].weight,
         )
         if step == 2:
             require_finite_nonzero_gradient(
-                "BR-DG-EPPA decoder guide",
+                "PLAM decoder guide",
                 model.up1.eppa.decoder_semantic_proj.weight,
             )
             require_finite_nonzero_gradient(
-                "BR-DG-EPPA dilated edge branch",
+                "EPPA dilated edge branch",
                 model.up1.eppa.edge_context.weight,
             )
             require_finite_nonzero_gradient(
-                "BR-DG-EPPA guide branch weights",
-                model.up1.eppa.guide_branch_logits,
+                "PLAM pixel strength",
+                model.up1.eppa.pixel_strength_logit,
             )
             require_finite_nonzero_gradient(
-                "BR-DG-EPPA local strength",
-                model.up1.eppa.local_strength_logit,
+                "EPPA edge strength",
+                model.up1.eppa.edge_strength_logit,
             )
             require_finite_nonzero_gradient(
-                "BR-DG-EPPA global strength",
-                model.up1.eppa.global_strength_logit,
+                "Normalized low-pass kernel",
+                model.up1.eppa.low_pass.kernel_logits,
             )
             require_finite_nonzero_gradient(
-                "BR-DG-EPPA spatial text FiLM",
-                model.up1.eppa.text_spatial_film.weight,
+                "PLAM text FiLM",
+                model.up1.eppa.text_pixel_film.weight,
             )
         if not torch.isfinite(loss):
             raise RuntimeError("Objective produced a non-finite loss")
@@ -232,7 +243,7 @@ def main():
             flush=True,
         )
 
-    trained_stats = check_balanced_invariants(model)
+    trained_stats = check_normalized_invariants(model)
     torch.cuda.synchronize()
     trainable_parameters = sum(
         parameter.numel()
@@ -249,11 +260,11 @@ def main():
     print("Prediction:", tuple(predictions.shape))
     print(f"Identity max error: {identity_error:.3e}")
     print(f"Trainable parameters: {trainable_parameters:,}")
-    print(f"BR-DG-EPPA parameters: {eppa_parameters:,}")
+    print(f"PLAM-guided EPPA parameters: {eppa_parameters:,}")
     print(
         "Initial residual strengths: "
-        f"local={initial_stats['local_strength_mean']:.4f}, "
-        f"global={initial_stats['global_strength_mean']:.4f}"
+        f"pixel={initial_stats['local_strength_mean']:.4f}, "
+        f"edge={initial_stats['global_strength_mean']:.4f}"
     )
     print(
         "Post-step spatial gain range: "
@@ -264,7 +275,12 @@ def main():
         "Peak GPU memory: "
         f"{torch.cuda.max_memory_allocated() / 1024 ** 3:.2f} GiB"
     )
-    print("BR-DG-EPPA architecture check passed.")
+    print(
+        "Low-pass kernel: "
+        f"sum={trained_stats['low_pass_kernel_sum']:.6f}, "
+        f"entropy={trained_stats['low_pass_kernel_entropy']:.4f}"
+    )
+    print("PLAM-guided EPPA focal-loss check passed.")
 
 
 if __name__ == "__main__":

@@ -33,10 +33,18 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 num_workers = 4
 persistent_workers = True
 
-# Architecture-only BR-DG-EPPA experiment. Boundary supervision is deliberately
-# disabled so any metric change can be attributed to the model architecture.
+# PLAM-guided normalized EPPA + focal-region experiment. Boundary supervision
+# remains disabled; this run uses only overlap and hard-pixel region terms.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
+loss_name = 'dice_focal'
+dice_loss_weight = 0.5
+focal_loss_weight = 0.5
+focal_gamma = 2.0
+focal_positive_weight = 0.5
+focal_negative_weight = 0.5
+experiment_architecture = 'PLAM-Guided Normalized EPPA'
+experiment_output_name = 'plam_focal_evaluation.json'
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -100,15 +108,14 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
-    # BR-DG-EPPA structural ablation switches. Parameters remain registered so
-    # checkpoints keep a stable state_dict shape across ablations.
+    # PLAM-guided normalized EPPA structural switches.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
-    config.eppa_balance_spatial = True
-    config.eppa_use_text_spatial_film = True
+    config.eppa_use_text_pixel_film = True
     config.eppa_normalize_channel_descriptors = True
-    config.eppa_local_strength_max = 0.5
-    config.eppa_global_strength_max = 0.15
+    config.eppa_channel_strength_max = 0.5
+    config.eppa_pixel_strength_max = 0.35
+    config.eppa_edge_strength_max = 0.5
     return config
 
 

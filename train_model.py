@@ -16,7 +16,12 @@ import Config as config
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
+from utils import (
+    CosineAnnealingWarmRestarts,
+    WeightedDiceBCE,
+    WeightedDiceFocal,
+    read_text,
+)
 
 
 def bark_notify(body, title="训练通知"):
@@ -82,7 +87,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
 
 
 def compute_eppa_stats(model):
-    """Snapshot the latest validation-time BR-DG-EPPA statistics."""
+    """Snapshot the latest validation-time EPPA statistics."""
     target = model.module if isinstance(model, nn.DataParallel) else model
     stats = {}
     for stage in ('up4', 'up3', 'up2', 'up1'):
@@ -208,11 +213,35 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
-    criterion = WeightedDiceBCE(
-        dice_weight=0.5,
-        BCE_weight=0.5,
-        boundary_weight=config.boundary_loss_weight,
-        boundary_kernel_size=config.boundary_kernel_size,
+    configured_loss = getattr(config, 'loss_name', 'dice_bce')
+    if configured_loss == 'dice_focal':
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError(
+                'dice_focal requires boundary_loss_weight=0.0'
+            )
+        criterion = WeightedDiceFocal(
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif configured_loss == 'dice_bce':
+        criterion = WeightedDiceBCE(
+            dice_weight=0.5,
+            BCE_weight=0.5,
+            boundary_weight=config.boundary_loss_weight,
+            boundary_kernel_size=config.boundary_kernel_size,
+        )
+    else:
+        raise ValueError(
+            'Unsupported loss_name: {}'.format(configured_loss)
+        )
+    logger.info(
+        'Objective: {} (boundary_weight={:.1f})'.format(
+            configured_loss,
+            config.boundary_loss_weight,
+        )
     )
     optimizer = torch.optim.Adam(
         filter(lambda p: p.requires_grad, model.parameters()),
@@ -350,7 +379,15 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # log stays compact instead of reprinting an O(epoch^2) stats table.
         current_eppa_stats = epoch_history[-1].get('eppa_stats') or {}
         if current_eppa_stats:
-            logger.info('--- BR-DG-EPPA validation statistics ---')
+            logger.info(
+                '--- {} validation statistics ---'.format(
+                    getattr(
+                        config,
+                        'experiment_architecture',
+                        'EPPA',
+                    )
+                )
+            )
             for stage in ('up4', 'up3', 'up2', 'up1'):
                 stage_stats = current_eppa_stats.get(stage)
                 if not stage_stats:
@@ -396,6 +433,22 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         stage_stats['guide_context_edge_weight'],
                     )
                 )
+                if 'low_pass_kernel_sum' in stage_stats:
+                    logger.info(
+                        '{} plam_frequency: pixel_std={:.4f}, '
+                        'edge_std={:.4f}, support={:.4f}, '
+                        'kernel_sum={:.4f}, kernel_entropy={:.4f}, '
+                        'kernel_center={:.4f}, kernel_delta={:.4e}'.format(
+                            stage,
+                            stage_stats['pixel_residual_std'],
+                            stage_stats['edge_residual_std'],
+                            stage_stats['semantic_support_mean'],
+                            stage_stats['low_pass_kernel_sum'],
+                            stage_stats['low_pass_kernel_entropy'],
+                            stage_stats['low_pass_kernel_center'],
+                            stage_stats['low_pass_kernel_delta_abs'],
+                        )
+                    )
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')
