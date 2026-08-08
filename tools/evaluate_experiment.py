@@ -244,6 +244,22 @@ def main():
         else latest_best_checkpoint().resolve()
     )
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
+    expected_architecture = getattr(
+        config,
+        "experiment_architecture_version",
+        None,
+    )
+    checkpoint_architecture = checkpoint.get("architecture_version")
+    if (
+        getattr(config, "require_checkpoint_architecture_match", False)
+        and checkpoint_architecture != expected_architecture
+    ):
+        raise RuntimeError(
+            "Checkpoint architecture mismatch: expected {!r}, found {!r}".format(
+                expected_architecture,
+                checkpoint_architecture,
+            )
+        )
     model = build_model()
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
@@ -352,11 +368,11 @@ def main():
     }
     result = {
         "checkpoint": str(checkpoint_path),
-        "architecture": getattr(
-            config,
-            "experiment_architecture",
-            "EPPA",
+        "architecture": checkpoint.get(
+            "architecture",
+            getattr(config, "experiment_architecture", "EPPA"),
         ),
+        "architecture_version": checkpoint_architecture,
         "best_epoch": int(checkpoint.get("best_epoch", -1)),
         "boundary_loss_weight": config.boundary_loss_weight,
         "loss_name": getattr(config, "loss_name", "dice_bce"),

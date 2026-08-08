@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""PLAM-guided, normalized frequency routing for LViT skip connections."""
+"""Frequency-aligned PLAM-guided skip refinement for BetterLViT."""
 
 import math
 
@@ -8,55 +8,118 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 
-class NormalizedLowPass(nn.Module):
-    """Per-channel non-negative 3x3 kernels constrained to sum to one."""
+class FixedHaarFrequencySplit(nn.Module):
+    """Exactly decompose a feature map into Haar low/high reconstructions.
+
+    The filters are fixed buffers rather than trainable logits. Consequently,
+    weight decay cannot turn the decomposition into the uniform 3x3 averaging
+    kernel observed in the previous normalized-EPPA experiment.
+    """
 
     def __init__(self, channels):
         super().__init__()
-        gaussian = torch.tensor(
+        filters = torch.tensor(
             [
-                [1.0, 2.0, 1.0],
-                [2.0, 4.0, 2.0],
-                [1.0, 2.0, 1.0],
+                [[1.0, 1.0], [1.0, 1.0]],
+                [[-1.0, -1.0], [1.0, 1.0]],
+                [[-1.0, 1.0], [-1.0, 1.0]],
+                [[1.0, -1.0], [-1.0, 1.0]],
             ],
             dtype=torch.float32,
-        ) / 16.0
-        initial_kernel = gaussian.view(1, 1, 3, 3)
-        self.kernel_logits = nn.Parameter(
-            initial_kernel.log().expand(channels, 1, 3, 3).clone()
+        ).unsqueeze(1) / 2.0
+        self.register_buffer(
+            "filters",
+            filters.repeat(channels, 1, 1, 1),
         )
-        self.register_buffer("initial_kernel", initial_kernel)
-        self.channels = channels
+        self.channels = int(channels)
 
-    def kernel(self):
-        return torch.softmax(
-            self.kernel_logits.flatten(2),
-            dim=-1,
-        ).view(self.channels, 1, 3, 3)
-
-    def forward(self, inputs):
-        padded = F.pad(inputs, (1, 1, 1, 1), mode="reflect")
-        return F.conv2d(
-            padded,
-            self.kernel(),
+    def _analysis(self, inputs):
+        height, width = inputs.shape[-2:]
+        pad_height = height % 2
+        pad_width = width % 2
+        if pad_height or pad_width:
+            inputs = F.pad(
+                inputs,
+                (0, pad_width, 0, pad_height),
+                mode="replicate",
+            )
+        coefficients = F.conv2d(
+            inputs,
+            self.filters,
+            stride=2,
             groups=self.channels,
         )
+        batch, _, coeff_height, coeff_width = coefficients.shape
+        coefficients = coefficients.view(
+            batch,
+            self.channels,
+            4,
+            coeff_height,
+            coeff_width,
+        )
+        return coefficients, (height, width)
+
+    def _synthesis(self, coefficients, output_size):
+        batch, channels, bands, height, width = coefficients.shape
+        if channels != self.channels or bands != 4:
+            raise ValueError(
+                "Expected Haar coefficients [B, {}, 4, H, W], got {}".format(
+                    self.channels,
+                    tuple(coefficients.shape),
+                )
+            )
+        reconstructed = F.conv_transpose2d(
+            coefficients.reshape(batch, channels * bands, height, width),
+            self.filters,
+            stride=2,
+            groups=self.channels,
+        )
+        output_height, output_width = output_size
+        return reconstructed[:, :, :output_height, :output_width]
+
+    def forward(self, inputs):
+        if inputs.shape[1] != self.channels:
+            raise ValueError(
+                "Expected {} channels, got {}".format(
+                    self.channels,
+                    inputs.shape[1],
+                )
+            )
+        coefficients, output_size = self._analysis(inputs)
+        low_coefficients = torch.zeros_like(coefficients)
+        low_coefficients[:, :, 0] = coefficients[:, :, 0]
+        high_coefficients = coefficients - low_coefficients
+        low = self._synthesis(low_coefficients, output_size)
+        high = self._synthesis(high_coefficients, output_size)
+        return low, high
 
 
-class PLAMGuidedNormalizedEPPA(nn.Module):
-    """Pixel-semantic and frequency-residual attention with identity init.
+def _strength_logit(initial, maximum, floor=0.0):
+    if not floor <= initial < maximum:
+        raise ValueError(
+            "Strength initial value must satisfy floor <= initial < maximum"
+        )
+    ratio = (initial - floor) / (maximum - floor)
+    ratio = min(max(ratio, 1e-4), 1.0 - 1e-4)
+    return math.log(ratio / (1.0 - ratio))
 
-    The BR-DG-EPPA experiment showed that a four-way static softmax stayed
-    almost uniform while the shallow spatial paths collapsed. This version
-    removes that competition. A PLAM-inspired semantic path receives the skip,
-    decoder and text features, while a separate EPPA path models local and
-    contextual high-frequency evidence. Each path owns a direct zero-initialised
-    output head, so useful gradients are not mediated by a shared branch gate.
 
-    The frequency decomposition is constrained: every depthwise low-pass
-    kernel remains non-negative and sums to one throughout training. The full
-    block is exactly the identity at initialisation.
+class FAMHaarEPPA(nn.Module):
+    """FAM-EPPA V4-A: separated PLAM semantics and stable Haar detail.
+
+    Raw CNN, PLAM and decoder features remain separate until this block. The
+    raw skip is decomposed by a fixed, exactly reconstructing Haar transform.
+    Its low-frequency component feeds the semantic/channel path, while its
+    high-frequency component owns a direct additive residual path with a small
+    non-zero floor. PLAM contributes only its low-frequency reconstruction as a
+    semantic residual, avoiding the irreversible pre-EPPA addition used by V3.
+
+    V4-A intentionally retains the existing CLS-token FiLM and same-scale
+    decoder guide. Token-level LFFI, adaptive filters and cross-scale routing
+    belong to later, separately measurable ablations.
     """
+
+    architecture_version = "fam_eppa_v4a"
 
     def __init__(
         self,
@@ -72,20 +135,16 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
         normalize_channel_descriptors=True,
         channel_strength_max=0.5,
         pixel_strength_max=0.35,
-        edge_strength_max=0.5,
-        pixel_strength_init=0.1,
-        edge_strength_init=0.15,
+        edge_strength_max=0.30,
+        pixel_strength_init=0.10,
+        edge_strength_init=0.10,
+        use_plam_guide=True,
+        plam_strength_max=1.25,
+        plam_strength_init=1.0,
+        plam_strength_floor=0.25,
+        detail_strength_floor=0.02,
     ):
         super().__init__()
-        if not 0.0 < pixel_strength_init < pixel_strength_max:
-            raise ValueError(
-                "pixel_strength_init must be between zero and its maximum"
-            )
-        if not 0.0 < edge_strength_init < edge_strength_max:
-            raise ValueError(
-                "edge_strength_init must be between zero and its maximum"
-            )
-
         channel_bottleneck = max(
             in_channels // reduction,
             min(in_channels, min_bottleneck_channels),
@@ -96,42 +155,43 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
         )
         pixel_hidden = max(8, guide_channels // 2)
 
-        self.low_pass = NormalizedLowPass(in_channels)
-        self.channel_mlp = nn.Sequential(
-            nn.Linear(
-                in_channels,
-                channel_bottleneck,
-                bias=False,
-            ),
-            nn.SiLU(inplace=True),
-            nn.Linear(
-                channel_bottleneck,
-                in_channels,
-                bias=False,
-            ),
-        )
-        nn.init.zeros_(self.channel_mlp[-1].weight)
-
+        self.in_channels = int(in_channels)
         self.text_dim = text_dim
-        self.use_decoder_guide = use_decoder_guide
-        self.use_dilated_edge = use_dilated_edge
-        self.use_text_pixel_film = use_text_pixel_film
-        self.normalize_channel_descriptors = (
+        self.use_decoder_guide = bool(use_decoder_guide)
+        self.use_dilated_detail = bool(use_dilated_edge)
+        self.use_text_pixel_film = bool(use_text_pixel_film)
+        self.use_plam_guide = bool(use_plam_guide)
+        self.normalize_channel_descriptors = bool(
             normalize_channel_descriptors
         )
         self.channel_strength_max = float(channel_strength_max)
-        self.pixel_strength_max = float(pixel_strength_max)
-        self.edge_strength_max = float(edge_strength_max)
+        self.region_strength_max = float(pixel_strength_max)
+        self.detail_strength_max = float(edge_strength_max)
+        self.detail_strength_floor = float(detail_strength_floor)
+        self.plam_strength_max = float(plam_strength_max)
+        self.plam_strength_floor = float(plam_strength_floor)
+
+        self.frequency_split = FixedHaarFrequencySplit(in_channels)
+
+        self.channel_mlp = nn.Sequential(
+            nn.Linear(in_channels, channel_bottleneck, bias=False),
+            nn.SiLU(inplace=True),
+            nn.Linear(channel_bottleneck, in_channels, bias=False),
+        )
+        nn.init.zeros_(self.channel_mlp[-1].weight)
 
         if text_dim is not None:
-            self.text_channel_proj = nn.Linear(
-                text_dim,
-                in_channels,
-            )
+            self.text_channel_proj = nn.Linear(text_dim, in_channels)
             nn.init.zeros_(self.text_channel_proj.weight)
             nn.init.zeros_(self.text_channel_proj.bias)
 
         self.skip_semantic_proj = nn.Conv2d(
+            in_channels,
+            guide_channels,
+            kernel_size=1,
+            bias=False,
+        )
+        self.plam_semantic_proj = nn.Conv2d(
             in_channels,
             guide_channels,
             kernel_size=1,
@@ -143,14 +203,10 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
             kernel_size=1,
             bias=False,
         )
-        self.skip_semantic_norm = nn.GroupNorm(
-            num_groups=1,
-            num_channels=guide_channels,
-        )
-        self.decoder_semantic_norm = nn.GroupNorm(
-            num_groups=1,
-            num_channels=guide_channels,
-        )
+        self.skip_semantic_norm = nn.GroupNorm(1, guide_channels)
+        self.plam_semantic_norm = nn.GroupNorm(1, guide_channels)
+        self.decoder_semantic_norm = nn.GroupNorm(1, guide_channels)
+
         if text_dim is not None:
             self.text_pixel_film = nn.Linear(
                 text_dim,
@@ -159,80 +215,119 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
             nn.init.zeros_(self.text_pixel_film.weight)
             nn.init.zeros_(self.text_pixel_film.bias)
 
-        # The first three descriptors reproduce PLAM's average, maximum and
-        # their sum. Decoder-skip cosine agreement adds top-down semantics.
-        self.pixel_mlp = nn.Sequential(
+        self.region_spatial = nn.Sequential(
             nn.Conv2d(4, pixel_hidden, kernel_size=1),
             nn.SiLU(inplace=True),
             nn.Conv2d(pixel_hidden, 1, kernel_size=1),
         )
-        nn.init.zeros_(self.pixel_mlp[-1].weight)
-        nn.init.zeros_(self.pixel_mlp[-1].bias)
+        nn.init.zeros_(self.region_spatial[-1].weight)
+        nn.init.zeros_(self.region_spatial[-1].bias)
+        self.region_out = nn.Sequential(
+            nn.Conv2d(
+                guide_channels,
+                guide_channels,
+                kernel_size=3,
+                padding=1,
+                groups=guide_channels,
+                bias=False,
+            ),
+            nn.GroupNorm(1, guide_channels),
+            nn.SiLU(inplace=True),
+            nn.Conv2d(guide_channels, in_channels, kernel_size=1),
+        )
+        nn.init.zeros_(self.region_out[-1].weight)
+        nn.init.zeros_(self.region_out[-1].bias)
 
-        self.edge_local = nn.Conv2d(
-            2,
-            guide_channels,
+        self.detail_local = nn.Conv2d(
+            in_channels,
+            in_channels,
             kernel_size=3,
             padding=1,
+            groups=in_channels,
             bias=False,
         )
-        self.edge_context = nn.Conv2d(
-            2,
-            guide_channels,
+        self.detail_context = nn.Conv2d(
+            in_channels,
+            in_channels,
             kernel_size=3,
             padding=2,
             dilation=2,
+            groups=in_channels,
             bias=False,
         )
-        self.edge_norm = nn.GroupNorm(
-            num_groups=1,
-            num_channels=guide_channels,
-        )
-        self.edge_activation = nn.SiLU(inplace=True)
-        self.edge_out = nn.Conv2d(
-            guide_channels,
-            1,
+        detail_groups = min(8, in_channels)
+        while in_channels % detail_groups:
+            detail_groups -= 1
+        self.detail_norm = nn.GroupNorm(detail_groups, in_channels)
+        self.detail_out = nn.Conv2d(
+            in_channels,
+            in_channels,
             kernel_size=1,
         )
-        nn.init.zeros_(self.edge_out.weight)
-        nn.init.zeros_(self.edge_out.bias)
+        nn.init.zeros_(self.detail_out.weight)
+        nn.init.zeros_(self.detail_out.bias)
 
-        pixel_ratio = pixel_strength_init / pixel_strength_max
-        edge_ratio = edge_strength_init / edge_strength_max
-        self.pixel_strength_logit = nn.Parameter(
+        self.region_strength_logit = nn.Parameter(
             torch.tensor(
-                math.log(pixel_ratio / (1.0 - pixel_ratio))
+                _strength_logit(
+                    pixel_strength_init,
+                    self.region_strength_max,
+                )
             ).view(1, 1, 1, 1)
         )
-        self.edge_strength_logit = nn.Parameter(
+        self.detail_strength_logit = nn.Parameter(
             torch.tensor(
-                math.log(edge_ratio / (1.0 - edge_ratio))
+                _strength_logit(
+                    edge_strength_init,
+                    self.detail_strength_max,
+                    self.detail_strength_floor,
+                )
+            ).view(1, 1, 1, 1)
+        )
+        self.plam_strength_logit = nn.Parameter(
+            torch.tensor(
+                _strength_logit(
+                    plam_strength_init,
+                    self.plam_strength_max,
+                    self.plam_strength_floor,
+                )
             ).view(1, 1, 1, 1)
         )
         self._last_stats = None
 
-    def _decoder_at_skip_resolution(self, decoder, skip):
-        if decoder is None:
+    @staticmethod
+    def _at_skip_resolution(features, skip, name):
+        if features is None:
             return torch.zeros_like(skip)
-        if decoder.shape[1] != skip.shape[1]:
+        if features.shape[1] != skip.shape[1]:
             raise ValueError(
-                "Decoder and skip channel counts must match: "
-                f"{decoder.shape[1]} != {skip.shape[1]}"
+                "{} and skip channel counts must match: {} != {}".format(
+                    name,
+                    features.shape[1],
+                    skip.shape[1],
+                )
             )
-        if decoder.shape[-2:] != skip.shape[-2:]:
-            decoder = F.interpolate(
-                decoder,
+        if features.shape[-2:] != skip.shape[-2:]:
+            features = F.interpolate(
+                features,
                 size=skip.shape[-2:],
                 mode="bilinear",
                 align_corners=False,
             )
-        return decoder
+        return features
 
-    def _channel_gain(self, skip_low, text):
-        average_pool = skip_low.mean(dim=(2, 3))
-        maximum_pool = skip_low.amax(dim=(2, 3))
+    @staticmethod
+    def _cosine_map(first, second):
+        first = F.normalize(first, p=2, dim=1, eps=1e-6)
+        second = F.normalize(second, p=2, dim=1, eps=1e-6)
+        return (first * second).sum(dim=1, keepdim=True)
+
+    def _channel_gain(self, skip_low, plam_low, decoder_low, text):
+        descriptor_source = skip_low + plam_low + decoder_low
+        average_pool = descriptor_source.mean(dim=(2, 3))
+        maximum_pool = descriptor_source.amax(dim=(2, 3))
         if self.normalize_channel_descriptors:
-            descriptor_scale = math.sqrt(skip_low.shape[1])
+            descriptor_scale = math.sqrt(descriptor_source.shape[1])
             average_pool = F.normalize(
                 average_pool,
                 p=2,
@@ -259,17 +354,22 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
             + self.channel_strength_max * torch.tanh(channel_logit)
         )[:, :, None, None]
 
-    def _semantic_pixel_residual(self, skip_low, decoder, text):
+    def _semantic_region(self, skip_low, plam_low, decoder_low, text):
         skip_features = self.skip_semantic_norm(
             self.skip_semantic_proj(skip_low)
         )
-        decoder_features = self.decoder_semantic_norm(
-            self.decoder_semantic_proj(decoder)
+        plam_features = self.plam_semantic_norm(
+            self.plam_semantic_proj(plam_low)
         )
+        decoder_features = self.decoder_semantic_norm(
+            self.decoder_semantic_proj(decoder_low)
+        )
+        if not self.use_plam_guide:
+            plam_features = torch.zeros_like(plam_features)
         if not self.use_decoder_guide:
             decoder_features = torch.zeros_like(decoder_features)
 
-        semantic_features = skip_features + decoder_features
+        semantic_features = skip_features + plam_features + decoder_features
         text_film_magnitude = None
         if (
             text is not None
@@ -293,141 +393,152 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
                 )
 
         semantic_features = F.silu(semantic_features)
-        semantic_average = semantic_features.mean(
-            dim=1,
-            keepdim=True,
-        )
-        semantic_maximum = semantic_features.amax(
-            dim=1,
-            keepdim=True,
-        )
-        skip_normalized = F.normalize(
+        semantic_average = semantic_features.mean(dim=1, keepdim=True)
+        semantic_maximum = semantic_features.amax(dim=1, keepdim=True)
+        plam_agreement = self._cosine_map(skip_features, plam_features)
+        decoder_agreement = self._cosine_map(
             skip_features,
-            p=2,
-            dim=1,
-            eps=1e-6,
-        )
-        decoder_normalized = F.normalize(
             decoder_features,
-            p=2,
-            dim=1,
-            eps=1e-6,
         )
-        agreement = (
-            skip_normalized * decoder_normalized
-        ).sum(dim=1, keepdim=True)
-        descriptors = torch.cat(
-            [
-                semantic_average,
-                semantic_maximum,
-                semantic_average + semantic_maximum,
-                agreement,
-            ],
-            dim=1,
+        region_logit = self.region_spatial(
+            torch.cat(
+                [
+                    semantic_average,
+                    semantic_maximum,
+                    plam_agreement,
+                    decoder_agreement,
+                ],
+                dim=1,
+            )
         )
-        pixel_logit = self.pixel_mlp(descriptors)
+        semantic_support = torch.sigmoid(region_logit)
+        region_residual = (
+            self.region_out(semantic_features) * semantic_support
+        )
         return (
-            torch.tanh(pixel_logit),
-            pixel_logit,
+            region_residual,
+            semantic_support,
             skip_features,
+            plam_features,
             decoder_features,
             semantic_features,
+            plam_agreement,
+            decoder_agreement,
             text_film_magnitude,
         )
 
-    def _edge_residual(self, skip_high, pixel_logit):
-        edge_magnitude = skip_high.abs()
-        edge_statistics = torch.cat(
-            [
-                edge_magnitude.mean(dim=1, keepdim=True),
-                edge_magnitude.amax(dim=1, keepdim=True),
-            ],
-            dim=1,
-        )
-        local_features = self.edge_local(edge_statistics)
-        context_features = self.edge_context(edge_statistics)
-        if not self.use_dilated_edge:
+    def _detail_residual(self, skip_high, semantic_support):
+        local_features = self.detail_local(skip_high)
+        context_features = self.detail_context(skip_high)
+        if not self.use_dilated_detail:
             context_features = torch.zeros_like(context_features)
-        edge_features = self.edge_activation(
-            self.edge_norm(local_features + context_features)
+        detail_features = F.silu(
+            self.detail_norm(local_features + context_features)
         )
-        edge_logit = self.edge_out(edge_features)
-        semantic_support = torch.sigmoid(pixel_logit)
-        edge_residual = (
-            torch.tanh(edge_logit) * semantic_support
-        )
+        detail_refinement = self.detail_out(detail_features)
+        support_gain = 0.5 + semantic_support
+        detail_residual = skip_high * support_gain + detail_refinement
         return (
-            edge_residual,
-            semantic_support,
+            detail_residual,
+            detail_refinement,
             local_features,
             context_features,
-            edge_features,
+            detail_features,
         )
 
-    def forward(self, skip, decoder=None, text=None):
-        decoder = self._decoder_at_skip_resolution(decoder, skip)
-        skip_low = self.low_pass(skip)
-        skip_high = skip - skip_low
-        channel_gain = self._channel_gain(skip_low, text)
+    def forward(self, skip, plam=None, decoder=None, text=None):
+        plam = self._at_skip_resolution(plam, skip, "PLAM")
+        decoder = self._at_skip_resolution(decoder, skip, "Decoder")
 
+        skip_low, skip_high = self.frequency_split(skip)
+        plam_low, plam_high = self.frequency_split(plam)
+        decoder_low, _ = self.frequency_split(decoder)
+
+        if not self.use_plam_guide:
+            plam_low = torch.zeros_like(plam_low)
+            plam_high = torch.zeros_like(plam_high)
+        if not self.use_decoder_guide:
+            decoder_low = torch.zeros_like(decoder_low)
+
+        channel_gain = self._channel_gain(
+            skip_low,
+            plam_low,
+            decoder_low,
+            text,
+        )
         (
-            pixel_residual,
-            pixel_logit,
+            region_residual,
+            semantic_support,
             skip_features,
+            plam_features,
             decoder_features,
             semantic_features,
+            plam_agreement,
+            decoder_agreement,
             text_film_magnitude,
-        ) = self._semantic_pixel_residual(skip_low, decoder, text)
+        ) = self._semantic_region(
+            skip_low,
+            plam_low,
+            decoder_low,
+            text,
+        )
         (
-            edge_residual,
-            semantic_support,
+            detail_residual,
+            detail_refinement,
             local_features,
             context_features,
-            edge_features,
-        ) = self._edge_residual(skip_high, pixel_logit)
+            detail_features,
+        ) = self._detail_residual(skip_high, semantic_support)
 
-        pixel_strength = (
-            self.pixel_strength_max
-            * torch.sigmoid(self.pixel_strength_logit)
+        region_strength = (
+            self.region_strength_max
+            * torch.sigmoid(self.region_strength_logit)
         )
-        edge_strength = (
-            self.edge_strength_max
-            * torch.sigmoid(self.edge_strength_logit)
+        detail_strength = (
+            self.detail_strength_floor
+            + (self.detail_strength_max - self.detail_strength_floor)
+            * torch.sigmoid(self.detail_strength_logit)
         )
-        spatial_residual = (
-            pixel_strength * pixel_residual
-            + edge_strength * edge_residual
+        plam_strength = (
+            self.plam_strength_floor
+            + (self.plam_strength_max - self.plam_strength_floor)
+            * torch.sigmoid(self.plam_strength_logit)
         )
-        spatial_gain = 1.0 + spatial_residual
 
+        channel_residual = skip_low * (channel_gain - 1.0)
         output = (
             skip
-            + skip_low * (channel_gain - 1.0)
-            + skip * pixel_strength * pixel_residual
-            + skip_high * edge_strength * edge_residual
+            + plam_strength * plam_low
+            + channel_residual
+            + region_strength * region_residual
+            + detail_strength * detail_residual
         )
 
         if not self.training:
             with torch.no_grad():
+                reconstruction_error = (
+                    skip - (skip_low + skip_high)
+                ).abs().amax()
                 branch_energy = torch.stack(
                     [
-                        skip_features.abs().mean(),
-                        decoder_features.abs().mean(),
-                        local_features.abs().mean(),
-                        context_features.abs().mean(),
+                        skip_low.abs().mean(),
+                        plam_low.abs().mean(),
+                        decoder_low.abs().mean(),
+                        skip_high.abs().mean(),
                     ]
                 ).clamp_min(1e-8)
                 branch_weights = branch_energy / branch_energy.sum()
-                low_pass_kernel = self.low_pass.kernel()
-                kernel_entropy = (
-                    -low_pass_kernel
-                    * low_pass_kernel.clamp_min(1e-8).log()
-                ).sum(dim=(2, 3)).mean() / math.log(9.0)
-                kernel_delta = (
-                    low_pass_kernel
-                    - self.low_pass.initial_kernel
-                ).abs().mean()
+                spatial_residual = (
+                    region_strength
+                    * torch.tanh(region_residual.mean(dim=1, keepdim=True))
+                    + detail_strength
+                    * torch.tanh(detail_residual.mean(dim=1, keepdim=True))
+                )
+                spatial_gain = 1.0 + spatial_residual
+                skip_energy = skip.square().mean().clamp_min(1e-8)
+                plam_energy = plam.square().mean().clamp_min(1e-8)
                 self._last_stats = {
+                    "architecture_version": self.architecture_version,
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
                     "spatial_mean": float(spatial_gain.mean().item()),
@@ -444,28 +555,25 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
                         0.5
                         * (
                             semantic_features.abs().mean()
-                            + edge_features.abs().mean()
+                            + detail_features.abs().mean()
                         ).item()
                     ),
-                    # Legacy names are retained for existing history readers.
                     "spatial_local_mean": float(
-                        pixel_residual.mean().item()
+                        region_residual.mean().item()
                     ),
                     "spatial_global_mean": float(
-                        edge_residual.mean().item()
+                        detail_residual.mean().item()
                     ),
                     "local_strength_mean": float(
-                        pixel_strength.mean().item()
+                        region_strength.item()
                     ),
                     "global_strength_mean": float(
-                        edge_strength.mean().item()
+                        detail_strength.item()
                     ),
                     "spatial_saturation_ratio": float(
-                        0.5
-                        * (
-                            (pixel_residual.abs() > 0.95).float().mean()
-                            + (edge_residual.abs() > 0.95).float().mean()
-                        ).item()
+                        semantic_support.lt(0.05).logical_or(
+                            semantic_support.gt(0.95)
+                        ).float().mean().item()
                     ),
                     "text_film_abs_mean": (
                         float(text_film_magnitude.item())
@@ -479,39 +587,66 @@ class PLAMGuidedNormalizedEPPA(nn.Module):
                         ).sum().div(math.log(4.0)).item()
                     ),
                     "guide_skip_weight": float(branch_weights[0].item()),
-                    "guide_decoder_weight": float(
-                        branch_weights[1].item()
+                    "guide_plam_weight": float(branch_weights[1].item()),
+                    "guide_decoder_weight": float(branch_weights[2].item()),
+                    "guide_detail_weight": float(branch_weights[3].item()),
+                    "haar_reconstruction_error": float(
+                        reconstruction_error.item()
                     ),
-                    "guide_local_edge_weight": float(
-                        branch_weights[2].item()
+                    "skip_low_energy_ratio": float(
+                        (skip_low.square().mean() / skip_energy).item()
                     ),
-                    "guide_context_edge_weight": float(
-                        branch_weights[3].item()
+                    "skip_high_energy_ratio": float(
+                        (skip_high.square().mean() / skip_energy).item()
                     ),
-                    "pixel_residual_std": float(
-                        pixel_residual.std().item()
+                    "plam_low_energy_ratio": float(
+                        (plam_low.square().mean() / plam_energy).item()
                     ),
-                    "edge_residual_std": float(
-                        edge_residual.std().item()
+                    "plam_high_energy_ratio": float(
+                        (plam_high.square().mean() / plam_energy).item()
+                    ),
+                    "plam_strength_mean": float(plam_strength.item()),
+                    "region_strength_mean": float(region_strength.item()),
+                    "detail_strength_mean": float(detail_strength.item()),
+                    "region_residual_std": float(
+                        region_residual.std().item()
+                    ),
+                    "detail_residual_std": float(
+                        detail_residual.std().item()
+                    ),
+                    "detail_refinement_std": float(
+                        detail_refinement.std().item()
                     ),
                     "semantic_support_mean": float(
                         semantic_support.mean().item()
                     ),
-                    "low_pass_kernel_sum": float(
-                        low_pass_kernel.sum(dim=(2, 3)).mean().item()
+                    "semantic_support_std": float(
+                        semantic_support.std().item()
                     ),
-                    "low_pass_kernel_entropy": float(
-                        kernel_entropy.item()
+                    "plam_skip_agreement": float(
+                        plam_agreement.mean().item()
                     ),
-                    "low_pass_kernel_center": float(
-                        low_pass_kernel[:, :, 1, 1].mean().item()
+                    "decoder_skip_agreement": float(
+                        decoder_agreement.mean().item()
                     ),
-                    "low_pass_kernel_delta_abs": float(
-                        kernel_delta.item()
+                    "raw_skip_feature_abs_mean": float(
+                        skip_features.abs().mean().item()
+                    ),
+                    "plam_feature_abs_mean": float(
+                        plam_features.abs().mean().item()
+                    ),
+                    "decoder_feature_abs_mean": float(
+                        decoder_features.abs().mean().item()
+                    ),
+                    "detail_local_abs_mean": float(
+                        local_features.abs().mean().item()
+                    ),
+                    "detail_context_abs_mean": float(
+                        context_features.abs().mean().item()
                     ),
                 }
         return output
 
 
 # Keep the public name used by the existing LViT import path.
-EPPA = PLAMGuidedNormalizedEPPA
+EPPA = FAMHaarEPPA

@@ -83,6 +83,16 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'max_dice': float(max_dice),
         'best_epoch': int(best_epoch),
         'epoch_history': epoch_history,
+        'architecture': getattr(
+            config,
+            'experiment_architecture',
+            None,
+        ),
+        'architecture_version': getattr(
+            config,
+            'experiment_architecture_version',
+            None,
+        ),
     }
 
 
@@ -99,6 +109,42 @@ def compute_eppa_stats(model):
             continue
         stats[stage] = dict(stage_stats)
     return stats
+
+
+def build_optimizer_parameter_groups(model, weight_decay):
+    """Keep residual gates and normalization parameters free of L2 decay."""
+    decay_parameters = []
+    no_decay_parameters = []
+    decay_names = []
+    no_decay_names = []
+    for name, parameter in model.named_parameters():
+        if not parameter.requires_grad:
+            continue
+        normalized_name = name.lower()
+        use_no_decay = (
+            parameter.ndim <= 1
+            or name.endswith('.bias')
+            or 'strength_logit' in normalized_name
+            or 'norm' in normalized_name
+        )
+        if use_no_decay:
+            no_decay_parameters.append(parameter)
+            no_decay_names.append(name)
+        else:
+            decay_parameters.append(parameter)
+            decay_names.append(name)
+    parameter_groups = []
+    if decay_parameters:
+        parameter_groups.append({
+            'params': decay_parameters,
+            'weight_decay': weight_decay,
+        })
+    if no_decay_parameters:
+        parameter_groups.append({
+            'params': no_decay_parameters,
+            'weight_decay': 0.0,
+        })
+    return parameter_groups, decay_names, no_decay_names
 
 
 def worker_init_fn(worker_id):
@@ -243,10 +289,19 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             config.boundary_loss_weight,
         )
     )
-    optimizer = torch.optim.Adam(
-        filter(lambda p: p.requires_grad, model.parameters()),
-        lr=lr,
-        weight_decay=getattr(config, 'weight_decay', 0.0),
+    optimizer_groups, decay_names, no_decay_names = (
+        build_optimizer_parameter_groups(
+            model,
+            getattr(config, 'weight_decay', 0.0),
+        )
+    )
+    optimizer = torch.optim.Adam(optimizer_groups, lr=lr)
+    logger.info(
+        'Optimizer groups: decay={} tensors, no_decay={} tensors; '
+        'EPPA residual gates are protected from L2 decay'.format(
+            len(decay_names),
+            len(no_decay_names),
+        )
     )
     if config.cosineLR is True:
         lr_scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4)
@@ -271,6 +326,29 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         if os.path.isfile(config.resume_path):
             logger.info('Resuming from {}'.format(config.resume_path))
             ckpt = torch.load(config.resume_path, map_location='cuda')
+
+            expected_architecture = getattr(
+                config,
+                'experiment_architecture_version',
+                None,
+            )
+            checkpoint_architecture = ckpt.get('architecture_version')
+            if (
+                getattr(
+                    config,
+                    'require_checkpoint_architecture_match',
+                    False,
+                )
+                and checkpoint_architecture != expected_architecture
+            ):
+                raise RuntimeError(
+                    'Checkpoint architecture mismatch: expected {!r}, '
+                    'found {!r}. FAM-EPPA V4-A must train from scratch or '
+                    'resume from a V4-A checkpoint.'.format(
+                        expected_architecture,
+                        checkpoint_architecture,
+                    )
+                )
 
             target = model.module if isinstance(model, nn.DataParallel) else model
             target.load_state_dict(ckpt['state_dict'], strict=False)
@@ -421,6 +499,53 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         stage_stats['text_film_abs_mean'],
                     )
                 )
+                if (
+                    stage_stats.get('architecture_version')
+                    == 'fam_eppa_v4a'
+                ):
+                    logger.info(
+                        '{} haar: reconstruction_error={:.3e}, '
+                        'skip_low/high={:.4f}/{:.4f}, '
+                        'plam_low/high={:.4f}/{:.4f}'.format(
+                            stage,
+                            stage_stats['haar_reconstruction_error'],
+                            stage_stats['skip_low_energy_ratio'],
+                            stage_stats['skip_high_energy_ratio'],
+                            stage_stats['plam_low_energy_ratio'],
+                            stage_stats['plam_high_energy_ratio'],
+                        )
+                    )
+                    logger.info(
+                        '{} strengths: plam={:.4f}, region={:.4f}, '
+                        'detail={:.4f}; residual_std region/detail/refine='
+                        '{:.4f}/{:.4f}/{:.4f}'.format(
+                            stage,
+                            stage_stats['plam_strength_mean'],
+                            stage_stats['region_strength_mean'],
+                            stage_stats['detail_strength_mean'],
+                            stage_stats['region_residual_std'],
+                            stage_stats['detail_residual_std'],
+                            stage_stats['detail_refinement_std'],
+                        )
+                    )
+                    logger.info(
+                        '{} guide_mix: entropy={:.4f}, raw_low={:.4f}, '
+                        'plam_low={:.4f}, decoder_low={:.4f}, detail={:.4f}; '
+                        'agreement plam/decoder={:.4f}/{:.4f}, '
+                        'support={:.4f}+/-{:.4f}'.format(
+                            stage,
+                            stage_stats['guide_branch_entropy'],
+                            stage_stats['guide_skip_weight'],
+                            stage_stats['guide_plam_weight'],
+                            stage_stats['guide_decoder_weight'],
+                            stage_stats['guide_detail_weight'],
+                            stage_stats['plam_skip_agreement'],
+                            stage_stats['decoder_skip_agreement'],
+                            stage_stats['semantic_support_mean'],
+                            stage_stats['semantic_support_std'],
+                        )
+                    )
+                    continue
                 logger.info(
                     '{} guide_mix: entropy={:.4f}, skip={:.4f}, '
                     'decoder={:.4f}, local_edge={:.4f}, '

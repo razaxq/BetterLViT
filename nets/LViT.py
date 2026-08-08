@@ -62,8 +62,13 @@ class UpblockAttention(nn.Module):
                  use_decoder_guide=True, use_dilated_edge=True,
                  use_text_pixel_film=True,
                  normalize_channel_descriptors=True,
+                 use_plam_guide=True,
                  channel_strength_max=0.5,
-                 pixel_strength_max=0.35, edge_strength_max=0.5):
+                 pixel_strength_max=0.35, edge_strength_max=0.3,
+                 plam_strength_max=1.25,
+                 plam_strength_init=1.0,
+                 plam_strength_floor=0.25,
+                 detail_strength_floor=0.02):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -76,19 +81,25 @@ class UpblockAttention(nn.Module):
             use_decoder_guide=use_decoder_guide,
             use_dilated_edge=use_dilated_edge,
             use_text_pixel_film=use_text_pixel_film,
+            use_plam_guide=use_plam_guide,
             normalize_channel_descriptors=(
                 normalize_channel_descriptors
             ),
             channel_strength_max=channel_strength_max,
             pixel_strength_max=pixel_strength_max,
             edge_strength_max=edge_strength_max,
+            plam_strength_max=plam_strength_max,
+            plam_strength_init=plam_strength_init,
+            plam_strength_floor=plam_strength_floor,
+            detail_strength_floor=detail_strength_floor,
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
-    def forward(self, x, skip_x, text=None):
+    def forward(self, x, skip_x, plam_x=None, text=None):
         up = self.up(x)
         skip_x_att = self.eppa(
             skip_x,
+            plam=plam_x,
             decoder=up,
             text=text,
         )
@@ -140,6 +151,11 @@ class LViT(nn.Module):
             'eppa_use_text_pixel_film',
             True,
         )
+        EPPA_USE_PLAM_GUIDE = getattr(
+            config,
+            'eppa_use_plam_guide',
+            True,
+        )
         EPPA_NORMALIZE_CHANNEL_DESCRIPTORS = getattr(
             config,
             'eppa_normalize_channel_descriptors',
@@ -158,19 +174,44 @@ class LViT(nn.Module):
         EPPA_EDGE_STRENGTH_MAX = getattr(
             config,
             'eppa_edge_strength_max',
-            0.5,
+            0.3,
+        )
+        EPPA_PLAM_STRENGTH_MAX = getattr(
+            config,
+            'eppa_plam_strength_max',
+            1.25,
+        )
+        EPPA_PLAM_STRENGTH_INIT = getattr(
+            config,
+            'eppa_plam_strength_init',
+            1.0,
+        )
+        EPPA_PLAM_STRENGTH_FLOOR = getattr(
+            config,
+            'eppa_plam_strength_floor',
+            0.25,
+        )
+        EPPA_DETAIL_STRENGTH_FLOOR = getattr(
+            config,
+            'eppa_detail_strength_floor',
+            0.02,
         )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
             'use_dilated_edge': EPPA_USE_DILATED_EDGE,
             'use_text_pixel_film': EPPA_USE_TEXT_PIXEL_FILM,
+            'use_plam_guide': EPPA_USE_PLAM_GUIDE,
             'normalize_channel_descriptors': (
                 EPPA_NORMALIZE_CHANNEL_DESCRIPTORS
             ),
             'channel_strength_max': EPPA_CHANNEL_STRENGTH_MAX,
             'pixel_strength_max': EPPA_PIXEL_STRENGTH_MAX,
             'edge_strength_max': EPPA_EDGE_STRENGTH_MAX,
+            'plam_strength_max': EPPA_PLAM_STRENGTH_MAX,
+            'plam_strength_init': EPPA_PLAM_STRENGTH_INIT,
+            'plam_strength_floor': EPPA_PLAM_STRENGTH_FLOOR,
+            'detail_strength_floor': EPPA_DETAIL_STRENGTH_FLOOR,
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -239,14 +280,18 @@ class LViT(nn.Module):
         y3 = self.upVit2(y3, y4, text3, True)
         y2 = self.upVit1(y2, y3, text2, True)
         y1 = self.upVit(y1, y2, text1, True)
-        x1 = self.reconstruct1(y1) + x1
-        x2 = self.reconstruct2(y2) + x2
-        x3 = self.reconstruct3(y3) + x3
-        x4 = self.reconstruct4(y4) + x4
-        x = self.up4(x5, x4, text)
-        x = self.up3(x, x3, text)
-        x = self.up2(x, x2, text)
-        x = self.up1(x, x1, text)
+        # V4-A deliberately keeps the local CNN skip and PLAM reconstruction
+        # separate until FAM-EPPA performs frequency-aware residual fusion.
+        # Earlier experiments added these tensors here, irreversibly mixing
+        # local detail and language-conditioned semantics before EPPA.
+        plam1 = self.reconstruct1(y1)
+        plam2 = self.reconstruct2(y2)
+        plam3 = self.reconstruct3(y3)
+        plam4 = self.reconstruct4(y4)
+        x = self.up4(x5, x4, plam4, text=text)
+        x = self.up3(x, x3, plam3, text=text)
+        x = self.up2(x, x2, plam2, text=text)
+        x = self.up1(x, x1, plam1, text=text)
         if self.n_classes == 1:
             logits = self.last_activation(self.outc(x))
         else:

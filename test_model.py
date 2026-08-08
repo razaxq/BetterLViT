@@ -75,6 +75,22 @@ if __name__ == '__main__':
         os.makedirs(vis_path)
 
     checkpoint = torch.load(model_path, map_location='cuda')
+    expected_architecture = getattr(
+        config,
+        'experiment_architecture_version',
+        None,
+    )
+    checkpoint_architecture = checkpoint.get('architecture_version')
+    if (
+        getattr(config, 'require_checkpoint_architecture_match', False)
+        and checkpoint_architecture != expected_architecture
+    ):
+        raise RuntimeError(
+            'Checkpoint architecture mismatch: expected {!r}, found {!r}'.format(
+                expected_architecture,
+                checkpoint_architecture,
+            )
+        )
 
     if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
@@ -89,6 +105,7 @@ if __name__ == '__main__':
             lora_r=config.text_lora_r,
             lora_alpha=config.text_lora_alpha,
             lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
         )
 
     elif model_type == 'LViT_pretrain':
@@ -103,6 +120,7 @@ if __name__ == '__main__':
             lora_r=config.text_lora_r,
             lora_alpha=config.text_lora_alpha,
             lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
         )
 
 
@@ -113,7 +131,7 @@ if __name__ == '__main__':
     if torch.cuda.device_count() > 1:
        print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
        model = nn.DataParallel(model)
-    model.load_state_dict(checkpoint['state_dict'], strict=False)
+    model.load_state_dict(checkpoint['state_dict'], strict=True)
     print('Model loaded !')
     tf_test = ValGenerator(output_size=[config.img_size, config.img_size])
     test_text = read_text(config.test_dataset + 'Test_text.xlsx')
