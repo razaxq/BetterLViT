@@ -67,3 +67,27 @@ The training history records Haar reconstruction error, low/high energy ratios,
 PLAM/region/detail gate strengths, residual standard deviations, semantic
 support, branch energies, and PLAM/decoder agreement at all four decoder stages.
 
+## Final outcome
+
+Training stopped by the configured validation early-stopping rule after Epoch
+161. The best checkpoint remained Epoch 80, with validation Dice `0.822985`
+and IoU `0.724706` at threshold `0.5`.
+
+The final evaluation used all 1,429 validation images to select the threshold
+before touching the 2,113-image test set:
+
+| Split | Threshold | Dice | IoU |
+| --- | ---: | ---: | ---: |
+| Validation | `0.5` | `0.822985` | `0.724706` |
+| Validation | `0.538` | `0.823873` | `0.726208` |
+| Test | `0.5` | `0.840286` | `0.753183` |
+| Test | validation-selected `0.538` | `0.841970` | `0.755838` |
+
+The calibrated test result is below the V3 reference (`0.844993/0.760152`) by
+Dice `0.003023` and IoU `0.004314`. Haar reconstruction remained numerically
+stable (approximately `1e-6` to `4e-6`), while the PLAM branch carried almost
+only low-frequency energy (`1.0/0.0`). Separating PLAM and guaranteeing a Haar
+detail residual therefore did not by itself improve the V3 result. The next
+ablation must test adaptive frequency selection rather than adding more loss
+terms: V4-B adds FreqFusion-style adaptive low/high-pass filtering only at the
+low-resolution `up4` and `up3` stages.
