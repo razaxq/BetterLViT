@@ -68,7 +68,15 @@ class UpblockAttention(nn.Module):
                  plam_strength_max=1.25,
                  plam_strength_init=1.0,
                  plam_strength_floor=0.25,
-                 detail_strength_floor=0.02):
+                 detail_strength_floor=0.02,
+                 use_adaptive_frequency=False,
+                 frequency_groups=8,
+                 frequency_context_channels=32,
+                 alpf_strength_max=0.50,
+                 alpf_strength_init=0.20,
+                 ahpf_strength_max=0.30,
+                 ahpf_strength_init=0.08,
+                 ahpf_strength_floor=0.02):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -92,16 +100,25 @@ class UpblockAttention(nn.Module):
             plam_strength_init=plam_strength_init,
             plam_strength_floor=plam_strength_floor,
             detail_strength_floor=detail_strength_floor,
+            use_adaptive_frequency=use_adaptive_frequency,
+            frequency_groups=frequency_groups,
+            frequency_context_channels=frequency_context_channels,
+            alpf_strength_max=alpf_strength_max,
+            alpf_strength_init=alpf_strength_init,
+            ahpf_strength_max=ahpf_strength_max,
+            ahpf_strength_init=ahpf_strength_init,
+            ahpf_strength_floor=ahpf_strength_floor,
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
     def forward(self, x, skip_x, plam_x=None, text=None):
         up = self.up(x)
-        skip_x_att = self.eppa(
+        skip_x_att, up = self.eppa(
             skip_x,
             plam=plam_x,
             decoder=up,
             text=text,
+            return_decoder=True,
         )
         x = torch.cat([skip_x_att, up], dim=1)  # dim 1 is the channel dimension
         return self.nConvs(x)
@@ -196,6 +213,46 @@ class LViT(nn.Module):
             'eppa_detail_strength_floor',
             0.02,
         )
+        EPPA_ADAPTIVE_FREQUENCY_STAGES = tuple(getattr(
+            config,
+            'eppa_adaptive_frequency_stages',
+            (),
+        ))
+        EPPA_FREQUENCY_GROUPS = getattr(
+            config,
+            'eppa_frequency_groups',
+            8,
+        )
+        EPPA_FREQUENCY_CONTEXT_CHANNELS = getattr(
+            config,
+            'eppa_frequency_context_channels',
+            32,
+        )
+        EPPA_ALPF_STRENGTH_MAX = getattr(
+            config,
+            'eppa_alpf_strength_max',
+            0.50,
+        )
+        EPPA_ALPF_STRENGTH_INIT = getattr(
+            config,
+            'eppa_alpf_strength_init',
+            0.20,
+        )
+        EPPA_AHPF_STRENGTH_MAX = getattr(
+            config,
+            'eppa_ahpf_strength_max',
+            0.30,
+        )
+        EPPA_AHPF_STRENGTH_INIT = getattr(
+            config,
+            'eppa_ahpf_strength_init',
+            0.08,
+        )
+        EPPA_AHPF_STRENGTH_FLOOR = getattr(
+            config,
+            'eppa_ahpf_strength_floor',
+            0.02,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -212,6 +269,15 @@ class LViT(nn.Module):
             'plam_strength_init': EPPA_PLAM_STRENGTH_INIT,
             'plam_strength_floor': EPPA_PLAM_STRENGTH_FLOOR,
             'detail_strength_floor': EPPA_DETAIL_STRENGTH_FLOOR,
+            'frequency_groups': EPPA_FREQUENCY_GROUPS,
+            'frequency_context_channels': (
+                EPPA_FREQUENCY_CONTEXT_CHANNELS
+            ),
+            'alpf_strength_max': EPPA_ALPF_STRENGTH_MAX,
+            'alpf_strength_init': EPPA_ALPF_STRENGTH_INIT,
+            'ahpf_strength_max': EPPA_AHPF_STRENGTH_MAX,
+            'ahpf_strength_init': EPPA_AHPF_STRENGTH_INIT,
+            'ahpf_strength_floor': EPPA_AHPF_STRENGTH_FLOOR,
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -219,6 +285,9 @@ class LViT(nn.Module):
             nb_Conv=2,
             min_bottleneck_channels=(
                 EPPA_MIN_BOTTLENECK_CHANNELS[0]
+            ),
+            use_adaptive_frequency=(
+                'up4' in EPPA_ADAPTIVE_FREQUENCY_STAGES
             ),
             **eppa_common,
         )
@@ -229,6 +298,9 @@ class LViT(nn.Module):
             min_bottleneck_channels=(
                 EPPA_MIN_BOTTLENECK_CHANNELS[1]
             ),
+            use_adaptive_frequency=(
+                'up3' in EPPA_ADAPTIVE_FREQUENCY_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -238,6 +310,9 @@ class LViT(nn.Module):
             min_bottleneck_channels=(
                 EPPA_MIN_BOTTLENECK_CHANNELS[2]
             ),
+            use_adaptive_frequency=(
+                'up2' in EPPA_ADAPTIVE_FREQUENCY_STAGES
+            ),
             **eppa_common,
         )
         self.up1 = UpblockAttention(
@@ -246,6 +321,9 @@ class LViT(nn.Module):
             nb_Conv=2,
             min_bottleneck_channels=(
                 EPPA_MIN_BOTTLENECK_CHANNELS[3]
+            ),
+            use_adaptive_frequency=(
+                'up1' in EPPA_ADAPTIVE_FREQUENCY_STAGES
             ),
             **eppa_common,
         )
@@ -280,7 +358,7 @@ class LViT(nn.Module):
         y3 = self.upVit2(y3, y4, text3, True)
         y2 = self.upVit1(y2, y3, text2, True)
         y1 = self.upVit(y1, y2, text1, True)
-        # V4-A deliberately keeps the local CNN skip and PLAM reconstruction
+        # FAM-EPPA deliberately keeps the local CNN skip and PLAM reconstruction
         # separate until FAM-EPPA performs frequency-aware residual fusion.
         # Earlier experiments added these tensors here, irreversibly mixing
         # local detail and language-conditioned semantics before EPPA.

@@ -104,6 +104,216 @@ def _strength_logit(initial, maximum, floor=0.0):
     return math.log(ratio / (1.0 - ratio))
 
 
+class SpatialAdaptiveFrequencyRefiner(nn.Module):
+    """Efficient spatially adaptive low/high-pass filtering.
+
+    FreqFusion predicts a normalized filter for every spatial location. A
+    literal CARAFE/unfold port is unnecessarily expensive for this 24 GB AMD
+    workstation, so V4-B predicts mixtures over a fixed normalized filter
+    bank: identity, 3x3 binomial and 5x5 binomial. The mixture remains
+    spatially variant and group-specific while every candidate filter is
+    implemented by an efficient depthwise convolution.
+
+    The ALPF path smooths the aligned decoder feature before semantic fusion.
+    The AHPF path adds the complementary high-frequency skip residual. Both
+    paths have independent bounded strengths and therefore cannot silently
+    become an unconstrained replacement for the V4-A residual backbone.
+    """
+
+    filter_names = ("identity", "blur3", "blur5")
+
+    def __init__(
+        self,
+        channels,
+        groups=8,
+        context_channels=32,
+        alpf_strength_max=0.50,
+        alpf_strength_init=0.20,
+        ahpf_strength_max=0.30,
+        ahpf_strength_init=0.08,
+        ahpf_strength_floor=0.02,
+    ):
+        super().__init__()
+        if channels % groups:
+            raise ValueError(
+                "Adaptive frequency groups must divide channels: {} % {}"
+                .format(channels, groups)
+            )
+        self.channels = int(channels)
+        self.groups = int(groups)
+        self.context_channels = int(context_channels)
+        self.alpf_strength_max = float(alpf_strength_max)
+        self.ahpf_strength_max = float(ahpf_strength_max)
+        self.ahpf_strength_floor = float(ahpf_strength_floor)
+
+        self.skip_context = nn.Conv2d(
+            channels,
+            context_channels,
+            kernel_size=1,
+            bias=False,
+        )
+        self.plam_context = nn.Conv2d(
+            channels,
+            context_channels,
+            kernel_size=1,
+            bias=False,
+        )
+        self.decoder_context = nn.Conv2d(
+            channels,
+            context_channels,
+            kernel_size=1,
+            bias=False,
+        )
+        context_groups = min(8, context_channels)
+        while context_channels % context_groups:
+            context_groups -= 1
+        self.context_norm = nn.GroupNorm(
+            context_groups,
+            context_channels,
+        )
+        filter_count = len(self.filter_names)
+        output_channels = groups * filter_count
+        self.low_kernel_predictor = nn.Conv2d(
+            context_channels,
+            output_channels,
+            kernel_size=3,
+            padding=1,
+        )
+        self.high_kernel_predictor = nn.Conv2d(
+            context_channels,
+            output_channels,
+            kernel_size=3,
+            padding=1,
+        )
+        nn.init.normal_(self.low_kernel_predictor.weight, std=0.001)
+        nn.init.normal_(self.high_kernel_predictor.weight, std=0.001)
+        low_bias = torch.tensor([0.0, 0.75, -0.75]).repeat(groups)
+        high_bias = torch.tensor([0.0, 0.50, -0.50]).repeat(groups)
+        with torch.no_grad():
+            self.low_kernel_predictor.bias.copy_(low_bias)
+            self.high_kernel_predictor.bias.copy_(high_bias)
+
+        blur3_vector = torch.tensor([1.0, 2.0, 1.0])
+        blur3 = torch.outer(blur3_vector, blur3_vector)
+        blur3 = blur3 / blur3.sum()
+        blur5_vector = torch.tensor([1.0, 4.0, 6.0, 4.0, 1.0])
+        blur5 = torch.outer(blur5_vector, blur5_vector)
+        blur5 = blur5 / blur5.sum()
+        self.register_buffer("blur3_kernel", blur3[None, None])
+        self.register_buffer("blur5_kernel", blur5[None, None])
+
+        self.alpf_strength_logit = nn.Parameter(
+            torch.tensor(
+                _strength_logit(
+                    alpf_strength_init,
+                    self.alpf_strength_max,
+                )
+            ).view(1, 1, 1, 1)
+        )
+        self.ahpf_strength_logit = nn.Parameter(
+            torch.tensor(
+                _strength_logit(
+                    ahpf_strength_init,
+                    self.ahpf_strength_max,
+                    self.ahpf_strength_floor,
+                )
+            ).view(1, 1, 1, 1)
+        )
+
+    def _depthwise_filter(self, features, kernel):
+        kernel_size = kernel.shape[-1]
+        padding = kernel_size // 2
+        padded = F.pad(
+            features,
+            (padding, padding, padding, padding),
+            mode="reflect",
+        )
+        weights = kernel.to(dtype=features.dtype).expand(
+            self.channels,
+            1,
+            kernel_size,
+            kernel_size,
+        )
+        return F.conv2d(padded, weights, groups=self.channels)
+
+    def _mixture_weights(self, logits):
+        batch, _, height, width = logits.shape
+        return F.softmax(
+            logits.view(
+                batch,
+                self.groups,
+                len(self.filter_names),
+                height,
+                width,
+            ),
+            dim=2,
+        )
+
+    def _apply_filter_bank(self, features, mixture_weights):
+        responses = (
+            features,
+            self._depthwise_filter(features, self.blur3_kernel),
+            self._depthwise_filter(features, self.blur5_kernel),
+        )
+        output = torch.zeros_like(features)
+        for index, response in enumerate(responses):
+            channel_weights = mixture_weights[:, :, index]
+            channel_weights = channel_weights.repeat_interleave(
+                self.channels // self.groups,
+                dim=1,
+            )
+            output = output + response * channel_weights
+        return output
+
+    def forward(
+        self,
+        skip_low,
+        plam_low,
+        decoder_low,
+        skip,
+        decoder,
+    ):
+        context = self.context_norm(
+            self.skip_context(skip_low)
+            + self.plam_context(plam_low)
+            + self.decoder_context(decoder_low)
+        )
+        context = F.silu(context)
+        low_weights = self._mixture_weights(
+            self.low_kernel_predictor(context)
+        )
+        high_weights = self._mixture_weights(
+            self.high_kernel_predictor(context)
+        )
+
+        decoder_filtered = self._apply_filter_bank(decoder, low_weights)
+        skip_filtered = self._apply_filter_bank(skip, high_weights)
+        decoder_delta = decoder_filtered - decoder
+        skip_high_residual = skip - skip_filtered
+
+        alpf_strength = (
+            self.alpf_strength_max
+            * torch.sigmoid(self.alpf_strength_logit)
+        )
+        ahpf_strength = (
+            self.ahpf_strength_floor
+            + (self.ahpf_strength_max - self.ahpf_strength_floor)
+            * torch.sigmoid(self.ahpf_strength_logit)
+        )
+        decoder_adaptive = decoder + alpf_strength * decoder_delta
+        skip_adaptive_residual = ahpf_strength * skip_high_residual
+        diagnostics = {
+            "low_weights": low_weights,
+            "high_weights": high_weights,
+            "decoder_delta": decoder_delta,
+            "skip_high_residual": skip_high_residual,
+            "skip_adaptive_residual": skip_adaptive_residual,
+            "alpf_strength": alpf_strength,
+            "ahpf_strength": ahpf_strength,
+        }
+        return decoder_adaptive, skip_adaptive_residual, diagnostics
+
+
 class FAMHaarEPPA(nn.Module):
     """FAM-EPPA V4-A: separated PLAM semantics and stable Haar detail.
 
@@ -143,6 +353,14 @@ class FAMHaarEPPA(nn.Module):
         plam_strength_init=1.0,
         plam_strength_floor=0.25,
         detail_strength_floor=0.02,
+        use_adaptive_frequency=False,
+        frequency_groups=8,
+        frequency_context_channels=32,
+        alpf_strength_max=0.50,
+        alpf_strength_init=0.20,
+        ahpf_strength_max=0.30,
+        ahpf_strength_init=0.08,
+        ahpf_strength_floor=0.02,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -170,8 +388,20 @@ class FAMHaarEPPA(nn.Module):
         self.detail_strength_floor = float(detail_strength_floor)
         self.plam_strength_max = float(plam_strength_max)
         self.plam_strength_floor = float(plam_strength_floor)
+        self.use_adaptive_frequency = bool(use_adaptive_frequency)
 
         self.frequency_split = FixedHaarFrequencySplit(in_channels)
+        if self.use_adaptive_frequency:
+            self.adaptive_frequency = SpatialAdaptiveFrequencyRefiner(
+                in_channels,
+                groups=frequency_groups,
+                context_channels=frequency_context_channels,
+                alpf_strength_max=alpf_strength_max,
+                alpf_strength_init=alpf_strength_init,
+                ahpf_strength_max=ahpf_strength_max,
+                ahpf_strength_init=ahpf_strength_init,
+                ahpf_strength_floor=ahpf_strength_floor,
+            )
 
         self.channel_mlp = nn.Sequential(
             nn.Linear(in_channels, channel_bottleneck, bias=False),
@@ -446,9 +676,17 @@ class FAMHaarEPPA(nn.Module):
             detail_features,
         )
 
-    def forward(self, skip, plam=None, decoder=None, text=None):
+    def forward(
+        self,
+        skip,
+        plam=None,
+        decoder=None,
+        text=None,
+        return_decoder=False,
+    ):
         plam = self._at_skip_resolution(plam, skip, "PLAM")
         decoder = self._at_skip_resolution(decoder, skip, "Decoder")
+        decoder_for_fusion = decoder
 
         skip_low, skip_high = self.frequency_split(skip)
         plam_low, plam_high = self.frequency_split(plam)
@@ -459,6 +697,30 @@ class FAMHaarEPPA(nn.Module):
             plam_high = torch.zeros_like(plam_high)
         if not self.use_decoder_guide:
             decoder_low = torch.zeros_like(decoder_low)
+
+        adaptive_diagnostics = None
+        adaptive_skip_residual = torch.zeros_like(skip)
+        if self.use_adaptive_frequency:
+            decoder_source = (
+                decoder
+                if self.use_decoder_guide
+                else torch.zeros_like(decoder)
+            )
+            (
+                decoder_adaptive,
+                adaptive_skip_residual,
+                adaptive_diagnostics,
+            ) = self.adaptive_frequency(
+                skip_low,
+                plam_low,
+                decoder_low,
+                skip,
+                decoder_source,
+            )
+            decoder_for_fusion = decoder_adaptive
+            decoder_low, _ = self.frequency_split(decoder_adaptive)
+            if not self.use_decoder_guide:
+                decoder_low = torch.zeros_like(decoder_low)
 
         channel_gain = self._channel_gain(
             skip_low,
@@ -508,6 +770,7 @@ class FAMHaarEPPA(nn.Module):
         channel_residual = skip_low * (channel_gain - 1.0)
         output = (
             skip
+            + adaptive_skip_residual
             + plam_strength * plam_low
             + channel_residual
             + region_strength * region_residual
@@ -529,7 +792,10 @@ class FAMHaarEPPA(nn.Module):
                 ).clamp_min(1e-8)
                 branch_weights = branch_energy / branch_energy.sum()
                 spatial_residual = (
-                    region_strength
+                    torch.tanh(
+                        adaptive_skip_residual.mean(dim=1, keepdim=True)
+                    )
+                    + region_strength
                     * torch.tanh(region_residual.mean(dim=1, keepdim=True))
                     + detail_strength
                     * torch.tanh(detail_residual.mean(dim=1, keepdim=True))
@@ -539,6 +805,9 @@ class FAMHaarEPPA(nn.Module):
                 plam_energy = plam.square().mean().clamp_min(1e-8)
                 self._last_stats = {
                     "architecture_version": self.architecture_version,
+                    "adaptive_frequency_enabled": bool(
+                        self.use_adaptive_frequency
+                    ),
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
                     "spatial_mean": float(spatial_gain.mean().item()),
@@ -645,8 +914,68 @@ class FAMHaarEPPA(nn.Module):
                         context_features.abs().mean().item()
                     ),
                 }
+                if adaptive_diagnostics is not None:
+                    low_weights = adaptive_diagnostics["low_weights"]
+                    high_weights = adaptive_diagnostics["high_weights"]
+                    low_means = low_weights.mean(dim=(0, 1, 3, 4))
+                    high_means = high_weights.mean(dim=(0, 1, 3, 4))
+                    low_entropy = (
+                        -low_weights
+                        * low_weights.clamp_min(1e-8).log()
+                    ).sum(dim=2).mean().div(
+                        math.log(len(self.adaptive_frequency.filter_names))
+                    )
+                    high_entropy = (
+                        -high_weights
+                        * high_weights.clamp_min(1e-8).log()
+                    ).sum(dim=2).mean().div(
+                        math.log(len(self.adaptive_frequency.filter_names))
+                    )
+                    self._last_stats.update({
+                        "alpf_strength_mean": float(
+                            adaptive_diagnostics["alpf_strength"].item()
+                        ),
+                        "ahpf_strength_mean": float(
+                            adaptive_diagnostics["ahpf_strength"].item()
+                        ),
+                        "alpf_kernel_sum": float(
+                            low_weights.sum(dim=2).mean().item()
+                        ),
+                        "ahpf_kernel_sum": float(
+                            high_weights.sum(dim=2).mean().item()
+                        ),
+                        "alpf_kernel_entropy": float(low_entropy.item()),
+                        "ahpf_kernel_entropy": float(high_entropy.item()),
+                        "alpf_identity_weight": float(low_means[0].item()),
+                        "alpf_blur3_weight": float(low_means[1].item()),
+                        "alpf_blur5_weight": float(low_means[2].item()),
+                        "ahpf_identity_weight": float(high_means[0].item()),
+                        "ahpf_blur3_weight": float(high_means[1].item()),
+                        "ahpf_blur5_weight": float(high_means[2].item()),
+                        "alpf_delta_std": float(
+                            adaptive_diagnostics["decoder_delta"].std().item()
+                        ),
+                        "ahpf_residual_std": float(
+                            adaptive_diagnostics[
+                                "skip_high_residual"
+                            ].std().item()
+                        ),
+                        "adaptive_skip_residual_std": float(
+                            adaptive_diagnostics[
+                                "skip_adaptive_residual"
+                            ].std().item()
+                        ),
+                    })
+        if return_decoder:
+            return output, decoder_for_fusion
         return output
 
 
+class FAMAdaptiveHaarEPPA(FAMHaarEPPA):
+    """V4-B: V4-A plus adaptive ALPF/AHPF at selected stages."""
+
+    architecture_version = "fam_eppa_v4b"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMHaarEPPA
+EPPA = FAMAdaptiveHaarEPPA

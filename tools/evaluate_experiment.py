@@ -365,6 +365,28 @@ def main():
                 "iou": 0.7514141235748568,
             },
         },
+        "plam_focal_v3": {
+            "threshold_0_5": {
+                "dice": 0.8411413060645541,
+                "iou": 0.7541531600426723,
+            },
+            "validation_selected": {
+                "threshold": 0.5820000000000003,
+                "dice": 0.8449933102612126,
+                "iou": 0.760151841226176,
+            },
+        },
+        "fam_eppa_v4a": {
+            "threshold_0_5": {
+                "dice": 0.8402855811777318,
+                "iou": 0.7531828257755875,
+            },
+            "validation_selected": {
+                "threshold": 0.5380000000000003,
+                "dice": 0.8419699790340577,
+                "iou": 0.7558375059099838,
+            },
+        },
     }
     result = {
         "checkpoint": str(checkpoint_path),

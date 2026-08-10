@@ -33,9 +33,9 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 num_workers = 4
 persistent_workers = True
 
-# FAM-EPPA V4-A architecture ablation. Raw CNN and PLAM features stay separate
-# until EPPA, frequency splitting uses fixed Haar filters, and the high-frequency
-# path is a direct residual. Boundary supervision remains strictly disabled.
+# FAM-EPPA V4-B architecture ablation. V4-A remains intact, while up4/up3 add
+# efficient spatially adaptive low/high-pass routing. Boundary supervision
+# remains strictly disabled so this stays an architecture-only experiment.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
 loss_name = 'dice_focal'
@@ -44,9 +44,9 @@ focal_loss_weight = 0.5
 focal_gamma = 2.0
 focal_positive_weight = 0.5
 focal_negative_weight = 0.5
-experiment_architecture = 'FAM-EPPA V4-A (Separated PLAM + Fixed Haar)'
-experiment_architecture_version = 'fam_eppa_v4a'
-experiment_output_name = 'fam_eppa_v4a_evaluation.json'
+experiment_architecture = 'FAM-EPPA V4-B (Low-Resolution Adaptive ALPF/AHPF)'
+experiment_architecture_version = 'fam_eppa_v4b'
+experiment_output_name = 'fam_eppa_v4b_evaluation.json'
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -111,7 +111,7 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
-    # FAM-EPPA V4-A structural switches and residual bounds.
+    # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
     config.eppa_use_text_pixel_film = True
@@ -124,6 +124,16 @@ def get_CTranS_config():
     config.eppa_plam_strength_init = 1.0
     config.eppa_plam_strength_floor = 0.25
     config.eppa_detail_strength_floor = 0.02
+    # Keep the ablation localized: only the two lowest-resolution decoder
+    # stages receive adaptive frequency filtering.
+    config.eppa_adaptive_frequency_stages = ('up4', 'up3')
+    config.eppa_frequency_groups = 8
+    config.eppa_frequency_context_channels = 32
+    config.eppa_alpf_strength_max = 0.50
+    config.eppa_alpf_strength_init = 0.20
+    config.eppa_ahpf_strength_max = 0.30
+    config.eppa_ahpf_strength_init = 0.08
+    config.eppa_ahpf_strength_floor = 0.02
     return config
 
 

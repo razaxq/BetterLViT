@@ -343,8 +343,8 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             ):
                 raise RuntimeError(
                     'Checkpoint architecture mismatch: expected {!r}, '
-                    'found {!r}. FAM-EPPA V4-A must train from scratch or '
-                    'resume from a V4-A checkpoint.'.format(
+                    'found {!r}. This experiment must train from scratch or '
+                    'resume from an architecture-matched checkpoint.'.format(
                         expected_architecture,
                         checkpoint_architecture,
                     )
@@ -501,7 +501,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 )
                 if (
                     stage_stats.get('architecture_version')
-                    == 'fam_eppa_v4a'
+                    in ('fam_eppa_v4a', 'fam_eppa_v4b')
                 ):
                     logger.info(
                         '{} haar: reconstruction_error={:.3e}, '
@@ -545,6 +545,33 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                             stage_stats['semantic_support_std'],
                         )
                     )
+                    if stage_stats.get('adaptive_frequency_enabled'):
+                        logger.info(
+                            '{} adaptive_frequency: ALPF strength={:.4f}, '
+                            'weights={:.4f}/{:.4f}/{:.4f}, '
+                            'sum={:.4f}, entropy={:.4f}, delta_std={:.4f}; '
+                            'AHPF strength={:.4f}, '
+                            'weights={:.4f}/{:.4f}/{:.4f}, '
+                            'sum={:.4f}, entropy={:.4f}, residual_std={:.4f}, '
+                            'scaled_std={:.4f}'.format(
+                                stage,
+                                stage_stats['alpf_strength_mean'],
+                                stage_stats['alpf_identity_weight'],
+                                stage_stats['alpf_blur3_weight'],
+                                stage_stats['alpf_blur5_weight'],
+                                stage_stats['alpf_kernel_sum'],
+                                stage_stats['alpf_kernel_entropy'],
+                                stage_stats['alpf_delta_std'],
+                                stage_stats['ahpf_strength_mean'],
+                                stage_stats['ahpf_identity_weight'],
+                                stage_stats['ahpf_blur3_weight'],
+                                stage_stats['ahpf_blur5_weight'],
+                                stage_stats['ahpf_kernel_sum'],
+                                stage_stats['ahpf_kernel_entropy'],
+                                stage_stats['ahpf_residual_std'],
+                                stage_stats['adaptive_skip_residual_std'],
+                            )
+                        )
                     continue
                 logger.info(
                     '{} guide_mix: entropy={:.4f}, skip={:.4f}, '
