@@ -303,9 +303,9 @@ class WeightedDiceFocal(nn.Module):
             + self.focal_weight * focal
         )
         self.last_components = {
-            "dice": float(dice.detach().item()),
-            "focal": float(focal.detach().item()),
-            "total": float(total.detach().item()),
+            "dice": dice.detach(),
+            "focal": focal.detach(),
+            "total": total.detach(),
         }
         return total
 
@@ -401,9 +401,9 @@ class WeightedDiceBCE(nn.Module):
             boundary = inputs.new_zeros(())
             dice_BCE_loss = region_loss
         self.last_components = {
-            'region': float(region_loss.detach().item()),
-            'boundary': float(boundary.detach().item()),
-            'total': float(dice_BCE_loss.detach().item()),
+            'region': region_loss.detach(),
+            'boundary': boundary.detach(),
+            'total': dice_BCE_loss.detach(),
         }
 
         return dice_BCE_loss
@@ -434,6 +434,33 @@ def iou_on_batch(masks, pred):
         mask_tmp[mask_tmp <= 0] = 0
         ious.append(jaccard_score(mask_tmp.reshape(-1), pred_tmp.reshape(-1)))
     return np.mean(ious)
+
+
+@torch.no_grad()
+def iou_on_batch_gpu(masks, pred):
+    """Compute the legacy per-image mean IoU without leaving the GPU."""
+    if masks.ndim == pred.ndim - 1:
+        masks = masks.unsqueeze(1)
+    if masks.shape != pred.shape:
+        raise ValueError(
+            'IoU shape mismatch: {} != {}'.format(
+                tuple(masks.shape),
+                tuple(pred.shape),
+            )
+        )
+
+    predicted = pred >= 0.5
+    targets = masks > 0
+    predicted = predicted.flatten(1)
+    targets = targets.flatten(1)
+    intersection = (predicted & targets).sum(dim=1).float()
+    union = (predicted | targets).sum(dim=1).float()
+    per_image_iou = torch.where(
+        union > 0,
+        intersection / union.clamp_min(1.0),
+        torch.zeros_like(union),
+    )
+    return per_image_iou.mean()
 
 
 def dice_coef(y_true, y_pred):
