@@ -109,3 +109,32 @@ checkpoint. The original session and checkpoint remain immutable.
 The server passes that source through `BETTERLVIT_RESUME_PATH`, so the tracked
 configuration remains clean and an omitted variable still means from-scratch
 training.
+
+## Final outcome
+
+Training completed all 200 epochs after a safe checkpoint restart. The best
+checkpoint was selected at Epoch 150 by validation Dice. The validation set
+selected threshold `0.574`; that fixed threshold was then applied once to the
+full test set.
+
+| Split | Threshold | Dice | IoU |
+| --- | ---: | ---: | ---: |
+| Validation | 0.500 | 0.823699 | 0.726468 |
+| Validation | 0.574 | 0.826138 | 0.730265 |
+| Test | 0.500 | 0.842347 | 0.756172 |
+| Test | 0.574 | 0.844016 | 0.759352 |
+
+The calibrated test result is below V4-B by `0.000980` Dice and `0.000920`
+IoU, and below V3 by `0.000978` Dice and `0.000800` IoU. This is not an
+optimization failure: it is evidence that the tested flow alignment does not
+improve generalization on this split.
+
+At the end of training, the flow was active at nearly every location. `up4`
+used strength `0.6029`, mean/maximum offsets `0.7923/0.9043` feature pixels and
+active ratio `0.9786`, but changed skip/decoder agreement only from `0.0376`
+to `0.0397`. `up3` used strength `0.9006`, offsets `1.0982/1.3509`, active
+ratio `0.9828`, and changed agreement only from `0.0831` to `0.0884`.
+
+The next controlled experiment therefore removes semantic flow, returns to
+the stronger V4-B frequency-alignment path, and tests token-level text
+localization as the sole architectural variable.

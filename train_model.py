@@ -501,7 +501,12 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 )
                 if (
                     stage_stats.get('architecture_version')
-                    in ('fam_eppa_v4a', 'fam_eppa_v4b', 'fam_eppa_v4c')
+                    in (
+                        'fam_eppa_v4a',
+                        'fam_eppa_v4b',
+                        'fam_eppa_v4c',
+                        'fam_eppa_v4d',
+                    )
                 ):
                     logger.info(
                         '{} haar: reconstruction_error={:.3e}, '
@@ -596,6 +601,27 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 stage_stats[
                                     'flow_local_similarity_std'
                                 ],
+                            )
+                        )
+                    if stage_stats.get('token_routing_enabled'):
+                        logger.info(
+                            '{} token_routing: strength={:.4f}, '
+                            'temperature={:.4f}, entropy={:.4f}, '
+                            'peak={:.4f}, cls/non_cls={:.4f}/{:.4f}, '
+                            'spatial_std={:.4f}, residual_std={:.4f}, '
+                            'valid_tokens={:.2f}'.format(
+                                stage,
+                                stage_stats['token_strength_mean'],
+                                stage_stats['token_temperature'],
+                                stage_stats['token_attention_entropy'],
+                                stage_stats['token_attention_peak'],
+                                stage_stats['token_cls_mass'],
+                                stage_stats['token_non_cls_mass'],
+                                stage_stats[
+                                    'token_attention_spatial_std'
+                                ],
+                                stage_stats['token_residual_std'],
+                                stage_stats['token_valid_count_mean'],
                             )
                         )
                     continue

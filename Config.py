@@ -37,9 +37,9 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 num_workers = 4
 persistent_workers = True
 
-# FAM-EPPA V4-C architecture ablation. V4-B remains intact, while up4/up3 add
-# bounded local-similarity semantic-flow alignment before adaptive frequency
-# routing. Boundary supervision stays disabled: this is architecture-only.
+# FAM-EPPA V4-D architecture ablation. It returns to the successful V4-B
+# frequency paths and adds explicit pixel-to-token semantic routing at up4/up3.
+# Boundary supervision stays disabled: this is architecture-only.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
 loss_name = 'dice_focal'
@@ -48,9 +48,9 @@ focal_loss_weight = 0.5
 focal_gamma = 2.0
 focal_positive_weight = 0.5
 focal_negative_weight = 0.5
-experiment_architecture = 'FAM-EPPA V4-C (Similarity-Guided Flow Alignment)'
-experiment_architecture_version = 'fam_eppa_v4c'
-experiment_output_name = 'fam_eppa_v4c_evaluation.json'
+experiment_architecture = 'FAM-EPPA V4-D (Token-Localized Semantic Routing)'
+experiment_architecture_version = 'fam_eppa_v4d'
+experiment_output_name = 'fam_eppa_v4d_evaluation.json'
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -115,7 +115,7 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
-    # FAM-EPPA V4-C structural switches and residual bounds.
+    # FAM-EPPA V4-D structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
     config.eppa_use_text_pixel_film = True
@@ -138,14 +138,21 @@ def get_CTranS_config():
     config.eppa_ahpf_strength_max = 0.30
     config.eppa_ahpf_strength_init = 0.08
     config.eppa_ahpf_strength_floor = 0.02
-    # Complete the missing FreqFusion alignment component at the same two
-    # coarse decoder stages. The zero-initialized predictor makes the initial
-    # warp exactly identity; the bounded strength limits geometric distortion.
-    config.eppa_semantic_flow_stages = ('up4', 'up3')
+    # V4-C's almost-everywhere flow did not improve generalization, so V4-D
+    # deliberately disables geometric warping and isolates token-level text.
+    config.eppa_semantic_flow_stages = ()
     config.eppa_flow_groups = 4
     config.eppa_flow_max_offset = 1.5
     config.eppa_flow_strength_max = 1.0
     config.eppa_flow_strength_init = 0.25
+    # Coarse semantic regions query all valid CXR-BERT tokens. A zero-initialized
+    # output projection makes the initial network exactly reproduce V4-B.
+    config.eppa_token_routing_stages = ('up4', 'up3')
+    config.eppa_token_attention_dim = 32
+    config.eppa_token_attention_heads = 4
+    config.eppa_token_strength_max = 0.50
+    config.eppa_token_strength_init = 0.10
+    config.eppa_token_temperature_init = 5.0
     return config
 
 

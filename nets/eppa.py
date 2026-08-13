@@ -563,6 +563,12 @@ class FAMHaarEPPA(nn.Module):
         flow_max_offset=1.5,
         flow_strength_max=1.0,
         flow_strength_init=0.25,
+        use_token_routing=False,
+        token_attention_dim=32,
+        token_attention_heads=4,
+        token_strength_max=0.50,
+        token_strength_init=0.10,
+        token_temperature_init=5.0,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -594,6 +600,7 @@ class FAMHaarEPPA(nn.Module):
         self.use_semantic_flow_alignment = bool(
             use_semantic_flow_alignment
         )
+        self.use_token_routing = bool(use_token_routing)
         if self.use_semantic_flow_alignment and not self.use_adaptive_frequency:
             raise ValueError(
                 "Semantic-flow alignment requires adaptive frequency routing"
@@ -652,6 +659,60 @@ class FAMHaarEPPA(nn.Module):
         self.skip_semantic_norm = nn.GroupNorm(1, guide_channels)
         self.plam_semantic_norm = nn.GroupNorm(1, guide_channels)
         self.decoder_semantic_norm = nn.GroupNorm(1, guide_channels)
+
+        if self.use_token_routing:
+            if text_dim is None:
+                raise ValueError("Token routing requires text embeddings")
+            if token_attention_dim % token_attention_heads:
+                raise ValueError(
+                    "Token attention heads must divide attention channels: "
+                    "{} % {}".format(
+                        token_attention_dim,
+                        token_attention_heads,
+                    )
+                )
+            self.token_attention_dim = int(token_attention_dim)
+            self.token_attention_heads = int(token_attention_heads)
+            self.token_head_dim = (
+                self.token_attention_dim // self.token_attention_heads
+            )
+            self.token_strength_max = float(token_strength_max)
+            self.token_query = nn.Conv2d(
+                guide_channels,
+                self.token_attention_dim,
+                kernel_size=1,
+                bias=False,
+            )
+            self.token_key = nn.Linear(
+                text_dim,
+                self.token_attention_dim,
+                bias=False,
+            )
+            self.token_value = nn.Linear(
+                text_dim,
+                self.token_attention_dim,
+                bias=False,
+            )
+            self.token_out = nn.Conv2d(
+                self.token_attention_dim,
+                guide_channels,
+                kernel_size=1,
+                bias=False,
+            )
+            # Safe initialization: V4-D exactly reproduces V4-B before the
+            # token-localized residual starts learning.
+            nn.init.zeros_(self.token_out.weight)
+            self.token_strength_logit = nn.Parameter(
+                torch.tensor(
+                    _strength_logit(
+                        token_strength_init,
+                        self.token_strength_max,
+                    )
+                )
+            )
+            self.token_log_temperature = nn.Parameter(
+                torch.tensor(math.log(token_temperature_init))
+            )
 
         if text_dim is not None:
             self.text_pixel_film = nn.Linear(
@@ -800,7 +861,102 @@ class FAMHaarEPPA(nn.Module):
             + self.channel_strength_max * torch.tanh(channel_logit)
         )[:, :, None, None]
 
-    def _semantic_region(self, skip_low, plam_low, decoder_low, text):
+    def _token_localize(self, visual_features, text, text_mask):
+        if text is None:
+            raise ValueError("Token routing requires a text tensor")
+        if text.ndim != 3 or text.shape[2] != self.text_dim:
+            raise ValueError(
+                "Unexpected text shape for token routing: {}".format(
+                    tuple(text.shape)
+                )
+            )
+        batch, _, height, width = visual_features.shape
+        if text.shape[0] != batch:
+            raise ValueError("Text and visual batch sizes must match")
+        if text_mask is None:
+            text_mask = torch.ones(
+                text.shape[:2],
+                dtype=torch.bool,
+                device=text.device,
+            )
+        else:
+            if tuple(text_mask.shape) != tuple(text.shape[:2]):
+                raise ValueError(
+                    "Unexpected text mask shape: {}".format(
+                        tuple(text_mask.shape)
+                    )
+                )
+            text_mask = text_mask.to(device=text.device, dtype=torch.bool)
+        if not text_mask.any(dim=1).all():
+            raise ValueError("Every sample must contain at least one text token")
+
+        query = self.token_query(visual_features).reshape(
+            batch,
+            self.token_attention_heads,
+            self.token_head_dim,
+            height * width,
+        ).permute(0, 1, 3, 2)
+        key = self.token_key(text).reshape(
+            batch,
+            text.shape[1],
+            self.token_attention_heads,
+            self.token_head_dim,
+        ).permute(0, 2, 1, 3)
+        value = self.token_value(text).reshape(
+            batch,
+            text.shape[1],
+            self.token_attention_heads,
+            self.token_head_dim,
+        ).permute(0, 2, 1, 3)
+        query = F.normalize(query, p=2, dim=-1, eps=1e-6)
+        key = F.normalize(key, p=2, dim=-1, eps=1e-6)
+        temperature = self.token_log_temperature.clamp(
+            min=math.log(1.0),
+            max=math.log(20.0),
+        ).exp()
+        attention_logits = torch.einsum(
+            "bhnd,bhtd->bhnt",
+            query,
+            key,
+        ) * temperature
+        attention_logits = attention_logits.masked_fill(
+            ~text_mask[:, None, None, :],
+            torch.finfo(attention_logits.dtype).min,
+        )
+        attention = attention_logits.softmax(dim=-1)
+        attended_text = torch.einsum(
+            "bhnt,bhtd->bhnd",
+            attention,
+            value,
+        ).permute(0, 1, 3, 2).reshape(
+            batch,
+            self.token_attention_dim,
+            height,
+            width,
+        )
+        token_residual = self.token_out(attended_text)
+        token_strength = (
+            self.token_strength_max
+            * torch.sigmoid(self.token_strength_logit)
+        )
+        routed_features = visual_features + token_strength * token_residual
+        diagnostics = {
+            "attention": attention,
+            "text_mask": text_mask,
+            "token_residual": token_residual,
+            "token_strength": token_strength,
+            "temperature": temperature,
+        }
+        return routed_features, diagnostics
+
+    def _semantic_region(
+        self,
+        skip_low,
+        plam_low,
+        decoder_low,
+        text,
+        text_mask,
+    ):
         skip_features = self.skip_semantic_norm(
             self.skip_semantic_proj(skip_low)
         )
@@ -838,6 +994,14 @@ class FAMHaarEPPA(nn.Module):
                     .mean()
                 )
 
+        token_diagnostics = None
+        if self.use_token_routing:
+            semantic_features, token_diagnostics = self._token_localize(
+                semantic_features,
+                text,
+                text_mask,
+            )
+
         semantic_features = F.silu(semantic_features)
         semantic_average = semantic_features.mean(dim=1, keepdim=True)
         semantic_maximum = semantic_features.amax(dim=1, keepdim=True)
@@ -871,6 +1035,7 @@ class FAMHaarEPPA(nn.Module):
             plam_agreement,
             decoder_agreement,
             text_film_magnitude,
+            token_diagnostics,
         )
 
     def _detail_residual(self, skip_high, semantic_support):
@@ -898,6 +1063,7 @@ class FAMHaarEPPA(nn.Module):
         plam=None,
         decoder=None,
         text=None,
+        text_mask=None,
         return_decoder=False,
     ):
         plam = self._at_skip_resolution(plam, skip, "PLAM")
@@ -954,11 +1120,13 @@ class FAMHaarEPPA(nn.Module):
             plam_agreement,
             decoder_agreement,
             text_film_magnitude,
+            token_diagnostics,
         ) = self._semantic_region(
             skip_low,
             plam_low,
             decoder_low,
             text,
+            text_mask,
         )
         (
             detail_residual,
@@ -1023,6 +1191,9 @@ class FAMHaarEPPA(nn.Module):
                     "architecture_version": self.architecture_version,
                     "adaptive_frequency_enabled": bool(
                         self.use_adaptive_frequency
+                    ),
+                    "token_routing_enabled": bool(
+                        self.use_token_routing
                     ),
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
@@ -1130,6 +1301,52 @@ class FAMHaarEPPA(nn.Module):
                         context_features.abs().mean().item()
                     ),
                 }
+                if token_diagnostics is not None:
+                    attention = token_diagnostics["attention"]
+                    token_mask = token_diagnostics["text_mask"]
+                    valid_count = token_mask.sum(dim=1).float()
+                    attention_entropy = (
+                        -attention
+                        * attention.clamp_min(1e-8).log()
+                    ).sum(dim=-1)
+                    attention_entropy = (
+                        attention_entropy
+                        / valid_count.clamp_min(2.0).log()[:, None, None]
+                    )
+                    spatial_attention = attention.mean(dim=1)
+                    spatial_std = spatial_attention.std(dim=1)
+                    masked_spatial_std = (
+                        spatial_std * token_mask.float()
+                    ).sum() / token_mask.sum().clamp_min(1)
+                    self._last_stats.update({
+                        "token_strength_mean": float(
+                            token_diagnostics["token_strength"].item()
+                        ),
+                        "token_temperature": float(
+                            token_diagnostics["temperature"].item()
+                        ),
+                        "token_attention_entropy": float(
+                            attention_entropy.mean().item()
+                        ),
+                        "token_attention_peak": float(
+                            attention.amax(dim=-1).mean().item()
+                        ),
+                        "token_cls_mass": float(
+                            attention[..., 0].mean().item()
+                        ),
+                        "token_non_cls_mass": float(
+                            (1.0 - attention[..., 0]).mean().item()
+                        ),
+                        "token_attention_spatial_std": float(
+                            masked_spatial_std.item()
+                        ),
+                        "token_residual_std": float(
+                            token_diagnostics["token_residual"].std().item()
+                        ),
+                        "token_valid_count_mean": float(
+                            valid_count.mean().item()
+                        ),
+                    })
                 if adaptive_diagnostics is not None:
                     low_weights = adaptive_diagnostics["low_weights"]
                     high_weights = adaptive_diagnostics["high_weights"]
@@ -1261,5 +1478,11 @@ class FAMSemanticFlowEPPA(FAMHaarEPPA):
     architecture_version = "fam_eppa_v4c"
 
 
+class FAMTokenLocalizedEPPA(FAMHaarEPPA):
+    """V4-D: V4-B plus token-localized semantic routing."""
+
+    architecture_version = "fam_eppa_v4d"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMSemanticFlowEPPA
+EPPA = FAMTokenLocalizedEPPA

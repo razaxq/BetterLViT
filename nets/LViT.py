@@ -81,7 +81,13 @@ class UpblockAttention(nn.Module):
                  flow_groups=4,
                  flow_max_offset=1.5,
                  flow_strength_max=1.0,
-                 flow_strength_init=0.25):
+                 flow_strength_init=0.25,
+                 use_token_routing=False,
+                 token_attention_dim=32,
+                 token_attention_heads=4,
+                 token_strength_max=0.50,
+                 token_strength_init=0.10,
+                 token_temperature_init=5.0):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -118,16 +124,30 @@ class UpblockAttention(nn.Module):
             flow_max_offset=flow_max_offset,
             flow_strength_max=flow_strength_max,
             flow_strength_init=flow_strength_init,
+            use_token_routing=use_token_routing,
+            token_attention_dim=token_attention_dim,
+            token_attention_heads=token_attention_heads,
+            token_strength_max=token_strength_max,
+            token_strength_init=token_strength_init,
+            token_temperature_init=token_temperature_init,
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
-    def forward(self, x, skip_x, plam_x=None, text=None):
+    def forward(
+        self,
+        x,
+        skip_x,
+        plam_x=None,
+        text=None,
+        text_mask=None,
+    ):
         up = self.up(x)
         skip_x_att, up = self.eppa(
             skip_x,
             plam=plam_x,
             decoder=up,
             text=text,
+            text_mask=text_mask,
             return_decoder=True,
         )
         x = torch.cat([skip_x_att, up], dim=1)  # dim 1 is the channel dimension
@@ -288,6 +308,36 @@ class LViT(nn.Module):
             'eppa_flow_strength_init',
             0.25,
         )
+        EPPA_TOKEN_ROUTING_STAGES = tuple(getattr(
+            config,
+            'eppa_token_routing_stages',
+            (),
+        ))
+        EPPA_TOKEN_ATTENTION_DIM = getattr(
+            config,
+            'eppa_token_attention_dim',
+            32,
+        )
+        EPPA_TOKEN_ATTENTION_HEADS = getattr(
+            config,
+            'eppa_token_attention_heads',
+            4,
+        )
+        EPPA_TOKEN_STRENGTH_MAX = getattr(
+            config,
+            'eppa_token_strength_max',
+            0.50,
+        )
+        EPPA_TOKEN_STRENGTH_INIT = getattr(
+            config,
+            'eppa_token_strength_init',
+            0.10,
+        )
+        EPPA_TOKEN_TEMPERATURE_INIT = getattr(
+            config,
+            'eppa_token_temperature_init',
+            5.0,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -317,6 +367,11 @@ class LViT(nn.Module):
             'flow_max_offset': EPPA_FLOW_MAX_OFFSET,
             'flow_strength_max': EPPA_FLOW_STRENGTH_MAX,
             'flow_strength_init': EPPA_FLOW_STRENGTH_INIT,
+            'token_attention_dim': EPPA_TOKEN_ATTENTION_DIM,
+            'token_attention_heads': EPPA_TOKEN_ATTENTION_HEADS,
+            'token_strength_max': EPPA_TOKEN_STRENGTH_MAX,
+            'token_strength_init': EPPA_TOKEN_STRENGTH_INIT,
+            'token_temperature_init': EPPA_TOKEN_TEMPERATURE_INIT,
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -330,6 +385,9 @@ class LViT(nn.Module):
             ),
             use_semantic_flow_alignment=(
                 'up4' in EPPA_SEMANTIC_FLOW_STAGES
+            ),
+            use_token_routing=(
+                'up4' in EPPA_TOKEN_ROUTING_STAGES
             ),
             **eppa_common,
         )
@@ -346,6 +404,9 @@ class LViT(nn.Module):
             use_semantic_flow_alignment=(
                 'up3' in EPPA_SEMANTIC_FLOW_STAGES
             ),
+            use_token_routing=(
+                'up3' in EPPA_TOKEN_ROUTING_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -360,6 +421,9 @@ class LViT(nn.Module):
             ),
             use_semantic_flow_alignment=(
                 'up2' in EPPA_SEMANTIC_FLOW_STAGES
+            ),
+            use_token_routing=(
+                'up2' in EPPA_TOKEN_ROUTING_STAGES
             ),
             **eppa_common,
         )
@@ -376,6 +440,9 @@ class LViT(nn.Module):
             use_semantic_flow_alignment=(
                 'up1' in EPPA_SEMANTIC_FLOW_STAGES
             ),
+            use_token_routing=(
+                'up1' in EPPA_TOKEN_ROUTING_STAGES
+            ),
             **eppa_common,
         )
         self.outc = nn.Conv2d(in_channels, n_classes, kernel_size=(1, 1), stride=(1, 1))
@@ -390,7 +457,7 @@ class LViT(nn.Module):
         self.text_module2 = nn.Conv1d(in_channels=256, out_channels=128, kernel_size=3, padding=1)
         self.text_module1 = nn.Conv1d(in_channels=128, out_channels=64, kernel_size=3, padding=1)
 
-    def forward(self, x, text):
+    def forward(self, x, text, text_mask=None):
         x = x.float()  # x [4,3,224,224]
         x1 = self.inc(x)  # x1 [4, 64, 224, 224]
         text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2) 
@@ -417,10 +484,18 @@ class LViT(nn.Module):
         plam2 = self.reconstruct2(y2)
         plam3 = self.reconstruct3(y3)
         plam4 = self.reconstruct4(y4)
-        x = self.up4(x5, x4, plam4, text=text)
-        x = self.up3(x, x3, plam3, text=text)
-        x = self.up2(x, x2, plam2, text=text)
-        x = self.up1(x, x1, plam1, text=text)
+        x = self.up4(
+            x5, x4, plam4, text=text, text_mask=text_mask
+        )
+        x = self.up3(
+            x, x3, plam3, text=text, text_mask=text_mask
+        )
+        x = self.up2(
+            x, x2, plam2, text=text, text_mask=text_mask
+        )
+        x = self.up1(
+            x, x1, plam1, text=text, text_mask=text_mask
+        )
         if self.n_classes == 1:
             logits = self.last_activation(self.outc(x))
         else:
