@@ -62,7 +62,7 @@ shutdown_after_training = False
 # original best_model is not overwritten in the source session.
 # resume_max_dice is only used as a fallback when the loaded checkpoint
 # predates this resume infrastructure (no 'max_dice' field).
-resume_path = ''
+resume_path = os.environ.get('BETTERLVIT_RESUME_PATH', '').strip()
 resume_max_dice = 0.0
 require_checkpoint_architecture_match = True
 
