@@ -89,3 +89,20 @@ V3/V4-B Dice difference is currently negligible.
   Flow*: <https://arxiv.org/abs/2207.04415>
 - Huang et al., *FaPN: Feature-aligned Pyramid Network for Dense Image
   Prediction*, ICCV 2021: <https://arxiv.org/abs/2108.07058>
+
+## Runtime maintenance after Epoch 6
+
+The first server session exposed frequent host-side gaps between CUDA kernels.
+Profiling traced the dominant avoidable synchronization to per-image
+GPU-to-CPU copies followed by scikit-learn IoU evaluation on every training
+batch. The continuation keeps the architecture, optimizer, scheduler, loss,
+batch size, seed, and deterministic cuDNN policy unchanged, while applying
+runtime-only maintenance:
+
+- vectorized per-image IoU on the active torch device;
+- device-side epoch accumulation with one host snapshot every 20 batches;
+- non-blocking copies from pinned DataLoader memory;
+- one batched tokenization pass when each dataset is constructed.
+
+The continuation must use a new session sourced from the complete Epoch 6
+checkpoint. The original session and checkpoint remain immutable.
