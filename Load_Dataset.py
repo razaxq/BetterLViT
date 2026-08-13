@@ -114,6 +114,18 @@ def _tokenize(tokenizer, text, max_len):
     return encoded['input_ids'].squeeze(0), encoded['attention_mask'].squeeze(0)
 
 
+def _tokenize_all(tokenizer, texts, max_len):
+    """Tokenize immutable dataset text once instead of once per sample/epoch."""
+    encoded = tokenizer(
+        list(texts),
+        max_length=max_len,
+        padding='max_length',
+        truncation=True,
+        return_tensors='pt',
+    )
+    return encoded['input_ids'], encoded['attention_mask']
+
+
 class LV2D(Dataset):
     def __init__(self, dataset_path: str, task_name: str, row_text: str, joint_transform: Callable = None,
                  one_hot_mask: int = False,
@@ -125,8 +137,13 @@ class LV2D(Dataset):
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
-        self.tokenizer = _build_tokenizer()
         self.text_max_len = config.text_max_len
+        tokenizer = _build_tokenizer()
+        self.input_ids, self.attention_masks = _tokenize_all(
+            tokenizer,
+            (self.rowtext[name] for name in self.mask_list),
+            self.text_max_len,
+        )
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -135,7 +152,7 @@ class LV2D(Dataset):
             self.joint_transform = lambda x, y: (to_tensor(x), to_tensor(y))
 
     def __len__(self):
-        return len(os.listdir(self.output_path))
+        return len(self.mask_list)
 
     def __getitem__(self, idx):
 
@@ -145,8 +162,8 @@ class LV2D(Dataset):
         mask[mask <= 0] = 0
         mask[mask > 0] = 1
         mask = correct_dims(mask)
-        text = self.rowtext[mask_filename]
-        input_ids, attention_mask = _tokenize(self.tokenizer, text, self.text_max_len)
+        input_ids = self.input_ids[idx]
+        attention_mask = self.attention_masks[idx]
         if self.one_hot_mask:
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
             mask = torch.zeros((self.one_hot_mask, mask.shape[1], mask.shape[2])).scatter_(0, mask.long(), 1)
@@ -170,8 +187,13 @@ class ImageToImage2D(Dataset):
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
-        self.tokenizer = _build_tokenizer()
         self.text_max_len = config.text_max_len
+        tokenizer = _build_tokenizer()
+        self.input_ids, self.attention_masks = _tokenize_all(
+            tokenizer,
+            (self.rowtext[name] for name in self.mask_list),
+            self.text_max_len,
+        )
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -180,7 +202,7 @@ class ImageToImage2D(Dataset):
             self.joint_transform = lambda x, y: (to_tensor(x), to_tensor(y))
 
     def __len__(self):
-        return len(os.listdir(self.input_path))
+        return len(self.images_list)
 
     def __getitem__(self, idx):
 
@@ -199,8 +221,8 @@ class ImageToImage2D(Dataset):
 
         # correct dimensions if needed
         image, mask = correct_dims(image, mask)
-        text = self.rowtext[mask_filename]
-        input_ids, attention_mask = _tokenize(self.tokenizer, text, self.text_max_len)
+        input_ids = self.input_ids[idx]
+        attention_mask = self.attention_masks[idx]
 
         if self.one_hot_mask:
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
