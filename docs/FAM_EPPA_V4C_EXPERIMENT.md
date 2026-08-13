@@ -106,3 +106,6 @@ runtime-only maintenance:
 
 The continuation must use a new session sourced from the complete Epoch 6
 checkpoint. The original session and checkpoint remain immutable.
+The server passes that source through `BETTERLVIT_RESUME_PATH`, so the tracked
+configuration remains clean and an omitted variable still means from-scratch
+training.
