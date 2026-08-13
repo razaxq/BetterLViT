@@ -93,6 +93,29 @@ strength gates. The AMD integration check uses a full real-data batch.
 - The 2,113-image test set is evaluated only after model and threshold choices
   are fixed.
 
+## Final outcome
+
+Training completed 200 epochs. The best checkpoint was Epoch 198, with
+validation Dice/IoU `0.824076/0.727164` at threshold `0.5`. Validation-only
+calibration selected threshold `0.52`:
+
+| Split | Threshold | Dice | IoU |
+| --- | ---: | ---: | ---: |
+| Validation | `0.5` | `0.824076` | `0.727164` |
+| Validation | `0.52` | `0.824274` | `0.727518` |
+| Test | `0.5` | `0.844562` | `0.759546` |
+| Test | validation-selected `0.52` | `0.844996` | `0.760273` |
+
+V4-B exceeds V4-A by Dice `0.003026` and IoU `0.004435`, showing that the
+adaptive frequency paths are useful. Against V3, however, calibrated Dice is
+effectively tied (`+0.000002`) and IoU improves only `0.000121`.
+
+The learned filters were non-trivial and normalized. At Epoch 200, `up4`
+ALPF/AHPF strengths were `0.3096/0.0653`; `up3` reached `0.3940/0.2264`.
+This rules out branch collapse but also shows that frequency selection alone
+has reached a plateau. The next controlled ablation is V4-C: preserve V4-B
+and add the omitted local-similarity offset alignment at `up4/up3`.
+
 ## Reference
 
 - Chen et al., *FreqFusion: Frequency-aware Feature Fusion for Dense Image

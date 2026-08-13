@@ -501,7 +501,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 )
                 if (
                     stage_stats.get('architecture_version')
-                    in ('fam_eppa_v4a', 'fam_eppa_v4b')
+                    in ('fam_eppa_v4a', 'fam_eppa_v4b', 'fam_eppa_v4c')
                 ):
                     logger.info(
                         '{} haar: reconstruction_error={:.3e}, '
@@ -570,6 +570,32 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 stage_stats['ahpf_kernel_entropy'],
                                 stage_stats['ahpf_residual_std'],
                                 stage_stats['adaptive_skip_residual_std'],
+                            )
+                        )
+                    if stage_stats.get('semantic_flow_enabled'):
+                        logger.info(
+                            '{} semantic_flow: strength={:.4f}, '
+                            'offset_mean/max={:.4f}/{:.4f}px, active={:.4f}, '
+                            'delta_std={:.4f}, agreement={:.4f}->{:.4f}, '
+                            'local_similarity={:.4f}+/-{:.4f}'.format(
+                                stage,
+                                stage_stats['flow_strength_mean'],
+                                stage_stats['flow_offset_mean'],
+                                stage_stats['flow_offset_max'],
+                                stage_stats['flow_active_ratio'],
+                                stage_stats['flow_alignment_delta_std'],
+                                stage_stats[
+                                    'flow_skip_agreement_before'
+                                ],
+                                stage_stats[
+                                    'flow_skip_agreement_after'
+                                ],
+                                stage_stats[
+                                    'flow_local_similarity_mean'
+                                ],
+                                stage_stats[
+                                    'flow_local_similarity_std'
+                                ],
                             )
                         )
                     continue

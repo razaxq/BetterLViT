@@ -33,9 +33,9 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 num_workers = 4
 persistent_workers = True
 
-# FAM-EPPA V4-B architecture ablation. V4-A remains intact, while up4/up3 add
-# efficient spatially adaptive low/high-pass routing. Boundary supervision
-# remains strictly disabled so this stays an architecture-only experiment.
+# FAM-EPPA V4-C architecture ablation. V4-B remains intact, while up4/up3 add
+# bounded local-similarity semantic-flow alignment before adaptive frequency
+# routing. Boundary supervision stays disabled: this is architecture-only.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
 loss_name = 'dice_focal'
@@ -44,9 +44,9 @@ focal_loss_weight = 0.5
 focal_gamma = 2.0
 focal_positive_weight = 0.5
 focal_negative_weight = 0.5
-experiment_architecture = 'FAM-EPPA V4-B (Low-Resolution Adaptive ALPF/AHPF)'
-experiment_architecture_version = 'fam_eppa_v4b'
-experiment_output_name = 'fam_eppa_v4b_evaluation.json'
+experiment_architecture = 'FAM-EPPA V4-C (Similarity-Guided Flow Alignment)'
+experiment_architecture_version = 'fam_eppa_v4c'
+experiment_output_name = 'fam_eppa_v4c_evaluation.json'
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -111,7 +111,7 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
-    # FAM-EPPA V4-B structural switches and residual bounds.
+    # FAM-EPPA V4-C structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
     config.eppa_use_text_pixel_film = True
@@ -134,6 +134,14 @@ def get_CTranS_config():
     config.eppa_ahpf_strength_max = 0.30
     config.eppa_ahpf_strength_init = 0.08
     config.eppa_ahpf_strength_floor = 0.02
+    # Complete the missing FreqFusion alignment component at the same two
+    # coarse decoder stages. The zero-initialized predictor makes the initial
+    # warp exactly identity; the bounded strength limits geometric distortion.
+    config.eppa_semantic_flow_stages = ('up4', 'up3')
+    config.eppa_flow_groups = 4
+    config.eppa_flow_max_offset = 1.5
+    config.eppa_flow_strength_max = 1.0
+    config.eppa_flow_strength_init = 0.25
     return config
 
 

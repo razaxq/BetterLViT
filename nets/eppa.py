@@ -105,7 +105,7 @@ def _strength_logit(initial, maximum, floor=0.0):
 
 
 class SpatialAdaptiveFrequencyRefiner(nn.Module):
-    """Efficient spatially adaptive low/high-pass filtering.
+    """Efficient adaptive frequency filtering and optional flow alignment.
 
     FreqFusion predicts a normalized filter for every spatial location. A
     literal CARAFE/unfold port is unnecessarily expensive for this 24 GB AMD
@@ -114,7 +114,12 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
     spatially variant and group-specific while every candidate filter is
     implemented by an efficient depthwise convolution.
 
-    The ALPF path smooths the aligned decoder feature before semantic fusion.
+    V4-C adds the offset component omitted by V4-B. It predicts bounded,
+    group-wise semantic flow from the shared context and its eight-neighbour
+    cosine similarities, then warps the decoder with ``grid_sample``. The
+    final flow predictor is zero-initialized, so V4-C is exactly V4-B at
+    initialization. The ALPF path smooths the aligned decoder feature before
+    semantic fusion.
     The AHPF path adds the complementary high-frequency skip residual. Both
     paths have independent bounded strengths and therefore cannot silently
     become an unconstrained replacement for the V4-A residual backbone.
@@ -132,6 +137,11 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         ahpf_strength_max=0.30,
         ahpf_strength_init=0.08,
         ahpf_strength_floor=0.02,
+        use_semantic_flow_alignment=False,
+        flow_groups=4,
+        flow_max_offset=1.5,
+        flow_strength_max=1.0,
+        flow_strength_init=0.25,
     ):
         super().__init__()
         if channels % groups:
@@ -145,6 +155,19 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         self.alpf_strength_max = float(alpf_strength_max)
         self.ahpf_strength_max = float(ahpf_strength_max)
         self.ahpf_strength_floor = float(ahpf_strength_floor)
+        self.use_semantic_flow_alignment = bool(
+            use_semantic_flow_alignment
+        )
+        self.flow_groups = int(flow_groups)
+        self.flow_max_offset = float(flow_max_offset)
+        self.flow_strength_max = float(flow_strength_max)
+        if self.use_semantic_flow_alignment and channels % self.flow_groups:
+            raise ValueError(
+                "Semantic-flow groups must divide channels: {} % {}".format(
+                    channels,
+                    self.flow_groups,
+                )
+            )
 
         self.skip_context = nn.Conv2d(
             channels,
@@ -192,6 +215,36 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         with torch.no_grad():
             self.low_kernel_predictor.bias.copy_(low_bias)
             self.high_kernel_predictor.bias.copy_(high_bias)
+
+        if self.use_semantic_flow_alignment:
+            flow_hidden = max(context_channels, 16)
+            self.flow_predictor = nn.Sequential(
+                nn.Conv2d(
+                    context_channels + 8,
+                    flow_hidden,
+                    kernel_size=3,
+                    padding=1,
+                    bias=False,
+                ),
+                nn.GroupNorm(1, flow_hidden),
+                nn.SiLU(inplace=True),
+                nn.Conv2d(
+                    flow_hidden,
+                    self.flow_groups * 2,
+                    kernel_size=3,
+                    padding=1,
+                ),
+            )
+            nn.init.zeros_(self.flow_predictor[-1].weight)
+            nn.init.zeros_(self.flow_predictor[-1].bias)
+            self.flow_strength_logit = nn.Parameter(
+                torch.tensor(
+                    _strength_logit(
+                        flow_strength_init,
+                        self.flow_strength_max,
+                    )
+                ).view(1, 1, 1, 1)
+            )
 
         blur3_vector = torch.tensor([1.0, 2.0, 1.0])
         blur3 = torch.outer(blur3_vector, blur3_vector)
@@ -265,6 +318,126 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             output = output + response * channel_weights
         return output
 
+    @staticmethod
+    def _local_similarity(features):
+        """Return cosine similarity to the eight immediate neighbours."""
+        normalized = F.normalize(features, p=2, dim=1, eps=1e-6)
+        height, width = normalized.shape[-2:]
+        padded = F.pad(normalized, (1, 1, 1, 1), mode="replicate")
+        similarities = []
+        for offset_y, offset_x in (
+            (-1, -1),
+            (-1, 0),
+            (-1, 1),
+            (0, -1),
+            (0, 1),
+            (1, -1),
+            (1, 0),
+            (1, 1),
+        ):
+            neighbour = padded[
+                :,
+                :,
+                1 + offset_y:1 + offset_y + height,
+                1 + offset_x:1 + offset_x + width,
+            ]
+            similarities.append(
+                (normalized * neighbour).sum(dim=1, keepdim=True)
+            )
+        return torch.cat(similarities, dim=1)
+
+    def _warp_groups(self, features, flow):
+        """Warp channel groups using pixel-unit x/y semantic flow."""
+        batch, channels, height, width = features.shape
+        channels_per_group = channels // self.flow_groups
+        if flow.shape != (batch, self.flow_groups, 2, height, width):
+            raise ValueError(
+                "Unexpected semantic-flow shape: {}".format(
+                    tuple(flow.shape)
+                )
+            )
+
+        y_coordinates = torch.linspace(
+            -1.0,
+            1.0,
+            height,
+            device=features.device,
+            dtype=features.dtype,
+        )
+        x_coordinates = torch.linspace(
+            -1.0,
+            1.0,
+            width,
+            device=features.device,
+            dtype=features.dtype,
+        )
+        grid_y, grid_x = torch.meshgrid(
+            y_coordinates,
+            x_coordinates,
+            indexing="ij",
+        )
+        base_grid = torch.stack((grid_x, grid_y), dim=-1)
+
+        normalized_flow = torch.stack(
+            (
+                flow[:, :, 0] * (2.0 / max(width - 1, 1)),
+                flow[:, :, 1] * (2.0 / max(height - 1, 1)),
+            ),
+            dim=-1,
+        )
+        sampling_grid = (
+            base_grid[None, None]
+            + normalized_flow
+        ).reshape(batch * self.flow_groups, height, width, 2)
+        grouped_features = features.reshape(
+            batch * self.flow_groups,
+            channels_per_group,
+            height,
+            width,
+        )
+        aligned = F.grid_sample(
+            grouped_features,
+            sampling_grid,
+            mode="bilinear",
+            padding_mode="border",
+            align_corners=True,
+        )
+        return aligned.reshape(batch, channels, height, width)
+
+    def _align_decoder(self, context, decoder):
+        local_similarity = self._local_similarity(context)
+        raw_flow = self.flow_predictor(
+            torch.cat((context, local_similarity), dim=1)
+        )
+        batch, _, height, width = raw_flow.shape
+        raw_flow = raw_flow.view(
+            batch,
+            self.flow_groups,
+            2,
+            height,
+            width,
+        )
+        flow_strength = (
+            self.flow_strength_max
+            * torch.sigmoid(self.flow_strength_logit)
+        )
+        flow_direction = torch.tanh(raw_flow)
+        flow_norm = flow_direction.square().sum(
+            dim=2,
+            keepdim=True,
+        ).add(1e-6).sqrt()
+        flow_direction = flow_direction / flow_norm.clamp_min(1.0)
+        effective_flow = (
+            self.flow_max_offset * flow_strength * flow_direction
+        )
+        aligned_decoder = self._warp_groups(decoder, effective_flow)
+        return (
+            aligned_decoder,
+            effective_flow,
+            flow_strength,
+            local_similarity,
+        )
+
     def forward(
         self,
         skip_low,
@@ -286,9 +459,25 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             self.high_kernel_predictor(context)
         )
 
-        decoder_filtered = self._apply_filter_bank(decoder, low_weights)
+        decoder_aligned = decoder
+        effective_flow = None
+        flow_strength = None
+        local_similarity = None
+        if self.use_semantic_flow_alignment:
+            (
+                decoder_aligned,
+                effective_flow,
+                flow_strength,
+                local_similarity,
+            ) = self._align_decoder(context, decoder)
+
+        decoder_filtered = self._apply_filter_bank(
+            decoder_aligned,
+            low_weights,
+        )
         skip_filtered = self._apply_filter_bank(skip, high_weights)
-        decoder_delta = decoder_filtered - decoder
+        decoder_delta = decoder_filtered - decoder_aligned
+        alignment_delta = decoder_aligned - decoder
         skip_high_residual = skip - skip_filtered
 
         alpf_strength = (
@@ -300,7 +489,7 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             + (self.ahpf_strength_max - self.ahpf_strength_floor)
             * torch.sigmoid(self.ahpf_strength_logit)
         )
-        decoder_adaptive = decoder + alpf_strength * decoder_delta
+        decoder_adaptive = decoder_aligned + alpf_strength * decoder_delta
         skip_adaptive_residual = ahpf_strength * skip_high_residual
         diagnostics = {
             "low_weights": low_weights,
@@ -310,6 +499,14 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             "skip_adaptive_residual": skip_adaptive_residual,
             "alpf_strength": alpf_strength,
             "ahpf_strength": ahpf_strength,
+            "semantic_flow_enabled": bool(
+                self.use_semantic_flow_alignment
+            ),
+            "decoder_aligned": decoder_aligned,
+            "alignment_delta": alignment_delta,
+            "effective_flow": effective_flow,
+            "flow_strength": flow_strength,
+            "local_similarity": local_similarity,
         }
         return decoder_adaptive, skip_adaptive_residual, diagnostics
 
@@ -361,6 +558,11 @@ class FAMHaarEPPA(nn.Module):
         ahpf_strength_max=0.30,
         ahpf_strength_init=0.08,
         ahpf_strength_floor=0.02,
+        use_semantic_flow_alignment=False,
+        flow_groups=4,
+        flow_max_offset=1.5,
+        flow_strength_max=1.0,
+        flow_strength_init=0.25,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -389,6 +591,13 @@ class FAMHaarEPPA(nn.Module):
         self.plam_strength_max = float(plam_strength_max)
         self.plam_strength_floor = float(plam_strength_floor)
         self.use_adaptive_frequency = bool(use_adaptive_frequency)
+        self.use_semantic_flow_alignment = bool(
+            use_semantic_flow_alignment
+        )
+        if self.use_semantic_flow_alignment and not self.use_adaptive_frequency:
+            raise ValueError(
+                "Semantic-flow alignment requires adaptive frequency routing"
+            )
 
         self.frequency_split = FixedHaarFrequencySplit(in_channels)
         if self.use_adaptive_frequency:
@@ -401,6 +610,13 @@ class FAMHaarEPPA(nn.Module):
                 ahpf_strength_max=ahpf_strength_max,
                 ahpf_strength_init=ahpf_strength_init,
                 ahpf_strength_floor=ahpf_strength_floor,
+                use_semantic_flow_alignment=(
+                    self.use_semantic_flow_alignment
+                ),
+                flow_groups=flow_groups,
+                flow_max_offset=flow_max_offset,
+                flow_strength_max=flow_strength_max,
+                flow_strength_init=flow_strength_init,
             )
 
         self.channel_mlp = nn.Sequential(
@@ -965,7 +1181,69 @@ class FAMHaarEPPA(nn.Module):
                                 "skip_adaptive_residual"
                             ].std().item()
                         ),
+                        "semantic_flow_enabled": bool(
+                            adaptive_diagnostics[
+                                "semantic_flow_enabled"
+                            ]
+                        ),
                     })
+                    if adaptive_diagnostics["semantic_flow_enabled"]:
+                        effective_flow = adaptive_diagnostics[
+                            "effective_flow"
+                        ]
+                        flow_magnitude = effective_flow.square().sum(
+                            dim=2
+                        ).sqrt()
+                        decoder_aligned = adaptive_diagnostics[
+                            "decoder_aligned"
+                        ]
+                        agreement_before = self._cosine_map(
+                            skip_low,
+                            decoder,
+                        )
+                        agreement_after = self._cosine_map(
+                            skip_low,
+                            decoder_aligned,
+                        )
+                        local_similarity = adaptive_diagnostics[
+                            "local_similarity"
+                        ]
+                        self._last_stats.update({
+                            "flow_strength_mean": float(
+                                adaptive_diagnostics[
+                                    "flow_strength"
+                                ].item()
+                            ),
+                            "flow_offset_mean": float(
+                                flow_magnitude.mean().item()
+                            ),
+                            "flow_offset_max": float(
+                                flow_magnitude.amax().item()
+                            ),
+                            "flow_active_ratio": float(
+                                (flow_magnitude > 0.25)
+                                .float()
+                                .mean()
+                                .item()
+                            ),
+                            "flow_alignment_delta_std": float(
+                                adaptive_diagnostics[
+                                    "alignment_delta"
+                                ].std().item()
+                            ),
+                            "flow_skip_agreement_before": float(
+                                agreement_before.mean().item()
+                            ),
+                            "flow_skip_agreement_after": float(
+                                agreement_after.mean().item()
+                            ),
+                            "flow_local_similarity_mean": float(
+                                local_similarity.mean().item()
+                            ),
+                            "flow_local_similarity_std": float(
+                                local_similarity.std().item()
+                            ),
+                        })
         if return_decoder:
             return output, decoder_for_fusion
         return output
@@ -977,5 +1255,11 @@ class FAMAdaptiveHaarEPPA(FAMHaarEPPA):
     architecture_version = "fam_eppa_v4b"
 
 
+class FAMSemanticFlowEPPA(FAMHaarEPPA):
+    """V4-C: V4-B plus local-similarity semantic-flow alignment."""
+
+    architecture_version = "fam_eppa_v4c"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMAdaptiveHaarEPPA
+EPPA = FAMSemanticFlowEPPA

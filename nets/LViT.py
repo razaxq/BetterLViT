@@ -76,7 +76,12 @@ class UpblockAttention(nn.Module):
                  alpf_strength_init=0.20,
                  ahpf_strength_max=0.30,
                  ahpf_strength_init=0.08,
-                 ahpf_strength_floor=0.02):
+                 ahpf_strength_floor=0.02,
+                 use_semantic_flow_alignment=False,
+                 flow_groups=4,
+                 flow_max_offset=1.5,
+                 flow_strength_max=1.0,
+                 flow_strength_init=0.25):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -108,6 +113,11 @@ class UpblockAttention(nn.Module):
             ahpf_strength_max=ahpf_strength_max,
             ahpf_strength_init=ahpf_strength_init,
             ahpf_strength_floor=ahpf_strength_floor,
+            use_semantic_flow_alignment=use_semantic_flow_alignment,
+            flow_groups=flow_groups,
+            flow_max_offset=flow_max_offset,
+            flow_strength_max=flow_strength_max,
+            flow_strength_init=flow_strength_init,
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
@@ -253,6 +263,31 @@ class LViT(nn.Module):
             'eppa_ahpf_strength_floor',
             0.02,
         )
+        EPPA_SEMANTIC_FLOW_STAGES = tuple(getattr(
+            config,
+            'eppa_semantic_flow_stages',
+            (),
+        ))
+        EPPA_FLOW_GROUPS = getattr(
+            config,
+            'eppa_flow_groups',
+            4,
+        )
+        EPPA_FLOW_MAX_OFFSET = getattr(
+            config,
+            'eppa_flow_max_offset',
+            1.5,
+        )
+        EPPA_FLOW_STRENGTH_MAX = getattr(
+            config,
+            'eppa_flow_strength_max',
+            1.0,
+        )
+        EPPA_FLOW_STRENGTH_INIT = getattr(
+            config,
+            'eppa_flow_strength_init',
+            0.25,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -278,6 +313,10 @@ class LViT(nn.Module):
             'ahpf_strength_max': EPPA_AHPF_STRENGTH_MAX,
             'ahpf_strength_init': EPPA_AHPF_STRENGTH_INIT,
             'ahpf_strength_floor': EPPA_AHPF_STRENGTH_FLOOR,
+            'flow_groups': EPPA_FLOW_GROUPS,
+            'flow_max_offset': EPPA_FLOW_MAX_OFFSET,
+            'flow_strength_max': EPPA_FLOW_STRENGTH_MAX,
+            'flow_strength_init': EPPA_FLOW_STRENGTH_INIT,
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -288,6 +327,9 @@ class LViT(nn.Module):
             ),
             use_adaptive_frequency=(
                 'up4' in EPPA_ADAPTIVE_FREQUENCY_STAGES
+            ),
+            use_semantic_flow_alignment=(
+                'up4' in EPPA_SEMANTIC_FLOW_STAGES
             ),
             **eppa_common,
         )
@@ -301,6 +343,9 @@ class LViT(nn.Module):
             use_adaptive_frequency=(
                 'up3' in EPPA_ADAPTIVE_FREQUENCY_STAGES
             ),
+            use_semantic_flow_alignment=(
+                'up3' in EPPA_SEMANTIC_FLOW_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -313,6 +358,9 @@ class LViT(nn.Module):
             use_adaptive_frequency=(
                 'up2' in EPPA_ADAPTIVE_FREQUENCY_STAGES
             ),
+            use_semantic_flow_alignment=(
+                'up2' in EPPA_SEMANTIC_FLOW_STAGES
+            ),
             **eppa_common,
         )
         self.up1 = UpblockAttention(
@@ -324,6 +372,9 @@ class LViT(nn.Module):
             ),
             use_adaptive_frequency=(
                 'up1' in EPPA_ADAPTIVE_FREQUENCY_STAGES
+            ),
+            use_semantic_flow_alignment=(
+                'up1' in EPPA_SEMANTIC_FLOW_STAGES
             ),
             **eppa_common,
         )

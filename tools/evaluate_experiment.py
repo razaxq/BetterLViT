@@ -225,8 +225,10 @@ def evaluate_thresholds(
 
 def main():
     args = parse_args()
-    if not torch.cuda.is_available() or not torch.version.hip:
-        raise RuntimeError("An AMD ROCm PyTorch environment is required.")
+    if not torch.cuda.is_available():
+        raise RuntimeError(
+            "A CUDA-compatible PyTorch environment is required."
+        )
     if (
         args.step <= 0
         or args.maximum < args.minimum
@@ -385,6 +387,17 @@ def main():
                 "threshold": 0.5380000000000003,
                 "dice": 0.8419699790340577,
                 "iou": 0.7558375059099838,
+            },
+        },
+        "fam_eppa_v4b": {
+            "threshold_0_5": {
+                "dice": 0.8445621201542276,
+                "iou": 0.7595461495330164,
+            },
+            "validation_selected": {
+                "threshold": 0.5200000000000002,
+                "dice": 0.8449955667928043,
+                "iou": 0.760272548555657,
             },
         },
     }
