@@ -21,7 +21,10 @@ img_size = 224
 print_frequency = 20
 tensorboard_frequency = 20
 save_frequency = 5000
-vis_frequency = 10
+# Validation previews are optional training artifacts. Long remote runs can
+# disable them without changing optimization or metrics, which also avoids a
+# failed image write interrupting checkpoint progress.
+vis_frequency = int(os.environ.get('BETTERLVIT_VIS_FREQUENCY', '10'))
 early_stopping_patience = 80
 print_loss_components = False  # Toggle to print individual loss components
 
