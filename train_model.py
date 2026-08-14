@@ -507,6 +507,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         'fam_eppa_v4c',
                         'fam_eppa_v4d',
                         'fam_eppa_v4e',
+                        'fam_eppa_v4f',
                     )
                 ):
                     logger.info(
@@ -658,6 +659,53 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 ],
                                 stage_stats[
                                     'plam_calibrated_residual_std'
+                                ],
+                            )
+                        )
+                    if stage_stats.get('semantic_prototype_enabled'):
+                        logger.info(
+                            '{} semantic_prototypes: strength={:.4f}, '
+                            'assignment/mass_entropy={:.4f}/{:.4f}, '
+                            'mass=[{:.4f},{:.4f}], active={:.4f}, '
+                            'std input/reconstruction/residual={:.4f}/'
+                            '{:.4f}/{:.4f}, variance_ratio={:.4f}, '
+                            'center_cosine={:.4f}, mean_error={:.3e}'.format(
+                                stage,
+                                stage_stats[
+                                    'semantic_prototype_strength'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_assignment_entropy'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_mass_entropy'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_min_mass_ratio'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_max_mass_ratio'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_active_ratio'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_input_std'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_reconstruction_std'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_residual_std'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_variance_ratio'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_center_cosine'
+                                ],
+                                stage_stats[
+                                    'semantic_prototype_mean_error'
                                 ],
                             )
                         )

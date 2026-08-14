@@ -422,6 +422,17 @@ def main():
                 "iou": 0.7541290639811059,
             },
         },
+        "fam_eppa_v4e": {
+            "threshold_0_5": {
+                "dice": 0.8425917207635323,
+                "iou": 0.7566763568616546,
+            },
+            "validation_selected": {
+                "threshold": 0.5580000000000003,
+                "dice": 0.8441656211350714,
+                "iou": 0.7591030031458643,
+            },
+        },
     }
     result = {
         "checkpoint": str(checkpoint_path),

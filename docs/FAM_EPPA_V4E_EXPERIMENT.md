@@ -102,3 +102,20 @@ a co-primary reference. V4-C and V4-D are negative ablations.
 - Koleilat et al., *MedCLIPSeg: Probabilistic Vision-Language Adaptation for
   Data-Efficient and Generalizable Medical Image Segmentation*, 2026:
   <https://arxiv.org/abs/2602.20423>
+
+## Final result and decision
+
+The run stopped by early stopping after Epoch 179; the validation-best
+checkpoint was Epoch 98. Validation selected threshold `0.558`.
+
+| Model | Validation Dice / IoU | Test Dice / IoU |
+|---|---:|---:|
+| V4-B, selected threshold `0.520` | 0.824274 / 0.727518 | **0.844996 / 0.760273** |
+| V4-E, selected threshold `0.558` | **0.825310 / 0.727844** | 0.844166 / 0.759103 |
+
+V4-E improved validation Dice by `0.001036` but reduced test Dice by
+`0.000830`. The learned gate converged to mean `0.5457`, suppressed essentially
+all spatial positions, and had only `-0.0462` correlation with the agreement
+signal. It therefore learned a nearly global PLAM attenuation shortcut instead
+of the intended local reliability calibration. V4-E is rejected as the next
+base architecture; V4-B remains the strongest generalizing reference.

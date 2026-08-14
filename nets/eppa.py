@@ -572,6 +572,11 @@ class FAMHaarEPPA(nn.Module):
         use_plam_calibration=False,
         plam_calibration_max_delta=0.50,
         plam_calibration_hidden_channels=16,
+        use_semantic_prototype_aggregation=False,
+        semantic_prototype_count=4,
+        semantic_prototype_temperature=0.75,
+        semantic_prototype_strength_max=0.25,
+        semantic_prototype_strength_init=0.0,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -605,8 +610,18 @@ class FAMHaarEPPA(nn.Module):
         )
         self.use_token_routing = bool(use_token_routing)
         self.use_plam_calibration = bool(use_plam_calibration)
+        self.use_semantic_prototype_aggregation = bool(
+            use_semantic_prototype_aggregation
+        )
         self.plam_calibration_max_delta = float(
             plam_calibration_max_delta
+        )
+        self.semantic_prototype_count = int(semantic_prototype_count)
+        self.semantic_prototype_temperature = float(
+            semantic_prototype_temperature
+        )
+        self.semantic_prototype_strength_max = float(
+            semantic_prototype_strength_max
         )
         if self.use_semantic_flow_alignment and not self.use_adaptive_frequency:
             raise ValueError(
@@ -617,6 +632,22 @@ class FAMHaarEPPA(nn.Module):
         if not 0.0 < self.plam_calibration_max_delta < 1.0:
             raise ValueError(
                 "PLAM calibration delta must be between zero and one"
+            )
+        if self.semantic_prototype_count < 2:
+            raise ValueError("Semantic prototype count must be at least two")
+        if self.semantic_prototype_temperature <= 0.0:
+            raise ValueError("Semantic prototype temperature must be positive")
+        if self.semantic_prototype_strength_max <= 0.0:
+            raise ValueError(
+                "Semantic prototype strength maximum must be positive"
+            )
+        if not (
+            -self.semantic_prototype_strength_max
+            < float(semantic_prototype_strength_init)
+            < self.semantic_prototype_strength_max
+        ):
+            raise ValueError(
+                "Semantic prototype strength init must lie inside its bounds"
             )
 
         self.frequency_split = FixedHaarFrequencySplit(in_channels)
@@ -698,6 +729,26 @@ class FAMHaarEPPA(nn.Module):
             # only a bounded, spatially varying correction to the PLAM path.
             nn.init.zeros_(self.plam_calibrator[-1].weight)
             nn.init.zeros_(self.plam_calibrator[-1].bias)
+
+        if self.use_semantic_prototype_aggregation:
+            self.semantic_prototype_assign = nn.Conv2d(
+                guide_channels,
+                self.semantic_prototype_count,
+                kernel_size=1,
+            )
+            nn.init.normal_(
+                self.semantic_prototype_assign.weight,
+                mean=0.0,
+                std=0.02,
+            )
+            nn.init.zeros_(self.semantic_prototype_assign.bias)
+            normalized_init = (
+                float(semantic_prototype_strength_init)
+                / self.semantic_prototype_strength_max
+            )
+            self.semantic_prototype_strength_raw = nn.Parameter(
+                torch.tensor(math.atanh(normalized_init))
+            )
 
         if self.use_token_routing:
             if text_dim is None:
@@ -1077,6 +1128,13 @@ class FAMHaarEPPA(nn.Module):
                 text_mask,
             )
 
+        prototype_diagnostics = None
+        if self.use_semantic_prototype_aggregation:
+            (
+                semantic_features,
+                prototype_diagnostics,
+            ) = self._semantic_prototype_aggregate(semantic_features)
+
         semantic_features = F.silu(semantic_features)
         semantic_average = semantic_features.mean(dim=1, keepdim=True)
         semantic_maximum = semantic_features.amax(dim=1, keepdim=True)
@@ -1108,7 +1166,43 @@ class FAMHaarEPPA(nn.Module):
             token_diagnostics,
             plam_calibration_gate,
             plam_decoder_agreement,
+            prototype_diagnostics,
         )
+
+    def _semantic_prototype_aggregate(self, semantic_features):
+        """Compact deep semantics without changing their spatial mean."""
+        assignment_logits = (
+            self.semantic_prototype_assign(semantic_features)
+            / self.semantic_prototype_temperature
+        )
+        assignments = assignment_logits.softmax(dim=1)
+        prototype_mass = assignments.sum(dim=(2, 3)).clamp_min(1e-6)
+        prototypes = torch.einsum(
+            "bkhw,bchw->bkc",
+            assignments,
+            semantic_features,
+        ) / prototype_mass.unsqueeze(-1)
+        reconstruction = torch.einsum(
+            "bkhw,bkc->bchw",
+            assignments,
+            prototypes,
+        )
+        residual = reconstruction - semantic_features
+        strength = (
+            self.semantic_prototype_strength_max
+            * torch.tanh(self.semantic_prototype_strength_raw)
+        )
+        aggregated = semantic_features + strength * residual
+        diagnostics = {
+            "assignments": assignments,
+            "prototype_mass": prototype_mass,
+            "prototypes": prototypes,
+            "reconstruction": reconstruction,
+            "residual": residual,
+            "input": semantic_features,
+            "strength": strength,
+        }
+        return aggregated, diagnostics
 
     def _detail_residual(self, skip_high, semantic_support):
         local_features = self.detail_local(skip_high)
@@ -1195,6 +1289,7 @@ class FAMHaarEPPA(nn.Module):
             token_diagnostics,
             plam_calibration_gate,
             plam_decoder_agreement,
+            prototype_diagnostics,
         ) = self._semantic_region(
             skip_low,
             plam_low,
@@ -1271,6 +1366,9 @@ class FAMHaarEPPA(nn.Module):
                     ),
                     "plam_calibration_enabled": bool(
                         self.use_plam_calibration
+                    ),
+                    "semantic_prototype_enabled": bool(
+                        self.use_semantic_prototype_aggregation
                     ),
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
@@ -1426,6 +1524,95 @@ class FAMHaarEPPA(nn.Module):
                         ),
                         "plam_calibrated_residual_std": float(
                             calibrated_plam.std().item()
+                        ),
+                    })
+                if prototype_diagnostics is not None:
+                    assignments = prototype_diagnostics["assignments"]
+                    prototype_mass = prototype_diagnostics[
+                        "prototype_mass"
+                    ]
+                    prototypes = prototype_diagnostics["prototypes"]
+                    reconstruction = prototype_diagnostics[
+                        "reconstruction"
+                    ]
+                    prototype_input = prototype_diagnostics["input"]
+                    prototype_residual = prototype_diagnostics["residual"]
+                    mass_probability = (
+                        prototype_mass
+                        / prototype_mass.sum(dim=1, keepdim=True)
+                    )
+                    assignment_entropy = (
+                        -assignments
+                        * assignments.clamp_min(1e-8).log()
+                    ).sum(dim=1).mean() / math.log(
+                        float(self.semantic_prototype_count)
+                    )
+                    mass_entropy = (
+                        -mass_probability
+                        * mass_probability.clamp_min(1e-8).log()
+                    ).sum(dim=1).mean() / math.log(
+                        float(self.semantic_prototype_count)
+                    )
+                    normalized_prototypes = F.normalize(
+                        prototypes,
+                        dim=-1,
+                        eps=1e-6,
+                    )
+                    center_similarity = torch.matmul(
+                        normalized_prototypes,
+                        normalized_prototypes.transpose(1, 2),
+                    )
+                    center_similarity = (
+                        center_similarity.sum(dim=(1, 2))
+                        - center_similarity.diagonal(
+                            dim1=1,
+                            dim2=2,
+                        ).sum(dim=1)
+                    ) / (
+                        self.semantic_prototype_count
+                        * (self.semantic_prototype_count - 1)
+                    )
+                    mean_preservation_error = (
+                        reconstruction.mean(dim=(2, 3))
+                        - prototype_input.mean(dim=(2, 3))
+                    ).abs().amax()
+                    input_std = prototype_input.std().clamp_min(1e-8)
+                    self._last_stats.update({
+                        "semantic_prototype_strength": float(
+                            prototype_diagnostics["strength"].item()
+                        ),
+                        "semantic_prototype_assignment_entropy": float(
+                            assignment_entropy.item()
+                        ),
+                        "semantic_prototype_mass_entropy": float(
+                            mass_entropy.item()
+                        ),
+                        "semantic_prototype_min_mass_ratio": float(
+                            mass_probability.amin().item()
+                        ),
+                        "semantic_prototype_max_mass_ratio": float(
+                            mass_probability.amax().item()
+                        ),
+                        "semantic_prototype_active_ratio": float(
+                            (mass_probability > 0.05).float().mean().item()
+                        ),
+                        "semantic_prototype_input_std": float(
+                            input_std.item()
+                        ),
+                        "semantic_prototype_reconstruction_std": float(
+                            reconstruction.std().item()
+                        ),
+                        "semantic_prototype_residual_std": float(
+                            prototype_residual.std().item()
+                        ),
+                        "semantic_prototype_variance_ratio": float(
+                            reconstruction.std().div(input_std).item()
+                        ),
+                        "semantic_prototype_center_cosine": float(
+                            center_similarity.mean().item()
+                        ),
+                        "semantic_prototype_mean_error": float(
+                            mean_preservation_error.item()
                         ),
                     })
                 if token_diagnostics is not None:
@@ -1617,5 +1804,11 @@ class FAMReliabilityCalibratedEPPA(FAMHaarEPPA):
     architecture_version = "fam_eppa_v4e"
 
 
+class FAMSemanticPrototypeEPPA(FAMHaarEPPA):
+    """V4-F: V4-B plus deep mean-preserving semantic prototypes."""
+
+    architecture_version = "fam_eppa_v4f"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMReliabilityCalibratedEPPA
+EPPA = FAMSemanticPrototypeEPPA

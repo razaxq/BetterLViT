@@ -90,7 +90,12 @@ class UpblockAttention(nn.Module):
                  token_temperature_init=5.0,
                  use_plam_calibration=False,
                  plam_calibration_max_delta=0.50,
-                 plam_calibration_hidden_channels=16):
+                 plam_calibration_hidden_channels=16,
+                 use_semantic_prototype_aggregation=False,
+                 semantic_prototype_count=4,
+                 semantic_prototype_temperature=0.75,
+                 semantic_prototype_strength_max=0.25,
+                 semantic_prototype_strength_init=0.0):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -137,6 +142,19 @@ class UpblockAttention(nn.Module):
             plam_calibration_max_delta=plam_calibration_max_delta,
             plam_calibration_hidden_channels=(
                 plam_calibration_hidden_channels
+            ),
+            use_semantic_prototype_aggregation=(
+                use_semantic_prototype_aggregation
+            ),
+            semantic_prototype_count=semantic_prototype_count,
+            semantic_prototype_temperature=(
+                semantic_prototype_temperature
+            ),
+            semantic_prototype_strength_max=(
+                semantic_prototype_strength_max
+            ),
+            semantic_prototype_strength_init=(
+                semantic_prototype_strength_init
             ),
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
@@ -361,6 +379,31 @@ class LViT(nn.Module):
             'eppa_plam_calibration_hidden_channels',
             16,
         )
+        EPPA_SEMANTIC_PROTOTYPE_STAGES = tuple(getattr(
+            config,
+            'eppa_semantic_prototype_stages',
+            (),
+        ))
+        EPPA_SEMANTIC_PROTOTYPE_COUNT = getattr(
+            config,
+            'eppa_semantic_prototype_count',
+            4,
+        )
+        EPPA_SEMANTIC_PROTOTYPE_TEMPERATURE = getattr(
+            config,
+            'eppa_semantic_prototype_temperature',
+            0.75,
+        )
+        EPPA_SEMANTIC_PROTOTYPE_STRENGTH_MAX = getattr(
+            config,
+            'eppa_semantic_prototype_strength_max',
+            0.25,
+        )
+        EPPA_SEMANTIC_PROTOTYPE_STRENGTH_INIT = getattr(
+            config,
+            'eppa_semantic_prototype_strength_init',
+            0.0,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -401,6 +444,18 @@ class LViT(nn.Module):
             'plam_calibration_hidden_channels': (
                 EPPA_PLAM_CALIBRATION_HIDDEN_CHANNELS
             ),
+            'semantic_prototype_count': (
+                EPPA_SEMANTIC_PROTOTYPE_COUNT
+            ),
+            'semantic_prototype_temperature': (
+                EPPA_SEMANTIC_PROTOTYPE_TEMPERATURE
+            ),
+            'semantic_prototype_strength_max': (
+                EPPA_SEMANTIC_PROTOTYPE_STRENGTH_MAX
+            ),
+            'semantic_prototype_strength_init': (
+                EPPA_SEMANTIC_PROTOTYPE_STRENGTH_INIT
+            ),
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -420,6 +475,9 @@ class LViT(nn.Module):
             ),
             use_plam_calibration=(
                 'up4' in EPPA_PLAM_CALIBRATION_STAGES
+            ),
+            use_semantic_prototype_aggregation=(
+                'up4' in EPPA_SEMANTIC_PROTOTYPE_STAGES
             ),
             **eppa_common,
         )
@@ -442,6 +500,9 @@ class LViT(nn.Module):
             use_plam_calibration=(
                 'up3' in EPPA_PLAM_CALIBRATION_STAGES
             ),
+            use_semantic_prototype_aggregation=(
+                'up3' in EPPA_SEMANTIC_PROTOTYPE_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -463,6 +524,9 @@ class LViT(nn.Module):
             use_plam_calibration=(
                 'up2' in EPPA_PLAM_CALIBRATION_STAGES
             ),
+            use_semantic_prototype_aggregation=(
+                'up2' in EPPA_SEMANTIC_PROTOTYPE_STAGES
+            ),
             **eppa_common,
         )
         self.up1 = UpblockAttention(
@@ -483,6 +547,9 @@ class LViT(nn.Module):
             ),
             use_plam_calibration=(
                 'up1' in EPPA_PLAM_CALIBRATION_STAGES
+            ),
+            use_semantic_prototype_aggregation=(
+                'up1' in EPPA_SEMANTIC_PROTOTYPE_STAGES
             ),
             **eppa_common,
         )
