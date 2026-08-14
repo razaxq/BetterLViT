@@ -506,6 +506,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         'fam_eppa_v4b',
                         'fam_eppa_v4c',
                         'fam_eppa_v4d',
+                        'fam_eppa_v4e',
                     )
                 ):
                     logger.info(
@@ -622,6 +623,42 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 ],
                                 stage_stats['token_residual_std'],
                                 stage_stats['token_valid_count_mean'],
+                            )
+                        )
+                    if stage_stats.get('plam_calibration_enabled'):
+                        logger.info(
+                            '{} plam_calibration: gate={:.4f}+/-{:.4f} '
+                            '[{:.4f},{:.4f}], amplify/suppress={:.4f}/'
+                            '{:.4f}, agreement skip/decoder={:.4f}/{:.4f}, '
+                            'gate_agreement_corr={:.4f}, residual_std={:.4f}'
+                            .format(
+                                stage,
+                                stage_stats[
+                                    'plam_calibration_gate_mean'
+                                ],
+                                stage_stats[
+                                    'plam_calibration_gate_std'
+                                ],
+                                stage_stats[
+                                    'plam_calibration_gate_min'
+                                ],
+                                stage_stats[
+                                    'plam_calibration_gate_max'
+                                ],
+                                stage_stats[
+                                    'plam_calibration_amplify_ratio'
+                                ],
+                                stage_stats[
+                                    'plam_calibration_suppress_ratio'
+                                ],
+                                stage_stats['plam_skip_agreement'],
+                                stage_stats['plam_decoder_agreement'],
+                                stage_stats[
+                                    'plam_calibration_agreement_correlation'
+                                ],
+                                stage_stats[
+                                    'plam_calibrated_residual_std'
+                                ],
                             )
                         )
                     continue

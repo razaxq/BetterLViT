@@ -87,7 +87,10 @@ class UpblockAttention(nn.Module):
                  token_attention_heads=4,
                  token_strength_max=0.50,
                  token_strength_init=0.10,
-                 token_temperature_init=5.0):
+                 token_temperature_init=5.0,
+                 use_plam_calibration=False,
+                 plam_calibration_max_delta=0.50,
+                 plam_calibration_hidden_channels=16):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -130,6 +133,11 @@ class UpblockAttention(nn.Module):
             token_strength_max=token_strength_max,
             token_strength_init=token_strength_init,
             token_temperature_init=token_temperature_init,
+            use_plam_calibration=use_plam_calibration,
+            plam_calibration_max_delta=plam_calibration_max_delta,
+            plam_calibration_hidden_channels=(
+                plam_calibration_hidden_channels
+            ),
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
@@ -338,6 +346,21 @@ class LViT(nn.Module):
             'eppa_token_temperature_init',
             5.0,
         )
+        EPPA_PLAM_CALIBRATION_STAGES = tuple(getattr(
+            config,
+            'eppa_plam_calibration_stages',
+            (),
+        ))
+        EPPA_PLAM_CALIBRATION_MAX_DELTA = getattr(
+            config,
+            'eppa_plam_calibration_max_delta',
+            0.50,
+        )
+        EPPA_PLAM_CALIBRATION_HIDDEN_CHANNELS = getattr(
+            config,
+            'eppa_plam_calibration_hidden_channels',
+            16,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -372,6 +395,12 @@ class LViT(nn.Module):
             'token_strength_max': EPPA_TOKEN_STRENGTH_MAX,
             'token_strength_init': EPPA_TOKEN_STRENGTH_INIT,
             'token_temperature_init': EPPA_TOKEN_TEMPERATURE_INIT,
+            'plam_calibration_max_delta': (
+                EPPA_PLAM_CALIBRATION_MAX_DELTA
+            ),
+            'plam_calibration_hidden_channels': (
+                EPPA_PLAM_CALIBRATION_HIDDEN_CHANNELS
+            ),
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -388,6 +417,9 @@ class LViT(nn.Module):
             ),
             use_token_routing=(
                 'up4' in EPPA_TOKEN_ROUTING_STAGES
+            ),
+            use_plam_calibration=(
+                'up4' in EPPA_PLAM_CALIBRATION_STAGES
             ),
             **eppa_common,
         )
@@ -407,6 +439,9 @@ class LViT(nn.Module):
             use_token_routing=(
                 'up3' in EPPA_TOKEN_ROUTING_STAGES
             ),
+            use_plam_calibration=(
+                'up3' in EPPA_PLAM_CALIBRATION_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -425,6 +460,9 @@ class LViT(nn.Module):
             use_token_routing=(
                 'up2' in EPPA_TOKEN_ROUTING_STAGES
             ),
+            use_plam_calibration=(
+                'up2' in EPPA_PLAM_CALIBRATION_STAGES
+            ),
             **eppa_common,
         )
         self.up1 = UpblockAttention(
@@ -442,6 +480,9 @@ class LViT(nn.Module):
             ),
             use_token_routing=(
                 'up1' in EPPA_TOKEN_ROUTING_STAGES
+            ),
+            use_plam_calibration=(
+                'up1' in EPPA_PLAM_CALIBRATION_STAGES
             ),
             **eppa_common,
         )

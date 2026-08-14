@@ -569,6 +569,9 @@ class FAMHaarEPPA(nn.Module):
         token_strength_max=0.50,
         token_strength_init=0.10,
         token_temperature_init=5.0,
+        use_plam_calibration=False,
+        plam_calibration_max_delta=0.50,
+        plam_calibration_hidden_channels=16,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -601,9 +604,19 @@ class FAMHaarEPPA(nn.Module):
             use_semantic_flow_alignment
         )
         self.use_token_routing = bool(use_token_routing)
+        self.use_plam_calibration = bool(use_plam_calibration)
+        self.plam_calibration_max_delta = float(
+            plam_calibration_max_delta
+        )
         if self.use_semantic_flow_alignment and not self.use_adaptive_frequency:
             raise ValueError(
                 "Semantic-flow alignment requires adaptive frequency routing"
+            )
+        if self.use_plam_calibration and not self.use_plam_guide:
+            raise ValueError("PLAM calibration requires the PLAM guide")
+        if not 0.0 < self.plam_calibration_max_delta < 1.0:
+            raise ValueError(
+                "PLAM calibration delta must be between zero and one"
             )
 
         self.frequency_split = FixedHaarFrequencySplit(in_channels)
@@ -659,6 +672,32 @@ class FAMHaarEPPA(nn.Module):
         self.skip_semantic_norm = nn.GroupNorm(1, guide_channels)
         self.plam_semantic_norm = nn.GroupNorm(1, guide_channels)
         self.decoder_semantic_norm = nn.GroupNorm(1, guide_channels)
+
+        if self.use_plam_calibration:
+            calibration_hidden = max(
+                4,
+                int(plam_calibration_hidden_channels),
+            )
+            self.plam_calibrator = nn.Sequential(
+                nn.Conv2d(
+                    4,
+                    calibration_hidden,
+                    kernel_size=3,
+                    padding=1,
+                    bias=False,
+                ),
+                nn.GroupNorm(1, calibration_hidden),
+                nn.SiLU(inplace=True),
+                nn.Conv2d(
+                    calibration_hidden,
+                    1,
+                    kernel_size=1,
+                ),
+            )
+            # V4-E starts as an exact V4-B function. Training can then learn
+            # only a bounded, spatially varying correction to the PLAM path.
+            nn.init.zeros_(self.plam_calibrator[-1].weight)
+            nn.init.zeros_(self.plam_calibrator[-1].bias)
 
         if self.use_token_routing:
             if text_dim is None:
@@ -971,7 +1010,43 @@ class FAMHaarEPPA(nn.Module):
         if not self.use_decoder_guide:
             decoder_features = torch.zeros_like(decoder_features)
 
-        semantic_features = skip_features + plam_features + decoder_features
+        plam_agreement = self._cosine_map(skip_features, plam_features)
+        decoder_agreement = self._cosine_map(
+            skip_features,
+            decoder_features,
+        )
+        plam_decoder_agreement = self._cosine_map(
+            plam_features,
+            decoder_features,
+        )
+        plam_calibration_gate = torch.ones_like(plam_agreement)
+        if self.use_plam_calibration:
+            calibration_evidence = torch.cat(
+                [
+                    plam_agreement,
+                    decoder_agreement,
+                    plam_decoder_agreement,
+                    (plam_agreement - decoder_agreement).abs(),
+                ],
+                dim=1,
+            )
+            calibration_delta = self.plam_calibrator(
+                calibration_evidence
+            )
+            plam_calibration_gate = (
+                1.0
+                + self.plam_calibration_max_delta
+                * torch.tanh(calibration_delta)
+            )
+
+        calibrated_plam_features = (
+            plam_features * plam_calibration_gate
+        )
+        semantic_features = (
+            skip_features
+            + calibrated_plam_features
+            + decoder_features
+        )
         text_film_magnitude = None
         if (
             text is not None
@@ -1005,11 +1080,6 @@ class FAMHaarEPPA(nn.Module):
         semantic_features = F.silu(semantic_features)
         semantic_average = semantic_features.mean(dim=1, keepdim=True)
         semantic_maximum = semantic_features.amax(dim=1, keepdim=True)
-        plam_agreement = self._cosine_map(skip_features, plam_features)
-        decoder_agreement = self._cosine_map(
-            skip_features,
-            decoder_features,
-        )
         region_logit = self.region_spatial(
             torch.cat(
                 [
@@ -1036,6 +1106,8 @@ class FAMHaarEPPA(nn.Module):
             decoder_agreement,
             text_film_magnitude,
             token_diagnostics,
+            plam_calibration_gate,
+            plam_decoder_agreement,
         )
 
     def _detail_residual(self, skip_high, semantic_support):
@@ -1121,6 +1193,8 @@ class FAMHaarEPPA(nn.Module):
             decoder_agreement,
             text_film_magnitude,
             token_diagnostics,
+            plam_calibration_gate,
+            plam_decoder_agreement,
         ) = self._semantic_region(
             skip_low,
             plam_low,
@@ -1155,7 +1229,7 @@ class FAMHaarEPPA(nn.Module):
         output = (
             skip
             + adaptive_skip_residual
-            + plam_strength * plam_low
+            + plam_strength * plam_low * plam_calibration_gate
             + channel_residual
             + region_strength * region_residual
             + detail_strength * detail_residual
@@ -1194,6 +1268,9 @@ class FAMHaarEPPA(nn.Module):
                     ),
                     "token_routing_enabled": bool(
                         self.use_token_routing
+                    ),
+                    "plam_calibration_enabled": bool(
+                        self.use_plam_calibration
                     ),
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
@@ -1285,6 +1362,9 @@ class FAMHaarEPPA(nn.Module):
                     "decoder_skip_agreement": float(
                         decoder_agreement.mean().item()
                     ),
+                    "plam_decoder_agreement": float(
+                        plam_decoder_agreement.mean().item()
+                    ),
                     "raw_skip_feature_abs_mean": float(
                         skip_features.abs().mean().item()
                     ),
@@ -1301,6 +1381,53 @@ class FAMHaarEPPA(nn.Module):
                         context_features.abs().mean().item()
                     ),
                 }
+                if self.use_plam_calibration:
+                    flat_gate = plam_calibration_gate.flatten()
+                    flat_agreement = plam_agreement.flatten()
+                    centered_gate = flat_gate - flat_gate.mean()
+                    centered_agreement = (
+                        flat_agreement - flat_agreement.mean()
+                    )
+                    gate_agreement_correlation = (
+                        centered_gate.mul(centered_agreement).mean()
+                        / (
+                            centered_gate.square().mean().sqrt()
+                            * centered_agreement.square().mean().sqrt()
+                        ).clamp_min(1e-8)
+                    )
+                    calibrated_plam = plam_low * plam_calibration_gate
+                    self._last_stats.update({
+                        "plam_calibration_gate_mean": float(
+                            plam_calibration_gate.mean().item()
+                        ),
+                        "plam_calibration_gate_std": float(
+                            plam_calibration_gate.std().item()
+                        ),
+                        "plam_calibration_gate_min": float(
+                            plam_calibration_gate.amin().item()
+                        ),
+                        "plam_calibration_gate_max": float(
+                            plam_calibration_gate.amax().item()
+                        ),
+                        "plam_calibration_amplify_ratio": float(
+                            (plam_calibration_gate > 1.05)
+                            .float()
+                            .mean()
+                            .item()
+                        ),
+                        "plam_calibration_suppress_ratio": float(
+                            (plam_calibration_gate < 0.95)
+                            .float()
+                            .mean()
+                            .item()
+                        ),
+                        "plam_calibration_agreement_correlation": float(
+                            gate_agreement_correlation.item()
+                        ),
+                        "plam_calibrated_residual_std": float(
+                            calibrated_plam.std().item()
+                        ),
+                    })
                 if token_diagnostics is not None:
                     attention = token_diagnostics["attention"]
                     token_mask = token_diagnostics["text_mask"]
@@ -1484,5 +1611,11 @@ class FAMTokenLocalizedEPPA(FAMHaarEPPA):
     architecture_version = "fam_eppa_v4d"
 
 
+class FAMReliabilityCalibratedEPPA(FAMHaarEPPA):
+    """V4-E: V4-B plus bounded deep PLAM reliability calibration."""
+
+    architecture_version = "fam_eppa_v4e"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMTokenLocalizedEPPA
+EPPA = FAMReliabilityCalibratedEPPA

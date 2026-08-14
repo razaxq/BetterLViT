@@ -73,6 +73,26 @@ images. Results are reported at threshold `0.5` and the validation-selected
 threshold. The primary target is V4-B calibrated test Dice/IoU
 `0.844996/0.760273`; V3 and V4-C remain secondary baselines.
 
+## Final outcome
+
+Training completed all 200 epochs. Epoch 159 was selected exclusively by
+validation Dice, and the validation set selected threshold `0.554`.
+
+| Split | Threshold | Dice | IoU |
+| --- | ---: | ---: | ---: |
+| Validation | `0.5` | `0.823747` | `0.725100` |
+| Validation | `0.554` | `0.825316` | `0.727697` |
+| Test | `0.5` | `0.838836` | `0.751675` |
+| Test | `0.554` | `0.840001` | `0.754129` |
+
+Although calibrated validation Dice is `0.001042` above V4-B, calibrated test
+Dice/IoU are lower by `0.004994/0.006143`. V4-D also falls below V3 by
+`0.004992/0.006023` and below V4-C by `0.004014/0.005223`. The token-localized
+residual therefore increases split-specific fitting without improving test
+generalization. The next controlled experiment removes token routing, returns
+to V4-B, and calibrates the established PLAM path from local visual agreement
+at the deepest decoder stage.
+
 ## References
 
 - Xing et al., *TextDiff: Mask-Guided Residual Diffusion Models for
