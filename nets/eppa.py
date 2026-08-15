@@ -142,6 +142,12 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         flow_max_offset=1.5,
         flow_strength_max=1.0,
         flow_strength_init=0.25,
+        text_dim=None,
+        use_text_frequency_routing=False,
+        text_frequency_attention_dim=32,
+        text_frequency_attention_heads=4,
+        text_frequency_temperature_init=5.0,
+        text_frequency_logit_max=1.0,
     ):
         super().__init__()
         if channels % groups:
@@ -161,6 +167,13 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         self.flow_groups = int(flow_groups)
         self.flow_max_offset = float(flow_max_offset)
         self.flow_strength_max = float(flow_strength_max)
+        self.text_dim = text_dim
+        self.use_text_frequency_routing = bool(
+            use_text_frequency_routing
+        )
+        self.text_frequency_logit_max = float(
+            text_frequency_logit_max
+        )
         if self.use_semantic_flow_alignment and channels % self.flow_groups:
             raise ValueError(
                 "Semantic-flow groups must divide channels: {} % {}".format(
@@ -168,6 +181,27 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
                     self.flow_groups,
                 )
             )
+        if self.use_text_frequency_routing:
+            if text_dim is None:
+                raise ValueError(
+                    "Text-frequency routing requires text embeddings"
+                )
+            if text_frequency_attention_dim % text_frequency_attention_heads:
+                raise ValueError(
+                    "Text-frequency heads must divide attention channels: "
+                    "{} % {}".format(
+                        text_frequency_attention_dim,
+                        text_frequency_attention_heads,
+                    )
+                )
+            if text_frequency_temperature_init <= 0.0:
+                raise ValueError(
+                    "Text-frequency temperature must be positive"
+                )
+            if self.text_frequency_logit_max <= 0.0:
+                raise ValueError(
+                    "Text-frequency logit bound must be positive"
+                )
 
         self.skip_context = nn.Conv2d(
             channels,
@@ -215,6 +249,54 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         with torch.no_grad():
             self.low_kernel_predictor.bias.copy_(low_bias)
             self.high_kernel_predictor.bias.copy_(high_bias)
+
+        if self.use_text_frequency_routing:
+            self.text_frequency_attention_dim = int(
+                text_frequency_attention_dim
+            )
+            self.text_frequency_attention_heads = int(
+                text_frequency_attention_heads
+            )
+            self.text_frequency_head_dim = (
+                self.text_frequency_attention_dim
+                // self.text_frequency_attention_heads
+            )
+            self.text_frequency_query = nn.Conv2d(
+                context_channels,
+                self.text_frequency_attention_dim,
+                kernel_size=1,
+                bias=False,
+            )
+            self.text_frequency_key = nn.Linear(
+                text_dim,
+                self.text_frequency_attention_dim,
+                bias=False,
+            )
+            self.text_frequency_value = nn.Linear(
+                text_dim,
+                self.text_frequency_attention_dim,
+                bias=False,
+            )
+            self.text_frequency_out = nn.Conv2d(
+                self.text_frequency_attention_dim,
+                context_channels,
+                kernel_size=1,
+                bias=False,
+            )
+            self.text_frequency_route_predictor = nn.Conv2d(
+                context_channels * 2,
+                output_channels * 2,
+                kernel_size=1,
+            )
+            # The route delta starts at exactly zero, so V4-H initially has
+            # the same normalized ALPF/AHPF kernels and output as V4-B. Unlike
+            # a zero scalar times a residual branch, this final predictor sits
+            # directly on the loss path and receives a gradient immediately.
+            nn.init.zeros_(self.text_frequency_route_predictor.weight)
+            nn.init.zeros_(self.text_frequency_route_predictor.bias)
+            self.text_frequency_log_temperature = nn.Parameter(
+                torch.tensor(math.log(text_frequency_temperature_init))
+            )
 
         if self.use_semantic_flow_alignment:
             flow_hidden = max(context_channels, 16)
@@ -317,6 +399,108 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             )
             output = output + response * channel_weights
         return output
+
+    def _text_conditioned_route(self, context, text, text_mask):
+        if text is None:
+            raise ValueError(
+                "Text-frequency routing requires a text tensor"
+            )
+        if text.ndim != 3 or text.shape[2] != self.text_dim:
+            raise ValueError(
+                "Unexpected text shape for text-frequency routing: {}"
+                .format(tuple(text.shape))
+            )
+        batch, _, height, width = context.shape
+        if text.shape[0] != batch:
+            raise ValueError("Text and visual batch sizes must match")
+        if text_mask is None:
+            text_mask = torch.ones(
+                text.shape[:2],
+                dtype=torch.bool,
+                device=text.device,
+            )
+        else:
+            if tuple(text_mask.shape) != tuple(text.shape[:2]):
+                raise ValueError(
+                    "Unexpected text mask shape: {}".format(
+                        tuple(text_mask.shape)
+                    )
+                )
+            text_mask = text_mask.to(device=text.device, dtype=torch.bool)
+        if not text_mask.any(dim=1).all():
+            raise ValueError("Every sample must contain at least one token")
+
+        query = self.text_frequency_query(context).reshape(
+            batch,
+            self.text_frequency_attention_heads,
+            self.text_frequency_head_dim,
+            height * width,
+        ).permute(0, 1, 3, 2)
+        key = self.text_frequency_key(text).reshape(
+            batch,
+            text.shape[1],
+            self.text_frequency_attention_heads,
+            self.text_frequency_head_dim,
+        ).permute(0, 2, 1, 3)
+        value = self.text_frequency_value(text).reshape(
+            batch,
+            text.shape[1],
+            self.text_frequency_attention_heads,
+            self.text_frequency_head_dim,
+        ).permute(0, 2, 1, 3)
+        query = F.normalize(query, p=2, dim=-1, eps=1e-6)
+        key = F.normalize(key, p=2, dim=-1, eps=1e-6)
+        temperature = self.text_frequency_log_temperature.clamp(
+            min=math.log(1.0),
+            max=math.log(20.0),
+        ).exp()
+        attention_logits = torch.einsum(
+            "bhnd,bhtd->bhnt",
+            query,
+            key,
+        ) * temperature
+        attention_logits = attention_logits.masked_fill(
+            ~text_mask[:, None, None, :],
+            torch.finfo(attention_logits.dtype).min,
+        )
+        attention = attention_logits.softmax(dim=-1)
+        attended_text = torch.einsum(
+            "bhnt,bhtd->bhnd",
+            attention,
+            value,
+        ).permute(0, 1, 3, 2).reshape(
+            batch,
+            self.text_frequency_attention_dim,
+            height,
+            width,
+        )
+        attended_text = self.text_frequency_out(attended_text)
+
+        # Both predictor inputs depend on the attended tokens. The route head
+        # therefore cannot learn a second visual-only frequency predictor.
+        context_unit = F.normalize(context, p=2, dim=1, eps=1e-6)
+        text_unit = F.normalize(attended_text, p=2, dim=1, eps=1e-6)
+        interaction = torch.cat(
+            (
+                context_unit * text_unit,
+                (context_unit - text_unit).abs(),
+            ),
+            dim=1,
+        )
+        raw_delta = self.text_frequency_route_predictor(interaction)
+        route_delta = (
+            self.text_frequency_logit_max * torch.tanh(raw_delta)
+        )
+        low_delta, high_delta = route_delta.chunk(2, dim=1)
+        diagnostics = {
+            "attention": attention,
+            "text_mask": text_mask,
+            "temperature": temperature,
+            "attended_text": attended_text,
+            "raw_delta": raw_delta,
+            "route_delta": route_delta,
+        }
+        return low_delta, high_delta, diagnostics
 
     @staticmethod
     def _local_similarity(features):
@@ -445,6 +629,8 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         decoder_low,
         skip,
         decoder,
+        text=None,
+        text_mask=None,
     ):
         context = self.context_norm(
             self.skip_context(skip_low)
@@ -452,12 +638,19 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             + self.decoder_context(decoder_low)
         )
         context = F.silu(context)
-        low_weights = self._mixture_weights(
-            self.low_kernel_predictor(context)
-        )
-        high_weights = self._mixture_weights(
-            self.high_kernel_predictor(context)
-        )
+        low_logits = self.low_kernel_predictor(context)
+        high_logits = self.high_kernel_predictor(context)
+        base_low_weights = self._mixture_weights(low_logits)
+        base_high_weights = self._mixture_weights(high_logits)
+        text_frequency_diagnostics = None
+        if self.use_text_frequency_routing:
+            low_delta, high_delta, text_frequency_diagnostics = (
+                self._text_conditioned_route(context, text, text_mask)
+            )
+            low_logits = low_logits + low_delta
+            high_logits = high_logits + high_delta
+        low_weights = self._mixture_weights(low_logits)
+        high_weights = self._mixture_weights(high_logits)
 
         decoder_aligned = decoder
         effective_flow = None
@@ -494,6 +687,8 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
         diagnostics = {
             "low_weights": low_weights,
             "high_weights": high_weights,
+            "base_low_weights": base_low_weights,
+            "base_high_weights": base_high_weights,
             "decoder_delta": decoder_delta,
             "skip_high_residual": skip_high_residual,
             "skip_adaptive_residual": skip_adaptive_residual,
@@ -507,6 +702,10 @@ class SpatialAdaptiveFrequencyRefiner(nn.Module):
             "effective_flow": effective_flow,
             "flow_strength": flow_strength,
             "local_similarity": local_similarity,
+            "text_frequency_enabled": bool(
+                self.use_text_frequency_routing
+            ),
+            "text_frequency": text_frequency_diagnostics,
         }
         return decoder_adaptive, skip_adaptive_residual, diagnostics
 
@@ -581,6 +780,11 @@ class FAMHaarEPPA(nn.Module):
         semantic_reliability_hidden_channels=16,
         semantic_reliability_strength_max=0.25,
         semantic_reliability_strength_init=0.0,
+        use_text_frequency_routing=False,
+        text_frequency_attention_dim=32,
+        text_frequency_attention_heads=4,
+        text_frequency_temperature_init=5.0,
+        text_frequency_logit_max=1.0,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -630,12 +834,19 @@ class FAMHaarEPPA(nn.Module):
         self.use_semantic_reliability_residual = bool(
             use_semantic_reliability_residual
         )
+        self.use_text_frequency_routing = bool(
+            use_text_frequency_routing
+        )
         self.semantic_reliability_strength_max = float(
             semantic_reliability_strength_max
         )
         if self.use_semantic_flow_alignment and not self.use_adaptive_frequency:
             raise ValueError(
                 "Semantic-flow alignment requires adaptive frequency routing"
+            )
+        if self.use_text_frequency_routing and not self.use_adaptive_frequency:
+            raise ValueError(
+                "Text-frequency routing requires adaptive frequency routing"
             )
         if self.use_plam_calibration and not self.use_plam_guide:
             raise ValueError("PLAM calibration requires the PLAM guide")
@@ -690,6 +901,20 @@ class FAMHaarEPPA(nn.Module):
                 flow_max_offset=flow_max_offset,
                 flow_strength_max=flow_strength_max,
                 flow_strength_init=flow_strength_init,
+                text_dim=text_dim,
+                use_text_frequency_routing=(
+                    self.use_text_frequency_routing
+                ),
+                text_frequency_attention_dim=(
+                    text_frequency_attention_dim
+                ),
+                text_frequency_attention_heads=(
+                    text_frequency_attention_heads
+                ),
+                text_frequency_temperature_init=(
+                    text_frequency_temperature_init
+                ),
+                text_frequency_logit_max=text_frequency_logit_max,
             )
 
         self.channel_mlp = nn.Sequential(
@@ -1366,6 +1591,8 @@ class FAMHaarEPPA(nn.Module):
                 decoder_low,
                 skip,
                 decoder_source,
+                text=text,
+                text_mask=text_mask,
             )
             decoder_for_fusion = decoder_adaptive
             decoder_low, _ = self.frequency_split(decoder_adaptive)
@@ -1493,6 +1720,9 @@ class FAMHaarEPPA(nn.Module):
                     ),
                     "semantic_reliability_enabled": bool(
                         self.use_semantic_reliability_residual
+                    ),
+                    "text_frequency_routing_enabled": bool(
+                        self.use_text_frequency_routing
                     ),
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
@@ -1968,6 +2198,84 @@ class FAMHaarEPPA(nn.Module):
                                 local_similarity.std().item()
                             ),
                         })
+                    if adaptive_diagnostics["text_frequency_enabled"]:
+                        text_frequency = adaptive_diagnostics[
+                            "text_frequency"
+                        ]
+                        attention = text_frequency["attention"]
+                        token_mask = text_frequency["text_mask"]
+                        valid_count = token_mask.sum(dim=1).float()
+                        attention_entropy = (
+                            -attention
+                            * attention.clamp_min(1e-8).log()
+                        ).sum(dim=-1)
+                        attention_entropy = (
+                            attention_entropy
+                            / valid_count.clamp_min(2.0).log()[
+                                :, None, None
+                            ]
+                        )
+                        spatial_attention = attention.mean(dim=1)
+                        spatial_std = spatial_attention.std(dim=1)
+                        masked_spatial_std = (
+                            spatial_std * token_mask.float()
+                        ).sum() / token_mask.sum().clamp_min(1)
+                        low_shift = (
+                            low_weights
+                            - adaptive_diagnostics["base_low_weights"]
+                        ).abs()
+                        high_shift = (
+                            high_weights
+                            - adaptive_diagnostics["base_high_weights"]
+                        ).abs()
+                        route_delta = text_frequency["route_delta"]
+                        self._last_stats.update({
+                            "text_frequency_temperature": float(
+                                text_frequency["temperature"].item()
+                            ),
+                            "text_frequency_attention_entropy": float(
+                                attention_entropy.mean().item()
+                            ),
+                            "text_frequency_attention_peak": float(
+                                attention.amax(dim=-1).mean().item()
+                            ),
+                            "text_frequency_cls_mass": float(
+                                attention[..., 0].mean().item()
+                            ),
+                            "text_frequency_non_cls_mass": float(
+                                (1.0 - attention[..., 0]).mean().item()
+                            ),
+                            "text_frequency_attention_spatial_std": float(
+                                masked_spatial_std.item()
+                            ),
+                            "text_frequency_valid_count_mean": float(
+                                valid_count.mean().item()
+                            ),
+                            "text_frequency_attended_std": float(
+                                text_frequency["attended_text"].std().item()
+                            ),
+                            "text_frequency_route_raw_mean": float(
+                                text_frequency["raw_delta"].mean().item()
+                            ),
+                            "text_frequency_route_raw_std": float(
+                                text_frequency["raw_delta"].std().item()
+                            ),
+                            "text_frequency_route_delta_mean": float(
+                                route_delta.mean().item()
+                            ),
+                            "text_frequency_route_delta_std": float(
+                                route_delta.std().item()
+                            ),
+                            "text_frequency_route_delta_max": float(
+                                route_delta.abs().amax().item()
+                            ),
+                            "text_frequency_low_weight_shift": float(
+                                low_shift.mean().item()
+                            ),
+                            "text_frequency_high_weight_shift": float(
+                                high_shift.mean().item()
+                            ),
+                        })
         if return_decoder:
             return output, decoder_for_fusion
         return output
@@ -2009,5 +2317,11 @@ class FAMMeanPreservingReliabilityEPPA(FAMHaarEPPA):
     architecture_version = "fam_eppa_v4g"
 
 
+class FAMTokenConditionedFrequencyEPPA(FAMHaarEPPA):
+    """V4-H: V4-B plus token-conditioned normalized frequency routing."""
+
+    architecture_version = "fam_eppa_v4h"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMMeanPreservingReliabilityEPPA
+EPPA = FAMTokenConditionedFrequencyEPPA

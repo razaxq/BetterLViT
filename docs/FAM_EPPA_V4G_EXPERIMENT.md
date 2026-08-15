@@ -61,3 +61,30 @@ Acceptance requires both mean errors below `1e-5`, non-zero spatial signal
 variation, and complete test Dice/IoU above V4-B `0.844996/0.760273`. The
 threshold is selected using only all 1,429 validation images and then fixed for
 all 2,113 test images.
+
+## Final result and postmortem
+
+Training stopped after complete Epoch 189; the validation-best checkpoint was
+Epoch 108. Formal evaluation used all 1,429 validation images to select
+threshold `0.52`, then fixed that threshold for all 2,113 test images:
+
+| split / threshold | Dice | IoU |
+| --- | ---: | ---: |
+| validation / 0.5 | 0.823912 | 0.726593 |
+| validation / 0.52 | 0.824192 | 0.726990 |
+| test / 0.5 | 0.842914 | 0.757394 |
+| test / 0.52 | 0.843047 | 0.757653 |
+
+V4-G is below V4-B by `0.001949` Dice and `0.002620` IoU at their respective
+validation-selected thresholds. More importantly, the proposed branch did not
+perform a meaningful ablation: reliability strength, signal standard
+deviation, and both correction standard deviations all became exactly zero
+from the early epochs onward.
+
+The cause is structural. With `Y = Y_v4b + s * R(theta)` and `s = 0`, gradients
+to `theta` are multiplied by zero. The scalar strength received only a weak
+aggregate signal, returned to zero, and weight decay then drove the calibrator
+toward a constant output. Mean preservation worked, but the branch learned the
+easiest admissible solution: do nothing. Future branches must place a
+zero-initialized predictor directly on an active loss path instead of
+multiplying a new residual by a separately zero-initialized scalar.

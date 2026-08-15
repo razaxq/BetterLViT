@@ -99,7 +99,12 @@ class UpblockAttention(nn.Module):
                  use_semantic_reliability_residual=False,
                  semantic_reliability_hidden_channels=16,
                  semantic_reliability_strength_max=0.25,
-                 semantic_reliability_strength_init=0.0):
+                 semantic_reliability_strength_init=0.0,
+                 use_text_frequency_routing=False,
+                 text_frequency_attention_dim=32,
+                 text_frequency_attention_heads=4,
+                 text_frequency_temperature_init=5.0,
+                 text_frequency_logit_max=1.0):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -172,6 +177,13 @@ class UpblockAttention(nn.Module):
             semantic_reliability_strength_init=(
                 semantic_reliability_strength_init
             ),
+            use_text_frequency_routing=use_text_frequency_routing,
+            text_frequency_attention_dim=text_frequency_attention_dim,
+            text_frequency_attention_heads=text_frequency_attention_heads,
+            text_frequency_temperature_init=(
+                text_frequency_temperature_init
+            ),
+            text_frequency_logit_max=text_frequency_logit_max,
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
 
@@ -440,6 +452,31 @@ class LViT(nn.Module):
             'eppa_semantic_reliability_strength_init',
             0.0,
         )
+        EPPA_TEXT_FREQUENCY_STAGES = tuple(getattr(
+            config,
+            'eppa_text_frequency_stages',
+            (),
+        ))
+        EPPA_TEXT_FREQUENCY_ATTENTION_DIM = getattr(
+            config,
+            'eppa_text_frequency_attention_dim',
+            32,
+        )
+        EPPA_TEXT_FREQUENCY_ATTENTION_HEADS = getattr(
+            config,
+            'eppa_text_frequency_attention_heads',
+            4,
+        )
+        EPPA_TEXT_FREQUENCY_TEMPERATURE_INIT = getattr(
+            config,
+            'eppa_text_frequency_temperature_init',
+            5.0,
+        )
+        EPPA_TEXT_FREQUENCY_LOGIT_MAX = getattr(
+            config,
+            'eppa_text_frequency_logit_max',
+            1.0,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -501,6 +538,18 @@ class LViT(nn.Module):
             'semantic_reliability_strength_init': (
                 EPPA_SEMANTIC_RELIABILITY_STRENGTH_INIT
             ),
+            'text_frequency_attention_dim': (
+                EPPA_TEXT_FREQUENCY_ATTENTION_DIM
+            ),
+            'text_frequency_attention_heads': (
+                EPPA_TEXT_FREQUENCY_ATTENTION_HEADS
+            ),
+            'text_frequency_temperature_init': (
+                EPPA_TEXT_FREQUENCY_TEMPERATURE_INIT
+            ),
+            'text_frequency_logit_max': (
+                EPPA_TEXT_FREQUENCY_LOGIT_MAX
+            ),
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -526,6 +575,9 @@ class LViT(nn.Module):
             ),
             use_semantic_reliability_residual=(
                 'up4' in EPPA_SEMANTIC_RELIABILITY_STAGES
+            ),
+            use_text_frequency_routing=(
+                'up4' in EPPA_TEXT_FREQUENCY_STAGES
             ),
             **eppa_common,
         )
@@ -554,6 +606,9 @@ class LViT(nn.Module):
             use_semantic_reliability_residual=(
                 'up3' in EPPA_SEMANTIC_RELIABILITY_STAGES
             ),
+            use_text_frequency_routing=(
+                'up3' in EPPA_TEXT_FREQUENCY_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -581,6 +636,9 @@ class LViT(nn.Module):
             use_semantic_reliability_residual=(
                 'up2' in EPPA_SEMANTIC_RELIABILITY_STAGES
             ),
+            use_text_frequency_routing=(
+                'up2' in EPPA_TEXT_FREQUENCY_STAGES
+            ),
             **eppa_common,
         )
         self.up1 = UpblockAttention(
@@ -607,6 +665,9 @@ class LViT(nn.Module):
             ),
             use_semantic_reliability_residual=(
                 'up1' in EPPA_SEMANTIC_RELIABILITY_STAGES
+            ),
+            use_text_frequency_routing=(
+                'up1' in EPPA_TEXT_FREQUENCY_STAGES
             ),
             **eppa_common,
         )

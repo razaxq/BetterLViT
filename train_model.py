@@ -509,6 +509,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         'fam_eppa_v4e',
                         'fam_eppa_v4f',
                         'fam_eppa_v4g',
+                        'fam_eppa_v4h',
                     )
                 ):
                     logger.info(
@@ -760,6 +761,61 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 ],
                                 stage_stats[
                                     'semantic_reliability_decoder_correlation'
+                                ],
+                            )
+                        )
+                    if stage_stats.get('text_frequency_routing_enabled'):
+                        logger.info(
+                            '{} text_frequency: temperature={:.4f}, '
+                            'entropy={:.4f}, peak={:.4f}, '
+                            'cls/non_cls={:.4f}/{:.4f}, spatial_std={:.4f}, '
+                            'valid_tokens={:.2f}, attended_std={:.4f}; '
+                            'route raw={:.4f}+/-{:.4f}, '
+                            'delta={:.4f}+/-{:.4f} max={:.4f}, '
+                            'weight_shift low/high={:.6f}/{:.6f}'.format(
+                                stage,
+                                stage_stats[
+                                    'text_frequency_temperature'
+                                ],
+                                stage_stats[
+                                    'text_frequency_attention_entropy'
+                                ],
+                                stage_stats[
+                                    'text_frequency_attention_peak'
+                                ],
+                                stage_stats['text_frequency_cls_mass'],
+                                stage_stats[
+                                    'text_frequency_non_cls_mass'
+                                ],
+                                stage_stats[
+                                    'text_frequency_attention_spatial_std'
+                                ],
+                                stage_stats[
+                                    'text_frequency_valid_count_mean'
+                                ],
+                                stage_stats[
+                                    'text_frequency_attended_std'
+                                ],
+                                stage_stats[
+                                    'text_frequency_route_raw_mean'
+                                ],
+                                stage_stats[
+                                    'text_frequency_route_raw_std'
+                                ],
+                                stage_stats[
+                                    'text_frequency_route_delta_mean'
+                                ],
+                                stage_stats[
+                                    'text_frequency_route_delta_std'
+                                ],
+                                stage_stats[
+                                    'text_frequency_route_delta_max'
+                                ],
+                                stage_stats[
+                                    'text_frequency_low_weight_shift'
+                                ],
+                                stage_stats[
+                                    'text_frequency_high_weight_shift'
                                 ],
                             )
                         )

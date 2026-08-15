@@ -37,10 +37,10 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 num_workers = 4
 persistent_workers = True
 
-# FAM-EPPA V4-G architecture ablation. It retains V4-B's successful frequency
-# paths and adds only a spatially zero-mean local reliability residual at the
-# deepest decoder stage. V4-C flow, V4-D token routing, V4-E amplitude gating
-# and V4-F prototypes are disabled. Boundary supervision remains disabled.
+# FAM-EPPA V4-H architecture ablation. It retains V4-B's successful normalized
+# frequency paths and lets masked report tokens make only bounded corrections
+# to the ALPF/AHPF mixture logits at up4/up3. Text never directly changes the
+# visual feature amplitude. Boundary supervision remains disabled.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
 loss_name = 'dice_focal'
@@ -49,9 +49,9 @@ focal_loss_weight = 0.5
 focal_gamma = 2.0
 focal_positive_weight = 0.5
 focal_negative_weight = 0.5
-experiment_architecture = 'FAM-EPPA V4-G (Mean-Preserving Local Reliability)'
-experiment_architecture_version = 'fam_eppa_v4g'
-experiment_output_name = 'fam_eppa_v4g_evaluation.json'
+experiment_architecture = 'FAM-EPPA V4-H (Token-Conditioned Frequency Routing)'
+experiment_architecture_version = 'fam_eppa_v4h'
+experiment_output_name = 'fam_eppa_v4h_evaluation.json'
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -116,7 +116,7 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
-    # FAM-EPPA V4-G structural switches and residual bounds.
+    # FAM-EPPA V4-H structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
     config.eppa_use_text_pixel_film = True
@@ -139,7 +139,7 @@ def get_CTranS_config():
     config.eppa_ahpf_strength_max = 0.30
     config.eppa_ahpf_strength_init = 0.08
     config.eppa_ahpf_strength_floor = 0.02
-    # V4-C's almost-everywhere flow did not improve generalization, so V4-G
+    # V4-C's almost-everywhere flow did not improve generalization, so V4-H
     # keeps geometric warping disabled.
     config.eppa_semantic_flow_stages = ()
     config.eppa_flow_groups = 4
@@ -147,10 +147,9 @@ def get_CTranS_config():
     config.eppa_flow_strength_max = 1.0
     config.eppa_flow_strength_init = 0.25
     # V4-D overfit after direct token-to-pixel residual injection. V4-E learned
-    # global PLAM attenuation, while V4-F collapsed all four prototypes into
-    # one center. V4-G uses local agreement only through a centered correction
-    # whose per-channel spatial mean is exactly zero. Constant/global routing
-    # therefore has no effect, and zero strength gives exact V4-B startup.
+    # global PLAM attenuation, V4-F collapsed its prototypes, and V4-G learned
+    # an exactly zero reliability branch. V4-H confines token-level semantics
+    # to normalized frequency selection, starting from exact V4-B weights.
     config.eppa_token_routing_stages = ()
     config.eppa_token_attention_dim = 32
     config.eppa_token_attention_heads = 4
@@ -165,10 +164,15 @@ def get_CTranS_config():
     config.eppa_semantic_prototype_temperature = 0.75
     config.eppa_semantic_prototype_strength_max = 0.25
     config.eppa_semantic_prototype_strength_init = 0.0
-    config.eppa_semantic_reliability_stages = ('up4',)
+    config.eppa_semantic_reliability_stages = ()
     config.eppa_semantic_reliability_hidden_channels = 16
     config.eppa_semantic_reliability_strength_max = 0.25
     config.eppa_semantic_reliability_strength_init = 0.0
+    config.eppa_text_frequency_stages = ('up4', 'up3')
+    config.eppa_text_frequency_attention_dim = 32
+    config.eppa_text_frequency_attention_heads = 4
+    config.eppa_text_frequency_temperature_init = 5.0
+    config.eppa_text_frequency_logit_max = 1.0
     return config
 
 
