@@ -577,6 +577,10 @@ class FAMHaarEPPA(nn.Module):
         semantic_prototype_temperature=0.75,
         semantic_prototype_strength_max=0.25,
         semantic_prototype_strength_init=0.0,
+        use_semantic_reliability_residual=False,
+        semantic_reliability_hidden_channels=16,
+        semantic_reliability_strength_max=0.25,
+        semantic_reliability_strength_init=0.0,
     ):
         super().__init__()
         channel_bottleneck = max(
@@ -623,6 +627,12 @@ class FAMHaarEPPA(nn.Module):
         self.semantic_prototype_strength_max = float(
             semantic_prototype_strength_max
         )
+        self.use_semantic_reliability_residual = bool(
+            use_semantic_reliability_residual
+        )
+        self.semantic_reliability_strength_max = float(
+            semantic_reliability_strength_max
+        )
         if self.use_semantic_flow_alignment and not self.use_adaptive_frequency:
             raise ValueError(
                 "Semantic-flow alignment requires adaptive frequency routing"
@@ -648,6 +658,18 @@ class FAMHaarEPPA(nn.Module):
         ):
             raise ValueError(
                 "Semantic prototype strength init must lie inside its bounds"
+            )
+        if self.semantic_reliability_strength_max <= 0.0:
+            raise ValueError(
+                "Semantic reliability strength maximum must be positive"
+            )
+        if not (
+            -self.semantic_reliability_strength_max
+            < float(semantic_reliability_strength_init)
+            < self.semantic_reliability_strength_max
+        ):
+            raise ValueError(
+                "Semantic reliability strength init must lie inside bounds"
             )
 
         self.frequency_split = FixedHaarFrequencySplit(in_channels)
@@ -748,6 +770,41 @@ class FAMHaarEPPA(nn.Module):
             )
             self.semantic_prototype_strength_raw = nn.Parameter(
                 torch.tensor(math.atanh(normalized_init))
+            )
+
+        if self.use_semantic_reliability_residual:
+            reliability_hidden = max(
+                4,
+                int(semantic_reliability_hidden_channels),
+            )
+            self.semantic_reliability_calibrator = nn.Sequential(
+                nn.Conv2d(
+                    4,
+                    reliability_hidden,
+                    kernel_size=3,
+                    padding=1,
+                    bias=False,
+                ),
+                nn.GroupNorm(1, reliability_hidden),
+                nn.SiLU(inplace=True),
+                nn.Conv2d(
+                    reliability_hidden,
+                    1,
+                    kernel_size=1,
+                    bias=False,
+                ),
+            )
+            nn.init.normal_(
+                self.semantic_reliability_calibrator[-1].weight,
+                mean=0.0,
+                std=0.02,
+            )
+            reliability_init = (
+                float(semantic_reliability_strength_init)
+                / self.semantic_reliability_strength_max
+            )
+            self.semantic_reliability_strength_raw = nn.Parameter(
+                torch.tensor(math.atanh(reliability_init))
             )
 
         if self.use_token_routing:
@@ -1128,6 +1185,50 @@ class FAMHaarEPPA(nn.Module):
                 text_mask,
             )
 
+        reliability_diagnostics = None
+        if self.use_semantic_reliability_residual:
+            reliability_evidence = torch.cat(
+                [
+                    plam_agreement,
+                    decoder_agreement,
+                    plam_decoder_agreement,
+                    (plam_agreement - decoder_agreement).abs(),
+                ],
+                dim=1,
+            )
+            reliability_raw = self.semantic_reliability_calibrator(
+                reliability_evidence
+            )
+            reliability_signal = torch.tanh(reliability_raw)
+            reliability_signal = (
+                reliability_signal
+                - reliability_signal.mean(dim=(2, 3), keepdim=True)
+            )
+            reliability_correction = (
+                plam_features * reliability_signal
+            )
+            reliability_correction = (
+                reliability_correction
+                - reliability_correction.mean(
+                    dim=(2, 3),
+                    keepdim=True,
+                )
+            )
+            reliability_strength = (
+                self.semantic_reliability_strength_max
+                * torch.tanh(self.semantic_reliability_strength_raw)
+            )
+            semantic_features = (
+                semantic_features
+                + reliability_strength * reliability_correction
+            )
+            reliability_diagnostics = {
+                "raw": reliability_raw,
+                "signal": reliability_signal,
+                "semantic_correction": reliability_correction,
+                "strength": reliability_strength,
+            }
+
         prototype_diagnostics = None
         if self.use_semantic_prototype_aggregation:
             (
@@ -1167,6 +1268,7 @@ class FAMHaarEPPA(nn.Module):
             plam_calibration_gate,
             plam_decoder_agreement,
             prototype_diagnostics,
+            reliability_diagnostics,
         )
 
     def _semantic_prototype_aggregate(self, semantic_features):
@@ -1290,6 +1392,7 @@ class FAMHaarEPPA(nn.Module):
             plam_calibration_gate,
             plam_decoder_agreement,
             prototype_diagnostics,
+            reliability_diagnostics,
         ) = self._semantic_region(
             skip_low,
             plam_low,
@@ -1321,6 +1424,18 @@ class FAMHaarEPPA(nn.Module):
         )
 
         channel_residual = skip_low * (channel_gain - 1.0)
+        reliability_plam_residual = torch.zeros_like(plam_low)
+        if reliability_diagnostics is not None:
+            reliability_plam_residual = (
+                plam_low * reliability_diagnostics["signal"]
+            )
+            reliability_plam_residual = (
+                reliability_plam_residual
+                - reliability_plam_residual.mean(
+                    dim=(2, 3),
+                    keepdim=True,
+                )
+            )
         output = (
             skip
             + adaptive_skip_residual
@@ -1328,6 +1443,12 @@ class FAMHaarEPPA(nn.Module):
             + channel_residual
             + region_strength * region_residual
             + detail_strength * detail_residual
+            + (
+                reliability_diagnostics["strength"]
+                * reliability_plam_residual
+                if reliability_diagnostics is not None
+                else 0.0
+            )
         )
 
         if not self.training:
@@ -1369,6 +1490,9 @@ class FAMHaarEPPA(nn.Module):
                     ),
                     "semantic_prototype_enabled": bool(
                         self.use_semantic_prototype_aggregation
+                    ),
+                    "semantic_reliability_enabled": bool(
+                        self.use_semantic_reliability_residual
                     ),
                     "channel_mean": float(channel_gain.mean().item()),
                     "channel_std": float(channel_gain.std().item()),
@@ -1615,6 +1739,75 @@ class FAMHaarEPPA(nn.Module):
                             mean_preservation_error.item()
                         ),
                     })
+                if reliability_diagnostics is not None:
+                    reliability_signal = reliability_diagnostics["signal"]
+                    semantic_correction = reliability_diagnostics[
+                        "semantic_correction"
+                    ]
+                    flat_signal = reliability_signal.flatten()
+
+                    def reliability_correlation(evidence):
+                        flat_evidence = evidence.flatten()
+                        centered_signal = flat_signal - flat_signal.mean()
+                        centered_evidence = (
+                            flat_evidence - flat_evidence.mean()
+                        )
+                        return (
+                            centered_signal.mul(centered_evidence).mean()
+                            / (
+                                centered_signal.square().mean().sqrt()
+                                * centered_evidence.square().mean().sqrt()
+                            ).clamp_min(1e-8)
+                        )
+
+                    self._last_stats.update({
+                        "semantic_reliability_strength": float(
+                            reliability_diagnostics["strength"].item()
+                        ),
+                        "semantic_reliability_raw_mean": float(
+                            reliability_diagnostics["raw"].mean().item()
+                        ),
+                        "semantic_reliability_raw_std": float(
+                            reliability_diagnostics["raw"].std().item()
+                        ),
+                        "semantic_reliability_signal_mean": float(
+                            reliability_signal.mean().item()
+                        ),
+                        "semantic_reliability_signal_std": float(
+                            reliability_signal.std().item()
+                        ),
+                        "semantic_reliability_signal_min": float(
+                            reliability_signal.amin().item()
+                        ),
+                        "semantic_reliability_signal_max": float(
+                            reliability_signal.amax().item()
+                        ),
+                        "semantic_reliability_positive_ratio": float(
+                            (reliability_signal > 0.0).float().mean().item()
+                        ),
+                        "semantic_reliability_semantic_std": float(
+                            semantic_correction.std().item()
+                        ),
+                        "semantic_reliability_semantic_mean_error": float(
+                            semantic_correction.mean(
+                                dim=(2, 3)
+                            ).abs().amax().item()
+                        ),
+                        "semantic_reliability_plam_std": float(
+                            reliability_plam_residual.std().item()
+                        ),
+                        "semantic_reliability_plam_mean_error": float(
+                            reliability_plam_residual.mean(
+                                dim=(2, 3)
+                            ).abs().amax().item()
+                        ),
+                        "semantic_reliability_plam_correlation": float(
+                            reliability_correlation(plam_agreement).item()
+                        ),
+                        "semantic_reliability_decoder_correlation": float(
+                            reliability_correlation(decoder_agreement).item()
+                        ),
+                    })
                 if token_diagnostics is not None:
                     attention = token_diagnostics["attention"]
                     token_mask = token_diagnostics["text_mask"]
@@ -1810,5 +2003,11 @@ class FAMSemanticPrototypeEPPA(FAMHaarEPPA):
     architecture_version = "fam_eppa_v4f"
 
 
+class FAMMeanPreservingReliabilityEPPA(FAMHaarEPPA):
+    """V4-G: V4-B plus zero-mean local reliability residuals."""
+
+    architecture_version = "fam_eppa_v4g"
+
+
 # Keep the public name used by the existing LViT import path.
-EPPA = FAMSemanticPrototypeEPPA
+EPPA = FAMMeanPreservingReliabilityEPPA

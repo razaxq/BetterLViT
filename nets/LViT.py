@@ -95,7 +95,11 @@ class UpblockAttention(nn.Module):
                  semantic_prototype_count=4,
                  semantic_prototype_temperature=0.75,
                  semantic_prototype_strength_max=0.25,
-                 semantic_prototype_strength_init=0.0):
+                 semantic_prototype_strength_init=0.0,
+                 use_semantic_reliability_residual=False,
+                 semantic_reliability_hidden_channels=16,
+                 semantic_reliability_strength_max=0.25,
+                 semantic_reliability_strength_init=0.0):
         super().__init__()
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
@@ -155,6 +159,18 @@ class UpblockAttention(nn.Module):
             ),
             semantic_prototype_strength_init=(
                 semantic_prototype_strength_init
+            ),
+            use_semantic_reliability_residual=(
+                use_semantic_reliability_residual
+            ),
+            semantic_reliability_hidden_channels=(
+                semantic_reliability_hidden_channels
+            ),
+            semantic_reliability_strength_max=(
+                semantic_reliability_strength_max
+            ),
+            semantic_reliability_strength_init=(
+                semantic_reliability_strength_init
             ),
         )
         self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
@@ -404,6 +420,26 @@ class LViT(nn.Module):
             'eppa_semantic_prototype_strength_init',
             0.0,
         )
+        EPPA_SEMANTIC_RELIABILITY_STAGES = tuple(getattr(
+            config,
+            'eppa_semantic_reliability_stages',
+            (),
+        ))
+        EPPA_SEMANTIC_RELIABILITY_HIDDEN_CHANNELS = getattr(
+            config,
+            'eppa_semantic_reliability_hidden_channels',
+            16,
+        )
+        EPPA_SEMANTIC_RELIABILITY_STRENGTH_MAX = getattr(
+            config,
+            'eppa_semantic_reliability_strength_max',
+            0.25,
+        )
+        EPPA_SEMANTIC_RELIABILITY_STRENGTH_INIT = getattr(
+            config,
+            'eppa_semantic_reliability_strength_init',
+            0.0,
+        )
         eppa_common = {
             'text_dim': TEXT_DIM,
             'use_decoder_guide': EPPA_USE_DECODER_GUIDE,
@@ -456,6 +492,15 @@ class LViT(nn.Module):
             'semantic_prototype_strength_init': (
                 EPPA_SEMANTIC_PROTOTYPE_STRENGTH_INIT
             ),
+            'semantic_reliability_hidden_channels': (
+                EPPA_SEMANTIC_RELIABILITY_HIDDEN_CHANNELS
+            ),
+            'semantic_reliability_strength_max': (
+                EPPA_SEMANTIC_RELIABILITY_STRENGTH_MAX
+            ),
+            'semantic_reliability_strength_init': (
+                EPPA_SEMANTIC_RELIABILITY_STRENGTH_INIT
+            ),
         }
         self.up4 = UpblockAttention(
             in_channels * 16,
@@ -478,6 +523,9 @@ class LViT(nn.Module):
             ),
             use_semantic_prototype_aggregation=(
                 'up4' in EPPA_SEMANTIC_PROTOTYPE_STAGES
+            ),
+            use_semantic_reliability_residual=(
+                'up4' in EPPA_SEMANTIC_RELIABILITY_STAGES
             ),
             **eppa_common,
         )
@@ -503,6 +551,9 @@ class LViT(nn.Module):
             use_semantic_prototype_aggregation=(
                 'up3' in EPPA_SEMANTIC_PROTOTYPE_STAGES
             ),
+            use_semantic_reliability_residual=(
+                'up3' in EPPA_SEMANTIC_RELIABILITY_STAGES
+            ),
             **eppa_common,
         )
         self.up2 = UpblockAttention(
@@ -527,6 +578,9 @@ class LViT(nn.Module):
             use_semantic_prototype_aggregation=(
                 'up2' in EPPA_SEMANTIC_PROTOTYPE_STAGES
             ),
+            use_semantic_reliability_residual=(
+                'up2' in EPPA_SEMANTIC_RELIABILITY_STAGES
+            ),
             **eppa_common,
         )
         self.up1 = UpblockAttention(
@@ -550,6 +604,9 @@ class LViT(nn.Module):
             ),
             use_semantic_prototype_aggregation=(
                 'up1' in EPPA_SEMANTIC_PROTOTYPE_STAGES
+            ),
+            use_semantic_reliability_residual=(
+                'up1' in EPPA_SEMANTIC_RELIABILITY_STAGES
             ),
             **eppa_common,
         )

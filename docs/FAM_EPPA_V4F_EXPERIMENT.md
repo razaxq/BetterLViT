@@ -77,3 +77,20 @@ all 2,113 test images.
 - Bhardwaj et al., *L3Seg: Lean Linear Layers for Language-Guided Vision
   Transformer in Medical Image Segmentation*, 2025:
   <https://openaccess.thecvf.com/content/ICCV2025W/CVAMD/html/Bhardwaj_L3Seg_Lean_Linear_Layers_for_Language-Guided_Vision_Transformer_in_Medical_ICCVW_2025_paper.html>
+
+## Final result and decision
+
+Training completed all 200 epochs. The validation-best checkpoint was Epoch
+150 and validation selected threshold `0.568`.
+
+| Model | Validation Dice / IoU | Test Dice / IoU |
+|---|---:|---:|
+| V4-B, selected threshold `0.520` | 0.824274 / 0.727518 | **0.844996 / 0.760273** |
+| V4-F, selected threshold `0.568` | 0.823745 / 0.726841 | 0.841666 / 0.756235 |
+
+V4-F reduced calibrated test Dice/IoU by `0.003330/0.004038`. Its four
+assignments were already uniform at Epoch 1 and remained uniform through Epoch
+200: normalized assignment entropy `1.0`, each mass `0.25`, and inter-center
+cosine `1.0`. Meanwhile residual strength rose from `-0.0069` to `0.1736`.
+The branch therefore became a single-center smoothing operation rather than
+semantic aggregation. V4-F is rejected, and V4-B remains the base for V4-G.

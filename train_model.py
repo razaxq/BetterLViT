@@ -508,6 +508,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         'fam_eppa_v4d',
                         'fam_eppa_v4e',
                         'fam_eppa_v4f',
+                        'fam_eppa_v4g',
                     )
                 ):
                     logger.info(
@@ -706,6 +707,59 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 ],
                                 stage_stats[
                                     'semantic_prototype_mean_error'
+                                ],
+                            )
+                        )
+                    if stage_stats.get('semantic_reliability_enabled'):
+                        logger.info(
+                            '{} semantic_reliability: strength={:.4f}, '
+                            'raw={:.4f}+/-{:.4f}, signal={:.3e}+/-{:.4f} '
+                            '[{:.4f},{:.4f}], positive={:.4f}, '
+                            'semantic/plam_std={:.4f}/{:.4f}, '
+                            'mean_error={:.3e}/{:.3e}, '
+                            'corr_plam/decoder={:.4f}/{:.4f}'.format(
+                                stage,
+                                stage_stats[
+                                    'semantic_reliability_strength'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_raw_mean'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_raw_std'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_signal_mean'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_signal_std'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_signal_min'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_signal_max'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_positive_ratio'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_semantic_std'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_plam_std'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_semantic_mean_error'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_plam_mean_error'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_plam_correlation'
+                                ],
+                                stage_stats[
+                                    'semantic_reliability_decoder_correlation'
                                 ],
                             )
                         )
