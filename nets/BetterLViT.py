@@ -43,8 +43,9 @@ class BetterLViT(LViT):
         self.text_encoder = AutoModel.from_pretrained(
             text_encoder_name, trust_remote_code=True
         )
+        self.use_lora = bool(use_lora)
 
-        if use_lora:
+        if self.use_lora:
             lora_cfg = LoraConfig(
                 r=lora_r,
                 lora_alpha=lora_alpha,
@@ -56,6 +57,14 @@ class BetterLViT(LViT):
         else:
             for p in self.text_encoder.parameters():
                 p.requires_grad = False
+            self.text_encoder.eval()
+
+    def train(self, mode=True):
+        """Keep the frozen B0 text encoder deterministic during training."""
+        super().train(mode)
+        if not self.use_lora:
+            self.text_encoder.eval()
+        return self
 
     def encode_text(self, input_ids, attention_mask):
         outputs = self.text_encoder(
@@ -67,4 +76,4 @@ class BetterLViT(LViT):
 
     def forward(self, x, input_ids, attention_mask):
         text = self.encode_text(input_ids, attention_mask)
-        return super().forward(x, text)
+        return super().forward(x, text, text_mask=attention_mask)

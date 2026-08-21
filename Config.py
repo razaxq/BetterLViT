@@ -5,18 +5,25 @@ import time
 import ml_collections
 import torch
 
+from paper_experiments import get_paper_experiment
+
+
+paper_experiment = get_paper_experiment(
+    os.environ.get('BETTERLVIT_EXPERIMENT', 'b0_baseline')
+)
+
 ## PARAMETERS OF THE MODEL
 save_model = True
 tensorboard = True
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 use_cuda = torch.cuda.is_available()
-seed = 1219
+seed = int(os.environ.get('BETTERLVIT_SEED', '1219'))
 os.environ['PYTHONHASHSEED'] = str(seed)
 
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
-epochs = 200
+epochs = int(os.environ.get('BETTERLVIT_EPOCHS', '200'))
 img_size = 224
 print_frequency = 20
 tensorboard_frequency = 20
@@ -37,20 +44,22 @@ batch_size = 16  # For LViT-T, 2 is better than 4
 num_workers = 4
 persistent_workers = True
 
-# FAM-EPPA V4-B architecture ablation. V4-A remains intact, while up4/up3 add
-# efficient spatially adaptive low/high-pass routing. Boundary supervision
-# remains strictly disabled so this stays an architecture-only experiment.
+# Pre-registered paper ablation. Boundary supervision is prohibited in every
+# profile; only LoRA, objective and decoder fusion are allowed to differ.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
-loss_name = 'dice_focal'
+loss_name = paper_experiment['loss_name']
 dice_loss_weight = 0.5
 focal_loss_weight = 0.5
 focal_gamma = 2.0
 focal_positive_weight = 0.5
 focal_negative_weight = 0.5
-experiment_architecture = 'FAM-EPPA V4-B (Low-Resolution Adaptive ALPF/AHPF)'
-experiment_architecture_version = 'fam_eppa_v4b'
-experiment_output_name = 'fam_eppa_v4b_evaluation.json'
+experiment_name = paper_experiment['name']
+experiment_paper_id = paper_experiment['paper_id']
+decoder_fusion_mode = paper_experiment['decoder_fusion_mode']
+experiment_architecture = paper_experiment['description']
+experiment_architecture_version = paper_experiment['architecture_version']
+experiment_output_name = experiment_name + '_evaluation.json'
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -72,7 +81,7 @@ require_checkpoint_architecture_match = True
 # Text encoder (replaces legacy bert-embedding / bert-base-uncased)
 text_encoder_name = 'microsoft/BiomedVLP-CXR-BERT-specialized'
 text_max_len = 32  # threaded into Vit.CTBN3.in_channels via LViT __init__
-text_use_lora = True
+text_use_lora = paper_experiment['text_use_lora']
 text_lora_r = 16
 text_lora_alpha = 32
 text_lora_dropout = 0.1
@@ -91,8 +100,14 @@ train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'
 test_dataset = './datasets/' + task_name + '/Test_Folder/'
 task_dataset = './datasets/' + task_name + '/Train_Folder/'
-session_name = 'Test_session' + '_' + time.strftime('%m.%d_%Hh%M')
-save_path = task_name + '/' + model_name + '/' + session_name + '/'
+session_name = (
+    experiment_paper_id + '_Test_session' + '_'
+    + time.strftime('%m.%d_%Hh%M')
+)
+save_path = (
+    task_name + '/' + model_name + '/' + experiment_name + '/'
+    + session_name + '/'
+)
 model_path = save_path + 'models/'
 tensorboard_folder = save_path + 'tensorboard_logs/'
 logger_path = save_path + session_name + ".log"
@@ -115,6 +130,7 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
+    config.decoder_fusion_mode = decoder_fusion_mode
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True

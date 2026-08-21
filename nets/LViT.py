@@ -4,6 +4,8 @@ import torch.nn as nn
 
 from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
+from .fmiseg_adapter import FMISegDecoderAdapter
+from .pixlevel import PixLevelModule
 
 
 def get_activation(activation_type):
@@ -54,6 +56,42 @@ class DownBlock(nn.Module):
 class Flatten(nn.Module):
     def forward(self, x):
         return x.view(x.size(0), -1)
+
+
+class LegacyPLAMUpblock(nn.Module):
+    """Original LViT pixel-level attention used by B0/A0/A1."""
+
+    def __init__(self, in_channels, out_channels, nb_Conv, activation='ReLU'):
+        super().__init__()
+        self.up = nn.Upsample(scale_factor=2)
+        self.pixModule = PixLevelModule(in_channels // 2)
+        self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
+
+    def forward(self, x, skip_x):
+        up = self.up(x)
+        skip_x_att = self.pixModule(skip_x)
+        return self.nConvs(torch.cat([skip_x_att, up], dim=1))
+
+
+class FMISegFusionUpblock(nn.Module):
+    """Decoder upblock using the controlled FMISeg-inspired adapter."""
+
+    def __init__(self, in_channels, out_channels, nb_Conv, activation='ReLU'):
+        super().__init__()
+        channels = in_channels // 2
+        self.up = nn.Upsample(scale_factor=2)
+        self.fmiseg = FMISegDecoderAdapter(channels)
+        self.nConvs = _make_nConv(in_channels, out_channels, nb_Conv, activation)
+
+    def forward(self, x, skip_x, plam_x, text, text_mask=None):
+        up = self.up(x)
+        refined_skip = self.fmiseg(
+            skip_x,
+            plam_x,
+            text,
+            text_mask=text_mask,
+        )
+        return self.nConvs(torch.cat([refined_skip, up], dim=1))
 
 
 class UpblockAttention(nn.Module):
@@ -130,6 +168,22 @@ class LViT(nn.Module):
         self.vis = vis
         self.n_channels = n_channels
         self.n_classes = n_classes
+        self.decoder_fusion_mode = getattr(
+            config,
+            'decoder_fusion_mode',
+            'fam_eppa_v4b',
+        )
+        valid_fusion_modes = {
+            'legacy_plam',
+            'fam_eppa_v4b',
+            'fmiseg_adapter',
+        }
+        if self.decoder_fusion_mode not in valid_fusion_modes:
+            raise ValueError(
+                'Unsupported decoder_fusion_mode: {}'.format(
+                    self.decoder_fusion_mode
+                )
+            )
         in_channels = config.base_channel
         self.inc = ConvBatchNorm(n_channels, in_channels)
         self.downVit = VisionTransformer(config, vis, img_size=224, channel_num=64, patch_size=16, embed_dim=64, text_seq_len=text_seq_len)
@@ -279,54 +333,45 @@ class LViT(nn.Module):
             'ahpf_strength_init': EPPA_AHPF_STRENGTH_INIT,
             'ahpf_strength_floor': EPPA_AHPF_STRENGTH_FLOOR,
         }
-        self.up4 = UpblockAttention(
-            in_channels * 16,
-            in_channels * 4,
-            nb_Conv=2,
-            min_bottleneck_channels=(
-                EPPA_MIN_BOTTLENECK_CHANNELS[0]
-            ),
-            use_adaptive_frequency=(
-                'up4' in EPPA_ADAPTIVE_FREQUENCY_STAGES
-            ),
-            **eppa_common,
-        )
-        self.up3 = UpblockAttention(
-            in_channels * 8,
-            in_channels * 2,
-            nb_Conv=2,
-            min_bottleneck_channels=(
-                EPPA_MIN_BOTTLENECK_CHANNELS[1]
-            ),
-            use_adaptive_frequency=(
-                'up3' in EPPA_ADAPTIVE_FREQUENCY_STAGES
-            ),
-            **eppa_common,
-        )
-        self.up2 = UpblockAttention(
-            in_channels * 4,
-            in_channels,
-            nb_Conv=2,
-            min_bottleneck_channels=(
-                EPPA_MIN_BOTTLENECK_CHANNELS[2]
-            ),
-            use_adaptive_frequency=(
-                'up2' in EPPA_ADAPTIVE_FREQUENCY_STAGES
-            ),
-            **eppa_common,
-        )
-        self.up1 = UpblockAttention(
-            in_channels * 2,
-            in_channels,
-            nb_Conv=2,
-            min_bottleneck_channels=(
-                EPPA_MIN_BOTTLENECK_CHANNELS[3]
-            ),
-            use_adaptive_frequency=(
-                'up1' in EPPA_ADAPTIVE_FREQUENCY_STAGES
-            ),
-            **eppa_common,
-        )
+        if self.decoder_fusion_mode == 'legacy_plam':
+            block = LegacyPLAMUpblock
+            self.up4 = block(in_channels * 16, in_channels * 4, nb_Conv=2)
+            self.up3 = block(in_channels * 8, in_channels * 2, nb_Conv=2)
+            self.up2 = block(in_channels * 4, in_channels, nb_Conv=2)
+            self.up1 = block(in_channels * 2, in_channels, nb_Conv=2)
+        elif self.decoder_fusion_mode == 'fmiseg_adapter':
+            block = FMISegFusionUpblock
+            self.up4 = block(in_channels * 16, in_channels * 4, nb_Conv=2)
+            self.up3 = block(in_channels * 8, in_channels * 2, nb_Conv=2)
+            self.up2 = block(in_channels * 4, in_channels, nb_Conv=2)
+            self.up1 = block(in_channels * 2, in_channels, nb_Conv=2)
+        else:
+            def make_eppa_block(index, block_in, block_out, stage):
+                return UpblockAttention(
+                    block_in,
+                    block_out,
+                    nb_Conv=2,
+                    min_bottleneck_channels=(
+                        EPPA_MIN_BOTTLENECK_CHANNELS[index]
+                    ),
+                    use_adaptive_frequency=(
+                        stage in EPPA_ADAPTIVE_FREQUENCY_STAGES
+                    ),
+                    **eppa_common,
+                )
+
+            self.up4 = make_eppa_block(
+                0, in_channels * 16, in_channels * 4, 'up4'
+            )
+            self.up3 = make_eppa_block(
+                1, in_channels * 8, in_channels * 2, 'up3'
+            )
+            self.up2 = make_eppa_block(
+                2, in_channels * 4, in_channels, 'up2'
+            )
+            self.up1 = make_eppa_block(
+                3, in_channels * 2, in_channels, 'up1'
+            )
         self.outc = nn.Conv2d(in_channels, n_classes, kernel_size=(1, 1), stride=(1, 1))
         self.last_activation = nn.Sigmoid()  # if using BCELoss
         self.multi_activation = nn.Softmax()
@@ -339,7 +384,7 @@ class LViT(nn.Module):
         self.text_module2 = nn.Conv1d(in_channels=256, out_channels=128, kernel_size=3, padding=1)
         self.text_module1 = nn.Conv1d(in_channels=128, out_channels=64, kernel_size=3, padding=1)
 
-    def forward(self, x, text):
+    def forward(self, x, text, text_mask=None):
         x = x.float()  # x [4,3,224,224]
         x1 = self.inc(x)  # x1 [4, 64, 224, 224]
         text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2) 
@@ -358,18 +403,25 @@ class LViT(nn.Module):
         y3 = self.upVit2(y3, y4, text3, True)
         y2 = self.upVit1(y2, y3, text2, True)
         y1 = self.upVit(y1, y2, text1, True)
-        # FAM-EPPA deliberately keeps the local CNN skip and PLAM reconstruction
-        # separate until FAM-EPPA performs frequency-aware residual fusion.
-        # Earlier experiments added these tensors here, irreversibly mixing
-        # local detail and language-conditioned semantics before EPPA.
         plam1 = self.reconstruct1(y1)
         plam2 = self.reconstruct2(y2)
         plam3 = self.reconstruct3(y3)
         plam4 = self.reconstruct4(y4)
-        x = self.up4(x5, x4, plam4, text=text)
-        x = self.up3(x, x3, plam3, text=text)
-        x = self.up2(x, x2, plam2, text=text)
-        x = self.up1(x, x1, plam1, text=text)
+        if self.decoder_fusion_mode == 'legacy_plam':
+            x = self.up4(x5, x4 + plam4)
+            x = self.up3(x, x3 + plam3)
+            x = self.up2(x, x2 + plam2)
+            x = self.up1(x, x1 + plam1)
+        elif self.decoder_fusion_mode == 'fmiseg_adapter':
+            x = self.up4(x5, x4, plam4, text, text_mask=text_mask)
+            x = self.up3(x, x3, plam3, text, text_mask=text_mask)
+            x = self.up2(x, x2, plam2, text, text_mask=text_mask)
+            x = self.up1(x, x1, plam1, text, text_mask=text_mask)
+        else:
+            x = self.up4(x5, x4, plam4, text=text)
+            x = self.up3(x, x3, plam3, text=text)
+            x = self.up2(x, x2, plam2, text=text)
+            x = self.up1(x, x1, plam1, text=text)
         if self.n_classes == 1:
             logits = self.last_activation(self.outc(x))
         else:

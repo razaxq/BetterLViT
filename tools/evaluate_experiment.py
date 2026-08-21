@@ -17,6 +17,15 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
+# Config selects an immutable paper profile at import time. Pre-parse only this
+# argument so evaluation cannot accidentally instantiate the default B0 model
+# for an A0/A1/A2/A3 checkpoint.
+_profile_parser = argparse.ArgumentParser(add_help=False)
+_profile_parser.add_argument("--experiment")
+_profile_args, _ = _profile_parser.parse_known_args()
+if _profile_args.experiment:
+    os.environ["BETTERLVIT_EXPERIMENT"] = _profile_args.experiment
+
 import Config as config
 from Load_Dataset import ImageToImage2D, ValGenerator
 from nets.BetterLViT import BetterLViT
@@ -25,6 +34,18 @@ from utils import read_text
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--experiment",
+        required=True,
+        choices=(
+            "b0_baseline",
+            "a0_lora",
+            "a1_lora_focal",
+            "a2_lora_freq",
+            "a3_lora_fmiseg",
+        ),
+        help="Paper ablation profile used to construct the model.",
+    )
     parser.add_argument("--checkpoint", type=Path)
     parser.add_argument("--minimum", type=float, default=0.30)
     parser.add_argument("--maximum", type=float, default=0.70)
@@ -55,13 +76,24 @@ def parse_args():
 
 
 def latest_best_checkpoint():
+    experiment_root = (
+        REPO_ROOT
+        / config.task_name
+        / config.model_name
+        / config.experiment_name
+    )
     candidates = list(
-        (REPO_ROOT / config.task_name / config.model_name).glob(
+        experiment_root.glob(
             f"*/models/best_model-{config.model_name}.pth.tar"
         )
     )
     if not candidates:
-        raise FileNotFoundError("No BetterLViT experiment checkpoint found.")
+        raise FileNotFoundError(
+            "No checkpoint found for experiment {!r} under {}.".format(
+                config.experiment_name,
+                experiment_root,
+            )
+        )
     return max(candidates, key=lambda path: path.stat().st_mtime)
 
 
@@ -244,6 +276,14 @@ def main():
         else latest_best_checkpoint().resolve()
     )
     checkpoint = torch.load(checkpoint_path, map_location="cpu")
+    checkpoint_experiment = checkpoint.get("experiment_name")
+    if checkpoint_experiment != config.experiment_name:
+        raise RuntimeError(
+            "Checkpoint experiment mismatch: expected {!r}, found {!r}".format(
+                config.experiment_name,
+                checkpoint_experiment,
+            )
+        )
     expected_architecture = getattr(
         config,
         "experiment_architecture_version",
@@ -390,6 +430,8 @@ def main():
     }
     result = {
         "checkpoint": str(checkpoint_path),
+        "experiment_name": config.experiment_name,
+        "paper_id": getattr(config, "experiment_paper_id", None),
         "architecture": checkpoint.get(
             "architecture",
             getattr(config, "experiment_architecture", "EPPA"),
@@ -398,6 +440,11 @@ def main():
         "best_epoch": int(checkpoint.get("best_epoch", -1)),
         "boundary_loss_weight": config.boundary_loss_weight,
         "loss_name": getattr(config, "loss_name", "dice_bce"),
+        "text_use_lora": bool(getattr(config, "text_use_lora", False)),
+        "primary_reporting_threshold": 0.5,
+        "secondary_threshold_protocol": (
+            "selected on validation only, then fixed for test"
+        ),
         "validation": {
             "samples": len(validation_dataset),
             "threshold_0_5": {

@@ -93,18 +93,33 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             'experiment_architecture_version',
             None,
         ),
+        'experiment_name': getattr(config, 'experiment_name', None),
+        'experiment_paper_id': getattr(config, 'experiment_paper_id', None),
+        'decoder_fusion_mode': getattr(config, 'decoder_fusion_mode', None),
+        'loss_name': getattr(config, 'loss_name', None),
+        'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
+        'seed': int(config.seed),
+        'prediction_threshold_protocol': {
+            'primary': 0.5,
+            'secondary': 'selected_on_validation_only',
+        },
     }
 
 
-def compute_eppa_stats(model):
-    """Snapshot the latest validation-time EPPA statistics."""
+def compute_decoder_fusion_stats(model):
+    """Snapshot validation-time EPPA or FMISeg-adapter diagnostics."""
     target = model.module if isinstance(model, nn.DataParallel) else model
     stats = {}
     for stage in ('up4', 'up3', 'up2', 'up1'):
         block = getattr(target, stage, None)
-        if block is None or not hasattr(block, 'eppa'):
+        if block is None:
             continue
-        stage_stats = getattr(block.eppa, '_last_stats', None)
+        fusion = getattr(block, 'eppa', None)
+        if fusion is None:
+            fusion = getattr(block, 'fmiseg', None)
+        if fusion is None:
+            continue
+        stage_stats = getattr(fusion, '_last_stats', None)
         if not stage_stats:
             continue
         stats[stage] = dict(stage_stats)
@@ -197,6 +212,22 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                              
     lr = config.learning_rate
     logger.info(model_type)
+    logger.info(
+        'Paper experiment {} / {}: {}'.format(
+            getattr(config, 'experiment_paper_id', '?'),
+            getattr(config, 'experiment_name', '?'),
+            getattr(config, 'experiment_architecture', '?'),
+        )
+    )
+    logger.info(
+        'Controlled factors: decoder_fusion={}, LoRA={}, loss={}, seed={}'
+        .format(
+            getattr(config, 'decoder_fusion_mode', '?'),
+            getattr(config, 'text_use_lora', False),
+            getattr(config, 'loss_name', '?'),
+            config.seed,
+        )
+    )
 
     if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
@@ -415,7 +446,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'lr': float(epoch_lr),
             'train_loss_components': train_loss_components,
             'val_loss_components': val_loss_components,
-            'eppa_stats': compute_eppa_stats(model),
+            'eppa_stats': compute_decoder_fusion_stats(model),
         })
 
         # =============================================================
@@ -469,6 +500,26 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             for stage in ('up4', 'up3', 'up2', 'up1'):
                 stage_stats = current_eppa_stats.get(stage)
                 if not stage_stats:
+                    continue
+                if (
+                    stage_stats.get('architecture_version')
+                    == 'fmiseg_adapter_v1'
+                ):
+                    logger.info(
+                        '{} fmiseg: strength={:.4f}, haar_error={:.3e}, '
+                        'low_gain={:.4f}+/-{:.4f}, '
+                        'high_gain={:.4f}+/-{:.4f}, correction_std={:.4f}'
+                        .format(
+                            stage,
+                            stage_stats['strength'],
+                            stage_stats['haar_reconstruction_error'],
+                            stage_stats['low_gain_mean'],
+                            stage_stats['low_gain_std'],
+                            stage_stats['high_gain_mean'],
+                            stage_stats['high_gain_std'],
+                            stage_stats['correction_std'],
+                        )
+                    )
                     continue
                 logger.info(
                     '{}: ca={:.4f}+/-{:.4f}, sa={:.4f}+/-{:.4f}, '
