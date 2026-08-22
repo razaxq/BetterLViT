@@ -44,7 +44,7 @@ weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
 # the RX 7900 XTX before the first epoch checkpoint. Keep every paper profile
 # on the same conservative local batch size; an explicit environment override
 # is recorded by the launcher for reproducibility.
-batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '4'))
+batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '8'))
 num_workers = 4
 persistent_workers = True
 # Windows ROCm/MIOpen deterministic BatchNorm repeatedly stalled or crashed

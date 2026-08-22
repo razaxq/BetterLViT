@@ -3,9 +3,12 @@
 This branch deliberately replaces the open-ended V4 experiments with five
 pre-registered runs. All training is performed on the local AMD Radeon RX 7900
 XTX with the same dataset split, seed, optimizer, augmentation, 200-epoch
-budget, physical batch size 4 and early-stopping rule. Batch 4 replaces the
+budget, physical batch size 8 and early-stopping rule. Batch 8 replaces the
 initial batch-16 registration after that configuration crashed in the Windows
-ROCm/MIOpen BatchNorm kernel before producing a complete first checkpoint.
+ROCm/MIOpen BatchNorm kernel before producing a complete first checkpoint. A
+real-data benchmark with MIOpen disabled measured about 30.9 images/second at
+batch 8 versus 22.5 images/second at batch 4 (+37%), with about 5.03 GB of
+dedicated GPU memory and no numerical or ROCm errors over more than 200 batches.
 
 | ID | Profile | Text | Decoder | Objective | Role |
 |---|---|---|---|---|---|
@@ -25,7 +28,7 @@ interaction to BetterLViT decoder skips.
 - Dataset: QaTa-COV19-v2, fixed split of 5716 train, 1429 validation and 2113
   test images.
 - Seed: 1219.
-- Epoch budget: 200; physical batch size: 4; the same configured
+- Epoch budget: 200; physical batch size: 8; the same configured
   early-stopping rule applies to all.
 - Local Windows ROCm runs set `MIOPEN_FIND_MODE=FAST`, using FindDb or the
   immediate fallback instead of benchmarking all available solvers at every
@@ -52,7 +55,7 @@ interaction to BetterLViT decoder skips.
 Run the synthetic forward/backward check before every full experiment:
 
 ```powershell
-D:\Project\BetterLViT\.venv\Scripts\python.exe tools\smoke_paper_profile.py --experiment b0_baseline --batch-size 4
+D:\Project\BetterLViT\.venv\Scripts\python.exe tools\smoke_paper_profile.py --experiment b0_baseline --batch-size 8
 ```
 
 Start one local background training run (the launcher refuses a duplicate):

@@ -12,7 +12,7 @@ param(
     [ValidateRange(1, 10000)]
     [int]$Epochs = 200,
     [ValidateRange(1, 64)]
-    [int]$BatchSize = 4
+    [int]$BatchSize = 8
 )
 
 $ErrorActionPreference = 'Stop'
