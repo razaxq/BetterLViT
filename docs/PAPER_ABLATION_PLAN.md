@@ -2,7 +2,7 @@
 
 This branch deliberately replaces the open-ended V4 experiments with five
 pre-registered runs. All training is performed on the local AMD Radeon RX 7900
-XTX with the same dataset split, seed, optimizer, augmentation, 200-epoch
+XTX with the same dataset split, seed, optimizer, augmentation, 100-epoch
 budget, physical batch size 8 and early-stopping rule. Batch 8 replaces the
 initial batch-16 registration after that configuration crashed in the Windows
 ROCm/MIOpen BatchNorm kernel before producing a complete first checkpoint. A
@@ -32,7 +32,7 @@ interaction to BetterLViT decoder skips.
 - Dataset: QaTa-COV19-v2, fixed split of 5716 train, 1429 validation and 2113
   test images.
 - Seed: 1219.
-- Epoch budget: 200; physical batch size: 8; training `drop_last=True`; the same configured
+- Epoch budget: 100; physical batch size: 8; training `drop_last=True`; the same configured
   early-stopping rule applies to all.
 - Local Windows ROCm runs set `MIOPEN_FIND_MODE=FAST`, using FindDb or the
   immediate fallback instead of benchmarking all available solvers at every

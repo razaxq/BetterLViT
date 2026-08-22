@@ -10,9 +10,10 @@ param(
     [string]$Experiment,
     [int]$Seed = 1219,
     [ValidateRange(1, 10000)]
-    [int]$Epochs = 200,
+    [int]$Epochs = 100,
     [ValidateRange(1, 64)]
-    [int]$BatchSize = 8
+    [int]$BatchSize = 8,
+    [string]$ResumePath = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -43,6 +44,11 @@ $arguments = @(
     '-Epochs', [string]$Epochs,
     '-BatchSize', [string]$BatchSize
 )
+$resolvedResumePath = ''
+if ($ResumePath) {
+    $resolvedResumePath = (Resolve-Path -LiteralPath $ResumePath).Path
+    $arguments += @('-ResumePath', $resolvedResumePath)
+}
 $startParameters = @{
     FilePath = 'powershell.exe'
     ArgumentList = $arguments
@@ -63,6 +69,7 @@ $process = Start-Process @startParameters
     "DETERMINISTIC_BACKEND=0"
     "MIOPEN_ENABLED=0"
     "TRAIN_DROP_LAST=1"
+    "RESUME_PATH=$resolvedResumePath"
     "LAUNCHER_PID=$($process.Id)"
     "STARTED_AT=$((Get-Date).ToString('o'))"
     "REPO=$repoRoot"

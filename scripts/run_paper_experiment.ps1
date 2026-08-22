@@ -10,9 +10,10 @@ param(
     [string]$Experiment,
     [int]$Seed = 1219,
     [ValidateRange(1, 10000)]
-    [int]$Epochs = 200,
+    [int]$Epochs = 100,
     [ValidateRange(1, 64)]
-    [int]$BatchSize = 8
+    [int]$BatchSize = 8,
+    [string]$ResumePath = ''
 )
 
 $ErrorActionPreference = 'Stop'
@@ -49,7 +50,12 @@ $env:MIOPEN_FIND_MODE = 'FAST'
 $env:BETTERLVIT_DETERMINISTIC = '0'
 $env:BETTERLVIT_MIOPEN_ENABLED = '0'
 $env:BETTERLVIT_TRAIN_DROP_LAST = '1'
-Remove-Item Env:BETTERLVIT_RESUME_PATH -ErrorAction SilentlyContinue
+if ($ResumePath) {
+    $resolvedResumePath = (Resolve-Path -LiteralPath $ResumePath).Path
+    $env:BETTERLVIT_RESUME_PATH = $resolvedResumePath
+} else {
+    Remove-Item Env:BETTERLVIT_RESUME_PATH -ErrorAction SilentlyContinue
+}
 
 Set-Location -LiteralPath $repoRoot
 & $python train_model.py
