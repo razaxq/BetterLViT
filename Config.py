@@ -53,6 +53,7 @@ persistent_workers = True
 deterministic_training = bool(
     int(os.environ.get('BETTERLVIT_DETERMINISTIC', '0'))
 )
+miopen_enabled = bool(int(os.environ.get('BETTERLVIT_MIOPEN_ENABLED', '0')))
 
 # Pre-registered paper ablation. Boundary supervision is prohibited in every
 # profile; only LoRA, objective and decoder fusion are allowed to differ.

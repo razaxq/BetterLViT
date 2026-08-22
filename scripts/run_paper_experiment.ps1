@@ -47,6 +47,7 @@ $env:TOKENIZERS_PARALLELISM = 'false'
 # batches and the unstable exhaustive-search path on Windows ROCm.
 $env:MIOPEN_FIND_MODE = 'FAST'
 $env:BETTERLVIT_DETERMINISTIC = '0'
+$env:BETTERLVIT_MIOPEN_ENABLED = '0'
 Remove-Item Env:BETTERLVIT_RESUME_PATH -ErrorAction SilentlyContinue
 
 Set-Location -LiteralPath $repoRoot

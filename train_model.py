@@ -229,10 +229,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     logger.info(
-        'Local runtime: batch_size={}, deterministic={}, '
+        'Local runtime: batch_size={}, deterministic={}, MIOpen={}, '
         'MIOPEN_FIND_MODE={}'.format(
             batch_size,
             config.deterministic_training,
+            config.miopen_enabled,
             os.environ.get('MIOPEN_FIND_MODE', 'unset'),
         )
     )
@@ -675,6 +676,7 @@ if __name__ == '__main__':
     # Keep benchmark disabled so runtime algorithm selection is stable. The
     # Windows ROCm deterministic BatchNorm path is not usable on this machine,
     # so only its hard restriction is configurable.
+    cudnn.enabled = config.miopen_enabled
     cudnn.benchmark = False
     cudnn.deterministic = config.deterministic_training
     random.seed(config.seed)

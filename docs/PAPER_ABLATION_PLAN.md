@@ -34,6 +34,10 @@ interaction to BetterLViT decoder skips.
   Windows MIOpen BatchNorm path stalled or crashed before a first checkpoint.
   `cudnn.benchmark` remains disabled, the seed remains 1219, and this runtime
   setting is identical for B0 through A3.
+- MIOpen itself is disabled for the local paper runs after both its BatchNorm
+  access violation and repeated six-minute first-batch stalls. PyTorch's HIP
+  fallback kernels keep the model and objective unchanged; the identical
+  backend setting is applied to every profile.
 - Boundary loss: disabled for every profile.
 - Primary result: test Dice and IoU at threshold 0.5.
 - Secondary result: select one threshold using validation only, freeze it, then

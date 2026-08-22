@@ -45,6 +45,10 @@ def main():
     from nets.BetterLViT import BetterLViT
     from utils import WeightedDiceBCE, WeightedDiceFocal
 
+    torch.backends.cudnn.enabled = config.miopen_enabled
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = config.deterministic_training
+
     if not args.cpu and (not torch.cuda.is_available() or not torch.version.hip):
         raise RuntimeError("An AMD ROCm PyTorch environment is required.")
     device = torch.device("cpu" if args.cpu else "cuda")
@@ -144,6 +148,8 @@ def main():
         "device": str(device),
         "torch": torch.__version__,
         "hip": torch.version.hip,
+        "miopen_enabled": config.miopen_enabled,
+        "deterministic_backend": config.deterministic_training,
         "output_shape": list(output.shape),
         "batch_size": args.batch_size,
         "max_memory_allocated_gb": round(
