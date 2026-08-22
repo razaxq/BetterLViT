@@ -62,6 +62,7 @@ $process = Start-Process @startParameters
     "MIOPEN_FIND_MODE=FAST"
     "DETERMINISTIC_BACKEND=0"
     "MIOPEN_ENABLED=0"
+    "TRAIN_DROP_LAST=1"
     "LAUNCHER_PID=$($process.Id)"
     "STARTED_AT=$((Get-Date).ToString('o'))"
     "REPO=$repoRoot"

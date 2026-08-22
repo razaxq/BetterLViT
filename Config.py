@@ -45,6 +45,7 @@ weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
 # on the same conservative local batch size; an explicit environment override
 # is recorded by the launcher for reproducibility.
 batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '8'))
+train_drop_last = bool(int(os.environ.get('BETTERLVIT_TRAIN_DROP_LAST', '1')))
 num_workers = 4
 persistent_workers = True
 # Windows ROCm/MIOpen deterministic BatchNorm repeatedly stalled or crashed

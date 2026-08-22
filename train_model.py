@@ -191,6 +191,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     train_loader = DataLoader(train_dataset,
                               batch_size=config.batch_size,
                               shuffle=True,
+                              drop_last=config.train_drop_last,
                               worker_init_fn=worker_init_fn,
                               num_workers=config.num_workers,
                               pin_memory=True,
@@ -229,9 +230,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     logger.info(
-        'Local runtime: batch_size={}, deterministic={}, MIOpen={}, '
-        'MIOPEN_FIND_MODE={}'.format(
+        'Local runtime: batch_size={}, train_drop_last={}, '
+        'deterministic={}, MIOpen={}, MIOPEN_FIND_MODE={}'.format(
             batch_size,
+            config.train_drop_last,
             config.deterministic_training,
             config.miopen_enabled,
             os.environ.get('MIOPEN_FIND_MODE', 'unset'),

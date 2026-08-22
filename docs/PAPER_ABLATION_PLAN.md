@@ -9,6 +9,10 @@ ROCm/MIOpen BatchNorm kernel before producing a complete first checkpoint. A
 real-data benchmark with MIOpen disabled measured about 30.9 images/second at
 batch 8 versus 22.5 images/second at batch 4 (+37%), with about 5.03 GB of
 dedicated GPU memory and no numerical or ROCm errors over more than 200 batches.
+Training uses `drop_last=True` so every optimizer step keeps the tested physical
+shape of eight; four shuffled training samples (0.07%) are omitted per epoch.
+This avoids the Windows HIP stall observed when the last training batch changed
+shape from eight to four. The same rule is locked for B0 through A3.
 
 | ID | Profile | Text | Decoder | Objective | Role |
 |---|---|---|---|---|---|
@@ -28,7 +32,7 @@ interaction to BetterLViT decoder skips.
 - Dataset: QaTa-COV19-v2, fixed split of 5716 train, 1429 validation and 2113
   test images.
 - Seed: 1219.
-- Epoch budget: 200; physical batch size: 8; the same configured
+- Epoch budget: 200; physical batch size: 8; training `drop_last=True`; the same configured
   early-stopping rule applies to all.
 - Local Windows ROCm runs set `MIOPEN_FIND_MODE=FAST`, using FindDb or the
   immediate fallback instead of benchmarking all available solvers at every

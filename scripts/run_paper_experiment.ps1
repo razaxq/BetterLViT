@@ -48,6 +48,7 @@ $env:TOKENIZERS_PARALLELISM = 'false'
 $env:MIOPEN_FIND_MODE = 'FAST'
 $env:BETTERLVIT_DETERMINISTIC = '0'
 $env:BETTERLVIT_MIOPEN_ENABLED = '0'
+$env:BETTERLVIT_TRAIN_DROP_LAST = '1'
 Remove-Item Env:BETTERLVIT_RESUME_PATH -ErrorAction SilentlyContinue
 
 Set-Location -LiteralPath $repoRoot
