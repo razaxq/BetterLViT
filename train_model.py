@@ -229,8 +229,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     logger.info(
-        'Local runtime: batch_size={}, MIOPEN_FIND_MODE={}'.format(
+        'Local runtime: batch_size={}, deterministic={}, '
+        'MIOPEN_FIND_MODE={}'.format(
             batch_size,
+            config.deterministic_training,
             os.environ.get('MIOPEN_FIND_MODE', 'unset'),
         )
     )
@@ -670,13 +672,11 @@ if __name__ == '__main__':
     print("[boot] entered __main__, sending Bark start notification...", flush=True)
     bark_notify("模型开始训练了，请耐心等待！", title="🚀 训练开始")
     print("[boot] Bark call returned, continuing setup...", flush=True)
-    deterministic = True
-    if not deterministic:
-        cudnn.benchmark = True
-        cudnn.deterministic = False
-    else:
-        cudnn.benchmark = False
-        cudnn.deterministic = True
+    # Keep benchmark disabled so runtime algorithm selection is stable. The
+    # Windows ROCm deterministic BatchNorm path is not usable on this machine,
+    # so only its hard restriction is configurable.
+    cudnn.benchmark = False
+    cudnn.deterministic = config.deterministic_training
     random.seed(config.seed)
     np.random.seed(config.seed)
     torch.manual_seed(config.seed)

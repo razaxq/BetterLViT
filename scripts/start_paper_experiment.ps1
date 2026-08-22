@@ -60,6 +60,7 @@ $process = Start-Process @startParameters
     "EPOCHS=$Epochs"
     "BATCH_SIZE=$BatchSize"
     "MIOPEN_FIND_MODE=FAST"
+    "DETERMINISTIC_BACKEND=0"
     "LAUNCHER_PID=$($process.Id)"
     "STARTED_AT=$((Get-Date).ToString('o'))"
     "REPO=$repoRoot"

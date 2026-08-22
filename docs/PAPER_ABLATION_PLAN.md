@@ -30,6 +30,10 @@ interaction to BetterLViT decoder skips.
 - Local Windows ROCm runs set `MIOPEN_FIND_MODE=FAST`, using FindDb or the
   immediate fallback instead of benchmarking all available solvers at every
   new process start.
+- The backend deterministic restriction is disabled because the deterministic
+  Windows MIOpen BatchNorm path stalled or crashed before a first checkpoint.
+  `cudnn.benchmark` remains disabled, the seed remains 1219, and this runtime
+  setting is identical for B0 through A3.
 - Boundary loss: disabled for every profile.
 - Primary result: test Dice and IoU at threshold 0.5.
 - Secondary result: select one threshold using validation only, freeze it, then

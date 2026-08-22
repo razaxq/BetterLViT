@@ -47,6 +47,12 @@ weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
 batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '4'))
 num_workers = 4
 persistent_workers = True
+# Windows ROCm/MIOpen deterministic BatchNorm repeatedly stalled or crashed
+# before the first checkpoint. Seeded runs remain controlled, but the backend
+# deterministic restriction is disabled identically for every paper profile.
+deterministic_training = bool(
+    int(os.environ.get('BETTERLVIT_DETERMINISTIC', '0'))
+)
 
 # Pre-registered paper ablation. Boundary supervision is prohibited in every
 # profile; only LoRA, objective and decoder fusion are allowed to differ.

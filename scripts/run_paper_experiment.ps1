@@ -46,6 +46,7 @@ $env:TOKENIZERS_PARALLELISM = 'false'
 # solver at each fresh process start. This avoids multi-minute CPU-only first
 # batches and the unstable exhaustive-search path on Windows ROCm.
 $env:MIOPEN_FIND_MODE = 'FAST'
+$env:BETTERLVIT_DETERMINISTIC = '0'
 Remove-Item Env:BETTERLVIT_RESUME_PATH -ErrorAction SilentlyContinue
 
 Set-Location -LiteralPath $repoRoot
