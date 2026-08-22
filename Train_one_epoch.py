@@ -44,9 +44,12 @@ def print_summary(epoch, i, nb_batch, loss, loss_name, batch_time,
 def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_scheduler, model_type, logger):
     logging_mode = 'Train' if model.training else 'Val'
     epoch_start = time.time()
-    loss_sum = None
-    dice_sum = None
-    iou_sum = None
+    # Windows ROCm 7.2 corrupted long-lived device scalar accumulators during
+    # sustained training. Keep epoch aggregates as ordinary host numbers and
+    # transfer one compact scalar snapshot per batch.
+    loss_sum = 0.0
+    dice_sum = 0.0
+    iou_sum = 0.0
     sample_count = 0
     component_sums = {}
     for i, (sampled_batch, names) in enumerate(loader, 1):
@@ -73,30 +76,48 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
 
         preds = model(images, input_ids, attention_mask)
         out_loss = criterion(preds, masks.float())  # Loss
-        if i == 1 or i % config.print_frequency == 0:
-            loss_snapshot = float(out_loss.detach().cpu())
-            if not math.isfinite(loss_snapshot) or not 0.0 <= loss_snapshot <= 100.0:
-                raise FloatingPointError(
-                    'Invalid loss at epoch {} batch {}: {}'.format(
-                        epoch + 1,
-                        i,
-                        loss_snapshot,
-                    )
-                )
-        # print(model.training)
-
-
-        if model.training:
-            optimizer.zero_grad()
-            out_loss.backward()
-            optimizer.step()
-
         with torch.no_grad():
             train_dice = criterion._show_dice(
                 preds.detach(),
                 masks.float(),
             )
             train_iou = iou_on_batch_gpu(masks, preds.detach())
+            component_names = list(
+                getattr(criterion, 'last_components', {}).keys()
+            )
+            component_values = [
+                getattr(criterion, 'last_components', {})[name]
+                for name in component_names
+            ]
+            snapshot = torch.stack([
+                out_loss.detach(),
+                train_iou,
+                train_dice,
+                *component_values,
+            ]).float().cpu().tolist()
+            (
+                loss_value,
+                iou_value,
+                dice_value,
+                *component_values,
+            ) = snapshot
+            component_snapshot = dict(
+                zip(component_names, component_values)
+            )
+
+        if not math.isfinite(loss_value) or not 0.0 <= loss_value <= 100.0:
+            raise FloatingPointError(
+                'Invalid loss at epoch {} batch {}: {}'.format(
+                    epoch + 1,
+                    i,
+                    loss_value,
+                )
+            )
+
+        if model.training:
+            optimizer.zero_grad()
+            out_loss.backward()
+            optimizer.step()
 
         if epoch % config.vis_frequency == 0 and logging_mode == 'Val':
             vis_path = config.visualize_path+str(epoch)+'/'
@@ -105,34 +126,13 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             save_on_batch(images,masks,preds,names,vis_path)
         batch_size = len(images)
         sample_count += batch_size
-        detached_loss = out_loss.detach()
-        loss_sum = (
-            batch_size * detached_loss
-            if loss_sum is None
-            else loss_sum + batch_size * detached_loss
-        )
-        iou_sum = (
-            batch_size * train_iou
-            if iou_sum is None
-            else iou_sum + batch_size * train_iou
-        )
-        dice_sum = (
-            batch_size * train_dice
-            if dice_sum is None
-            else dice_sum + batch_size * train_dice
-        )
-        for name, value in getattr(
-            criterion,
-            'last_components',
-            {},
-        ).items():
-            if not torch.is_tensor(value):
-                value = detached_loss.new_tensor(value)
-            value = value.detach()
+        loss_sum += batch_size * loss_value
+        iou_sum += batch_size * iou_value
+        dice_sum += batch_size * dice_value
+        for name, value in component_snapshot.items():
             component_sums[name] = (
-                batch_size * value
-                if name not in component_sums
-                else component_sums[name] + batch_size * value
+                component_sums.get(name, 0.0)
+                + batch_size * value
             )
 
         average_loss = loss_sum / sample_count
@@ -150,34 +150,9 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         if should_print or should_write:
             torch.cuda.synchronize()
             average_time = (time.time() - epoch_start) / i
-            component_names = list(
-                getattr(criterion, 'last_components', {}).keys()
-            )
-            component_values = [
-                getattr(criterion, 'last_components', {})[name]
-                for name in component_names
-            ]
-            snapshot = torch.stack([
-                detached_loss,
-                average_loss,
-                train_iou,
-                train_iou_average,
-                train_dice,
-                train_dice_avg,
-                *component_values,
-            ]).float().cpu().tolist()
-            (
-                loss_value,
-                average_loss_value,
-                iou_value,
-                average_iou_value,
-                dice_value,
-                average_dice_value,
-                *component_snapshot,
-            ) = snapshot
-            component_snapshot = dict(
-                zip(component_names, component_snapshot)
-            )
+            average_loss_value = average_loss
+            average_iou_value = train_iou_average
+            average_dice_value = train_dice_avg
         if should_print:
             print_summary(epoch + 1, i, len(loader), loss_value, loss_name, average_time,
                           average_loss_value, average_time, iou_value, average_iou_value,
@@ -203,19 +178,13 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         lr_scheduler.step()
 
     torch.cuda.synchronize()
-    epoch_names = list(component_sums)
-    epoch_values = torch.stack([
-        loss_sum / sample_count,
-        dice_sum / sample_count,
-        iou_sum / sample_count,
-        *(component_sums[name] / sample_count for name in epoch_names),
-    ]).float().cpu().tolist()
-    average_loss, train_dice_avg, train_iou_average, *component_values = (
-        epoch_values
-    )
-    criterion.last_epoch_components = dict(
-        zip(epoch_names, component_values)
-    )
+    average_loss = loss_sum / sample_count
+    train_dice_avg = dice_sum / sample_count
+    train_iou_average = iou_sum / sample_count
+    criterion.last_epoch_components = {
+        name: value / sample_count
+        for name, value in component_sums.items()
+    }
     if criterion.last_epoch_components:
         logger.info(
             '   [{}] Loss components: {}'.format(
