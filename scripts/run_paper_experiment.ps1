@@ -42,6 +42,10 @@ $env:BETTERLVIT_VIS_FREQUENCY = '100000'
 $env:HF_HUB_OFFLINE = '1'
 $env:TRANSFORMERS_OFFLINE = '1'
 $env:TOKENIZERS_PARALLELISM = 'false'
+# MIOpen FAST uses FindDb/immediate fallback instead of benchmarking every
+# solver at each fresh process start. This avoids multi-minute CPU-only first
+# batches and the unstable exhaustive-search path on Windows ROCm.
+$env:MIOPEN_FIND_MODE = 'FAST'
 Remove-Item Env:BETTERLVIT_RESUME_PATH -ErrorAction SilentlyContinue
 
 Set-Location -LiteralPath $repoRoot

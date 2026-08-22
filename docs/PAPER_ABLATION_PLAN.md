@@ -27,6 +27,9 @@ interaction to BetterLViT decoder skips.
 - Seed: 1219.
 - Epoch budget: 200; physical batch size: 4; the same configured
   early-stopping rule applies to all.
+- Local Windows ROCm runs set `MIOPEN_FIND_MODE=FAST`, using FindDb or the
+  immediate fallback instead of benchmarking all available solvers at every
+  new process start.
 - Boundary loss: disabled for every profile.
 - Primary result: test Dice and IoU at threshold 0.5.
 - Secondary result: select one threshold using validation only, freeze it, then

@@ -228,6 +228,12 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             config.seed,
         )
     )
+    logger.info(
+        'Local runtime: batch_size={}, MIOPEN_FIND_MODE={}'.format(
+            batch_size,
+            os.environ.get('MIOPEN_FIND_MODE', 'unset'),
+        )
+    )
 
     if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
