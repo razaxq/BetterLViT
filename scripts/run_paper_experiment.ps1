@@ -9,7 +9,10 @@ param(
     )]
     [string]$Experiment,
     [int]$Seed = 1219,
-    [int]$Epochs = 200
+    [ValidateRange(1, 10000)]
+    [int]$Epochs = 200,
+    [ValidateRange(1, 64)]
+    [int]$BatchSize = 4
 )
 
 $ErrorActionPreference = 'Stop'
@@ -34,6 +37,7 @@ if ($existing) {
 $env:BETTERLVIT_EXPERIMENT = $Experiment
 $env:BETTERLVIT_SEED = [string]$Seed
 $env:BETTERLVIT_EPOCHS = [string]$Epochs
+$env:BETTERLVIT_BATCH_SIZE = [string]$BatchSize
 $env:BETTERLVIT_VIS_FREQUENCY = '100000'
 $env:HF_HUB_OFFLINE = '1'
 $env:TRANSFORMERS_OFFLINE = '1'

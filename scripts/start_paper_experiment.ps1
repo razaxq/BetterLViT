@@ -9,7 +9,10 @@ param(
     )]
     [string]$Experiment,
     [int]$Seed = 1219,
-    [int]$Epochs = 200
+    [ValidateRange(1, 10000)]
+    [int]$Epochs = 200,
+    [ValidateRange(1, 64)]
+    [int]$BatchSize = 4
 )
 
 $ErrorActionPreference = 'Stop'
@@ -37,7 +40,8 @@ $arguments = @(
     '-File', $launcher,
     '-Experiment', $Experiment,
     '-Seed', [string]$Seed,
-    '-Epochs', [string]$Epochs
+    '-Epochs', [string]$Epochs,
+    '-BatchSize', [string]$BatchSize
 )
 $startParameters = @{
     FilePath = 'powershell.exe'
@@ -54,6 +58,7 @@ $process = Start-Process @startParameters
     "EXPERIMENT=$Experiment"
     "SEED=$Seed"
     "EPOCHS=$Epochs"
+    "BATCH_SIZE=$BatchSize"
     "LAUNCHER_PID=$($process.Id)"
     "STARTED_AT=$((Get-Date).ToString('o'))"
     "REPO=$repoRoot"

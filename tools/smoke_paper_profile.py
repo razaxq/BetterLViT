@@ -28,11 +28,14 @@ def parse_args():
         ),
     )
     parser.add_argument("--cpu", action="store_true")
+    parser.add_argument("--batch-size", type=int, default=1)
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
+    if args.batch_size <= 0:
+        raise ValueError("batch size must be positive")
     os.environ["BETTERLVIT_EXPERIMENT"] = args.experiment
     os.environ.setdefault("HF_HUB_OFFLINE", "1")
     os.environ.setdefault("TRANSFORMERS_OFFLINE", "1")
@@ -72,9 +75,15 @@ def main():
         if model.text_encoder.training:
             raise RuntimeError("B0 frozen text encoder must remain in eval mode.")
 
-    images = torch.randn(1, 3, config.img_size, config.img_size, device=device)
+    images = torch.randn(
+        args.batch_size,
+        3,
+        config.img_size,
+        config.img_size,
+        device=device,
+    )
     input_ids = torch.zeros(
-        1,
+        args.batch_size,
         config.text_max_len,
         dtype=torch.long,
         device=device,
@@ -83,7 +92,7 @@ def main():
     labels = torch.randint(
         0,
         2,
-        (1, 1, config.img_size, config.img_size),
+        (args.batch_size, 1, config.img_size, config.img_size),
         dtype=torch.float32,
         device=device,
     )
@@ -136,6 +145,15 @@ def main():
         "torch": torch.__version__,
         "hip": torch.version.hip,
         "output_shape": list(output.shape),
+        "batch_size": args.batch_size,
+        "max_memory_allocated_gb": round(
+            torch.cuda.max_memory_allocated() / (1024 ** 3),
+            3,
+        ) if device.type == "cuda" else 0.0,
+        "max_memory_reserved_gb": round(
+            torch.cuda.max_memory_reserved() / (1024 ** 3),
+            3,
+        ) if device.type == "cuda" else 0.0,
         "loss": float(loss.detach().cpu()),
         "trainable_text_tensors": len(trainable_text),
         "lora_parameter_tensors": len(lora_parameters),

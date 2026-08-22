@@ -40,7 +40,11 @@ pretrain = False
 task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
 weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
-batch_size = 16  # For LViT-T, 2 is better than 4
+# A physical batch of 16 triggered a Windows ROCm/MIOpen access violation on
+# the RX 7900 XTX before the first epoch checkpoint. Keep every paper profile
+# on the same conservative local batch size; an explicit environment override
+# is recorded by the launcher for reproducibility.
+batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '4'))
 num_workers = 4
 persistent_workers = True
 

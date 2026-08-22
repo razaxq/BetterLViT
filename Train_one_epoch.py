@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import torch.optim
+import math
 import os
 import time
 from utils import *
@@ -72,6 +73,16 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
 
         preds = model(images, input_ids, attention_mask)
         out_loss = criterion(preds, masks.float())  # Loss
+        if i == 1 or i % config.print_frequency == 0:
+            loss_snapshot = float(out_loss.detach().cpu())
+            if not math.isfinite(loss_snapshot) or not 0.0 <= loss_snapshot <= 100.0:
+                raise FloatingPointError(
+                    'Invalid loss at epoch {} batch {}: {}'.format(
+                        epoch + 1,
+                        i,
+                        loss_snapshot,
+                    )
+                )
         # print(model.training)
 
 

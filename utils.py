@@ -30,8 +30,10 @@ class WeightedBCE(nn.Module):
         loss = F.binary_cross_entropy(logit, truth, reduction='none')
         pos = (truth > 0.5).float()
         neg = (truth < 0.5).float()
-        pos_weight = pos.sum().item() + 1e-12
-        neg_weight = neg.sum().item() + 1e-12
+        # Keep class counts on the active device. The former ``.item()`` calls
+        # synchronized every batch and made the Windows ROCm path less stable.
+        pos_weight = pos.sum().clamp_min(1.0)
+        neg_weight = neg.sum().clamp_min(1.0)
         loss = (self.weights[0] * pos * loss / pos_weight + self.weights[1] * neg * loss / neg_weight).sum()
 
         return loss
@@ -380,6 +382,10 @@ class WeightedDiceBCE(nn.Module):
         self.last_components = {}
 
     def _show_dice(self, inputs, targets):
+        # ``detach()`` still aliases model output storage; clone before
+        # thresholding so metric reporting cannot corrupt later diagnostics.
+        inputs = inputs.clone()
+        targets = targets.clone()
         inputs[inputs >= 0.5] = 1
         inputs[inputs < 0.5] = 0
         targets[targets > 0] = 1
