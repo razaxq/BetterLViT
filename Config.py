@@ -48,11 +48,11 @@ batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '8'))
 train_drop_last = bool(int(os.environ.get('BETTERLVIT_TRAIN_DROP_LAST', '1')))
 num_workers = 4
 persistent_workers = True
-# Windows ROCm/MIOpen deterministic BatchNorm repeatedly stalled or crashed
-# before the first checkpoint. Seeded runs remain controlled, but the backend
-# deterministic restriction is disabled identically for every paper profile.
+# Deterministic execution is enabled by default for reproducible paper runs.
+# Windows ROCm/MIOpen has previously stalled or crashed with this restriction;
+# keep that risk visible in the run metadata and logs.
 deterministic_training = bool(
-    int(os.environ.get('BETTERLVIT_DETERMINISTIC', '0'))
+    int(os.environ.get('BETTERLVIT_DETERMINISTIC', '1'))
 )
 miopen_enabled = bool(int(os.environ.get('BETTERLVIT_MIOPEN_ENABLED', '0')))
 
