@@ -12,7 +12,7 @@ param(
     [ValidateRange(1, 10000)]
     [int]$Epochs = 100,
     [ValidateRange(1, 64)]
-    [int]$BatchSize = 8,
+    [int]$BatchSize = 2,
     [string]$ResumePath = ''
 )
 
