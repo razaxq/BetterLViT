@@ -3,9 +3,11 @@
 import argparse
 import json
 import os
+import random
 import sys
 from pathlib import Path
 
+import numpy as np
 import torch
 
 
@@ -29,6 +31,7 @@ def parse_args():
     )
     parser.add_argument("--cpu", action="store_true")
     parser.add_argument("--batch-size", type=int, default=1)
+    parser.add_argument("--seed", type=int, default=1219)
     return parser.parse_args()
 
 
@@ -45,12 +48,19 @@ def main():
     from nets.BetterLViT import BetterLViT
     from utils import WeightedDiceBCE, WeightedDiceFocal
 
-    torch.backends.cudnn.enabled = config.miopen_enabled
+    torch.backends.cudnn.enabled = config.cudnn_enabled
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.deterministic = config.deterministic_training
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.use_deterministic_algorithms(config.deterministic_training)
+    random.seed(args.seed)
+    np.random.seed(args.seed)
+    torch.manual_seed(args.seed)
+    torch.cuda.manual_seed_all(args.seed)
 
-    if not args.cpu and (not torch.cuda.is_available() or not torch.version.hip):
-        raise RuntimeError("An AMD ROCm PyTorch environment is required.")
+    if not args.cpu and not torch.cuda.is_available():
+        raise RuntimeError("A CUDA-capable PyTorch environment is required.")
     device = torch.device("cpu" if args.cpu else "cuda")
 
     model = BetterLViT(
@@ -147,8 +157,9 @@ def main():
         "text_use_lora": config.text_use_lora,
         "device": str(device),
         "torch": torch.__version__,
+        "cuda": torch.version.cuda,
         "hip": torch.version.hip,
-        "miopen_enabled": config.miopen_enabled,
+        "cudnn_enabled": config.cudnn_enabled,
         "deterministic_backend": config.deterministic_training,
         "output_shape": list(output.shape),
         "batch_size": args.batch_size,

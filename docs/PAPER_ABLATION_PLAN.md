@@ -1,18 +1,12 @@
 # BetterLViT controlled paper ablation
 
 This branch deliberately replaces the open-ended V4 experiments with five
-pre-registered runs. All training is performed on the local AMD Radeon RX 7900
-XTX with the same dataset split, seed, optimizer, augmentation, 100-epoch
-budget, physical batch size 8 and early-stopping rule. Batch 8 replaces the
-initial batch-16 registration after that configuration crashed in the Windows
-ROCm/MIOpen BatchNorm kernel before producing a complete first checkpoint. A
-real-data benchmark with MIOpen disabled measured about 30.9 images/second at
-batch 8 versus 22.5 images/second at batch 4 (+37%), with about 5.03 GB of
-dedicated GPU memory and no numerical or ROCm errors over more than 200 batches.
-Training uses `drop_last=True` so every optimizer step keeps the tested physical
-shape of eight; four shuffled training samples (0.07%) are omitted per epoch.
-This avoids the Windows HIP stall observed when the last training batch changed
-shape from eight to four. The same rule is locked for B0 through A3.
+pre-registered runs. The current canonical protocol runs on one RTX 4090D
+server with the same dataset split, seed, optimizer, augmentation, 100-epoch
+budget, physical batch size 16 and early-stopping rule. Training uses
+`drop_last=True`, so every optimizer step keeps the same physical shape and four
+shuffled samples (0.07%) are omitted per epoch. The same rule is locked for B0
+through A3.
 
 | ID | Profile | Text | Decoder | Objective | Role |
 |---|---|---|---|---|---|
@@ -32,19 +26,12 @@ interaction to BetterLViT decoder skips.
 - Dataset: QaTa-COV19-v2, fixed split of 5716 train, 1429 validation and 2113
   test images.
 - Seed: 1219.
-- Epoch budget: 100; physical batch size: 8; training `drop_last=True`; the same configured
+- Epoch budget: 100; physical batch size: 16; training `drop_last=True`; the same configured
   early-stopping rule applies to all.
-- Local Windows ROCm runs set `MIOPEN_FIND_MODE=FAST`, using FindDb or the
-  immediate fallback instead of benchmarking all available solvers at every
-  new process start.
-- The backend deterministic restriction is disabled because the deterministic
-  Windows MIOpen BatchNorm path stalled or crashed before a first checkpoint.
-  `cudnn.benchmark` remains disabled, the seed remains 1219, and this runtime
-  setting is identical for B0 through A3.
-- MIOpen itself is disabled for the local paper runs after both its BatchNorm
-  access violation and repeated six-minute first-batch stalls. PyTorch's HIP
-  fallback kernels keep the model and objective unchanged; the identical
-  backend setting is applied to every profile.
+- Runtime: one RTX 4090D, CUDA/cuDNN enabled, deterministic algorithms required,
+  cuDNN benchmarking and TF32 disabled, and `CUBLAS_WORKSPACE_CONFIG=:4096:8`.
+- Dataset ordering, sampler state, worker seeds and global CPU/CUDA RNG states
+  are stored so an epoch-boundary resume preserves the training trajectory.
 - Boundary loss: disabled for every profile.
 - Primary result: test Dice and IoU at threshold 0.5.
 - Secondary result: select one threshold using validation only, freeze it, then
@@ -54,23 +41,25 @@ interaction to BetterLViT decoder skips.
 - B0 through A3 must finish before considering any combination such as
   LoRA + FMISeg + Focal.
 
-## Local commands
+## Server commands
 
 Run the synthetic forward/backward check before every full experiment:
 
-```powershell
-D:\Project\BetterLViT\.venv\Scripts\python.exe tools\smoke_paper_profile.py --experiment b0_baseline --batch-size 8
+```bash
+/root/autodl-tmp/envs/betterlvit-paper/bin/python \
+  tools/smoke_paper_profile.py --experiment b0_baseline --batch-size 16
 ```
 
 Start one local background training run (the launcher refuses a duplicate):
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\start_paper_experiment.ps1 -Experiment b0_baseline
+```bash
+bash scripts/start_paper_experiment_server.sh b0_baseline 1219 100 16
 ```
 
 After choosing the best checkpoint using validation Dice, evaluate it with the
 matching explicit profile:
 
-```powershell
-D:\Project\BetterLViT\.venv\Scripts\python.exe tools\evaluate_experiment.py --experiment b0_baseline --checkpoint <checkpoint>
+```bash
+/root/autodl-tmp/envs/betterlvit-paper/bin/python \
+  tools/evaluate_experiment.py --experiment b0_baseline --checkpoint <checkpoint>
 ```

@@ -67,11 +67,15 @@ def save_checkpoint(state, save_path, verbose=True):
         filename = save_path + '/' + 'last_model-{}.pth.tar'.format(model)
     if verbose:
         logger.info('\t Saving to {}'.format(filename))
-    torch.save(state, filename)
+    temporary = filename + '.tmp'
+    torch.save(state, temporary)
+    os.replace(temporary, filename)
 
 
 def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
-                           val_loss, max_dice, best_epoch, epoch_history, is_best):
+                           val_loss, max_dice, best_epoch, epoch_history, is_best,
+                           train_generator, val_generator):
+    numpy_state = np.random.get_state()
     return {
         'epoch': epoch,
         'best_model': is_best,
@@ -99,6 +103,26 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'loss_name': getattr(config, 'loss_name', None),
         'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
         'seed': int(config.seed),
+        'source_git_commit': config.source_git_commit,
+        'batch_size': int(config.batch_size),
+        'epochs': int(config.epochs),
+        'train_drop_last': bool(config.train_drop_last),
+        'deterministic_training': bool(config.deterministic_training),
+        'cudnn_enabled': bool(config.cudnn_enabled),
+        'rng_state': {
+            'python': random.getstate(),
+            'numpy': {
+                'bit_generator': numpy_state[0],
+                'state': torch.from_numpy(numpy_state[1].copy()),
+                'pos': int(numpy_state[2]),
+                'has_gauss': int(numpy_state[3]),
+                'cached_gaussian': float(numpy_state[4]),
+            },
+            'torch_cpu': torch.get_rng_state(),
+            'torch_cuda': torch.cuda.get_rng_state_all(),
+            'train_generator': train_generator.get_state(),
+            'val_generator': val_generator.get_state(),
+        },
         'prediction_threshold_protocol': {
             'primary': 0.5,
             'secondary': 'selected_on_validation_only',
@@ -163,7 +187,9 @@ def build_optimizer_parameter_groups(model, weight_decay):
 
 
 def worker_init_fn(worker_id):
-    random.seed(config.seed + worker_id)
+    worker_seed = torch.initial_seed() % (2 ** 32)
+    random.seed(worker_seed)
+    np.random.seed(worker_seed)
 
 
 ##################################################################################
@@ -188,6 +214,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         val_dataset = ImageToImage2D(config.val_dataset, config.task_name, text, val_tf, image_size=config.img_size)
 
 
+    train_generator = torch.Generator()
+    train_generator.manual_seed(config.seed + 1001)
+    val_generator = torch.Generator()
+    val_generator.manual_seed(config.seed + 2001)
+
     train_loader = DataLoader(train_dataset,
                               batch_size=config.batch_size,
                               shuffle=True,
@@ -195,6 +226,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                               worker_init_fn=worker_init_fn,
                               num_workers=config.num_workers,
                               pin_memory=True,
+                              generator=train_generator,
                               persistent_workers=(
                                   config.persistent_workers
                                   and config.num_workers > 0
@@ -206,6 +238,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                             worker_init_fn=worker_init_fn,
                             num_workers=config.num_workers,
                             pin_memory=True,
+                            generator=val_generator,
                             persistent_workers=(
                                 config.persistent_workers
                                 and config.num_workers > 0
@@ -393,7 +426,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 )
 
             target = model.module if isinstance(model, nn.DataParallel) else model
-            target.load_state_dict(ckpt['state_dict'], strict=False)
+            target.load_state_dict(ckpt['state_dict'], strict=True)
             optimizer.load_state_dict(ckpt['optimizer'])
 
             start_epoch = ckpt['epoch'] + 1
@@ -410,6 +443,22 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             max_dice = float(ckpt.get('max_dice', config.resume_max_dice))
             best_epoch = int(ckpt.get('best_epoch', start_epoch))
             epoch_history = ckpt.get('epoch_history', []) or []
+            rng_state = ckpt.get('rng_state')
+            if rng_state:
+                random.setstate(rng_state['python'])
+                numpy_state = rng_state['numpy']
+                np.random.set_state((
+                    numpy_state['bit_generator'],
+                    numpy_state['state'].cpu().numpy(),
+                    numpy_state['pos'],
+                    numpy_state['has_gauss'],
+                    numpy_state['cached_gaussian'],
+                ))
+                torch.set_rng_state(rng_state['torch_cpu'])
+                torch.cuda.set_rng_state_all(rng_state['torch_cuda'])
+                train_generator.set_state(rng_state['train_generator'])
+                val_generator.set_state(rng_state['val_generator'])
+                logger.info('Restored global, CUDA, sampler and worker RNG state')
 
             logger.info('Resumed at epoch {}, max_dice={:.4f}, best_epoch={}, history rows={}'.format(
                 start_epoch + 1, max_dice, best_epoch, len(epoch_history)))
@@ -471,7 +520,8 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 best_epoch = epoch + 1
                 best_state = build_checkpoint_state(
                     model, optimizer, lr_scheduler, model_type, epoch,
-                    val_loss, max_dice, best_epoch, epoch_history, is_best=True)
+                    val_loss, max_dice, best_epoch, epoch_history, is_best=True,
+                    train_generator=train_generator, val_generator=val_generator)
                 save_checkpoint(best_state, config.model_path)
                 bark_notify(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
         else:
@@ -484,7 +534,8 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # interruption point, not just from the best.
         last_state = build_checkpoint_state(
             model, optimizer, lr_scheduler, model_type, epoch,
-            val_loss, max_dice, best_epoch, epoch_history, is_best=False)
+            val_loss, max_dice, best_epoch, epoch_history, is_best=False,
+            train_generator=train_generator, val_generator=val_generator)
         save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
         logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
@@ -675,12 +726,15 @@ if __name__ == '__main__':
     print("[boot] entered __main__, sending Bark start notification...", flush=True)
     bark_notify("模型开始训练了，请耐心等待！", title="🚀 训练开始")
     print("[boot] Bark call returned, continuing setup...", flush=True)
-    # Keep benchmark disabled so runtime algorithm selection is stable. The
-    # Windows ROCm deterministic BatchNorm path is not usable on this machine,
-    # so only its hard restriction is configurable.
+    os.environ.setdefault('CUBLAS_WORKSPACE_CONFIG', ':4096:8')
+    # Keep benchmark and TF32 disabled and make unsupported nondeterministic
+    # operations fail loudly instead of silently invalidating the paper run.
     cudnn.enabled = config.miopen_enabled
     cudnn.benchmark = False
     cudnn.deterministic = config.deterministic_training
+    cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.use_deterministic_algorithms(config.deterministic_training)
     random.seed(config.seed)
     np.random.seed(config.seed)
     torch.manual_seed(config.seed)

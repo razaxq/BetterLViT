@@ -40,19 +40,21 @@ pretrain = False
 task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
 weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
-# Use the requested batch size of 2 for deterministic local paper runs. An
-# explicit environment override is recorded by the launcher for reproducibility.
-batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '2'))
+# The 4090D paper protocol uses one locked physical batch size for B0--A3.
+# Every launcher records an explicit override; 16 is the tested server default.
+batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '16'))
 train_drop_last = bool(int(os.environ.get('BETTERLVIT_TRAIN_DROP_LAST', '1')))
-num_workers = 4
-persistent_workers = True
-# Deterministic execution is enabled by default for reproducible paper runs.
-# Windows ROCm/MIOpen has previously stalled or crashed with this restriction;
-# keep that risk visible in the run metadata and logs.
+num_workers = int(os.environ.get('BETTERLVIT_NUM_WORKERS', '4'))
+# Recreate workers at every epoch boundary so checkpoint resume can restore the
+# exact sampler and augmentation RNG streams.
+persistent_workers = False
+# Deterministic execution is mandatory for the server paper protocol.
 deterministic_training = bool(
     int(os.environ.get('BETTERLVIT_DETERMINISTIC', '1'))
 )
-miopen_enabled = bool(int(os.environ.get('BETTERLVIT_MIOPEN_ENABLED', '0')))
+cudnn_enabled = bool(int(os.environ.get('BETTERLVIT_CUDNN_ENABLED', '1')))
+# Backward-compatible alias used by the existing training entry point.
+miopen_enabled = cudnn_enabled
 
 # Pre-registered paper ablation. Boundary supervision is prohibited in every
 # profile; only LoRA, objective and decoder fusion are allowed to differ.
@@ -70,6 +72,7 @@ decoder_fusion_mode = paper_experiment['decoder_fusion_mode']
 experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
 experiment_output_name = experiment_name + '_evaluation.json'
+source_git_commit = os.environ.get('BETTERLVIT_GIT_COMMIT', '').strip()
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'

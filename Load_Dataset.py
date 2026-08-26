@@ -133,7 +133,7 @@ class LV2D(Dataset):
         self.dataset_path = dataset_path
         self.image_size = image_size
         self.output_path = os.path.join(dataset_path)
-        self.mask_list = os.listdir(self.output_path)
+        self.mask_list = sorted(os.listdir(self.output_path))
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
@@ -182,8 +182,23 @@ class ImageToImage2D(Dataset):
         self.image_size = image_size
         self.input_path = os.path.join(dataset_path, 'img')
         self.output_path = os.path.join(dataset_path, 'labelcol')
-        self.images_list = os.listdir(self.input_path)
-        self.mask_list = os.listdir(self.output_path)
+        self.images_list = sorted(os.listdir(self.input_path))
+        self.mask_list = sorted(os.listdir(self.output_path))
+        expected_images = [name.replace('mask_', '') for name in self.mask_list]
+        if self.images_list != expected_images:
+            missing_images = sorted(set(expected_images) - set(self.images_list))
+            missing_masks = sorted(set(self.images_list) - set(expected_images))
+            raise RuntimeError(
+                'Image/mask pairing mismatch: missing_images={}, missing_masks={}'
+                .format(missing_images[:10], missing_masks[:10])
+            )
+        missing_text = [name for name in self.mask_list if name not in self.rowtext]
+        if missing_text:
+            raise RuntimeError(
+                'Missing text rows for {} masks, first entries: {}'.format(
+                    len(missing_text), missing_text[:10]
+                )
+            )
         self.one_hot_mask = one_hot_mask
         self.rowtext = row_text
         self.task_name = task_name
