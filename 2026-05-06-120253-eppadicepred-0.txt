@@ -1,0 +1,1700 @@
+ ▐▛███▜▌   Claude Code v2.1.128
+▝▜█████▛▘  Opus 4.7 · Claude Pro
+  ▘▘ ▝▝    D:\Sync\Syncthing\Study\USYD\semester-2\Dissertation A\project\B…
+
+❯ 分析eppa分支最近一次的提交内容，我训练之后的结果与改变之前的结果，现在是dice_ 
+  pred 0.83337873 iou_pred 0.7473006883904849，之前dice0.834 iou0.746           
+
+● Bash(git log -1 --stat eppa)
+  ⎿  commit b4aef624be2589036f736dfe0d85875c3c95963f
+     Author: Ramos <razaxq@gmail.com>
+     Date:   Tue May 5 12:06:45 2026 +1000
+     … +11 lines (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● Bash(git show b4aef62)
+  ⎿  commit b4aef624be2589036f736dfe0d85875c3c95963f
+     Author: Ramos <razaxq@gmail.com>
+     Date:   Tue May 5 12:06:45 2026 +1000
+     … +75 lines (ctrl+o to expand)
+
+● 提交分析（b4aef62）
+
+  改动：给 EPPA 的通道注意力瓶颈加了最小通道数下限 min_bottleneck_channels。
+
+  旧公式：c_red = max(C // reduction, 8)
+  新公式：c_red = max(C // reduction, min(C, 
+  min_bottleneck_channels))，本次配置为 (32, 32, 32, 32)。
+
+  实际生效的层（in_channels=64 默认）:
+
+  ┌───────┬───────────────┬──────────┬──────────┬──────────┐
+  │ Stage │ EPPA 输入通道 │ 旧 c_red │ 新 c_red │ 是否变化 │
+  ├───────┼───────────────┼──────────┼──────────┼──────────┤
+  │ up4   │ 512           │ 64       │ 64       │ 不变     │
+  ├───────┼───────────────┼──────────┼──────────┼──────────┤
+  │ up3   │ 256           │ 32       │ 32       │ 不变     │
+  ├───────┼───────────────┼──────────┼──────────┼──────────┤
+  │ up2   │ 128           │ 16       │ 32       │ ↑ 加宽   │
+  ├───────┼───────────────┼──────────┼──────────┼──────────┤
+  │ up1   │ 64            │ 8        │ 32       │ ↑ 加宽   │
+  └───────┴───────────────┴──────────┴──────────┴──────────┘
+
+  所以这次改动只影响最浅的两个 decoder stage（up2、up1）——把它们的通道注意力 MLP
+   瓶颈从 16/8 加宽到 32，避免浅层维度崩塌。
+
+  结果对比
+
+  ┌──────┬────────┬─────────┬─────────┐
+  │ 指标 │ 改动前 │ 改动后  │    Δ    │
+  ├──────┼────────┼─────────┼─────────┤
+  │ Dice │ 0.834  │ 0.83338 │ −0.0006 │
+  ├──────┼────────┼─────────┼─────────┤
+  │ IoU  │ 0.746  │ 0.74730 │ +0.0013 │
+  └──────┴────────┴─────────┴─────────┘
+
+  解读
+
+  两个指标的变化都在 ±1e-3 量级，基本属于随机种子噪声范围内（多 GPU upsample
+  本身就有非确定性，CLAUDE.md §5
+  也提到了）。这个改动没有显著正向收益，也没显著伤害。
+
+  几个可能的原因:
+  1. 浅层瓶颈本来就不是性能瓶颈——up2/up1 的 EPPA 已经被 LayerScale=0
+  初始化，对最终输出贡献相对受控；通道注意力的容量提升被 LayerScale 吸收。
+  2. 未真正测过单变量：你只跑了一次
+  seed，无法区分"加宽起作用"和"恰好走运/走衰"。
+  3. 若要在 dissertation 里 claim 这是改进，需要至少 3 个 seed 求均值 +
+  标准差，或者把它作为 ablation 表里的一行（"加宽瓶颈 →
+  无明显增益"），证明你试过且做了选择。
+
+  建议方向（请选择）
+
+  是否要继续推进 EPPA 这条线？我看到三种可能的下一步，需要你定方向：
+
+  1. 回滚到 (8,8,8,8) 默认值，认定加宽无收益，把这次实验作为消融记录归档；
+  2. 保留 32 配置但跑多 seed 验证，确认是否真的稳定 +0.001 IoU；
+  3. 换个浅层创新点，比如 EPPA 的空间注意力核改成 Sobel 初始化、或在浅层加
+  boundary refinement，因为目前的瓶颈不在通道维度。
+
+  你想往哪个方向走？
+
+✻ Brewed for 35s
+
+❯ 目前的瓶颈在哪                                                                
+
+  Read 3 files (ctrl+o to expand)
+
+● 让我看损失函数和训练循环来完成诊断。
+
+● Bash(git ls-files Covid19/BetterLViT/ 2>$null | head -30)
+  ⎿  /usr/bin/bash: line 1: $null: ambiguous redirect
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● 发现一个关键问题。让我确认。
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● 找到瓶颈了。头号瓶颈不在 EPPA，而在损失函数。
+
+  🔴 头号问题：CLAUDE.md 描述的"复合边界损失"实际并未接入训练
+
+  train_model.py:184 当前使用的是：
+
+  criterion = WeightedDiceBCE(dice_weight=0.5, BCE_weight=0.5)
+
+  而不是 CLAUDE.md 中所述的 WeightedTverskyFocalBoundary。
+
+  证据链:
+  - train_model.py:19 只 import 了 WeightedDiceBCE
+  - Train_one_epoch.py:71 直接 out_loss = criterion(...)，没有 tuple unpacking
+  - 整个训练循环里没有 set_epoch 调用
+  - WeightedTverskyFocalBoundary 类定义可能存在于 utils.py，但根本没被实例化
+  - .idea/workspace.xml 里有历史 commit "[eppa-boundary] feat: 替换 BCE 损失为
+  Focal 损失"——这条改动被回退了或从未合并到 eppa 分支
+
+  也就是说，你的三大创新里：
+
+  ┌───────────────────────────────┬───────────────┬────────────────────────┐
+  │             创新              │  CLAUDE.md    │        实际状态        │
+  │                               │     声明      │                        │
+  ├───────────────────────────────┼───────────────┼────────────────────────┤
+  │ 1. CXR-BERT + LoRA            │ ✓             │ ✓ 已生效               │
+  ├───────────────────────────────┼───────────────┼────────────────────────┤
+  │ 2. EPPA                       │ ✓             │ ✓ 已生效               │
+  ├───────────────────────────────┼───────────────┼────────────────────────┤
+  │ 3. Tversky+Focal+Boundary     │ ✓             │ ✗ 未接入，仍是         │
+  │ 损失                          │               │ Dice+BCE               │
+  └───────────────────────────────┴───────────────┴────────────────────────┘
+
+  这就解释了为什么 dice 卡在 0.834 上下，并且 EPPA
+  各种微调（最近这次瓶颈通道、之前 PLAM→EPPA 替换）都只在 ±0.001 范围内抖动 ——
+  没有边界监督的情况下，再多注意力模块也是在已饱和的 region-level 
+  信号上做边际优化。在 dice ≈ 0.83
+  这个区间，剩余误差几乎全是边界附近的几个像素，BCE
+  对这些像素的梯度信号已经接近平台。
+
+  🟡 次级瓶颈（按优先级）
+
+  2. EPPA 的 LayerScale gate 初始化为 0——所有梯度经过 gate * x_sa
+  这条乘法链才能传到 ch_mlp / sp_proj，导致 EPPA 内部参数学习信号弱。这是
+  LayerScale 的已知问题：理论上"残差安全"，但实践中 gate
+  经常无法"打开"。需要训练后实测各层 gate 的均值/方差才能确诊（建议在下一次 best
+   模型保存时打印 model.up*.eppa.gate 的统计量）。
+  3. 缺少深度监督：outc 只在 224×224 单尺度出 logit + Sigmoid，decoder 中间
+  stage 没有辅助损失。这是 segmentation 文献里几乎稳定 +0.5%–1% Dice
+  的标准技巧。
+  4. Tversky α/β 取向（即使接入也存疑）：CLAUDE.md 说 α=0.45, β=0.55（惩罚 
+  FP）。但 Covid19 ground-glass opacities 通常是漫散区域，FN
+  漏检的代价更高，应该是 α>β。这是个文献争议点，需要测。
+
+  建议下一步
+
+  先修头号问题，再谈 EPPA。具体三选一：
+
+  1. 最小修复：把 WeightedTverskyFocalBoundary 真正接到 train_model.py +
+  Train_one_epoch.py，跑一次 baseline 对比（这次的 EPPA 配置不变）。如果接入后
+  dice 跳到 0.84+，说明瓶颈定位正确。
+  2. 回滚 + 重做：先回滚到 PLAM baseline（不带
+  EPPA），仅引入复合损失，看损失函数单独贡献多少 Dice，再叠加 EPPA。这样
+  dissertation 的 ablation 表更干净。
+  3. 先诊断 EPPA gate：在下一次 eval 时打印各层
+  eppa.gate.detach().abs().mean()，确认 EPPA 实际有没有"打开"。如果 gate 都是
+  ~1e-3 量级，说明 EPPA 等于没启用，再多调瓶颈通道都没用。
+
+  我倾向 路径 1：复合损失明显是被遗漏的低悬果实，先把它接回来再说。要我直接动手
+  接回去吗？还是你想先去 GPU 机上跑 gate 诊断？
+
+✻ Brewed for 1m 35s
+
+❯ EPPA gate是什么                                                               
+
+● EPPA gate 是什么
+
+  它是 EPPA 模块里的一个可学习残差缩放系数，控制"EPPA
+  算出来的注意力修正量"对原始 skip 特征施加多大的影响。
+
+  看 nets/eppa.py:66:
+
+  self.gate = nn.Parameter(torch.zeros(1, in_channels, 1, 1))
+
+  形状是 (1, C, 1, 1)——每个通道一个独立标量，初始化为 0。
+
+  在 forward 最后一行（eppa.py:92）：
+
+  return x + self.gate * x_sa
+
+  这里：
+  - x 是原始 skip 特征
+  - x_sa 是经过通道注意力 + 空间注意力修正过的特征
+  - self.gate 决定"修正量按多大比例叠加回去"
+
+  为什么这么设计
+
+  这是 LayerScale（CaiT、Swin V2 用的技巧）的逐通道版：
+
+  1. 训练初期完全无害：gate=0 时，输出 = x + 0 = x，EPPA
+  等价于直通。模型可以从一个"已知能 work"的状态出发。
+  2. 模型自己决定要不要打开：每个通道独立学习自己的 gate
+  值，可以正、可以负，可以保持接近 0。
+  3. 避免随机初始化的注意力模块在前几个 epoch 注入噪声——这是直接残差 x + x_sa
+  的常见失败模式。
+
+  为什么它现在是个怀疑对象
+
+  LayerScale 的"安全初始化"有个反面：梯度信号经过 gate * x_sa 
+  这条乘法链回传时，gate 处的梯度 ∝ x_sa，而 ch_mlp / sp_proj 内部参数的梯度 ∝
+  gate——初始 gate=0 时，内部参数几乎收不到梯度。
+
+  理论上靠 gate 的二阶项慢慢"启动"是可以的，但实际中经常出现两种坏情况：
+
+  1. gate 始终保持在 1e-3 量级 → EPPA 等于没接入，模型表现 ≈
+  baseline。这正符合你看到的"加宽瓶颈通道毫无效果"——如果 gate≈0，瓶颈通道是 8
+  还是 32 根本无所谓。
+  2. gate 学到一个负值 → EPPA 在做"反向修正"，但这通常意味着监督信号没足够强到让
+   EPPA 学出有意义的边界增强，模型只是在用它做轻微的特征抑制。
+
+  如何诊断
+
+  最便宜的诊断：在 train_model.py 里 best 模型保存时打印各层 gate 统计：
+
+  for name in ['up4', 'up3', 'up2', 'up1']:
+      block = getattr(model.module if isinstance(model, nn.DataParallel) else
+  model, name)
+      g = block.eppa.gate.detach()
+      logger.info(f'{name}.eppa.gate: mean={g.mean():.4f} '
+                  f'abs_mean={g.abs().mean():.4f} '
+                  f'max={g.max():.4f} min={g.min():.4f}')
+
+  判读标准：
+  - abs_mean < 0.01 → EPPA 基本没启用，瓶颈不在 EPPA 内部结构
+  - abs_mean ∈ [0.05, 0.5] → EPPA 在工作，但比较温和
+  - abs_mean > 1.0 → EPPA 起主导作用（少见，通常意味着初始化失衡）
+
+  要我帮你把这段诊断打印加到 train_model.py 里吗？只需要改 5
+  行，下次训练就能直接看到。
+
+✻ Cogitated for 24s
+
+❯ 把这段诊断打印加到Epoch History 中                                            
+
+● 进入 plan 模式。让我先验证一下当前代码状态，再确认设计选择。
+
+  Searched for 2 patterns (ctrl+o to expand)
+
+● 确认完毕。关键设计选择需要你定一下。
+
+● User answered Claude's questions:
+  ⎿  · 每个 stage 的 gate 显示哪些统计量？ → mean / abs_mean / max / min
+     · EPPA gate 诊断打印怎么呈现？ → 主表后追加独立 gate 子表
+● 收到。现在写最终 plan。
+
+● Updated plan
+  ⎿  /plan to preview
+  ⎿  Tool use rejected
+
+● 两个反馈都正确，我修正 plan 后重新提交。
+
+  Read 1 file (ctrl+o to expand)
+
+● Updated plan
+  ⎿  /plan to preview
+
+● 修正要点：
+
+  1. 新增 Step 0：把 epoch_history.append 移到 best/last save
+  之前，修复你指出的"best_model 历史漏掉自己"的 bug。
+  2. 重写 Context：删掉了"EPPA 退化为恒等映射"的错误论断，换成更准确的描述——gate
+   从 step 1 起就有非零梯度，但 gate ↔ inner-params 之间存在乘法耦合形成正反馈，
+  收敛到偏小量级才是真正担忧的失效模式（不是"永远锁死"）。判读标准也相应更新。
+
+● User approved Claude's plan
+  ⎿  Plan saved to: C:\Users\dtftn\.claude\plans\epoch-history-spicy-phoenix.md 
+     · /plan to edit
+     Plan: 把 EPPA gate 诊断打印加到 Epoch History
+
+     Context
+
+     当前 EPPA 的几次微调（PLAM→EPPA、瓶颈通道 8→32）都只在 dice/iou 的 ±0.001
+     量级抖动。一个高度可疑的解释是：EPPA 的 self.gate（per-channel
+     LayerScale，初始化为 0）在整个训练过程中收敛到了一个偏小的量级，导致 EPPA
+     残差分支对最终输出贡献微弱，inner module（ch_mlp /
+     sp_proj）的结构改动（瓶颈通道 8→32 等）几乎被 gate 抑制。
+
+     注意：这并非"gate 永远锁死为 0"——gate 自身在 step 1
+     就能拿到非零梯度（∂out/∂gate = x_sa ≠ 0），从 step 2 起就脱离
+     0。真正的担忧是 LayerScale 残差分支与内部参数之间的耦合学习动力学:
+
+     - gate 的梯度 ∝ x_sa（依赖 ch_mlp / sp_proj 已学好）
+     - ch_mlp / sp_proj 的梯度 ∝ gate（依赖 gate 已增长）
+
+     两者形成正反馈耦合，初期都很小，需要监督信号有足够强度推动其中一方先增长。
+     在 dice ≈ 0.83 的饱和区间，剩余监督信号本身就弱，gate 完全可能稳定在
+     abs_mean < 0.05 的低位，使 EPPA 实际贡献被压平。
+
+     要证实/证伪这个假设，最便宜的办法是在每个 epoch 的 Epoch History 旁追加一张
+      gate 统计子表，让你在不进 GPU 机调试的情况下，直接从训练日志判断 EPPA
+     是否被"打开"。
+
+     用户已确定的设计选择:
+     - 呈现位置：主 Epoch History 表后追加独立 gate 子表（不嵌入主表）
+     - 每个 stage 的统计量：mean / abs_mean / max / min 四项
+
+     判读标准:
+     - abs_mean < 0.01 且不增长 → EPPA 实际贡献微弱，瓶颈在 LayerScale
+     启动动力学（应考虑 gate 初始化为小正数、或拆掉 LayerScale）
+     - abs_mean ∈ [0.05, 0.5] 且随 epoch 增长 → EPPA
+     在工作，瓶颈在别处（如复合损失未接入）
+     - mean 与 abs_mean 相近 → gate 系统性偏正/偏负
+     - mean ≈ 0 但 abs_mean 较大 → 各通道学到了正负混合的修正
+
+     Critical Files
+
+     - train_model.py — 主训练循环，包含 epoch_history 列表、best/last
+     模型保存、Epoch History 表打印（lines 258–306）
+     - nets/eppa.py:66 — self.gate = nn.Parameter(torch.zeros(1, in_channels, 1,
+      1))，待读取的参数
+     - nets/LViT.py:107–118 — self.up4 / up3 / up2 / up1 各自包含
+     .eppa.gate（UpblockAttention.eppa）
+
+     Implementation
+
+     Step 0. 修复一个原代码 bug：epoch_history.append 顺序
+
+     当前问题 (train_model.py:261–287):
+
+     if val_dice > max_dice:
+         if epoch + 1 > 5:
+             ...
+             best_state = build_checkpoint_state(..., epoch_history,
+     is_best=True)  # ← epoch_history 缺当前 epoch 行
+             save_checkpoint(best_state, config.model_path)
+     ...
+     epoch_history.append({...})   # ← 当前 epoch 在保存之后才被 append
+
+     如果当前 epoch 就是新 best，写入 best_model-*.pth.tar 的 epoch_history
+     会漏掉它自己这一行。后续从 best_model resume 时会看到一个缺末行的
+     history（且也会丢未来加上的 gate_stats）。
+
+     修复：把 epoch_history.append({...}) 块（line 278–287）整体移到 # Save best
+      model 块（line 258）之前——val_loss/val_dice/val_iou/epoch_lr
+     在更早就已计算完毕，移动顺序无副作用。这样 best/last 两类 checkpoint 的
+     history 都包含当前 epoch。
+
+     Step 1. 顶部新增辅助函数
+
+     在 worker_init_fn 上方（约第 82 行附近）添加：
+
+     def compute_eppa_gate_stats(model):
+         """Snapshot EPPA gate stats from each decoder stage.
+
+         Returns dict[stage -> {mean, abs_mean, max, min}] of Python floats.
+         Empty dict if no EPPA-equipped UpblockAttention is found.
+         """
+         target = model.module if isinstance(model, nn.DataParallel) else model
+         stats = {}
+         for stage in ('up4', 'up3', 'up2', 'up1'):
+             block = getattr(target, stage, None)
+             if block is None or not hasattr(block, 'eppa'):
+                 continue
+             g = block.eppa.gate.detach()
+             stats[stage] = {
+                 'mean':     float(g.mean().item()),
+                 'abs_mean': float(g.abs().mean().item()),
+                 'max':      float(g.max().item()),
+                 'min':      float(g.min().item()),
+             }
+         return stats
+
+     Step 2. 在 epoch_history 字典里写入 gate_stats
+
+     修复后的 epoch_history.append 字典加一项 'gate_stats': 
+     compute_eppa_gate_stats(model)。
+
+     Step 3. 在主 Epoch History 表后追加 gate 子表
+
+     紧跟在主表 for h in epoch_history: 循环（line 298–302）之后插入：
+
+     # --- EPPA Gate Sub-Table ---
+     # Skipped silently if no entry has gate_stats (e.g., resumed from a 
+     pre-diagnostic
+     # checkpoint — those rows render as "—" so the table doesn't crash).
+     if any(h.get('gate_stats') for h in epoch_history):
+         logger.info('--- EPPA Gate History (mean / abs_mean / max / min per 
+     stage) ---')
+         group_hdr = '{:>5} | '.format('Epoch') + ' | '.join(
+             '{:^31}'.format(s.capitalize()) for s in ('up4', 'up3', 'up2',
+     'up1'))
+         stat_hdr = '{:>5} | '.format('') + ' | '.join(
+             ['{:>7} {:>7} {:>7} {:>7}'.format('mean', 'abs', 'max', 'min')] *
+     4)
+         logger.info(group_hdr)
+         logger.info(stat_hdr)
+         for h in epoch_history:
+             gs = h.get('gate_stats') or {}
+             cells = []
+             for stage in ('up4', 'up3', 'up2', 'up1'):
+                 s = gs.get(stage)
+                 if not s:
+                     cells.append('{:>31}'.format('—'))
+                 else:
+                     cells.append('{:>7.4f} {:>7.4f} {:>7.4f} {:>7.4f}'.format(
+                         s['mean'], s['abs_mean'], s['max'], s['min']))
+             logger.info('{:>5d} | {}'.format(h['epoch'], ' | '.join(cells)))
+
+     输出形如:
+
+     --- EPPA Gate History (mean / abs_mean / max / min per stage) ---
+     Epoch |              Up4              |              Up3              |
+               Up2              |              Up1
+           |   mean     abs     max     min |   mean     abs     max     min |
+      mean     abs     max     min |   mean     abs     max     min
+         1 | 0.0012  0.0034  0.0501 -0.0489 | 0.0008  0.0029  0.0432 -0.0421 |
+     0.0021  0.0045  0.0589 -0.0567 | 0.0034  0.0067  0.0612 -0.0598
+         2 | 0.0089  0.0145  0.1203 -0.0987 | ...
+
+     兼容性 & 副作用
+
+     1. Resume 兼容：旧 checkpoint 的 epoch_history 没有 gate_stats
+     字段。新代码用 h.get('gate_stats') 读取，缺失时该 epoch 行渲染为
+     —，不抛异常。
+     2. Step 0 修复的副作用：移动 epoch_history.append 顺序后，best_model 与
+     last_model 写入的 epoch_history 都会包含当前 
+     epoch——这正是修复的目标。无其他副作用：early_stopping 计数不依赖
+     history、bark notify 只读 max_dice。
+     3. Checkpoint 体积：每 epoch 增加 ~ 4 stage × 4 float = 16 个
+     float，可忽略。
+     4. 打印开销：每 epoch 打印长度 ~150 字符 × N 行（N
+     随训练增长）。与现有主表同等量级，不影响性能。
+     5. DataParallel 处理：函数已用 model.module if isinstance(model, 
+     nn.DataParallel) else model 解包，与 train_model.py 既有 resume 代码（line
+     214）保持一致。
+     6. 覆盖范围：所有三种 model_type（'LViT' / 'BetterLViT' /
+     'LViT_pretrain'）都通过 BetterLViT(LViT) 实例化，up1..up4 始终是
+     UpblockAttention(.eppa=EPPA(...))。函数对三者都生效。
+
+     Verification
+
+     本地 Windows 没有 Python 运行时，只能通过代码审查 + 远程 GPU 验证：
+
+     1. 代码静态检查（本地）:
+       - 确认 compute_eppa_gate_stats 不依赖 train/eval 模式
+       - 确认 epoch_history.append 已被移到 best/last save 之前
+       - 确认 best_state 与 last_state 现在都拿到包含当前 epoch 的 history
+     2. 远程 GPU 端到端（推送到训练机后）:
+       - python train_model.py 跑 3 个 epoch 即可看到子表输出
+       - 检查 abs_mean 是否在 (0, 0.01) 还是 (0.05, ∞)：这就是诊断结果
+       - 用 epoch ≥ 6 的 best_model 验证 history 末行是否包含自己（即 history
+     最后一行 epoch == best_epoch）
+     3. Resume 旧 checkpoint 兼容性（远程）:
+       - 把 Config.resume_path 指向当前已有的旧 best_model（无 gate_stats）
+       - 训练 1 epoch；观察子表中早期 epoch 显示为 —，新 epoch
+     显示数值，不抛异常
+
+     Out of Scope（本次不做）
+
+     - 不修改 EPPA 内部初始化策略（gate 仍 init=0）。本次只加观测 + 修一个
+     history 顺序 bug，不动模型。
+     - 不接入
+     WeightedTverskyFocalBoundary。那是上一轮诊断指出的更大瓶颈，应作为独立 PR。
+     - 不写到 tensorboard。日志文件足够，避免 SummaryWriter 接口复杂化。
+
+● Step 1：先添加 helper 函数。
+
+● Update(train_model.py)
+  ⎿  Added 21 lines
+       79      }
+       80  
+       81  
+       82 +def compute_eppa_gate_stats(model):                           
+       83 +    """Snapshot EPPA gate stats from each decoder stage (up4..
+          +up1).                                                         
+       84 +    Returns dict[stage -> {mean, abs_mean, max, min}] of Pytho
+          +n floats,                                                     
+       85 +    or empty dict if no EPPA-equipped UpblockAttention is foun
+          +d.                                                            
+       86 +    """                                                       
+       87 +    target = model.module if isinstance(model, nn.DataParallel
+          +) else model                                                  
+       88 +    stats = {}                                                
+       89 +    for stage in ('up4', 'up3', 'up2', 'up1'):                
+       90 +        block = getattr(target, stage, None)                  
+       91 +        if block is None or not hasattr(block, 'eppa'):       
+       92 +            continue                                          
+       93 +        g = block.eppa.gate.detach()                          
+       94 +        stats[stage] = {                                      
+       95 +            'mean':     float(g.mean().item()),               
+       96 +            'abs_mean': float(g.abs().mean().item()),         
+       97 +            'max':      float(g.max().item()),                
+       98 +            'min':      float(g.min().item()),                
+       99 +        }                                                     
+      100 +    return stats                                              
+      101 +                                                              
+      102 +                                                              
+      103  def worker_init_fn(worker_id):
+      104      random.seed(config.seed + worker_id)
+      105  
+  ⎿  Found 18 new diagnostic issues in 1 file (ctrl+o to expand)
+
+● Helper 加好了。诊断只是一些预存的代码风格警告，无功能问题。
+
+● Step 0 + Step 2：合并改动。把 epoch_history.append 移到 best save 之前，并加入
+   gate_stats 字段。
+
+● Update(train_model.py)  ⎿  Added 16 lines, removed 11 lines
+      276              model.eval()
+      277              val_loss, val_dice, val_iou = train_one_epoch(val_
+           loader, model, criterion,
+      278                                                            opti
+           mizer, writer, epoch, lr_scheduler, model_type, logger)
+      279 +        # Append current epoch to history BEFORE saving any ch
+          +eckpoint, so that                                             
+      280 +        # both best_model and last_model serialise an epoch_hi
+          +story that                                                    
+      281 +        # includes the just-finished epoch (the best_model pat
+          +h used to drop                                                
+      282 +        # its own row otherwise).                             
+      283 +        epoch_history.append({                                
+      284 +            'epoch': epoch + 1,                               
+      285 +            'train_loss': float(train_loss),                  
+      286 +            'train_dice': float(train_dice),                  
+      287 +            'train_iou': float(train_iou),                    
+      288 +            'val_loss': float(val_loss),                      
+      289 +            'val_dice': float(val_dice),                      
+      290 +            'val_iou': float(val_iou),                        
+      291 +            'lr': float(epoch_lr),                            
+      292 +            'gate_stats': compute_eppa_gate_stats(model),     
+      293 +        })                                                    
+      294 +                                                              
+      295          # ====================================================
+           =========
+      296          #       Save best model
+      297          # ====================================================
+           =========
+     ...
+      312          early_stopping_count = epoch - best_epoch + 1
+      313          logger.info('\t early_stopping_count: {}/{}'.format(ea
+           rly_stopping_count, config.early_stopping_patience))
+      314  
+      299 -        epoch_history.append({                                
+      300 -            'epoch': epoch + 1,                               
+      301 -            'train_loss': float(train_loss),                  
+      302 -            'train_dice': float(train_dice),                  
+      303 -            'train_iou': float(train_iou),                    
+      304 -            'val_loss': float(val_loss),                      
+      305 -            'val_dice': float(val_dice),                      
+      306 -            'val_iou': float(val_iou),                        
+      307 -            'lr': float(epoch_lr),                            
+      308 -        })                                                    
+      309 -                                                              
+      315          # Always save last_model (rolling) so future runs can 
+           resume from any
+      316          # interruption point, not just from the best.
+      317          last_state = build_checkpoint_state(
+  ⎿  Found 3 new diagnostic issues in 1 file (ctrl+o to expand)
+
+● Step 3：在主表后追加 gate 子表。
+
+● Update(train_model.py)
+  ⎿  Added 24 lines
+      327                  h['epoch'], h['train_loss'], h['train_dice'], 
+           h['train_iou'],
+      328                  h['val_loss'], h['val_dice'], h['val_iou'], h[
+           'lr'], marker))
+      329  
+      330 +        # --- EPPA Gate Sub-Table ---                         
+      331 +        # Skipped silently if no entry has gate_stats (e.g., r
+          +esumed from a                                                 
+      332 +        # pre-diagnostic checkpoint -- those rows render as "-
+          +-" so the table                                               
+      333 +        # does not crash).                                    
+      334 +        if any(h.get('gate_stats') for h in epoch_history):   
+      335 +            logger.info('--- EPPA Gate History (mean / abs_mea
+          +n / max / min per stage) ---')                                
+      336 +            group_hdr = '{:>5} | '.format('Epoch') + ' | '.joi
+          +n(                                                            
+      337 +                '{:^31}'.format(s.capitalize()) for s in ('up4
+          +', 'up3', 'up2', 'up1'))                                      
+      338 +            stat_hdr = '{:>5} | '.format('') + ' | '.join(    
+      339 +                ['{:>7} {:>7} {:>7} {:>7}'.format('mean', 'abs
+          +', 'max', 'min')] * 4)                                        
+      340 +            logger.info(group_hdr)                            
+      341 +            logger.info(stat_hdr)                             
+      342 +            for h in epoch_history:                           
+      343 +                gs = h.get('gate_stats') or {}                
+      344 +                cells = []                                    
+      345 +                for stage in ('up4', 'up3', 'up2', 'up1'):    
+      346 +                    s = gs.get(stage)                         
+      347 +                    if not s:                                 
+      348 +                        cells.append('{:>31}'.format('--'))   
+      349 +                    else:                                     
+      350 +                        cells.append('{:>7.4f} {:>7.4f} {:>7.4
+          +f} {:>7.4f}'.format(                                          
+      351 +                            s['mean'], s['abs_mean'], s['max']
+          +, s['min']))                                                  
+      352 +                logger.info('{:>5d} | {}'.format(h['epoch'], '
+          + | '.join(cells)))                                            
+      353 +                                                              
+      354          if early_stopping_count > config.early_stopping_patien
+           ce:
+      355              logger.info('\t early_stopping!')
+      356              break
+  ⎿  Found 5 new diagnostic issues in 1 file (ctrl+o to expand)
+
+  Read 1 file (ctrl+o to expand)
+
+● 全部完成。改动总结:
+
+  ┌──────────┬────────────────────────┬──────────────────────────────────────┐
+  │   Step   │          位置          │                 改动                 │
+  ├──────────┼────────────────────────┼──────────────────────────────────────┤
+  │ 0. Bug   │                        │ 把 epoch_history.append 移到         │
+  │ 修复     │ train_model.py:283-293 │ best/last save 之前，确保 best_model │
+  │          │                        │  checkpoint 包含自己这一行           │
+  ├──────────┼────────────────────────┼──────────────────────────────────────┤
+  │          │                        │ 新增                                 │
+  │ 1.       │ train_model.py:82-100  │ compute_eppa_gate_stats(model)，返回 │
+  │ Helper   │                        │  {up4..up1: {mean, abs_mean, max,    │
+  │          │                        │ min}}                                │
+  ├──────────┼────────────────────────┼──────────────────────────────────────┤
+  │ 2.       │ train_model.py:292     │ 字典新增 'gate_stats':               │
+  │ 写入历史 │                        │ compute_eppa_gate_stats(model)       │
+  ├──────────┼────────────────────────┼──────────────────────────────────────┤
+  │ 3.       │                        │ 主表后追加 --- EPPA Gate History --- │
+  │ 子表打印 │ train_model.py:330-352 │  子表，旧 epoch 缺 gate_stats 时显示 │
+  │          │                        │  --                                  │
+  └──────────┴────────────────────────┴──────────────────────────────────────┘
+
+  下一步：推到 GPU 机跑 3 个 epoch 看 abs_mean 量级。如果各层 abs_mean 始终 <
+  0.01，可基本确认 EPPA 没启用，瓶颈在 LayerScale 启动；如果在 0.05+
+  范围且增长，则瓶颈在别处（最可能是未接入的复合损失）。
+
+✻ Churned for 6m 4s
+
+❯ 分析EPPA模块如何达到更高的iou                                                 
+
+● 一、先回到指标本身：IoU 比 Dice 想要什么？
+
+  $$\text{IoU} = \frac{TP}{TP+FP+FN}, \quad \text{Dice} =
+  \frac{2TP}{2TP+FP+FN}$$
+
+  Dice 在分子里把 TP 加倍，对 FP/FN 相对宽容；IoU 对 FP/FN 的惩罚更线性。当前
+  dice 0.834 / iou 0.747 时，进一步抬高 IoU 等价于"减少 FP+FN
+  像素"——而这两类错误几乎全部是空间错误：
+
+  - FP：肺野外/正常区域被误判为病灶 → 空间注意力没把它们抑制住
+  - FN：病灶边界 1–2 像素被切掉 → 空间注意力把边缘像素也抑制掉了
+
+  所以，对 IoU 最有杠杆的不是 channel attention，是 spatial attention。
+
+  这里要泼一盆冷水：你最近一次提交（瓶颈通道 8→32）调的是 ch_mlp，根本不在 IoU 
+  的关键路径上。这解释了为什么 ±0.001。
+
+  ---
+  二、EPPA 当前的空间分支有多弱？
+
+  看 nets/eppa.py:62-63:
+
+  self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1, bias=False)
+
+  输入是 cat([avg_over_channels, max_over_channels], dim=1)——两张 1×H×W
+  的统计图，3×3 卷积压成 1 张注意力图。
+
+  问题:
+  1. 没有任何"边缘"先验。3×3 conv 是个标准 CBAM 配方，初始化是
+  Kaiming/Xavier，完全可能学成低通模糊——和 EPPA 名字里的 "Edge-Preserving"
+  完全相反。模块叫这个名字，但架构里没有任何东西强制它去保边缘。
+  2. 感受野只有 ±1 像素。对于跨度 50–200px
+  的肺部病灶，模型看不到"这块区域是不是更大病灶的一部分"，无法做远程一致性判断。
+  3. 空间统计只用了 avg + max。这两个都是低阶统计量，对梯度/边缘完全无视。要保边
+  缘，输入里必须有梯度信号。
+  4. CA → SA 串行：spatial attention 的输入是
+  x_ca（通道注意力调制后的特征），如果 CA 错误抑制了一个通道，SA
+  永远没机会单独从原 x 中恢复它。
+
+  ---
+  三、按"对 IoU 杠杆 / 实现成本"排序的改造
+
+  Tier 1（高杠杆，~5–20 行代码，强烈推荐）
+
+  1. 给 spatial attention 输入增加显式梯度通道
+
+  把 sp_proj 从 Conv2d(2, 1, ...) 改成 Conv2d(3, 1, ...)，输入加一个 Sobel
+  梯度幅值通道:
+
+  sobel_x = F.conv2d(sp_avg, sobel_kernel_x, padding=1)
+  sobel_y = F.conv2d(sp_avg, sobel_kernel_y, padding=1)
+  grad_mag = torch.sqrt(sobel_x ** 2 + sobel_y ** 2 + 1e-6)
+  sa_input = torch.cat([sp_avg, sp_max, grad_mag], dim=1)
+
+  Sobel kernel 用 register_buffer 固定，不可训练。这样 sp_proj
+  就强制看到边缘信息——再随机初始化也不会学成模糊。这才让 "Edge-Preserving"
+  名实相符。预期 IoU +0.5%–1%（基于 BAM/SAFNet 之类工作的报告）。
+
+  2. sp_proj 初始化为 Laplacian/边缘核
+
+  即使输入只是 [avg, max]，把 conv 初始化成边缘检测器（不是
+  random）也大幅缩短训练路径:
+
+  nn.init.constant_(self.sp_proj.weight, 0)
+  # 让中心权重正、邻域权重负 — 类似 Laplacian
+  self.sp_proj.weight.data[0, :, 1, 1] = 1.0
+  self.sp_proj.weight.data[0, :, [0,1,2], [1,1,1]] -= 0.25  # 等等
+
+  或更简单：直接复制一份 Sobel/Laplacian 权重作为初始化，再让模型自由微调。~3 
+  行代码，几乎无风险。
+
+  3. 把 LayerScale gate 初始化改成小正数
+
+  self.gate = nn.Parameter(torch.full((1, in_channels, 1, 1), 0.01))
+
+  不是 0 而是
+  1e-2。绕开你前一次诊断指出的"耦合冷启动"问题。这条不依赖架构改造，是个独立的 1
+   行 PR，可以和 Tier 1 的 1+2 一起验证。
+
+  Tier 2（中等杠杆，需要更多代码）
+
+  4. 多空洞率并行 spatial attention
+
+  把单个 3×3 conv 换成 3 个 3×3 conv（dilation = 1, 2, 4），输出求和后过
+  sigmoid:
+
+  self.sp_d1 = nn.Conv2d(C_in, 1, 3, padding=1,  dilation=1, bias=False)
+  self.sp_d2 = nn.Conv2d(C_in, 1, 3, padding=2,  dilation=2, bias=False)
+  self.sp_d4 = nn.Conv2d(C_in, 1, 3, padding=4,  dilation=4, bias=False)
+  sa_logit = self.sp_d1(x) + self.sp_d2(x) + self.sp_d4(x)
+
+  感受野从 3×3 扩到 9×9，参数量只翻倍，依然只产出 1 张注意力图。对 large lesion 
+  outline + small lesion 同时友好。
+
+  5. CA 与 SA 并行而非串行
+
+  ca = sigmoid(ch_logit)[:, :, None, None]   # 用原 x 算 CA
+  sa = sigmoid(sp_proj(...))                  # 也用原 x 算 SA
+  out = x * ca * sa                           # 或 x * (ca + sa) / 2
+
+  避免"CA 错抑制 → SA 无法救"。CBAM 论文里两种都报过，并行在某些数据集上更好。
+
+  Tier 3（更激进，低 ROI 或风险高）
+
+  6. per-pixel gate：把 gate 从 (1, C, 1, 1) 扩成 (1, C, H, 
+  W)——但这只在固定输入分辨率时可行（你的 224×224
+  是固定的，所以技术可行），增加大量参数，过拟合风险显著。
+  7. 去掉 LayerScale，用 zero-init 最终 conv：把 sp_proj
+  的最后一层权重全初始化为 0，这样 EPPA 输出的修正量为
+  0（残差安全），但每个参数都有直接梯度路径，无 gate 耦合。需要重新组织
+  forward。
+  8. 频域分解：高通通道走 spatial attention，低通通道走 channel
+  attention。文献上有效但工程复杂度高，本科论文做这个会不好讲。
+
+  ---
+  四、给 dissertation 的诚实建议
+
+  EPPA 当前的命名是过度承诺：架构里没有任何 edge-preserving
+  的归纳偏置。这其实是个论文叙事漏洞——答辩时可能被问"为什么叫
+  Edge-Preserving，体现在哪里"。
+
+  Tier 1 的改动 1 + 2 正好把这个漏洞补上：
+
+  - 输入显式带 Sobel 梯度通道（架构层面的边缘先验）
+  - spatial conv 初始化为 Laplacian（参数层面的边缘先验）
+
+  这样你能在论文里写一句:
+
+  ▎ "EPPA explicitly injects edge gradient information into the spatial 
+  ▎ attention input and initialises the spatial projection with a Laplacian-like
+  ▎  kernel, providing both architectural and parametric inductive biases for 
+  ▎ boundary preservation."
+
+  ——这才是名副其实的 "Edge-Preserving"。
+
+  ---
+  五、推荐的实施顺序
+
+  前提：你刚加的 gate 子表诊断先跑一次，得出 gate 是否真死。
+
+  路径 A：gate 几乎没打开（abs_mean < 0.01）
+    → 先做 Tier 1.3 (gate 初始化 0.01)
+    → 再叠加 Tier 1.1 + 1.2（spatial 边缘先验）
+    → 这是最低风险路径，每步都有清晰的消融解释
+
+  路径 B：gate 已经在 0.05–0.5 正常工作
+    → 直接做 Tier 1.1 + 1.2，跳过 1.3
+    → 因为这种情况下瓶颈在 spatial 分支没学好边缘
+
+  任一路径，每次只改一项，跑一个 seed，看 IoU 是否突破 0.75。Tier 1
+  的三项加起来，我估计能把 IoU 推到 0.755–0.760。
+
+  要我先动手写 Tier 1.1 + 1.2（带 Sobel 梯度通道 + Laplacian
+  初始化）吗？这两项放一个 PR 里逻辑最连贯，是把 EPPA "edge-preserving"
+  名号坐实的最小单元。
+
+✻ Crunched for 2m 3s
+
+❯ 计划实施 Tier 1.1 + 1.2（带 Sobel 梯度通道 + Laplacian 初始化）               
+
+● 在动手前需要先定两个架构选择，因为它们会进 dissertation
+  的论述/消融表，不应该默认。
+
+● User declined to answer questions
+
+❯ --- Epoch History (1..9) ---                                                  
+  Epoch |  TrainLoss |  TrainDice |  TrainIoU |    ValLoss |    ValDice |       
+  ValIoU |         LR | Best                                                    
+      1 |     0.3490 |     0.5884 |    0.4597 |     0.2931 |     0.6600 |       
+  0.5374 |   3.00e-04 |                                                         
+      2 |     0.2434 |     0.6853 |    0.5617 |     0.2429 |     0.6726 |       
+  0.5466 |   2.95e-04 |                                                         
+      3 |     0.2142 |     0.7134 |    0.5946 |     0.2686 |     0.6348 |       
+  0.5080 |   2.81e-04 |                                                         
+      4 |     0.1983 |     0.7303 |    0.6141 |     0.1974 |     0.7343 |       
+  0.6207 |   2.59e-04 |                                                         
+      5 |     0.1874 |     0.7408 |    0.6265 |     0.1698 |     0.7657 |       
+  0.6565 |   2.31e-04 |                                                         
+      6 |     0.1781 |     0.7525 |    0.6404 |     0.1799 |     0.7554 |       
+  0.6505 |   2.00e-04 |                                                         
+      7 |     0.1735 |     0.7577 |    0.6471 |     0.1835 |     0.7423 |       
+  0.6290 |   1.69e-04 |                                                         
+      8 |     0.1688 |     0.7632 |    0.6540 |     0.1655 |     0.7740 |       
+  0.6676 |   1.41e-04 |                                                         
+      9 |     0.1638 |     0.7693 |    0.6609 |     0.1576 |     0.7773 |       
+  0.6700 |   1.19e-04 |    *--- EPPA Gate History (mean / abs_mean / max / min  
+  per stage) ---                                                                
+  Epoch |               Up4               |               Up3               |   
+               Up2               |               Up1                            
+        |    mean     abs     max     min |    mean     abs     max     min |   
+    mean     abs     max     min |    mean     abs     max     min              
+      1 | -0.0014  0.0027  0.0072 -0.0113 |  0.0002  0.0028  0.0144 -0.0091 |   
+  -0.0012  0.0026  0.0061 -0.0075 | -0.0034  0.0039  0.0077 -0.0125             
+      2 | -0.0016  0.0032  0.0096 -0.0108 | -0.0001  0.0040  0.0161 -0.0095 |   
+  -0.0027  0.0035  0.0063 -0.0104 | -0.0058  0.0058  0.0004 -0.0166             
+      3 | -0.0016  0.0035  0.0104 -0.0096 | -0.0003  0.0046  0.0194 -0.0120 |   
+  -0.0035  0.0042  0.0061 -0.0132 | -0.0070  0.0070 -0.0010 -0.0195             
+      4 | -0.0010  0.0033  0.0107 -0.0102 | -0.0005  0.0046  0.0192 -0.0127 |   
+  -0.0040  0.0045  0.0064 -0.0129 | -0.0075  0.0075  0.0001 -0.0185             
+      5 | -0.0009  0.0031  0.0123 -0.0087 | -0.0006  0.0043  0.0190 -0.0127 |   
+  -0.0041  0.0046  0.0078 -0.0126 | -0.0076  0.0076  0.0014 -0.0163             
+      6 | -0.0008  0.0028  0.0136 -0.0077 | -0.0005  0.0039  0.0174 -0.0115 |   
+  -0.0040  0.0045  0.0085 -0.0114 | -0.0074  0.0075  0.0020 -0.0159             
+      7 | -0.0006  0.0026  0.0138 -0.0075 | -0.0007  0.0037  0.0164 -0.0108 |   
+  -0.0040  0.0044  0.0085 -0.0104 | -0.0073  0.0074  0.0028 -0.0157             
+      8 | -0.0006  0.0025  0.0144 -0.0071 | -0.0008  0.0036  0.0165 -0.0112 |   
+  -0.0039  0.0043  0.0085 -0.0101 | -0.0070  0.0071  0.0032 -0.0152             
+      9 | -0.0006  0.0023  0.0143 -0.0070 | -0.0007  0.0033  0.0176 -0.0115 |   
+  -0.0037  0.0042  0.0089 -0.0097 | -0.0068  0.0070  0.0034 -0.0143             
+
+● 诊断结果非常关键。这数据直接改变了优先级——Tier 1.1 + 1.2 
+  暂时不要做了。让我解释。
+
+  数据解读：gate 死了，且在主动回归 0
+
+  ┌────────┬──────────┬─────────┬─────────┬─────────────────────────────────┐
+  │ Stage  │ abs_mean │  趋势   │  mean   │              解读               │
+  │        │   (ep9)  │ (ep1→9) │         │                                 │
+  ├────────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+  │ Up4    │          │ 升到    │         │                                 │
+  │ (深,   │ 0.0023   │ 0.0035  │ -0.0006 │ 几乎完全静止                    │
+  │ 512ch) │          │ 后回落  │         │                                 │
+  ├────────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+  │        │          │ 升到    │         │                                 │
+  │ Up3    │ 0.0033   │ 0.0046  │ -0.0007 │ 同上                            │
+  │        │          │ 后回落  │         │                                 │
+  ├────────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+  │        │          │ 升到    │         │                                 │
+  │ Up2    │ 0.0042   │ 0.0046  │ -0.0037 │ 系统性偏负                      │
+  │        │          │ 后回落  │         │                                 │
+  ├────────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+  │ Up1    │          │ 升到    │         │ mean ≈                          │
+  │ (浅,   │ 0.0070   │ 0.0076  │ -0.0068 │ -abs_mean，几乎所有通道都是负值 │
+  │ 64ch)  │          │ 后回落  │         │                                 │
+  └────────┴──────────┴─────────┴─────────┴─────────────────────────────────┘
+
+  四个关键观察:
+
+  1. 所有 abs_mean < 0.01——按之前的判读标准，EPPA 实际贡献微弱。
+  2. abs_mean 在 epoch 3–5 
+  达到峰值后开始下降。这不是"还在缓慢爬升"，是已经找到了平衡点，Adam 在主动把 
+  gate 拉回 0。系统正在告诉你"x_sa 这个分支对 loss 没用，请关掉"。
+  3. mean 系统性偏负，特别是浅层（Up1: mean=-0.0068，几乎等于
+  -abs_mean）。这意味着 Up1 的 EPPA 不是在做"增强 skip 特征"，而是在轻微抑制
+  x_sa。换句话说，模型学出来的策略是"EPPA 帮倒忙，请关闭"。
+  4. 越浅层 abs_mean 越大（Up1 > Up2 > Up3 > Up4）。浅层 skip
+  信息密度高、梯度信号强，gate 才有机会动；深层基本完全僵死。
+
+  这意味着什么
+
+  我之前推荐的 Tier 1.1（Sobel 梯度通道）和 1.2（Laplacian 初始化）目标是让 
+  spatial attention 学得更快更准。但 spatial attention 的输出 x_sa 经过 gate * 
+  x_sa 后再加回 x——gate ≈ 0.003 时，spatial 分支再聪明，乘以 0.003 也几乎归零。
+
+  打个比方:
+  - 现在：EPPA 是个声音被关到 1% 的扬声器，无论你换多好的喇叭单元，听众都听不见
+  - 我之前推荐的 Tier 1.1/1.2 ≈ 升级喇叭单元
+  - 真正要做的是先把音量打开
+
+  更糟糕的是：gate 在收缩说明系统主动关掉它。这不只是"启动慢"，是"模型选择不用"
+  。所以光靠初始化为小正数（Tier 1.3）也可能不够——开机时声音是开的，但 Adam
+  一上来就把它拧回去了。
+
+  修正后的优先级
+
+  新的 Tier 0（必须先做，否则后面都是空中楼阁）:
+
+  选项 A：单纯 gate 初始化 = 0.1（1 行改动）
+
+  self.gate = nn.Parameter(torch.full((1, in_channels, 1, 1), 0.1))
+  赌注：当 gate 从 0.1 开始时，x_sa 能拿到足够梯度让 ch_mlp / sp_proj
+  快速学到有用表示，跨过冷启动陷阱后 gate 就不会被拉回。
+  风险：如果 ch_mlp / sp_proj 永远学不到对 loss 有用的修正，Adam 还是会把 gate
+  拉回 0，只是慢一点。从你的数据看，风险不低——浅层 mean=-0.007 说明就算让 gate
+  暂时正，模型也会把它拉负。
+
+  选项 B：废弃 LayerScale，改用末层 zero-init（5 行改动）
+
+  # 在 sp_proj 之后接一个 1x1 conv，权重全 0 初始化
+  self.out_conv = nn.Conv2d(in_channels, in_channels, 1, bias=False)
+  nn.init.zeros_(self.out_conv.weight)
+  # forward: return x + self.out_conv(x_sa)  # 不再有 gate
+  优势：去除 gate 的乘法瓶颈耦合。每个内部参数都有直接梯度路径。残差初始仍是
+  0（safe-init），但不会"被关掉"。
+  风险：增加参数量（每个 stage 多 C² 参数，up4 加 ~26 万参数）。
+
+  选项 C：gate 单独高 LR（10 行改动）
+
+  optimizer 里给 *.eppa.gate 单独一个 param group，用 10× 基础 LR。
+  优势：架构不变，只调优化器。
+  风险：你的数据显示是"gate 主动收缩"，单纯加 LR 可能让收缩更快。
+
+  选项 D：先做实验，再下结论（推荐）
+
+  最严谨的 dissertation 路径——做一个ablation，跑两组 50-epoch:
+
+  ┌──────────────────────┬────────┬────────────────────────────────┐
+  │         实验         │  改动  │            预期结果            │
+  ├──────────────────────┼────────┼────────────────────────────────┤
+  │ 1. gate=0.1 init     │ 选项 A │ 看 gate 是否被拉回             │
+  ├──────────────────────┼────────┼────────────────────────────────┤
+  │ 2. 完全去 LayerScale │ 选项 B │ 看 EPPA 在"无安全网"时是否有用 │
+  └──────────────────────┴────────┴────────────────────────────────┘
+
+  如果两个都不能让 dice 突破 0.835，说明 EPPA 这个 spatial+channel CBAM
+  范式对当前数据集没有附加价值——需要换思路（比如真正的 boundary-aware
+  模块，或者干脆先把 CLAUDE.md 提到的 WeightedTverskyFocalBoundary 接进来）。
+
+  我的建议
+
+  放弃当前 EPPA 微调路线。新的最小可行实验:
+
+  1. 先做选项 A（gate=0.1 init）——1 行改动，跑 30 epoch，看 gate
+  是收缩还是稳定。
+    - 如果稳定在 ≥0.05 且 dice 上升 → EPPA 架构 OK，原来就是 cold-start
+  卡住，再叠加 Tier 1.1+1.2
+    - 如果还是被拉回 ~0 → EPPA 的 spatial+channel
+  设计在该数据集上确实没用，这本身就是 dissertation 
+  里一个有价值的负面发现，应该转去做 WeightedTverskyFocalBoundary 接入
+  2. 不要现在做 Tier 1.1+1.2。在 gate 没活之前做这些，看不到任何信号。
+
+  要我先动手做选项 A（1 行 gate 初始化改动 + 一个简短的 commit
+  message），还是你想先讨论？
+
+✻ Crunched for 1m 22s
+
+❯ 做选项 A（                                                                    
+
+● Update(nets\eppa.py)
+  ⎿  Error editing file
+
+● 进入 plan 模式。先确认当前文件状态——之前的 plan 文件是 gate
+  诊断子表（已实施完成），这是新任务，需要重写 plan 文件。
+
+  Read 2 files (ctrl+o to expand)
+● Updated plan
+  ⎿  /plan to preview
+
+● User approved Claude's plan
+  ⎿  Plan saved to: C:\Users\dtftn\.claude\plans\epoch-history-spicy-phoenix.md 
+     · /plan to edit
+     Plan: EPPA gate 初始化 0 → 0.1（修复 LayerScale 冷启动死锁）
+
+     Context
+
+     上一个 plan（gate 诊断子表）已经实施完成并取得诊断数据。9 epoch
+     训练日志显示 EPPA gate 完全没有打开:
+
+     ┌───────┬──────────┬─────────┬─────────┬─────────────────────────────────┐
+     │ Stage │ abs_mean │  趋势   │  mean   │              解读               │
+     │       │   (ep9)  │         │  (ep9)  │                                 │
+     ├───────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+     │ Up4   │          │ 升至    │         │                                 │
+     │ (深)  │ 0.0023   │ 0.0035  │ -0.0006 │ 几乎完全静止                    │
+     │       │          │ 后回落  │         │                                 │
+     ├───────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+     │       │          │ 升至    │         │                                 │
+     │ Up3   │ 0.0033   │ 0.0046  │ -0.0007 │ 同上                            │
+     │       │          │ 后回落  │         │                                 │
+     ├───────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+     │       │          │ 升至    │         │                                 │
+     │ Up2   │ 0.0042   │ 0.0046  │ -0.0037 │ 系统性偏负                      │
+     │       │          │ 后回落  │         │                                 │
+     ├───────┼──────────┼─────────┼─────────┼─────────────────────────────────┤
+     │ Up1   │          │ 升至    │         │ mean ≈                          │
+     │ (浅)  │ 0.0070   │ 0.0076  │ -0.0068 │ -abs_mean，几乎所有通道都是负值 │
+     │       │          │ 后回落  │         │                                 │
+     └───────┴──────────┴─────────┴─────────┴─────────────────────────────────┘
+
+     四个关键证据:
+
+     1. 所有 stage 的 abs_mean < 0.01，按预设判读标准属于"未启用"区间。
+     2. abs_mean 在 epoch 3–5 见顶后开始回落——不是缓慢爬升，是 Adam 在主动把
+     gate 拉回 0。
+     3. mean 系统性偏负，特别 Up1 mean ≈
+     -abs_mean，意味着模型学到的策略是"轻微抑制 x_sa"，相当于"请关掉 EPPA"。
+     4. 越浅层 abs_mean 越大，但仍然处于 ~0.005 量级——浅层 skip 信息密度高，gate
+      才有机会动；深层完全僵死。
+
+     根因诊断（与上一轮 plan Context 中描述的 LayerScale 冷启动耦合假设吻合）：
+
+     - gate 梯度 ∝ x_sa（依赖 ch_mlp / sp_proj 已学到有用表示）
+     - ch_mlp / sp_proj 梯度 ∝ gate（依赖 gate 已增长）
+     - 当前数据集在 dice ≈ 0.83
+     饱和区间监督信号不足，两者形成"谁也不先迈出第一步"的耦合僵局，Adam
+     最终选择"全部归零"
+
+     预期目标：把 gate 初始化从 0 改成 0.1，强制 x_sa 一开始就有非平凡量级（10%
+     残差），让 ch_mlp / sp_proj 在 step 1
+     就拿到可学习量级的梯度，跨过冷启动陷阱。
+
+     预期验证：下次训练前 9 epoch 的 gate 子表中，abs_mean 应当保持 ≥ 0.05（即
+     init 量级）或缓慢增长，而不是再次回落到 ~0。如果 init=0.1 后 gate 仍被 Adam
+      拉回 0，说明 EPPA 这个 spatial+channel CBAM
+     范式在该数据集上确实没有附加价值——这本身是 dissertation
+     的有价值负面发现，下一步应转向接入 WeightedTverskyFocalBoundary。
+
+     Critical Files
+
+     - nets/eppa.py:65-66 — 实际的 self.gate 初始化语句
+     - nets/eppa.py:32-35 — class docstring 中描述 gate 为 "init = 0 -> exact
+     identity"
+     - nets/eppa.py:37-40 — class docstring 的 resume policy 段，"EPPA at init
+     produces unmodulated skip features" 与 init=0.1 冲突
+     - CLAUDE.md:80 — Innovation #2 描述里写的 "Per-channel LayerScale gate
+     initialised to 0 (identity at init)"
+
+     Implementation
+
+     Edit 1: nets/eppa.py:65-66
+
+             # Per-channel LayerScale-style residual gate, init = 0.1 (NOT 0).
+             # init=0 was diagnosed dead in epoch 1-9 (see train_model.py gate
+             # sub-table): abs_mean < 0.01 and trending DOWN, mean 
+     systematically
+             # negative -- Adam was actively closing the gate. 0.1 forces a
+             # non-trivial x_sa residual contribution from step 1 so inner
+             # ch_mlp / sp_proj receive learnable-magnitude gradients before the
+             # cold-start coupling traps them at zero.
+             self.gate = nn.Parameter(torch.full((1, in_channels, 1, 1), 0.1))
+
+     Edit 2: nets/eppa.py:32-35 (class docstring residual section)
+
+     把 "init = 0 -> exact identity at training start. Each channel learns..."
+     这段重写为:
+
+     - Residual: per-channel LayerScale-style learnable parameter
+       (1, C, 1, 1), init = 0.1 (NOT 0; see __init__ comment for the
+       diagnostic that motivated this). Each channel still learns its
+       own positive or negative contribution; no activation function
+       on the gate so gradient flow is direct.
+
+     Edit 3: nets/eppa.py:37-40 (resume policy)
+
+     原文 "EPPA at init produces unmodulated skip features" 已经不准确（init=0.1
+      时 EPPA 在初始时输出 0.1 × random 的扰动）。改为:
+
+     Resume policy: train from scratch only. Loading a PLAM checkpoint into
+     an EPPA model causes decoder distribution shift (decoder was trained
+     expecting PLAM-modulated skip features; EPPA at init produces a small
+     random perturbation -- gate=0.1 amplifies untrained ch_mlp / sp_proj
+     output by 10% and adds it to the skip).
+
+     Edit 4: CLAUDE.md:80
+
+     把 "Per-channel LayerScale gate initialised to 0 (identity at init) — but
+     this still causes..." 改为:
+
+     Per-channel LayerScale gate initialised to **0.1** (originally 0; init=0
+     was diagnosed via the per-epoch gate sub-table to equilibrate near zero
+     with negative mean, so the bootstrap was raised to break the cold-start
+     coupling). Decoder distribution shift still requires **EPPA models train
+     from scratch**.
+
+     兼容性 & 副作用
+
+     1. 从已有 EPPA checkpoint resume：state_dict 中 up*.eppa.gate
+     是已训练好的张量值，load_state_dict 直接覆盖 init，因此已有 checkpoint 
+     加载行为不变——init 只在从头训练时生效。
+     2. gate 子表诊断逻辑无需改动：它读 block.eppa.gate
+     张量，不关心初始化。新一轮训练第 1 epoch 的 gate 子表里 abs_mean ≈ 0.1, 
+     mean ≈ 0.1，可作为 init 已生效的验证标记。
+     3. CLAUDE.md 中"训练从零"约束依然成立：因为 init 改了，新跑的 EPPA
+     checkpoint 的 gate 分布与旧 checkpoint 不同，跨 init 复用 checkpoint
+     没意义；同时 PLAM↔EPPA 互不兼容也没变。
+     4. min_bottleneck_channels=(32,32,32,32) 不冲突：channel attention
+     内部参数与 gate 解耦，独立学习。
+     5. 改动不影响所有其他 architecture（LoRA、ViT cross-attn、loss）——EPPA 是
+     isolated module。
+
+     Verification
+
+     本地无 Python，仅代码审查 + 远程 GPU 验证。
+
+     1. 静态检查（本地）：
+       - nets/eppa.py:66 的 torch.zeros(...) 已改为 torch.full(..., 0.1)
+       - 4 处文档（class docstring 2 段 + 行内注释 + CLAUDE.md）一致地描述 0.1
+       - 没有其他文件引用 "gate ... 0" 或 "identity at init"
+     2. 远程 GPU 端到端（推送后）：
+       - python train_model.py 跑 5–10 epoch
+       - 验证 epoch 1 的 gate 子表：abs_mean ≈ 0.10, mean ≈ 0.10, max ≈ 0.10, 
+     min ≈ 0.10（4 个统计量都接近 0.1，因为是常量 init）。如果不是这个数，说明
+     init 没生效。
+       - 验证 epoch 5–10 的趋势：abs_mean 应当 ≥ 0.05（gate
+     没被压扁）或继续增长。如果回落到 < 0.01，说明 init=0.1
+     也救不了，需要换方案（B/C/D 备选）。
+       - 同时观察 dice / iou：如果 gate 保持 ≥ 0.05 且 dice 突破 0.835，说明
+     EPPA 路径可行；如果 gate 死、dice 不动，这个负面结果本身值得记录到 
+     dissertation 的 ablation。
+
+     Out of Scope（本次不做）
+
+     - 不做 Tier 1.1（Sobel 梯度通道）和 Tier 1.2（Laplacian 初始化）——这两项在
+     gate 死的状态下无法测量收益，必须先确认 gate 能开。
+     - 不调整 optimizer（不加 gate-only param group / 不改
+     LR）——保持单变量原则。
+     - 不接入 WeightedTverskyFocalBoundary——独立 PR。
+     - 不改 EPPA forward 逻辑（不重排 CA/SA 串并行、不改 sp_proj kernel size）。
+
+● Update(nets\eppa.py)
+  ⎿  Added 7 lines, removed 5 lines
+      30        is image-text contrastive aligned during pretraining and 
+          is by
+      31        construction free of [PAD] pollution.
+      32      - Residual: per-channel LayerScale-style learnable paramete
+          r
+      33 -      (1, C, 1, 1), init = 0 -> exact identity at training star
+         -t. Each                                                        
+      34 -      channel learns its own positive or negative contribution;
+         - no activation                                                 
+      35 -      function on the gate so gradient flow is direct.         
+      33 +      (1, C, 1, 1), init = 0.1 (NOT 0; see __init__ comment for
+         + the                                                           
+      34 +      diagnostic that motivated this). Each channel still learn
+         +s its                                                          
+      35 +      own positive or negative contribution; no activation func
+         +tion on                                                        
+      36 +      the gate so gradient flow is direct.                     
+      37  
+      38      Resume policy: train from scratch only. Loading a PLAM chec
+          kpoint into
+      39      an EPPA model causes decoder distribution shift (decoder wa
+          s trained
+      39 -    expecting PLAM-modulated skip features; EPPA at init produc
+         -es                                                             
+      40 -    unmodulated skip features).                                
+      40 +    expecting PLAM-modulated skip features; EPPA at init produc
+         +es a                                                           
+      41 +    small random perturbation -- gate=0.1 amplifies untrained c
+         +h_mlp /                                                        
+      42 +    sp_proj output by 10% and adds it to the skip).            
+      43      """
+      44  
+      45      def __init__(self, in_channels, text_dim=None, reduction=8,
+
+● Update(nets\eppa.py)
+  ⎿  Added 8 lines, removed 2 lines
+      64          # Spatial attention: 3x3 conv on [avg, max] over channe
+          ls.
+      65          self.sp_proj = nn.Conv2d(2, 1, kernel_size=3, padding=1
+          , bias=False)
+      66  
+      67 -        # Per-channel LayerScale-style residual gate, init = 0 
+         -(identity).                                                    
+      68 -        self.gate = nn.Parameter(torch.zeros(1, in_channels, 1,
+         - 1))                                                           
+      67 +        # Per-channel LayerScale-style residual gate, init = 0.
+         +1 (NOT 0).                                                     
+      68 +        # init=0 was diagnosed dead in epoch 1-9 (see train_mod
+         +el.py gate                                                     
+      69 +        # sub-table): abs_mean < 0.01 and trending DOWN, mean s
+         +ystematically                                                  
+      70 +        # negative -- Adam was actively closing the gate. 0.1 f
+         +orces a                                                        
+      71 +        # non-trivial x_sa residual contribution from step 1 so
+         + inner                                                         
+      72 +        # ch_mlp / sp_proj receive learnable-magnitude gradient
+         +s before                                                       
+      73 +        # the cold-start coupling traps them at zero.          
+      74 +        self.gate = nn.Parameter(torch.full((1, in_channels, 1,
+         + 1), 0.1))                                                     
+      75  
+      76      def forward(self, x, text=None):
+      77          # Channel attention via global avg / max pool through s
+          hared MLP.
+
+● Update(CLAUDE.md)
+  ⎿  Added 1 line, removed 1 line
+      77  Each is documented inline in its own file. When extending, pref
+          er adding a new module to swapping these in place — they are di
+          ssertation experiments and need to remain comparable.
+      78  
+      79  1. **CXR-BERT text encoder + LoRA** (`nets/BetterLViT.py`): rep
+          laces legacy `bert_embedding` with `microsoft/BiomedVLP-CXR-BER
+          T-specialized`. LoRA targets `query` and `value` modules. `mode
+          l_name='LViT'` toggles to a fully-frozen baseline for ablation.
+      80 -2. **EPPA — Edge-Preserving Pixel Attention** (`nets/eppa.py`):
+         - drop-in replacement for `PixLevelModule` on `UpblockAttention`
+         - skip connections. Channel attention (CBAM-style) factorised wi
+         -th 3×3 spatial attention, conditioned on text [CLS]. Per-channe
+         -l LayerScale gate initialised to 0 (identity at init) — but thi
+         -s still causes decoder distribution shift if loaded onto a PLAM
+         --trained checkpoint, so **EPPA models must train from scratch**
+         -.                                                              
+      80 +2. **EPPA — Edge-Preserving Pixel Attention** (`nets/eppa.py`):
+         + drop-in replacement for `PixLevelModule` on `UpblockAttention`
+         + skip connections. Channel attention (CBAM-style) factorised wi
+         +th 3×3 spatial attention, conditioned on text [CLS]. Per-channe
+         +l LayerScale gate initialised to **0.1** (originally 0; init=0 
+         +was diagnosed via the per-epoch gate sub-table to equilibrate n
+         +ear zero with negative mean, so the bootstrap was raised to bre
+         +ak the cold-start coupling). Decoder distribution shift still r
+         +equires **EPPA models train from scratch**.                    
+      81  3. **Composite boundary-aware loss** (`utils.py:WeightedTversky
+          FocalBoundary`): Tversky (α=0.45, β=0.55, FP-penalising) + Bina
+          ryFocalLoss (focal_alpha=0.25, gamma=2.0, focuses on hard pixel
+          s) + Kervadec boundary loss with a linear warmup ramp (0 → 0.1 
+          over 50 epochs). Default term weights (0.5, 0.5, 0.1).
+      82  
+      83  ## Resume / checkpointing
+
+● 三个文件四处改动完成。
+
+  改动汇总:
+
+  ┌──────────────┬───────┬───────────────────────────────────────────────────┐
+  │     文件     │  行   │                       改动                        │
+  ├──────────────┼───────┼───────────────────────────────────────────────────┤
+  │ nets/eppa.py │ 32–35 │ docstring residual section: init = 0 → init =     │
+  │              │       │ 0.1，附原因引用                                   │
+  ├──────────────┼───────┼───────────────────────────────────────────────────┤
+  │              │       │ resume policy 段：删除"unmodulated skip           │
+  │ nets/eppa.py │ 37–41 │ features"的旧描述，改为"small random perturbation │
+  │              │       │  amplified by gate=0.1"                           │
+  ├──────────────┼───────┼───────────────────────────────────────────────────┤
+  │ nets/eppa.py │ 65–73 │ 实际 init：torch.zeros(...) → torch.full(...,     │
+  │              │       │ 0.1)，注释引用诊断证据                            │
+  ├──────────────┼───────┼───────────────────────────────────────────────────┤
+  │ CLAUDE.md    │ 80    │ Innovation #2 描述：gate 0 → 0.1，附诊断说明      │
+  └──────────────┴───────┴───────────────────────────────────────────────────┘
+
+  下一步（你来跑）:
+
+  1. 推到 GPU 机，python train_model.py 跑 5–10 epoch
+  2. 看新一轮 gate 子表的 epoch 1：四列统计量都应接近 0.1000（确认 init 生效）
+  3. 看 epoch 5–10：abs_mean 是否能 ≥ 0.05 不被压扁
+  4. 看 dice/iou：是否能突破 0.835 / 0.747
+
+  要我现在帮你 commit 吗？建议 commit message:
+
+  [eppa] fix: gate init 0 → 0.1 to break LayerScale cold-start
+
+  Diagnosed via per-epoch gate sub-table (b4aef62 + recent
+  diagnostic commit): all four stages' abs_mean < 0.01 and
+  trending DOWN after epoch 5, mean systematically negative,
+  indicating Adam actively closed the gate due to ch_mlp / sp_proj
+  ↔ gate cold-start coupling.
+
+  init=0.1 forces non-trivial x_sa residual from step 1, giving
+  inner modules learnable-magnitude gradients before the
+  coupling traps everything at zero.
+
+✻ Cooked for 3m 18s
+
+❯ --- EPPA Gate History (mean / abs_mean / max / min per stage) ---             
+  Epoch |               Up4               |               Up3               |   
+               Up2               |               Up1                            
+        |    mean     abs     max     min |    mean     abs     max     min |   
+    mean     abs     max     min |    mean     abs     max     min              
+      1 |  0.0707  0.0707  0.0950  0.0531 |  0.0768  0.0768  0.1018  0.0569 |   
+  0.0847  0.0847  0.1055  0.0572 |  0.0841  0.0841  0.1023  0.0543              
+      2 |  0.0513  0.0513  0.0904  0.0250 |  0.0599  0.0599  0.0981  0.0312 |   
+  0.0703  0.0703  0.1047  0.0284 |  0.0686  0.0686  0.0960  0.0263              
+      3 |  0.0376  0.0376  0.0852  0.0094 |  0.0474  0.0474  0.0980  0.0152 |   
+  0.0583  0.0583  0.1010  0.0148 |  0.0562  0.0562  0.0914  0.0085              
+      4 |  0.0285  0.0285  0.0819  0.0015 |  0.0383  0.0383  0.0974  0.0059 |   
+  0.0482  0.0482  0.0977  0.0023 |  0.0465  0.0465  0.0883  0.0020              
+      5 |  0.0224  0.0225  0.0786 -0.0021 |  0.0318  0.0318  0.0977  0.0035 |   
+  0.0407  0.0407  0.0955 -0.0002 |  0.0393  0.0394  0.0846 -0.0021              
+      6 |  0.0184  0.0185  0.0770 -0.0034 |  0.0271  0.0271  0.0975  0.0007 |   
+  0.0348  0.0348  0.0934 -0.0027 |  0.0338  0.0342  0.0814 -0.0041              
+      7 |  0.0156  0.0158  0.0737 -0.0048 |  0.0237  0.0238  0.0973 -0.0009 |   
+  0.0302  0.0302  0.0910 -0.0034 |  0.0294  0.0301  0.0788 -0.0048              
+      8 |  0.0135  0.0138  0.0711 -0.0047 |  0.0213  0.0214  0.0971 -0.0017 |   
+  0.0267  0.0267  0.0895 -0.0041 |  0.0261  0.0269  0.0764 -0.0054              
+      9 |  0.0121  0.0124  0.0689 -0.0050 |  0.0194  0.0195  0.0967 -0.0024 |   
+  0.0240  0.0241  0.0883 -0.0040 |  0.0234  0.0241  0.0740 -0.0055              
+     10 |  0.0110  0.0113  0.0679 -0.0044 |  0.0179  0.0181  0.0963 -0.0027 |   
+  0.0218  0.0219  0.0870 -0.0032 |  0.0214  0.0221  0.0718 -0.0057              
+     11 |  0.0074  0.0094  0.0654 -0.0102 |  0.0139  0.0150  0.0974 -0.0088 |   
+  0.0156  0.0161  0.0852 -0.0055 |  0.0149  0.0164  0.0651 -0.0085              
+
+● 数据有意思但不乐观。让我拆开看。
+
+  Gate 轨迹（init=0.1 实验）
+
+  Stage   ep1     ep5     ep11    decay rate
+  Up4     0.071 → 0.022 → 0.009    ~25%/epoch (最快)
+  Up3     0.077 → 0.032 → 0.015    ~20%/epoch
+  Up2     0.085 → 0.041 → 0.016    ~22%/epoch
+  Up1     0.084 → 0.039 → 0.016    ~22%/epoch
+
+  三个关键观察
+
+  1. init=0.1 没救活 gate，只是延长了死亡时间
+
+  Adam 仍然在主动关闭 gate，速率在 -20%/epoch 左右。按这个轨迹外推：
+
+  ┌───────┬──────────────────────────┐
+  │ Epoch │   预期 abs_mean (Up4)    │
+  ├───────┼──────────────────────────┤
+  │ 11    │ 0.009                    │
+  ├───────┼──────────────────────────┤
+  │ 20    │ 0.001–0.002              │
+  ├───────┼──────────────────────────┤
+  │ 30    │ ~0（与 init=0 终态相同） │
+  └───────┴──────────────────────────┘
+
+  也就是说，init=0.1 只把"gate 死"从 epoch 5 推迟到 epoch 25–30。最终归宿一样。
+
+  2. 但是——max 列几乎不衰减
+
+  ┌───────┬─────────┬──────────┬──────┐
+  │ Stage │ ep1 max │ ep11 max │ 衰减 │
+  ├───────┼─────────┼──────────┼──────┤
+  │ Up4   │ 0.0950  │ 0.0654   │ -31% │
+  ├───────┼─────────┼──────────┼──────┤
+  │ Up3   │ 0.1018  │ 0.0974   │ -4%  │
+  ├───────┼─────────┼──────────┼──────┤
+  │ Up2   │ 0.1055  │ 0.0852   │ -19% │
+  ├───────┼─────────┼──────────┼──────┤
+  │ Up1   │ 0.1023  │ 0.0651   │ -36% │
+  └───────┴─────────┴──────────┴──────┘
+
+  特别是 Up3 的 max 几乎不动（0.097 几乎等于 init 0.1）。这意味着 Up3 里至少有 1
+   个通道找到了对 loss 有用的 x_sa 调制，那个 gate 完全没被压。
+
+  但 Up3 总共有 256 个通道（in_channels=128 即 C × 2 / 2 = 128 在 EPPA 里 → 实际
+   in_channels=128），而 mean 只有 0.019——说明极少数通道（可能 < 10 个）gate 
+  较大，其余 ~250 个通道 gate 趋零。
+
+  3. min 在 ep5+ 开始转负
+
+  ep1 时所有 min ≥ 0.0531（因为 init=0.1，初期 Adam 还没把任何通道推过 0）。到
+  ep11，所有 stage 的 min 都进入负区。这是与 init=0
+  时观察到的"系统性偏负"模式重新汇合的标志。
+
+  这告诉我们什么
+
+  EPPA 的失败模式不是"冷启动卡住"，是模型在主动告诉你 x_sa 大部分时候没用:
+
+  - 极少数通道（<5%）能从 EPPA 获益，gate 维持高位
+  - 大部分通道（>95%）gate 被关闭
+  - "冷启动"不是真原因——给它 0.1 的热启动它也会关回去
+
+  我之前的 cold-start 假设只对了一半：少数通道确实需要冷启动（看 max
+  维持），但大多数通道是真的不需要 EPPA，不是被卡住。
+
+  关键问题：dice / iou 怎么样了？
+
+  你只发了 gate 子表，没发主表。这才是判断方向的决定性数据。两种可能:
+
+  ┌─────┬─────────────┬──────────────────────────┬──────────────────────────┐
+  │ 情  │  dice 表现  │           解读           │          下一步          │
+  │ 形  │             │                          │                          │
+  ├─────┼─────────────┼──────────────────────────┼──────────────────────────┤
+  │     │ dice 已超过 │ 那 5% 起作用的通道是真有 │                          │
+  │ A   │  0.834（ini │ 效，gate                 │ 走 Tier 1.1+1.2，让起作  │
+  │     │ t=0         │ 死的通道无害——EPPA       │ 用的通道更多             │
+  │     │ baseline）  │ 部分可用                 │                          │
+  ├─────┼─────────────┼──────────────────────────┼──────────────────────────┤
+  │     │ dice 仍卡在 │ 即使 5% 通道起作用，整体 │ 直接放弃 EPPA 路径，转   │
+  │ B   │  0.83x      │ 没收益——EPPA             │ WeightedTverskyFocalBoun │
+  │     │             │ 范式对这数据集不行       │ dary                     │
+  └─────┴─────────────┴──────────────────────────┴──────────────────────────┘
+
+  可以请你贴一下 epoch 1–11 的主表吗
+
+  具体想看的列：ValDice 和 ValIoU。如果 ep5–11 还在 0.78–0.79 那量级（看你的诊断
+   dump 的 ep9 是 ValDice 0.7773），说明还在爬升期，需要再等。但如果到 ep30
+  还停在 0.83x，就是 B 情形。
+
+  也可以现在就告诉我：到目前为止 best dice
+  是多少？这一个数能让我直接判断走哪条路。
+
+✻ Worked for 1m 35s
+
+❯ /usage 
+  ⎿  Status dialog dismissed
+
+❯ 分析 x_sa 是什么，怎么让eppa有效果                                            
+
+  Read 2 files (ctrl+o to expand)
+
+● 一、x_sa 是什么——数学解构
+
+  逐步追 forward path（eppa.py:76-100）:
+
+  ca = sigmoid(ch_logit)[:, :, None, None]    # [B, C, 1, 1], 范围 (0, 1)
+  x_ca = x * ca                                # 通道维加权后的特征图
+
+  sa = sigmoid(sp_proj(...))                   # [B, 1, H, W], 范围 (0, 1)
+  x_sa = x_ca * sa                             # 进一步空间加权
+
+  return x + gate * x_sa                       # 残差
+
+  展开:
+
+  $$x_sa = x \cdot ca \cdot sa$$
+
+  其中 $ca \in (0, 1)$，$sa \in (0, 1)$，所以 $ca \cdot sa \in (0, 1)$。
+
+  结论：$|x_sa[b, c, h, w]| \leq |x[b, c, h, w]|$ 逐元素恒成立。
+
+  x_sa 永远是 x 的"衰减版"——只能比 x 更小（绝对值），永远不能比 x 更大、不能跨越
+   x 的零点、不能注入 x 中没有的信息。
+
+  最终残差等价于:
+
+  $$\text{out} = x + g \cdot ca \cdot sa \cdot x = x \cdot (1 + g \cdot ca \cdot
+   sa)$$
+
+  当 g=0.1, ca=0.5, sa=0.5 时，乘子 ≈ 1.025。EPPA 
+  在最好的情况下只能把每个像素-通道值放大 ~2.5%。
+
+  二、这就是 EPPA 失败的根因
+
+  dice 卡在 0.83x 时，剩余误差在边界 1–2 像素的"模糊区"。模糊区的特点是 x 
+  在那里本来就接近 0（特征不明确，BN 之后接近均值）。
+
+  而 x_sa = x * ca * sa：x 本来 ≈ 0，再乘个 ca · sa ∈ (0,1)，更接近 0。x_sa 
+  在最该出力的位置（边界模糊处）信号最弱。
+
+  模型学了 11 个 epoch 之后告诉你:
+
+  ▎ "把 x 等比放大 0–10% 解决不了边界模糊。我宁可关掉这个分支。"
+
+  Adam 在主动收 gate，是正确的优化决定——以当前架构，x_sa 真的没用。
+
+  三、PLAM 为什么能 work
+
+  读 nets/pixlevel.py，关键差异在第 39–43 行：
+
+  x_output = torch.cat((x_avg, x_max, x_out), dim=1)       # [B, 3, H, W]
+  x_output = self.bottleneck(x_output)                     # MLP → [B, 1, H, W]
+                                                           # 注意：没有 
+  sigmoid！
+  y = x_output * x                                         # 直接相乘
+
+  PLAM 的 bottleneck 输出没有过 sigmoid，所以 x_output 可以是 任意实数——可以 >
+  1（放大）、可以 < 0（翻转符号）、可以远离 x 的原值。
+
+  PLAM 的 y = x_output * x 不是残差，是直接替换。decoder
+  拿到的是被任意重新缩放后的 skip，不是衰减版的 x。
+
+  EPPA 把这两个关键自由度都阉割了：sigmoid 限制 ∈ (0,1)、残差 + gate
+  限制贡献量级。
+
+  四、怎么让 EPPA 真正有用
+
+  核心要打破 x_sa ≤ x 这个约束。三种改造方案，按 ROI 排序：
+
+  方案 1（推荐）：把 x_sa 从衰减改成"学习到的修正量"
+
+  # 现在
+  x_sa = x_ca * sa
+
+  # 改成
+  delta = self.delta_conv(x_ca)        # Conv2d(C, C, 3x3, padding=1)
+  x_sa  = delta * sa                   # sa 决定"在哪里加"，delta 决定"加什么"
+
+  - delta 输出无激活函数，可正可负、可大可小，能注入新信息
+  - sa 仍是空间门，告诉模型"在哪些像素施加修正"
+  - 残差 x + gate * x_sa 依然安全（gate 控制总量级）
+
+  参数代价：每 stage +9·C² 参数。Up4 (C=512) +2.4M；总四个 stage ~3M。和 LoRA +
+  ViT 的总量比是小头。
+
+  dissertation 叙事：
+
+  ▎ "Vanilla CBAM-style attention attenuates skip features (x_sa ≤ x). We 
+  ▎ replace it with a learned residual delta: spatial attention selects WHERE to
+  ▎  inject, a 3×3 conv produces WHAT to inject. This breaks the magnitude bound
+  ▎  and lets EPPA contribute boundary information not present in the 
+  ▎ unmodulated skip."
+
+  方案 2：显式边缘注入分支
+
+  # 在 forward 前：
+  sobel_kernel_x = torch.tensor([[-1,0,1],[-2,0,2],[-1,0,1]]) / 4
+  sobel_kernel_y = sobel_kernel_x.T
+  self.register_buffer('sobel_x', sobel_kernel_x[None, None])
+  self.register_buffer('sobel_y', sobel_kernel_y[None, None])
+  self.edge_proj = nn.Conv2d(1, in_channels, 1, bias=False)
+
+  # 在 forward：
+  x_avg = x.mean(dim=1, keepdim=True)
+  ex = F.conv2d(x_avg, self.sobel_x, padding=1)
+  ey = F.conv2d(x_avg, self.sobel_y, padding=1)
+  edge = (ex.pow(2) + ey.pow(2) + 1e-6).sqrt()    # [B, 1, H, W] 边缘幅值
+  edge_feat = self.edge_proj(edge)                # [B, C, H, W]
+
+  x_sa = x_ca * sa + edge_feat                    # 显式边缘加进来
+  return x + gate * x_sa
+
+  - Sobel 用 register_buffer，不可训练（保持边缘检测先验）
+  - edge_proj 学习如何把单通道边缘幅值广播到 C 通道
+  - 这下名字 "Edge-Preserving Pixel Attention" 是名副其实——架构里强制有边缘信号
+
+  参数代价：每 stage +1·C 参数（极小）。
+
+  方案 3：方案 1 + 2 合并
+
+  最完整，dissertation 也最好讲：
+
+  delta_feat = self.delta_conv(x_ca)              # 学到的修正
+  edge_feat  = self.edge_proj(sobel(x_avg))       # 显式边缘
+  x_sa = (delta_feat + edge_feat) * sa            # sa 同时门控两者
+  return x + gate * x_sa
+
+  边缘分支保证最低限度的"edge-preserving"先验，delta 分支允许学超出边缘的修正。
+
+  五、推荐路径
+
+  先做方案 1（最小改动，最大解锁）。理由:
+
+  1. 它解决的是根本架构问题（multiplicative attenuation → learned
+  additive）。不解决这个，再多 Sobel 注入也是给一个被乘数 ≤ 1
+  的项加边缘信号——还是被压。
+  2. 如果方案 1 之后 gate 仍然死 → 真正的"EPPA 范式不行"，这时再叠加方案
+  2（边缘注入）作为最后一搏，仍不行就转 WeightedTverskyFocalBoundary。
+  3. 方案 1 的代码改动 < 5 行，单次实验。
+
+  dissertation 论述路径会非常硬:
+
+  ▎ "We initially designed EPPA as a CBAM-style attention with LayerScale 
+  ▎ residual. Empirical diagnostics revealed the gate was actively suppressed by
+  ▎  the optimizer (Section X), which we traced to a structural constraint: x_sa
+  ▎  = x · ca · sa is element-wise bounded by x, preventing the residual from 
+  ▎ injecting boundary information not already in the skip features. We resolve 
+  ▎ this by replacing the multiplicative attenuation with a learned residual: 
+  ▎ x_sa = δ(x_ca) · sa, where δ is a 3×3 convolution producing arbitrary 
+  ▎ corrections gated spatially by sa."
+
+  要不要我接着做方案 1 的具体实施 plan？还是你想先把当前 init=0.1 的训练跑完看
+  dice 终值？
+
+✻ Cogitated for 2m 0s
+
+❯ /usage 
+  ⎿  Status dialog dismissed
+
+❯ 我想的是提取不同频率信息，高频作用于边缘，低频作用于通道                      
+
+● 这是个非常漂亮的想法
+
+  它直接命中了我上一段分析里指出的两个根本问题:
+
+  ┌─────────────────────────────────┬───────────────────────────────────────┐
+  │              问题               │           频率分解如何解决            │
+  ├─────────────────────────────────┼───────────────────────────────────────┤
+  │ x_sa ≤ x 的衰减约束             │ x_high 是高通滤波后的残量，不是 x     │
+  │                                 │ 的衰减——可正可负、可大可小            │
+  ├─────────────────────────────────┼───────────────────────────────────────┤
+  │ EPPA                            │ x_high 在数学定义上就是边缘信号（高频 │
+  │ 名字"edge-preserving"是空头支票 │  = 边缘 +                             │
+  │                                 │ 噪声）。架构里强制有边缘先验          │
+  └─────────────────────────────────┴───────────────────────────────────────┘
+
+  而且你的路由是对的：
+  - 低频 → 通道注意力：低频 = 整体语义/区域 → 该看"这通道在不在感兴趣区域"
+  - 高频 → 空间注意力：高频 = 局部突变/边缘 → 该看"哪个像素是边界"
+
+  这等于把两个原本耦合的注意力沿频率轴解耦，每个分支各做擅长的事。
+
+  ---
+  架构草图
+
+  class FreqEPPA(nn.Module):
+      def forward(self, x, text=None):
+          # 1. 频率分解（Gaussian-blur 风格的低通）
+          x_low  = F.avg_pool2d(x, kernel_size=3, stride=1, padding=1)
+          x_high = x - x_low                                # 高通 = 残量
+
+          # 2. 通道注意力：从 x_low 算（语义、区域级）
+          avg = x_low.mean(dim=(2,3))
+          mx  = x_low.amax(dim=(2,3))
+          ch_logit = self.ch_mlp(avg) + self.ch_mlp(mx)
+          if text is not None:
+              ch_logit = ch_logit + self.text_proj(text[:,0,:])
+          ca = 1 + 0.5 * torch.tanh(ch_logit)               # 范围 (0.5, 1.5), 
+  init=1
+          ca = ca[:, :, None, None]
+
+          # 3. 空间注意力：从 |x_high| 算（边缘幅值，符号无关）
+          sp_avg = x_high.abs().mean(dim=1, keepdim=True)
+          sp_max = x_high.abs().amax(dim=1, keepdim=True)
+          sa = 1 + torch.tanh(self.sp_proj(torch.cat([sp_avg, sp_max], dim=1)))
+          # 范围 (0, 2), init=1 — 关键：sa 可以 > 1，允许"边缘锐化"
+
+          # 4. 频率域重组
+          out = x_low * ca + x_high * sa
+
+          # 5. 残差（gate 仍保留，可选）
+          return x + self.gate * (out - x)
+          # 或者直接 return out（init 时 out = x，本身就是恒等）
+
+  ---
+  这个设计的三个关键技术点
+
+  技术点 1：identity-at-init 重新成立
+
+  ca = 1 + 0.5·tanh(0) = 1，sa = 1 + tanh(0) = 1。
+
+  所以 init 时 out = x_low · 1 + x_high · 1 = x_low + x_high = x——恒等映射不依赖
+   gate。
+
+  不再需要 LayerScale 那个会被 Adam 关掉的 gate。架构本身就 safe-init。
+
+  如果你想保留 gate 做"训练前期保险"：用 gate=1.0 init（不是
+  0.1），让模型决定何时收回——而且 gate 现在控制的是 (out - x)
+  的量级，不是只能加放大版的 x。
+
+  技术点 2：sa 必须能 > 1
+
+  这是整个设计的灵魂。
+
+  如果还用 sa = sigmoid(...) ∈ (0,1)，那 x_high · sa 还是衰减版的
+  x_high——你只是把"衰减 x"换成"衰减 x_high"，本质没变。
+
+  sa ∈ (0, 2) 表示在边缘处可以放大高频，做 unsharp masking 风格的边缘锐化:
+
+  $$\text{out} = \underbrace{x_{\text{low}}}{\text{平滑区域}} + \underbrace{2 
+  \cdot x{\text{high}}}_{\text{边缘加倍}}$$
+
+  经典的图像锐化公式就是 original + α · (original - blur)，等价于 low + (1+α) · 
+  high。这里 sa 学的就是"在哪里把 α 调大"。
+
+  技术点 3：x_high 用 abs 还是 signed？
+
+  空间注意力的输入用 |x_high|（abs 后再 mean/max）：
+  - abs 给出"边缘幅值"，无方向性 → 适合 sigmoid/tanh 这种对称激活
+  - 模型只需学"哪里有边缘"，不用学边缘方向
+
+  但 x_high 本身在重组时保留带符号：
+  - x_high * sa 中 x_high 的正负代表边缘方向（亮→暗 vs 暗→亮）
+  - sa 是各向同性的"放大因子"，不破坏方向
+
+  ---
+  dissertation 论述硬度
+
+  这个改动的论述力度远超之前的 EPPA。我帮你拟一段:
+
+  ▎ "Vanilla CBAM-style spatial-channel attention applies multiplicative gates 
+  ▎ derived from full-spectrum features, producing an output bounded 
+  ▎ element-wise by the input (x_sa ≤ x). For boundary-augmented segmentation 
+  ▎ this is structurally insufficient: the residual cannot inject high-frequency
+  ▎  information beyond what the unmodulated skip already contains. We propose 
+  ▎ Frequency-Routed EPPA, which decomposes the skip into low-frequency 
+  ▎ (smoothed) and high-frequency (residual) components, routes them to channel 
+  ▎ and spatial attention respectively, and recomposes with an 
+  ▎ unsharp-masking-style spatial gain (sa ∈ (0, 2)). This yields three 
+  ▎ properties unattainable by CBAM: (i) architectural edge-preservation by 
+  ▎ construction, (ii) capacity for boundary sharpening, (iii) identity-at-init 
+  ▎ without gate bootstrapping. The decomposition itself is parameter-free (3×3 
+  ▎ average pooling)."
+
+  这一段你直接能往 thesis Method 章节里搬。
+
+  ---
+  实施前需要你定的几个选择
+
+  最关键的两项:
+
+● User answered Claude's questions:
+  ⎿  · 频率分解用哪种低通？ → 学习代低通 (Conv2d depth-wise 3x3)
+     · Gate 怎么处理？现在架构本身在 init 时就是恒等映射，不再需要 LayerScale 
+     安全网。 → 完全删掉 gate (Recommended)
+
+● 明确了。开始实施频率分解版 EPPA。  ⎿  You've hit your limit · resets 3:10pm (Australia/Sydney)
+     /upgrade to increase your usage limit.
+
+✻ Brewed for 4m 32s
