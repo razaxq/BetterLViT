@@ -184,6 +184,7 @@ class ImageToImage2D(Dataset):
         self.output_path = os.path.join(dataset_path, 'labelcol')
         self.images_list = sorted(os.listdir(self.input_path))
         self.mask_list = sorted(os.listdir(self.output_path))
+        self.rowtext = row_text
         expected_images = [name.replace('mask_', '') for name in self.mask_list]
         if self.images_list != expected_images:
             missing_images = sorted(set(expected_images) - set(self.images_list))
@@ -200,7 +201,6 @@ class ImageToImage2D(Dataset):
                 )
             )
         self.one_hot_mask = one_hot_mask
-        self.rowtext = row_text
         self.task_name = task_name
         self.text_max_len = config.text_max_len
         tokenizer = _build_tokenizer()
