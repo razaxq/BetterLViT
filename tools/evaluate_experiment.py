@@ -257,8 +257,8 @@ def evaluate_thresholds(
 
 def main():
     args = parse_args()
-    if not torch.cuda.is_available() or not torch.version.hip:
-        raise RuntimeError("An AMD ROCm PyTorch environment is required.")
+    if not torch.cuda.is_available():
+        raise RuntimeError("A CUDA-capable PyTorch environment is required.")
     if (
         args.step <= 0
         or args.maximum < args.minimum
@@ -275,7 +275,11 @@ def main():
         if args.checkpoint
         else latest_best_checkpoint().resolve()
     )
-    checkpoint = torch.load(checkpoint_path, map_location="cpu")
+    checkpoint = torch.load(
+        checkpoint_path,
+        map_location="cpu",
+        weights_only=True,
+    )
     checkpoint_experiment = checkpoint.get("experiment_name")
     if checkpoint_experiment != config.experiment_name:
         raise RuntimeError(
@@ -300,6 +304,13 @@ def main():
                 checkpoint_architecture,
             )
         )
+    torch.backends.cudnn.enabled = config.cudnn_enabled
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.deterministic = config.deterministic_training
+    torch.backends.cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.use_deterministic_algorithms(config.deterministic_training)
+
     model = build_model()
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
