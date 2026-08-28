@@ -441,6 +441,8 @@ def main():
     }
     result = {
         "checkpoint": str(checkpoint_path),
+        "git_commit": checkpoint.get("source_git_commit")
+        or getattr(config, "source_git_commit", None),
         "experiment_name": config.experiment_name,
         "paper_id": getattr(config, "experiment_paper_id", None),
         "architecture": checkpoint.get(
@@ -523,6 +525,8 @@ def main():
             json.dumps(
                 {
                     "checkpoint": str(checkpoint_path),
+                    "git_commit": checkpoint.get("source_git_commit")
+                    or getattr(config, "source_git_commit", None),
                     "threshold": prediction_threshold,
                     "validation_selected_threshold": selected_threshold,
                     "samples": len(test_dataset),

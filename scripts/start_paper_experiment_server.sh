@@ -3,7 +3,7 @@ set -euo pipefail
 
 experiment="${1:-b0_baseline}"
 seed="${2:-1219}"
-epochs="${3:-100}"
+epochs="${3:-150}"
 batch_size="${4:-16}"
 evaluation_batch_size="${BETTERLVIT_EVAL_BATCH_SIZE:-16}"
 
