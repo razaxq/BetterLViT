@@ -3,7 +3,7 @@
   "experiment": "a3_lora_fmiseg",
   "description": "CXR-BERT LoRA + FMISeg-adapted decoder fusion + Dice/BCE",
   "parent_commit": "994094f989069a4d5b7263dc4ad45d333e9d0ede",
-  "git_tag": "paper-a3-b16-seed1219-20260829",
+  "git_tag": "paper-a3-b16-seed1219-20260829-restart",
   "dataset": "QaTa-COV19-v2",
   "split": {
     "train": 5716,
