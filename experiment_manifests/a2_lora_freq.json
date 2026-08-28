@@ -1,0 +1,33 @@
+{
+  "paper_id": "A2",
+  "experiment": "a2_lora_freq",
+  "description": "CXR-BERT LoRA + FAM-EPPA V4-B frequency fusion + Dice/BCE",
+  "parent_commit": "3e46ab48e4eb7c077e789d6d9afc0158cda18a73",
+  "git_tag": "paper-a2-b16-seed1219-20260828",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 150,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": true,
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.1
+  },
+  "decoder_fusion_mode": "fam_eppa_v4b",
+  "loss": {
+    "name": "dice_bce",
+    "boundary_weight": 0.0
+  },
+  "automatic_test_evaluation": true,
+  "primary_test_threshold": 0.5,
+  "secondary_threshold_protocol": "select on validation only, then freeze for test"
+}
