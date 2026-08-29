@@ -27,6 +27,7 @@ def parse_args():
             "a1_lora_focal",
             "a2_lora_freq",
             "a3_lora_fmiseg",
+            "a4_lora_freq_focal",
         ),
     )
     parser.add_argument("--cpu", action="store_true")

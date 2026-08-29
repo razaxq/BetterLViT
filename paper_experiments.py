@@ -47,6 +47,14 @@ PAPER_EXPERIMENTS = {
         "loss_name": "dice_bce",
         "architecture_version": "paper_a3_lora_fmiseg_adapter_dice_bce",
     },
+    "a4_lora_freq_focal": {
+        "paper_id": "A4",
+        "description": "CXR-BERT LoRA + FAM-EPPA V4-B frequency fusion + Dice/Focal",
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "text_use_lora": True,
+        "loss_name": "dice_focal",
+        "architecture_version": "paper_a4_lora_fam_eppa_v4b_dice_focal",
+    },
 }
 
 
