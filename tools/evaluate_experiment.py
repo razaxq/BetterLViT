@@ -43,6 +43,7 @@ def parse_args():
             "a1_lora_focal",
             "a2_lora_freq",
             "a3_lora_fmiseg",
+            "a5_lora_fmiseg_focal",
         ),
         help="Paper ablation profile used to construct the model.",
     )
@@ -157,7 +158,13 @@ def accumulate_metrics(probabilities, labels, thresholds):
         intersection / union,
         torch.zeros_like(intersection),
     )
-    return dice.sum(dim=0), iou.sum(dim=0)
+    return (
+        dice.sum(dim=0),
+        iou.sum(dim=0),
+        intersection.sum(dim=0),
+        prediction_sum.sum(dim=0),
+        label_sum.sum(),
+    )
 
 
 @torch.inference_mode()
@@ -181,6 +188,9 @@ def evaluate_thresholds(
         device="cpu",
     )
     iou_sums = torch.zeros_like(dice_sums)
+    intersection_sums = torch.zeros_like(dice_sums)
+    prediction_sums = torch.zeros_like(dice_sums)
+    label_sum = torch.zeros((), dtype=torch.float64, device="cpu")
     if prediction_output_dir is not None:
         if prediction_threshold is None:
             raise ValueError(
@@ -200,13 +210,22 @@ def evaluate_thresholds(
             batch["input_ids"].cuda(non_blocking=True),
             batch["attention_mask"].cuda(non_blocking=True),
         )[:, 0].float().cpu()
-        dice, iou = accumulate_metrics(
+        (
+            dice,
+            iou,
+            intersection,
+            prediction_sum,
+            batch_label_sum,
+        ) = accumulate_metrics(
             probabilities,
             batch["label"].bool(),
             threshold_cpu,
         )
         dice_sums += dice
         iou_sums += iou
+        intersection_sums += intersection
+        prediction_sums += prediction_sum
+        label_sum += batch_label_sum
 
         if prediction_output_dir is not None:
             prediction_masks = (
@@ -240,19 +259,38 @@ def evaluate_thresholds(
 
     dice_means = (dice_sums / sample_count).numpy()
     iou_means = (iou_sums / sample_count).numpy()
+    micro_denominator = prediction_sums + label_sum
+    micro_union = micro_denominator - intersection_sums
+    micro_dice = torch.where(
+        micro_denominator > 0,
+        2.0 * intersection_sums / micro_denominator,
+        torch.zeros_like(intersection_sums),
+    ).numpy()
+    micro_iou = torch.where(
+        micro_union > 0,
+        intersection_sums / micro_union,
+        torch.zeros_like(intersection_sums),
+    ).numpy()
     if (
         not np.isfinite(dice_means).all()
         or not np.isfinite(iou_means).all()
+        or not np.isfinite(micro_dice).all()
+        or not np.isfinite(micro_iou).all()
         or (dice_means < 0).any()
         or (dice_means > 1).any()
         or (iou_means < 0).any()
         or (iou_means > 1).any()
         or (iou_means > dice_means + 1e-12).any()
+        or (micro_dice < 0).any()
+        or (micro_dice > 1).any()
+        or (micro_iou < 0).any()
+        or (micro_iou > 1).any()
+        or (micro_iou > micro_dice + 1e-12).any()
     ):
         raise RuntimeError(
             "Invalid segmentation metrics; refusing to save results."
         )
-    return dice_means, iou_means
+    return dice_means, iou_means, micro_dice, micro_iou
 
 
 def main():
@@ -326,7 +364,7 @@ def main():
         args.maximum + args.step * 0.5,
         args.step,
     )
-    val_dice, val_iou = evaluate_thresholds(
+    val_dice, val_iou, val_micro_dice, val_micro_iou = evaluate_thresholds(
         model,
         validation_loader,
         len(validation_dataset),
@@ -361,7 +399,7 @@ def main():
             )
         )
     test_thresholds = np.asarray([0.5, selected_threshold])
-    test_dice, test_iou = evaluate_thresholds(
+    test_dice, test_iou, test_micro_dice, test_micro_iou = evaluate_thresholds(
         model,
         test_loader,
         len(test_dataset),
@@ -455,6 +493,10 @@ def main():
         "loss_name": getattr(config, "loss_name", "dice_bce"),
         "text_use_lora": bool(getattr(config, "text_use_lora", False)),
         "primary_reporting_threshold": 0.5,
+        "metric_aggregation": {
+            "macro": "mean of per-image Dice/IoU (primary)",
+            "micro": "global pixel intersection/union across all images",
+        },
         "secondary_threshold_protocol": (
             "selected on validation only, then fixed for test"
         ),
@@ -463,11 +505,15 @@ def main():
             "threshold_0_5": {
                 "dice": float(val_dice[default_index]),
                 "iou": float(val_iou[default_index]),
+                "micro_dice": float(val_micro_dice[default_index]),
+                "micro_iou": float(val_micro_iou[default_index]),
             },
             "selected": {
                 "threshold": selected_threshold,
                 "dice": float(val_dice[best_index]),
                 "iou": float(val_iou[best_index]),
+                "micro_dice": float(val_micro_dice[best_index]),
+                "micro_iou": float(val_micro_iou[best_index]),
             },
         },
         "test": {
@@ -485,11 +531,15 @@ def main():
             "threshold_0_5": {
                 "dice": float(test_dice[0]),
                 "iou": float(test_iou[0]),
+                "micro_dice": float(test_micro_dice[0]),
+                "micro_iou": float(test_micro_iou[0]),
             },
             "validation_selected_threshold": {
                 "threshold": selected_threshold,
                 "dice": float(test_dice[1]),
                 "iou": float(test_iou[1]),
+                "micro_dice": float(test_micro_dice[1]),
+                "micro_iou": float(test_micro_iou[1]),
             },
         },
         "baselines_to_beat": baselines,

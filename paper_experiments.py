@@ -47,6 +47,14 @@ PAPER_EXPERIMENTS = {
         "loss_name": "dice_bce",
         "architecture_version": "paper_a3_lora_fmiseg_adapter_dice_bce",
     },
+    "a5_lora_fmiseg_focal": {
+        "paper_id": "A5",
+        "description": "CXR-BERT LoRA + FMISeg-adapted decoder fusion + Dice/Focal",
+        "decoder_fusion_mode": "fmiseg_adapter",
+        "text_use_lora": True,
+        "loss_name": "dice_focal",
+        "architecture_version": "paper_a5_lora_fmiseg_adapter_dice_focal",
+    },
 }
 
 

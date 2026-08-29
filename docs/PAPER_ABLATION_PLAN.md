@@ -5,8 +5,8 @@ pre-registered runs. The current canonical protocol runs on one RTX 4090D
 server with the same dataset split, seed, optimizer, augmentation, 150-epoch
 budget, physical batch size 16 and early-stopping rule. Training uses
 `drop_last=True`, so every optimizer step keeps the same physical shape and four
-shuffled samples (0.07%) are omitted per epoch. The same rule is locked for B0
-through A3.
+shuffled samples (0.07%) are omitted per epoch. The same rule is locked for all
+formal profiles.
 
 | ID | Profile | Text | Decoder | Objective | Role |
 |---|---|---|---|---|---|
@@ -15,6 +15,7 @@ through A3.
 | A1 | `a1_lora_focal` | CXR-BERT + LoRA | original PLAM | Dice/Focal | LoRA + Focal |
 | A2 | `a2_lora_freq` | CXR-BERT + LoRA | FAM-EPPA V4-B frequency path | Dice/BCE | LoRA + frequency |
 | A3 | `a3_lora_fmiseg` | CXR-BERT + LoRA | FMISeg-adapted fusion | Dice/BCE | LoRA + FMISeg adaptation |
+| A5 | `a5_lora_fmiseg_focal` | CXR-BERT + LoRA | FMISeg-adapted fusion | Dice/Focal | A3 with Focal only |
 
 A3 is an adaptation of the interaction principles described by FMISeg, not a
 claim to reproduce or rename its published dual-ConvNeXt architecture. It adds
@@ -36,9 +37,11 @@ interaction to BetterLViT decoder skips.
 - Primary result: test Dice and IoU at threshold 0.5.
 - Secondary result: select one threshold using validation only, freeze it, then
   evaluate the test set once.
+- Report both macro (mean per image, primary) and micro (global pixels) Dice/IoU
+  for validation and test.
 - The test set must not be used for checkpoint, architecture, loss or threshold
   selection.
-- B0 through A3 must finish before considering any combination such as
+- B0 through A3 must finish before considering a combination such as
   LoRA + FMISeg + Focal.
 
 ## Server commands

@@ -5,7 +5,8 @@ param(
         'a0_lora',
         'a1_lora_focal',
         'a2_lora_freq',
-        'a3_lora_fmiseg'
+        'a3_lora_fmiseg',
+        'a5_lora_fmiseg_focal'
     )]
     [string]$Experiment,
     [int]$Seed = 1219,

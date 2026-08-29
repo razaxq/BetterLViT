@@ -1,0 +1,37 @@
+{
+  "paper_id": "A5",
+  "experiment": "a5_lora_fmiseg_focal",
+  "description": "CXR-BERT LoRA + FMISeg-adapted decoder fusion + Dice/Focal",
+  "parent_commit": "1c0b7dae263b27860a3fd672431d6968f7beec0c",
+  "git_tag": "paper-a5-b16-seed1219-20260830",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 150,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": true,
+    "rank": 16,
+    "alpha": 32,
+    "dropout": 0.1
+  },
+  "decoder_fusion_mode": "fmiseg_adapter",
+  "loss": {
+    "name": "dice_focal",
+    "boundary_weight": 0.0
+  },
+  "automatic_test_evaluation": true,
+  "primary_test_threshold": 0.5,
+  "secondary_threshold_protocol": "select on validation only, then freeze for test",
+  "metric_aggregation": [
+    "macro_per_image",
+    "micro_global_pixels"
+  ]
+}
