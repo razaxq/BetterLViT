@@ -7,6 +7,8 @@ import random
 import sys
 from pathlib import Path
 
+os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
+
 import numpy as np
 import torch
 
@@ -28,6 +30,9 @@ def parse_args():
             "a2_lora_freq",
             "a3_lora_fmiseg",
             "a4_lora_freq_focal",
+            "a6_lora_tcsr",
+            "a7_lora_tcsr_freq",
+            "a8_lora_tcsr_freq_focal",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -154,6 +159,7 @@ def main():
         "paper_id": config.experiment_paper_id,
         "architecture_version": config.experiment_architecture_version,
         "decoder_fusion_mode": config.decoder_fusion_mode,
+        "tcsr_enabled": config.tcsr_enabled,
         "loss_name": config.loss_name,
         "text_use_lora": config.text_use_lora,
         "device": str(device),
