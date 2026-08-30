@@ -1,0 +1,47 @@
+{
+  "paper_id": "A6",
+  "experiment": "a6_tcsr",
+  "description": "Frozen CXR-BERT + TCSR V1 + original PLAM + Dice/BCE",
+  "parent_commit": "05e3d15e31cd35c92a8a0f37608495bd6c3232b4",
+  "git_tag": "paper-a6-frozen-b16-seed1219-20260830-restart",
+  "supersedes": {
+    "experiment": "a6_lora_tcsr",
+    "git_commit": "5aa4ceec87d49d891ae3955b4513302c096dd2c5",
+    "reason": "User removed LoRA; prior run terminated with status 143 and is not a formal result"
+  },
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 150,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": false,
+    "training": "frozen"
+  },
+  "tcsr": {
+    "enabled": true,
+    "architecture_version": "tcsr_v1",
+    "routing_dim": 32,
+    "max_residual_strength": 1.0,
+    "identity_gate_initialization": 0.0
+  },
+  "decoder_fusion_mode": "legacy_plam",
+  "loss": {
+    "name": "dice_bce",
+    "boundary_weight": 0.0
+  },
+  "automatic_test_evaluation": true,
+  "primary_test_threshold": 0.5,
+  "secondary_threshold_protocol": "select on validation only, then freeze for test",
+  "metric_aggregation": [
+    "macro_per_image",
+    "micro_global_pixels"
+  ]
+}
