@@ -57,7 +57,8 @@ cudnn_enabled = bool(int(os.environ.get('BETTERLVIT_CUDNN_ENABLED', '1')))
 miopen_enabled = cudnn_enabled
 
 # Pre-registered paper ablation. Boundary supervision is prohibited in every
-# profile; only LoRA, objective and decoder fusion are allowed to differ.
+# profile; only LoRA, objective, decoder fusion and the registered TCSR switch
+# are allowed to differ.
 boundary_loss_weight = 0.0
 boundary_kernel_size = 3
 loss_name = paper_experiment['loss_name']
@@ -69,6 +70,9 @@ focal_negative_weight = 0.5
 experiment_name = paper_experiment['name']
 experiment_paper_id = paper_experiment['paper_id']
 decoder_fusion_mode = paper_experiment['decoder_fusion_mode']
+tcsr_enabled = bool(paper_experiment.get('tcsr_enabled', False))
+tcsr_routing_dim = 32
+tcsr_max_residual_strength = 1.0
 experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
 experiment_output_name = experiment_name + '_evaluation.json'
@@ -144,6 +148,9 @@ def get_CTranS_config():
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
     config.decoder_fusion_mode = decoder_fusion_mode
+    config.tcsr_enabled = tcsr_enabled
+    config.tcsr_routing_dim = tcsr_routing_dim
+    config.tcsr_max_residual_strength = tcsr_max_residual_strength
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True

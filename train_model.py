@@ -100,6 +100,13 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'experiment_name': getattr(config, 'experiment_name', None),
         'experiment_paper_id': getattr(config, 'experiment_paper_id', None),
         'decoder_fusion_mode': getattr(config, 'decoder_fusion_mode', None),
+        'tcsr_enabled': bool(getattr(config, 'tcsr_enabled', False)),
+        'tcsr_routing_dim': int(getattr(config, 'tcsr_routing_dim', 0)),
+        'tcsr_max_residual_strength': float(getattr(
+            config,
+            'tcsr_max_residual_strength',
+            0.0,
+        )),
         'loss_name': getattr(config, 'loss_name', None),
         'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
         'seed': int(config.seed),
@@ -150,6 +157,16 @@ def compute_decoder_fusion_stats(model):
     return stats
 
 
+def compute_tcsr_stats(model):
+    """Snapshot validation-time cross-scale skip-routing diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    router = getattr(target, 'tcsr', None)
+    if router is None:
+        return {}
+    stats = getattr(router, '_last_stats', None)
+    return dict(stats) if stats else {}
+
+
 def build_optimizer_parameter_groups(model, weight_decay):
     """Keep residual gates and normalization parameters free of L2 decay."""
     decay_parameters = []
@@ -164,6 +181,7 @@ def build_optimizer_parameter_groups(model, weight_decay):
             parameter.ndim <= 1
             or name.endswith('.bias')
             or 'strength_logit' in normalized_name
+            or 'residual_gate' in normalized_name
             or 'norm' in normalized_name
         )
         if use_no_decay:
@@ -254,9 +272,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     logger.info(
-        'Controlled factors: decoder_fusion={}, LoRA={}, loss={}, seed={}'
+        'Controlled factors: decoder_fusion={}, TCSR={}, LoRA={}, loss={}, seed={}'
         .format(
             getattr(config, 'decoder_fusion_mode', '?'),
+            getattr(config, 'tcsr_enabled', False),
             getattr(config, 'text_use_lora', False),
             getattr(config, 'loss_name', '?'),
             config.seed,
@@ -507,6 +526,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'train_loss_components': train_loss_components,
             'val_loss_components': val_loss_components,
             'eppa_stats': compute_decoder_fusion_stats(model),
+            'tcsr_stats': compute_tcsr_stats(model),
         })
 
         # =============================================================
@@ -548,6 +568,24 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
         # Current validation snapshot is persisted in epoch_history while the
         # log stays compact instead of reprinting an O(epoch^2) stats table.
+        current_tcsr_stats = epoch_history[-1].get('tcsr_stats') or {}
+        if current_tcsr_stats:
+            logger.info(
+                'TCSR: scale_weights={}, sum={:.6f}, entropy={:.4f}; '
+                'spatial_means={}; gates={}'.format(
+                    [round(value, 4) for value in current_tcsr_stats[
+                        'scale_weights'
+                    ]],
+                    current_tcsr_stats['scale_weight_sum'],
+                    current_tcsr_stats['scale_entropy'],
+                    [round(value, 4) for value in current_tcsr_stats[
+                        'spatial_mask_means'
+                    ]],
+                    [round(value, 4) for value in current_tcsr_stats[
+                        'effective_gates'
+                    ]],
+                )
+            )
         current_eppa_stats = epoch_history[-1].get('eppa_stats') or {}
         if current_eppa_stats:
             logger.info(
