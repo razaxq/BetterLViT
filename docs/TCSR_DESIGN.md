@@ -43,11 +43,13 @@ Scale weights are initialized uniformly and always sum to one per sample.
 
 | Paper ID | Profile | TCSR | Decoder fusion | Loss | Question |
 |---|---|---:|---|---|---|
-| A6 | `a6_lora_tcsr` | yes | original PLAM | Dice/BCE | Does TCSR improve the LoRA baseline without EPPA? |
-| A7 | `a7_lora_tcsr_freq` | yes | FAM-EPPA V4-B | Dice/BCE | Are TCSR and EPPA complementary under the A2 objective? |
-| A8 | `a8_lora_tcsr_freq_focal` | yes | FAM-EPPA V4-B | Dice/Focal | Does the combined architecture retain the A4 objective gain? |
+| A6 | `a6_tcsr` | yes | original PLAM | Dice/BCE | Does TCSR improve the frozen-text B0 architecture? |
+| A7 | `a7_tcsr_freq` | yes | FAM-EPPA V4-B | Dice/BCE | Are TCSR and EPPA complementary without LoRA? |
+| A8 | `a8_tcsr_freq_focal` | yes | FAM-EPPA V4-B | Dice/Focal | Does the combined architecture benefit from Focal without LoRA? |
 
-Every formal run must receive its own full Git commit and immutable tag. The
+All three TCSR profiles freeze CXR-BERT (`text_use_lora=False`) while retaining
+its token embeddings as router input. Every formal run must receive its own
+full Git commit and immutable tag. The
 training protocol remains 150 epochs, batch size 16, seed 1219, deterministic
 execution, `drop_last=True`, boundary loss zero, and automatic validation-only
 threshold selection followed by Test evaluation.

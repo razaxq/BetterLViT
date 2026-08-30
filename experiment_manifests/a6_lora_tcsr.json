@@ -1,6 +1,8 @@
 {
   "paper_id": "A6",
   "experiment": "a6_lora_tcsr",
+  "status": "aborted_by_user_no_lora",
+  "superseded_by": "a6_tcsr",
   "description": "CXR-BERT LoRA + TCSR V1 + original PLAM + Dice/BCE",
   "parent_commit": "3ef8f68761a4e98a623370d0fb9b3edea21bdfe9",
   "git_tag": "paper-a6-b16-seed1219-20260830",

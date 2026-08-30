@@ -61,32 +61,32 @@ PAPER_EXPERIMENTS = {
         "loss_name": "dice_focal",
         "architecture_version": "paper_a4_lora_fam_eppa_v4b_dice_focal",
     },
-    "a6_lora_tcsr": {
+    "a6_tcsr": {
         "paper_id": "A6",
-        "description": "CXR-BERT LoRA + TCSR + original PLAM + Dice/BCE",
+        "description": "Frozen CXR-BERT + TCSR + original PLAM + Dice/BCE",
         "decoder_fusion_mode": "legacy_plam",
         "tcsr_enabled": True,
-        "text_use_lora": True,
+        "text_use_lora": False,
         "loss_name": "dice_bce",
-        "architecture_version": "paper_a6_lora_tcsr_v1_plam_dice_bce",
+        "architecture_version": "paper_a6_frozen_tcsr_v1_plam_dice_bce",
     },
-    "a7_lora_tcsr_freq": {
+    "a7_tcsr_freq": {
         "paper_id": "A7",
-        "description": "CXR-BERT LoRA + TCSR + FAM-EPPA V4-B + Dice/BCE",
+        "description": "Frozen CXR-BERT + TCSR + FAM-EPPA V4-B + Dice/BCE",
         "decoder_fusion_mode": "fam_eppa_v4b",
         "tcsr_enabled": True,
-        "text_use_lora": True,
+        "text_use_lora": False,
         "loss_name": "dice_bce",
-        "architecture_version": "paper_a7_lora_tcsr_v1_fam_eppa_v4b_dice_bce",
+        "architecture_version": "paper_a7_frozen_tcsr_v1_fam_eppa_v4b_dice_bce",
     },
-    "a8_lora_tcsr_freq_focal": {
+    "a8_tcsr_freq_focal": {
         "paper_id": "A8",
-        "description": "CXR-BERT LoRA + TCSR + FAM-EPPA V4-B + Dice/Focal",
+        "description": "Frozen CXR-BERT + TCSR + FAM-EPPA V4-B + Dice/Focal",
         "decoder_fusion_mode": "fam_eppa_v4b",
         "tcsr_enabled": True,
-        "text_use_lora": True,
+        "text_use_lora": False,
         "loss_name": "dice_focal",
-        "architecture_version": "paper_a8_lora_tcsr_v1_fam_eppa_v4b_dice_focal",
+        "architecture_version": "paper_a8_frozen_tcsr_v1_fam_eppa_v4b_dice_focal",
     },
 }
 
