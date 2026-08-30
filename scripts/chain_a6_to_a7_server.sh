@@ -97,7 +97,14 @@ if nvidia-smi --query-compute-apps=pid --format=csv,noheader,nounits | grep -Eq 
 fi
 
 [ "$(git -C "$a7_repo" rev-parse HEAD)" = "$expected_a7_commit" ] || fail_chain blocked_a7_commit_mismatch
-[ -z "$(git -C "$a7_repo" status --porcelain)" ] || fail_chain blocked_a7_worktree_dirty
+[ -L "$a7_repo/datasets" ] || fail_chain blocked_a7_datasets_symlink_missing
+[ "$(readlink -f "$a7_repo/datasets")" = "/root/autodl-tmp/datasets" ] || fail_chain blocked_a7_datasets_symlink_mismatch
+unexpected_dirty="$(
+  git -C "$a7_repo" status --porcelain --untracked-files=all \
+    | grep -v -E '^\?\? datasets/?$' \
+    || true
+)"
+[ -z "$unexpected_dirty" ] || fail_chain blocked_a7_worktree_dirty
 
 export HF_HOME="$hf_home"
 export HF_HUB_CACHE="$HF_HOME/hub"
