@@ -3,7 +3,11 @@
   "experiment": "a7_tcsr_freq",
   "description": "Frozen CXR-BERT + TCSR V1 + FAM-EPPA V4-B + Dice/BCE",
   "parent_commit": "01cd2f7501804f07e04ad4595de2fc9e2c511ede",
-  "git_tag": "paper-a7-frozen-b16-seed1219-20260831",
+  "git_tag": "paper-a7-frozen-b16-seed1219-20260831-restart",
+  "supersedes_prelaunch_commit": {
+    "git_commit": "067f7a77297fcf2d25fe304d799f637675f0396b",
+    "reason": "Handoff prelaunch stopped before GPU work because A6 BATCH_SIZE metadata contained a trailing CR; no A7 preflight or training was started"
+  },
   "dataset": "QaTa-COV19-v2",
   "split": {
     "train": 5716,

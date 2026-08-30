@@ -39,6 +39,13 @@ while [ ! -s "$a6_env" ]; do sleep 30; done
 
 # shellcheck disable=SC1090
 . "$a6_env"
+EXPERIMENT="${EXPERIMENT//$'\r'/}"
+GIT_COMMIT="${GIT_COMMIT//$'\r'/}"
+EPOCHS="${EPOCHS//$'\r'/}"
+BATCH_SIZE="${BATCH_SIZE//$'\r'/}"
+SEED="${SEED//$'\r'/}"
+TRAIN_STATUS="${TRAIN_STATUS//$'\r'/}"
+EVAL_STATUS="${EVAL_STATUS//$'\r'/}"
 [ "${EXPERIMENT:-}" = "a6_tcsr" ] || fail_chain blocked_a6_experiment_mismatch
 [ "${GIT_COMMIT:-}" = "$expected_a6_commit" ] || fail_chain blocked_a6_commit_mismatch
 [ "${EPOCHS:-}" = "150" ] || fail_chain blocked_a6_epochs_mismatch
@@ -142,6 +149,10 @@ a7_env="$a7_repo/runtime_logs/paper_experiment_current.env"
 [ -s "$a7_env" ] || fail_chain blocked_a7_runtime_metadata_missing
 # shellcheck disable=SC1090
 . "$a7_env"
+EXPERIMENT="${EXPERIMENT//$'\r'/}"
+GIT_COMMIT="${GIT_COMMIT//$'\r'/}"
+TRAIN_STATUS="${TRAIN_STATUS//$'\r'/}"
+EVAL_STATUS="${EVAL_STATUS//$'\r'/}"
 [ "${EXPERIMENT:-}" = "a7_tcsr_freq" ] || fail_chain blocked_a7_runtime_experiment_mismatch
 [ "${GIT_COMMIT:-}" = "$expected_a7_commit" ] || fail_chain blocked_a7_runtime_commit_mismatch
 [ "$(tr -d '\r\n ' <"$TRAIN_STATUS" 2>/dev/null || true)" = "running" ] || fail_chain blocked_a7_not_running
