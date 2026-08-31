@@ -1,0 +1,46 @@
+{
+  "paper_id": "A9",
+  "experiment": "a9_frozen_freq_focal",
+  "description": "Frozen CXR-BERT + FAM-EPPA V4-B frequency fusion + Dice/Focal",
+  "parent_commit": "a1d40d3a305a34abc0e96885fae68532007485b2",
+  "git_tag": "paper-a9-frozen-b16-seed1219-20260831",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 150,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": false,
+    "trainable": false
+  },
+  "decoder_fusion_mode": "fam_eppa_v4b",
+  "tcsr_enabled": false,
+  "loss": {
+    "name": "dice_focal",
+    "dice_weight": 0.5,
+    "focal_weight": 0.5,
+    "focal_gamma": 2.0,
+    "boundary_weight": 0.0
+  },
+  "automatic_test_evaluation": true,
+  "primary_test_threshold": 0.5,
+  "secondary_threshold_protocol": "select on validation only, then freeze for test",
+  "metric_aggregation": [
+    "macro_per_image",
+    "micro_global_pixels"
+  ],
+  "ablation_question": "Does LoRA improve A4 when architecture, objective and training protocol are held fixed?",
+  "paired_reference": {
+    "paper_id": "A4",
+    "experiment": "a4_lora_freq_focal",
+    "git_commit": "a1d40d3a305a34abc0e96885fae68532007485b2",
+    "only_intended_change": "text_use_lora true to false"
+  }
+}

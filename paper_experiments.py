@@ -55,6 +55,14 @@ PAPER_EXPERIMENTS = {
         "loss_name": "dice_focal",
         "architecture_version": "paper_a4_lora_fam_eppa_v4b_dice_focal",
     },
+    "a9_frozen_freq_focal": {
+        "paper_id": "A9",
+        "description": "Frozen CXR-BERT + FAM-EPPA V4-B frequency fusion + Dice/Focal",
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "text_use_lora": False,
+        "loss_name": "dice_focal",
+        "architecture_version": "paper_a9_frozen_fam_eppa_v4b_dice_focal",
+    },
 }
 
 

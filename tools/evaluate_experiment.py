@@ -44,6 +44,7 @@ def parse_args():
             "a2_lora_freq",
             "a3_lora_fmiseg",
             "a4_lora_freq_focal",
+            "a9_frozen_freq_focal",
         ),
         help="Paper ablation profile used to construct the model.",
     )

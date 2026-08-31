@@ -28,6 +28,7 @@ def parse_args():
             "a2_lora_freq",
             "a3_lora_fmiseg",
             "a4_lora_freq_focal",
+            "a9_frozen_freq_focal",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -86,9 +87,9 @@ def main():
             raise RuntimeError("LoRA profile has no trainable LoRA parameters.")
     else:
         if trainable_text:
-            raise RuntimeError("B0 text encoder is not fully frozen.")
+            raise RuntimeError("Frozen text encoder has trainable parameters.")
         if model.text_encoder.training:
-            raise RuntimeError("B0 frozen text encoder must remain in eval mode.")
+            raise RuntimeError("Frozen text encoder must remain in eval mode.")
 
     images = torch.randn(
         args.batch_size,

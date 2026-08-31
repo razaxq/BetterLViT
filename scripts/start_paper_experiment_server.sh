@@ -8,7 +8,7 @@ batch_size="${4:-16}"
 evaluation_batch_size="${BETTERLVIT_EVAL_BATCH_SIZE:-16}"
 
 case "$experiment" in
-  b0_baseline|a0_lora|a1_lora_focal|a2_lora_freq|a3_lora_fmiseg|a4_lora_freq_focal) ;;
+  b0_baseline|a0_lora|a1_lora_focal|a2_lora_freq|a3_lora_fmiseg|a4_lora_freq_focal|a9_frozen_freq_focal) ;;
   *) echo "Unsupported experiment: $experiment" >&2; exit 2 ;;
 esac
 
