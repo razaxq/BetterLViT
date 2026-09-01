@@ -47,7 +47,7 @@ def parse_args():
             "a9_frozen_freq_focal",
             "a6_tcsr",
             "a7_tcsr_freq",
-            "a8_tcsr_freq_focal",
+            "a8_tcsrv2_freq_focal",
         ),
         help="Paper ablation profile used to construct the model.",
     )
@@ -497,7 +497,13 @@ def main():
         "loss_name": getattr(config, "loss_name", "dice_bce"),
         "text_use_lora": bool(getattr(config, "text_use_lora", False)),
         "tcsr_enabled": bool(getattr(config, "tcsr_enabled", False)),
+        "tcsr_version": getattr(config, "tcsr_version", None),
         "tcsr_routing_dim": int(getattr(config, "tcsr_routing_dim", 0)),
+        "tcsr_initial_residual_strength": float(getattr(
+            config,
+            "tcsr_initial_residual_strength",
+            0.0,
+        )),
         "primary_reporting_threshold": 0.5,
         "metric_aggregation": {
             "macro": "mean of per-image Dice/IoU (primary)",

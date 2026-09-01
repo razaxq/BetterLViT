@@ -33,7 +33,7 @@ def parse_args():
             "a9_frozen_freq_focal",
             "a6_tcsr",
             "a7_tcsr_freq",
-            "a8_tcsr_freq_focal",
+            "a8_tcsrv2_freq_focal",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -161,6 +161,7 @@ def main():
         "architecture_version": config.experiment_architecture_version,
         "decoder_fusion_mode": config.decoder_fusion_mode,
         "tcsr_enabled": config.tcsr_enabled,
+        "tcsr_version": config.tcsr_version,
         "loss_name": config.loss_name,
         "text_use_lora": config.text_use_lora,
         "device": str(device),

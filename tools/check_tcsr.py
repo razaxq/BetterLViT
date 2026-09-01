@@ -15,12 +15,16 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from nets.tcsr import TextConditionedCrossScaleSkipRouter
+from nets.tcsr import (
+    TextConditionedCrossScaleSkipRouter,
+    TextConditionedCrossScaleSkipRouterV2,
+)
 
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--cuda", action="store_true")
+    parser.add_argument("--version", choices=("v1", "v2"), default="v2")
     parser.add_argument("--batch-size", type=int, default=2)
     parser.add_argument("--seed", type=int, default=1219)
     return parser.parse_args()
@@ -51,12 +55,21 @@ def main():
 
     channels = (8, 16, 32, 64)
     spatial_sizes = (32, 16, 8, 4)
-    router = TextConditionedCrossScaleSkipRouter(
-        channels,
-        text_dim=16,
-        routing_dim=8,
-        max_residual_strength=1.0,
-    ).to(device)
+    if args.version == "v2":
+        router = TextConditionedCrossScaleSkipRouterV2(
+            channels,
+            text_dim=16,
+            routing_dim=8,
+            max_residual_strength=0.5,
+            initial_residual_strength=0.05,
+        ).to(device)
+    else:
+        router = TextConditionedCrossScaleSkipRouter(
+            channels,
+            text_dim=16,
+            routing_dim=8,
+            max_residual_strength=1.0,
+        ).to(device)
     router.eval()
     skips = tuple(
         torch.randn(
@@ -86,36 +99,51 @@ def main():
     if args.batch_size > 1:
         text_mask[1].zero_()
 
-    identity_outputs = router(skips, text, text_mask=text_mask)
-    identity_error = max(
+    initial_outputs = router(skips, text, text_mask=text_mask)
+    initial_error = max(
         (output - source).abs().max().item()
-        for output, source in zip(identity_outputs, skips)
+        for output, source in zip(initial_outputs, skips)
     )
-    if identity_error != 0.0:
+    initial_rms_ratios = [
+        float(
+            ((output - source).square().mean().sqrt()
+             / source.square().mean().sqrt().clamp_min(1e-8)).item()
+        )
+        for output, source in zip(initial_outputs, skips)
+    ]
+    if args.version == "v1" and initial_error != 0.0:
         raise RuntimeError(
-            "Identity initialization changed a skip: {:.3e}.".format(
-                identity_error
+            "V1 identity initialization changed a skip: {:.3e}.".format(
+                initial_error
             )
         )
+    if args.version == "v2" and max(initial_rms_ratios) >= 0.08:
+        raise RuntimeError(
+            "V2 initial residual exceeded the 8% RMS safety bound: {}."
+            .format(initial_rms_ratios)
+        )
     if any(tuple(output.shape) != tuple(source.shape)
-           for output, source in zip(identity_outputs, skips)):
+           for output, source in zip(initial_outputs, skips)):
         raise RuntimeError("TCSR changed one or more skip shapes.")
-    if not all(torch.isfinite(output).all() for output in identity_outputs):
-        raise RuntimeError("Identity pass produced a non-finite output.")
+    if not all(torch.isfinite(output).all() for output in initial_outputs):
+        raise RuntimeError("Initial pass produced a non-finite output.")
     first_stats = dict(router._last_stats)
-    if abs(first_stats["scale_weight_sum"] - 1.0) > 1e-6:
+    if (
+        args.version == "v1"
+        and abs(first_stats["scale_weight_sum"] - 1.0) > 1e-6
+    ):
         raise RuntimeError("Scale routing weights do not sum to one.")
 
-    identity_loss = sum(output.square().mean() for output in identity_outputs)
-    identity_loss.backward()
-    require_nonzero_finite_gradient("residual_gate", router.residual_gate)
-
-    router.zero_grad(set_to_none=True)
-    for source in skips:
-        source.grad = None
-    text.grad = None
-    with torch.no_grad():
-        router.residual_gate.fill_(0.25)
+    if args.version == "v1":
+        identity_loss = sum(output.square().mean() for output in initial_outputs)
+        identity_loss.backward()
+        require_nonzero_finite_gradient("residual_gate", router.residual_gate)
+        router.zero_grad(set_to_none=True)
+        for source in skips:
+            source.grad = None
+        text.grad = None
+        with torch.no_grad():
+            router.residual_gate.fill_(0.25)
     active_outputs_1 = router(skips, text, text_mask=text_mask)
     active_outputs_2 = router(skips, text, text_mask=text_mask)
     deterministic_error = max(
@@ -130,18 +158,58 @@ def main():
         )
     active_loss = sum(output.square().mean() for output in active_outputs_1)
     active_loss.backward()
-    gradient_checks = {
-        "residual_gate": router.residual_gate,
-        "visual_projection": router.visual_projections[0][0].weight,
-        "text_key": router.text_key.weight,
-        "scale_score": router.scale_score_heads[0][-1].weight,
-        "channel_head": router.channel_heads[0].weight,
-        "spatial_head": router.spatial_local[0].weight,
-    }
+    if args.version == "v2":
+        gradient_checks = {
+            "residual_strength_logit": router.residual_strength_logit,
+            "visual_projection": router.visual_projections[0][0].weight,
+            "consensus_fusion": router.consensus_fusions[0][0].weight,
+            "text_key": router.text_key.weight,
+            "route_confidence": router.route_confidence_heads[0][-1].weight,
+            "film_head": router.film_heads[0].weight,
+            "channel_head": router.channel_heads[0].weight,
+            "spatial_head": router.spatial_heads[0].weight,
+            "message_head": router.message_heads[0][0].weight,
+        }
+    else:
+        gradient_checks = {
+            "residual_gate": router.residual_gate,
+            "visual_projection": router.visual_projections[0][0].weight,
+            "text_key": router.text_key.weight,
+            "scale_score": router.scale_score_heads[0][-1].weight,
+            "channel_head": router.channel_heads[0].weight,
+            "spatial_head": router.spatial_local[0].weight,
+        }
     for name, parameter in gradient_checks.items():
         require_nonzero_finite_gradient(name, parameter)
 
     active_stats = dict(router._last_stats)
+    with torch.no_grad():
+        shifted_text = text.detach().clone()
+        shifted_text[:, 0] = shifted_text[:, 0] + 0.25
+        text_shift_outputs = router(
+            tuple(source.detach() for source in skips),
+            shifted_text,
+            text_mask=text_mask,
+        )
+        text_conditioning_effect = max(
+            (left.detach() - right).abs().max().item()
+            for left, right in zip(active_outputs_1, text_shift_outputs)
+        )
+        changed_skips = [source.detach().clone() for source in skips]
+        changed_skips[0] = changed_skips[0] + 0.25
+        cross_scale_outputs = router(
+            tuple(changed_skips),
+            text.detach(),
+            text_mask=text_mask,
+        )
+        adjacent_scale_effect = (
+            active_outputs_1[1].detach() - cross_scale_outputs[1]
+        ).abs().max().item()
+    if args.version == "v2" and text_conditioning_effect == 0.0:
+        raise RuntimeError("V2 output is insensitive to text conditioning.")
+    if args.version == "v2" and adjacent_scale_effect == 0.0:
+        raise RuntimeError("V2 does not exchange adjacent-scale features.")
+
     result = {
         "status": "ok",
         "architecture_version": router.architecture_version,
@@ -150,13 +218,25 @@ def main():
         "parameter_count": sum(
             parameter.numel() for parameter in router.parameters()
         ),
-        "identity_max_abs_error": identity_error,
+        "initial_max_abs_delta": initial_error,
+        "initial_delta_rms_ratios": initial_rms_ratios,
         "deterministic_repeat_max_abs_error": deterministic_error,
-        "scale_weights": active_stats["scale_weights"],
-        "scale_weight_sum": active_stats["scale_weight_sum"],
-        "effective_gates": active_stats["effective_gates"],
+        "text_conditioning_max_abs_effect": text_conditioning_effect,
+        "adjacent_scale_max_abs_effect": adjacent_scale_effect,
         "all_required_gradients_nonzero": True,
     }
+    if args.version == "v2":
+        result.update({
+            "route_confidences": active_stats["route_confidences"],
+            "effective_strengths": active_stats["effective_strengths"],
+            "delta_rms_ratios": active_stats["delta_rms_ratios"],
+        })
+    else:
+        result.update({
+            "scale_weights": active_stats["scale_weights"],
+            "scale_weight_sum": active_stats["scale_weight_sum"],
+            "effective_gates": active_stats["effective_gates"],
+        })
     print(json.dumps(result, indent=2))
 
 

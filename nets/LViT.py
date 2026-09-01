@@ -6,7 +6,10 @@ from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
-from .tcsr import TextConditionedCrossScaleSkipRouter
+from .tcsr import (
+    TextConditionedCrossScaleSkipRouter,
+    TextConditionedCrossScaleSkipRouterV2,
+)
 
 
 def get_activation(activation_type):
@@ -187,6 +190,7 @@ class LViT(nn.Module):
             )
         in_channels = config.base_channel
         self.tcsr_enabled = bool(getattr(config, 'tcsr_enabled', False))
+        self.tcsr_version = str(getattr(config, 'tcsr_version', 'v1'))
         self.inc = ConvBatchNorm(n_channels, in_channels)
         self.downVit = VisionTransformer(config, vis, img_size=224, channel_num=64, patch_size=16, embed_dim=64, text_seq_len=text_seq_len)
         self.downVit1 = VisionTransformer(config, vis, img_size=112, channel_num=128, patch_size=8, embed_dim=128, text_seq_len=text_seq_len)
@@ -202,20 +206,37 @@ class LViT(nn.Module):
         self.down4 = DownBlock(in_channels * 8, in_channels * 8, nb_Conv=2)
         TEXT_DIM = 768
         if self.tcsr_enabled:
-            self.tcsr = TextConditionedCrossScaleSkipRouter(
-                skip_channels=(
+            router_types = {
+                'v1': TextConditionedCrossScaleSkipRouter,
+                'v2': TextConditionedCrossScaleSkipRouterV2,
+            }
+            if self.tcsr_version not in router_types:
+                raise ValueError(
+                    'Unsupported TCSR version: {}'.format(self.tcsr_version)
+                )
+            router_kwargs = {
+                'skip_channels': (
                     in_channels,
                     in_channels * 2,
                     in_channels * 4,
                     in_channels * 8,
                 ),
-                text_dim=TEXT_DIM,
-                routing_dim=getattr(config, 'tcsr_routing_dim', 32),
-                max_residual_strength=getattr(
+                'text_dim': TEXT_DIM,
+                'routing_dim': getattr(config, 'tcsr_routing_dim', 32),
+                'max_residual_strength': getattr(
                     config,
                     'tcsr_max_residual_strength',
                     1.0,
                 ),
+            }
+            if self.tcsr_version == 'v2':
+                router_kwargs['initial_residual_strength'] = getattr(
+                    config,
+                    'tcsr_initial_residual_strength',
+                    0.05,
+                )
+            self.tcsr = router_types[self.tcsr_version](
+                **router_kwargs
             )
         else:
             self.tcsr = None

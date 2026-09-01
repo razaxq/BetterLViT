@@ -101,10 +101,16 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'experiment_paper_id': getattr(config, 'experiment_paper_id', None),
         'decoder_fusion_mode': getattr(config, 'decoder_fusion_mode', None),
         'tcsr_enabled': bool(getattr(config, 'tcsr_enabled', False)),
+        'tcsr_version': getattr(config, 'tcsr_version', None),
         'tcsr_routing_dim': int(getattr(config, 'tcsr_routing_dim', 0)),
         'tcsr_max_residual_strength': float(getattr(
             config,
             'tcsr_max_residual_strength',
+            0.0,
+        )),
+        'tcsr_initial_residual_strength': float(getattr(
+            config,
+            'tcsr_initial_residual_strength',
             0.0,
         )),
         'loss_name': getattr(config, 'loss_name', None),
@@ -272,10 +278,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     logger.info(
-        'Controlled factors: decoder_fusion={}, TCSR={}, LoRA={}, loss={}, seed={}'
+        'Controlled factors: decoder_fusion={}, TCSR={} {}, LoRA={}, loss={}, seed={}'
         .format(
             getattr(config, 'decoder_fusion_mode', '?'),
             getattr(config, 'tcsr_enabled', False),
+            getattr(config, 'tcsr_version', 'v1'),
             getattr(config, 'text_use_lora', False),
             getattr(config, 'loss_name', '?'),
             config.seed,
@@ -570,22 +577,41 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # log stays compact instead of reprinting an O(epoch^2) stats table.
         current_tcsr_stats = epoch_history[-1].get('tcsr_stats') or {}
         if current_tcsr_stats:
-            logger.info(
-                'TCSR: scale_weights={}, sum={:.6f}, entropy={:.4f}; '
-                'spatial_means={}; gates={}'.format(
-                    [round(value, 4) for value in current_tcsr_stats[
-                        'scale_weights'
-                    ]],
-                    current_tcsr_stats['scale_weight_sum'],
-                    current_tcsr_stats['scale_entropy'],
-                    [round(value, 4) for value in current_tcsr_stats[
-                        'spatial_mask_means'
-                    ]],
-                    [round(value, 4) for value in current_tcsr_stats[
-                        'effective_gates'
-                    ]],
+            if current_tcsr_stats.get('architecture_version') == 'tcsr_v2':
+                logger.info(
+                    'TCSR V2: confidences={}; spatial_means={}; '
+                    'strengths={}; delta_rms_ratios={}'.format(
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'route_confidences'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'spatial_mask_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'effective_strengths'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'delta_rms_ratios'
+                        ]],
+                    )
                 )
-            )
+            else:
+                logger.info(
+                    'TCSR V1: scale_weights={}, sum={:.6f}, entropy={:.4f}; '
+                    'spatial_means={}; gates={}'.format(
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'scale_weights'
+                        ]],
+                        current_tcsr_stats['scale_weight_sum'],
+                        current_tcsr_stats['scale_entropy'],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'spatial_mask_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'effective_gates'
+                        ]],
+                    )
+                )
         current_eppa_stats = epoch_history[-1].get('eppa_stats') or {}
         if current_eppa_stats:
             logger.info(

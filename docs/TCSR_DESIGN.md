@@ -1,5 +1,10 @@
 # Text-Conditioned Cross-Scale Skip Router (TCSR)
 
+> This document describes V1, retained for A6/A7 reproducibility.  Its strict
+> B0/A6 comparison was negative, so new development proceeds as TCSR V2 in
+> `docs/TCSRV2_DESIGN.md`; V1 results must not be presented as a positive
+> contribution.
+
 ## Purpose
 
 TCSR is the second architecture contribution in BetterLViT. It is independent
@@ -43,9 +48,12 @@ Scale weights are initialized uniformly and always sum to one per sample.
 
 | Paper ID | Profile | TCSR | Decoder fusion | Loss | Question |
 |---|---|---:|---|---|---|
-| A6 | `a6_lora_tcsr` | yes | original PLAM | Dice/BCE | Does TCSR improve the LoRA baseline without EPPA? |
-| A7 | `a7_lora_tcsr_freq` | yes | FAM-EPPA V4-B | Dice/BCE | Are TCSR and EPPA complementary under the A2 objective? |
-| A8 | `a8_lora_tcsr_freq_focal` | yes | FAM-EPPA V4-B | Dice/Focal | Does the combined architecture retain the A4 objective gain? |
+| A6 | `a6_tcsr` | V1 | original PLAM | Dice/BCE | Does V1 improve frozen-text B0? |
+| A7 | `a7_tcsr_freq` | V1 | FAM-EPPA V4-B | Dice/BCE | Are V1 and EPPA complementary? |
+
+The original V1 A8 profile was never formally run.  The A8 identifier is now
+reserved for `a8_tcsrv2_freq_focal`, the strict TCSR V2 comparison documented
+in `TCSRV2_DESIGN.md`.
 
 Every formal run must receive its own full Git commit and immutable tag. The
 training protocol remains 150 epochs, batch size 16, seed 1219, deterministic

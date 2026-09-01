@@ -1,0 +1,85 @@
+{
+  "experiment": "a8_tcsrv2_freq_focal",
+  "paper_id": "A8",
+  "status": "development_preflight_passed",
+  "description": "Frozen CXR-BERT + TCSR V2 + FAM-EPPA V4-B + Dice/Focal",
+  "comparison_parent": {
+    "experiment": "a9_frozen_freq_focal",
+    "git_commit": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+    "reason": "strict one-factor control with TCSR disabled"
+  },
+  "protocol": {
+    "epochs": 150,
+    "batch_size": 16,
+    "seed": 1219,
+    "train_drop_last": true,
+    "deterministic": true,
+    "automatic_test_evaluation": true,
+    "primary_threshold": 0.5,
+    "secondary_threshold": "selected_on_validation_only",
+    "primary_aggregation": "macro"
+  },
+  "controlled_factors": {
+    "text_encoder": "microsoft/BiomedVLP-CXR-BERT-specialized",
+    "text_use_lora": false,
+    "decoder_fusion_mode": "fam_eppa_v4b",
+    "loss_name": "dice_focal",
+    "boundary_loss_weight": 0.0
+  },
+  "tcsr": {
+    "enabled": true,
+    "architecture_version": "tcsr_v2",
+    "routing_dim": 32,
+    "max_residual_strength": 0.5,
+    "initial_residual_strength": 0.05,
+    "scale_gate": "independent_sigmoid",
+    "cross_scale_exchange": "adjacent spatial consensus",
+    "text_conditioning": "masked token attention plus bounded FiLM"
+  },
+  "provenance": {
+    "development_base_git_commit": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+    "formal_git_commit": null,
+    "formal_tag": null,
+    "formal_session": null
+  },
+  "preflight": {
+    "date": "2026-09-01",
+    "module_cpu": {
+      "status": "ok",
+      "batch_size": 2,
+      "initial_delta_rms_ratios": [
+        0.0143557722,
+        0.0136097297,
+        0.0140518826,
+        0.0138285989
+      ],
+      "deterministic_repeat_max_abs_error": 0.0,
+      "all_required_gradients_nonzero": true
+    },
+    "module_cuda": {
+      "status": "ok",
+      "batch_size": 16,
+      "initial_delta_rms_ratios": [
+        0.0141620403,
+        0.0140034240,
+        0.0136105707,
+        0.0136979911
+      ],
+      "deterministic_repeat_max_abs_error": 0.0,
+      "text_conditioning_max_abs_effect": 0.0105905533,
+      "adjacent_scale_max_abs_effect": 0.0045673847,
+      "all_required_gradients_nonzero": true
+    },
+    "full_model_cuda": {
+      "status": "ok",
+      "repeats": 2,
+      "batch_size": 16,
+      "loss_each_repeat": 0.2595914900,
+      "max_memory_allocated_gb": 17.723,
+      "max_memory_reserved_gb": 19.051,
+      "trainable_text_tensors": 0,
+      "lora_parameter_tensors": 0,
+      "trainable_tensors_with_gradient": 509
+    }
+  }
+}

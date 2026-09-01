@@ -71,8 +71,16 @@ experiment_name = paper_experiment['name']
 experiment_paper_id = paper_experiment['paper_id']
 decoder_fusion_mode = paper_experiment['decoder_fusion_mode']
 tcsr_enabled = bool(paper_experiment.get('tcsr_enabled', False))
-tcsr_routing_dim = 32
-tcsr_max_residual_strength = 1.0
+tcsr_version = str(paper_experiment.get('tcsr_version', 'v1'))
+tcsr_routing_dim = int(paper_experiment.get('tcsr_routing_dim', 32))
+tcsr_max_residual_strength = float(paper_experiment.get(
+    'tcsr_max_residual_strength',
+    1.0,
+))
+tcsr_initial_residual_strength = float(paper_experiment.get(
+    'tcsr_initial_residual_strength',
+    0.05,
+))
 experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
 experiment_output_name = experiment_name + '_evaluation.json'
@@ -149,8 +157,10 @@ def get_CTranS_config():
     config.n_classes = 1
     config.decoder_fusion_mode = decoder_fusion_mode
     config.tcsr_enabled = tcsr_enabled
+    config.tcsr_version = tcsr_version
     config.tcsr_routing_dim = tcsr_routing_dim
     config.tcsr_max_residual_strength = tcsr_max_residual_strength
+    config.tcsr_initial_residual_strength = tcsr_initial_residual_strength
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
