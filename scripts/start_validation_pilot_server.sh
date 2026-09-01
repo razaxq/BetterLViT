@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-experiment="${1:-p1_tcsrv21_boundary_router}"
+experiment="${1:-p2_tcsrv22_single_hop_boundary}"
 seed="${2:-1219}"
 epochs="${3:-40}"
 batch_size="${4:-16}"
 
-if [ "$experiment" != "p1_tcsrv21_boundary_router" ]; then
+if [ "$experiment" != "p1_tcsrv21_boundary_router" ] \
+  && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ]; then
   echo "Unsupported validation pilot: $experiment" >&2
   exit 2
 fi

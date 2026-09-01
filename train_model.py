@@ -675,6 +675,34 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         current_tcsr_stats['regularization_loss'],
                     )
                 )
+            elif current_tcsr_stats.get('architecture_version') == (
+                'tcsr_v2_2_single_hop_boundary_focused'
+            ):
+                logger.info(
+                    'TCSR V2.2: routes={}; gates={}; closed={}; '
+                    'spatial_means={}; boundary_focus={}; strengths={}; '
+                    'delta_rms_ratios={}'.format(
+                        current_tcsr_stats['route_names'],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'route_gate_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'route_gate_closed_fractions'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'spatial_mask_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'boundary_focus_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'effective_strengths'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'delta_rms_ratios'
+                        ]],
+                    )
+                )
             else:
                 logger.info(
                     'TCSR V1: scale_weights={}, sum={:.6f}, entropy={:.4f}; '

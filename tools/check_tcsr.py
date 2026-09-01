@@ -17,6 +17,7 @@ if str(REPO_ROOT) not in sys.path:
 
 from nets.tcsr import (
     BoundaryPreservingAsymmetricTextGuidedRouter,
+    SingleHopBoundaryFocusedTextGuidedRouter,
     TextConditionedCrossScaleSkipRouter,
     TextConditionedCrossScaleSkipRouterV2,
 )
@@ -27,7 +28,7 @@ def parse_args():
     parser.add_argument("--cuda", action="store_true")
     parser.add_argument(
         "--version",
-        choices=("v1", "v2", "v2.1"),
+        choices=("v1", "v2", "v2.1", "v2.2"),
         default="v2",
     )
     parser.add_argument("--batch-size", type=int, default=2)
@@ -60,7 +61,16 @@ def main():
 
     channels = (8, 16, 32, 64)
     spatial_sizes = (32, 16, 8, 4)
-    if args.version == "v2.1":
+    if args.version == "v2.2":
+        router = SingleHopBoundaryFocusedTextGuidedRouter(
+            channels,
+            text_dim=16,
+            routing_dim=8,
+            max_residual_strength=0.08,
+            initial_residual_strength=0.04,
+            initial_gate_probability=0.25,
+        ).to(device)
+    elif args.version == "v2.1":
         router = BoundaryPreservingAsymmetricTextGuidedRouter(
             channels,
             text_dim=16,
@@ -134,7 +144,7 @@ def main():
                 initial_error
             )
         )
-    if args.version in ("v2", "v2.1") and max(initial_rms_ratios) >= 0.08:
+    if args.version in ("v2", "v2.1", "v2.2") and max(initial_rms_ratios) >= 0.08:
         raise RuntimeError(
             "V2 initial residual exceeded the 8% RMS safety bound: {}."
             .format(initial_rms_ratios)
@@ -200,6 +210,19 @@ def main():
             "spatial_head": router.spatial_heads[0].weight,
             "message_head": router.message_heads[0].weight,
         }
+    elif args.version == "v2.2":
+        gradient_checks = {
+            "residual_strength_logit": router.residual_strength_logit,
+            "source_projection": router.source_projection[0].weight,
+            "target_projection": router.target_projection[0].weight,
+            "route_fusion": router.route_fusion[0].weight,
+            "text_key": router.text_key.weight,
+            "route_confidence": router.route_confidence[-1].weight,
+            "film_head": router.film_head.weight,
+            "channel_head": router.channel_head.weight,
+            "spatial_head": router.spatial_head.weight,
+            "message_head": router.message_head.weight,
+        }
     else:
         gradient_checks = {
             "residual_gate": router.residual_gate,
@@ -226,8 +249,12 @@ def main():
             for left, right in zip(active_outputs_1, text_shift_outputs)
         )
         changed_skips = [source.detach().clone() for source in skips]
-        changed_source_index = 3 if args.version == "v2.1" else 0
-        changed_target_index = 2 if args.version == "v2.1" else 1
+        if args.version == "v2.1":
+            changed_source_index, changed_target_index = 3, 2
+        elif args.version == "v2.2":
+            changed_source_index, changed_target_index = 2, 1
+        else:
+            changed_source_index, changed_target_index = 0, 1
         changed_skips[changed_source_index] = (
             changed_skips[changed_source_index] + 0.25
         )
@@ -240,9 +267,9 @@ def main():
             active_outputs_1[changed_target_index].detach()
             - cross_scale_outputs[changed_target_index]
         ).abs().max().item()
-    if args.version in ("v2", "v2.1") and text_conditioning_effect == 0.0:
+    if args.version in ("v2", "v2.1", "v2.2") and text_conditioning_effect == 0.0:
         raise RuntimeError("V2 output is insensitive to text conditioning.")
-    if args.version in ("v2", "v2.1") and adjacent_scale_effect == 0.0:
+    if args.version in ("v2", "v2.1", "v2.2") and adjacent_scale_effect == 0.0:
         raise RuntimeError("V2 does not exchange adjacent-scale features.")
     if args.version == "v2.1":
         identity_error = max(
@@ -257,6 +284,20 @@ def main():
         regularization = router.regularization_loss()
         if not torch.isfinite(regularization):
             raise RuntimeError("V2.1 regularization is non-finite.")
+    elif args.version == "v2.2":
+        identity_error = max(
+            (active_outputs_1[index] - skips[index]).abs().max().item()
+            for index in (0, 2, 3)
+        )
+        if identity_error != 0.0:
+            raise RuntimeError(
+                "V2.2 changed protected identity scales: {:.3e}.".format(
+                    identity_error
+                )
+            )
+        regularization = router.regularization_loss()
+        if not torch.isfinite(regularization) or regularization.item() != 0.0:
+            raise RuntimeError("V2.2 must not apply gate regularization.")
 
     result = {
         "status": "ok",
@@ -286,6 +327,19 @@ def main():
             "route_gate_closed_fractions": active_stats[
                 "route_gate_closed_fractions"
             ],
+            "effective_strengths": active_stats["effective_strengths"],
+            "delta_rms_ratios": active_stats["delta_rms_ratios"],
+            "identity_scales": active_stats["identity_scales"],
+            "regularization_loss": active_stats["regularization_loss"],
+        })
+    elif args.version == "v2.2":
+        result.update({
+            "route_names": active_stats["route_names"],
+            "route_gate_means": active_stats["route_gate_means"],
+            "route_gate_closed_fractions": active_stats[
+                "route_gate_closed_fractions"
+            ],
+            "boundary_focus_means": active_stats["boundary_focus_means"],
             "effective_strengths": active_stats["effective_strengths"],
             "delta_rms_ratios": active_stats["delta_rms_ratios"],
             "identity_scales": active_stats["identity_scales"],

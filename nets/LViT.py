@@ -8,6 +8,7 @@ from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
 from .tcsr import (
     BoundaryPreservingAsymmetricTextGuidedRouter,
+    SingleHopBoundaryFocusedTextGuidedRouter,
     TextConditionedCrossScaleSkipRouter,
     TextConditionedCrossScaleSkipRouterV2,
 )
@@ -211,6 +212,7 @@ class LViT(nn.Module):
                 'v1': TextConditionedCrossScaleSkipRouter,
                 'v2': TextConditionedCrossScaleSkipRouterV2,
                 'v2.1': BoundaryPreservingAsymmetricTextGuidedRouter,
+                'v2.2': SingleHopBoundaryFocusedTextGuidedRouter,
             }
             if self.tcsr_version not in router_types:
                 raise ValueError(
@@ -231,7 +233,7 @@ class LViT(nn.Module):
                     1.0,
                 ),
             }
-            if self.tcsr_version in ('v2', 'v2.1'):
+            if self.tcsr_version in ('v2', 'v2.1', 'v2.2'):
                 router_kwargs['initial_residual_strength'] = getattr(
                     config,
                     'tcsr_initial_residual_strength',
@@ -260,6 +262,12 @@ class LViT(nn.Module):
                         0.005,
                     ),
                 })
+            if self.tcsr_version == 'v2.2':
+                router_kwargs['initial_gate_probability'] = getattr(
+                    config,
+                    'tcsr_initial_gate_probability',
+                    0.25,
+                )
             self.tcsr = router_types[self.tcsr_version](
                 **router_kwargs
             )

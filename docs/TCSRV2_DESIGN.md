@@ -112,3 +112,28 @@ diagnostics only.
 - FiLM motivates feature-wise conditioning from text:
   https://arxiv.org/abs/1709.07871
 
+## V2.1 pilot finding and V2.2 response
+
+The validation-only P1 run completed 40 epochs but failed its preregistered
+screen.  Against the converged A9 control, validation macro Dice changed by
+`-0.006308` (paired bootstrap 95% CI `[-0.009483, -0.003038]`), while the
+smallest-lesion quartile changed by `-0.013219`.  At epoch 40, the comparison
+against A9's matched epoch was only `+0.001409`, below the required `+0.002`.
+The learned routes were also asymmetric in the wrong way: `x4 -> x3` produced
+about 7.1% RMS residual while `x3 -> x2` became exactly inactive.
+
+P2 therefore tests TCSR V2.2 as a narrower causal correction:
+
+- expose only `x3 -> x2`; `x1`, `x3`, and `x4` are exact identities;
+- remove the global activation budget and the gate-binarization loss;
+- replace the hard-sigmoid with a smooth independent sigmoid confidence;
+- multiply the spatial mask by a deterministic transition map derived from
+  the target x2 feature, focusing the semantic message near local structure;
+- reduce residual strength from 0.15/0.08 max/initial to 0.08/0.04.
+
+P2 remains a 40-epoch validation-only pilot with Test access disabled.  It
+must improve matched-control validation macro Dice by at least 0.20 percentage
+points, avoid degradation in the smallest-lesion quartile, preserve protected
+skips exactly, avoid gate collapse, and avoid a widening train-validation gap.
+Failure stops the branch without Test evaluation; success advances only to an
+80-epoch validation-only confirmation.

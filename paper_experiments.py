@@ -127,6 +127,27 @@ PAPER_EXPERIMENTS = {
             "fam_eppa_v4b_dice_focal"
         ),
     },
+    "p2_tcsrv22_single_hop_boundary": {
+        "paper_id": "P2",
+        "description": (
+            "Frozen CXR-BERT + single-hop boundary-focused TCSR V2.2 "
+            "+ FAM-EPPA V4-B + Dice/Focal"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "tcsr_enabled": True,
+        "tcsr_version": "v2.2",
+        "tcsr_routing_dim": 32,
+        "tcsr_max_residual_strength": 0.08,
+        "tcsr_initial_residual_strength": 0.04,
+        "tcsr_initial_gate_probability": 0.25,
+        "tcsr_router_lr_scale": 0.5,
+        "text_use_lora": False,
+        "loss_name": "dice_focal",
+        "architecture_version": (
+            "pilot_p2_frozen_tcsr_v2_2_single_hop_boundary_focused_"
+            "fam_eppa_v4b_dice_focal"
+        ),
+    },
 }
 
 

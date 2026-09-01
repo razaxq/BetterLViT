@@ -1,0 +1,62 @@
+{
+  "experiment": "p2_tcsrv22_single_hop_boundary",
+  "paper_id": "P2",
+  "status": "validation_pilot_preflight_pending",
+  "description": "Frozen CXR-BERT + single-hop boundary-focused TCSR V2.2 + FAM-EPPA V4-B + Dice/Focal",
+  "comparison_parent": {
+    "experiment": "a9_frozen_freq_focal",
+    "git_commit": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+    "reason": "strict control with the same frozen text encoder, decoder fusion and loss"
+  },
+  "diagnostic_parent": {
+    "experiment": "p1_tcsrv21_boundary_router",
+    "git_commit": "e00138529f5ce5ac3996f58e54f764274789081e",
+    "finding": "x4_to_x3 dominated while x3_to_x2 collapsed; validation Dice and smallest-lesion quartile both failed acceptance"
+  },
+  "protocol": {
+    "epochs": 40,
+    "batch_size": 16,
+    "seed": 1219,
+    "train_drop_last": true,
+    "deterministic": true,
+    "automatic_test_evaluation": false,
+    "test_split_allowed": false,
+    "primary_threshold": 0.5,
+    "primary_aggregation": "macro"
+  },
+  "controlled_factors": {
+    "text_encoder": "microsoft/BiomedVLP-CXR-BERT-specialized",
+    "text_use_lora": false,
+    "decoder_fusion_mode": "fam_eppa_v4b",
+    "loss_name": "dice_focal",
+    "boundary_loss_weight": 0.0
+  },
+  "tcsr": {
+    "enabled": true,
+    "architecture_version": "tcsr_v2.2",
+    "routing_dim": 32,
+    "route": "x3_to_x2_only",
+    "identity_scales": ["x1", "x3", "x4"],
+    "max_residual_strength": 0.08,
+    "initial_residual_strength": 0.04,
+    "initial_gate_probability": 0.25,
+    "gate": "smooth_independent_sigmoid",
+    "gate_regularization": "none",
+    "spatial_focus": "parameter_free_target_feature_transition_map",
+    "router_lr_scale": 0.5
+  },
+  "acceptance": {
+    "overall_validation_macro_dice_delta_min": 0.002,
+    "smallest_lesion_quartile_non_degradation": true,
+    "protected_scales_exact_identity": true,
+    "route_gate_not_collapsed": true,
+    "train_validation_gap_not_persistently_widening": true,
+    "failure_action": "stop_without_test",
+    "success_action": "extend_to_80_epoch_validation_only"
+  },
+  "provenance": {
+    "formal_git_commit": "recorded_by_runtime_from_the_immutable_pilot_commit",
+    "formal_tag": "assigned_after_cuda_preflight",
+    "required_runtime_provenance": "GIT_COMMIT and checkpoint source_git_commit must equal the pilot commit"
+  }
+}
