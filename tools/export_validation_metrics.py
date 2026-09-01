@@ -33,6 +33,7 @@ ALLOWED_EXPERIMENTS = (
     "a9_frozen_freq_focal",
     "p1_tcsrv21_boundary_router",
     "p2_tcsrv22_single_hop_boundary",
+    "p3_tcsrv23_calibrated_gate",
 )
 
 

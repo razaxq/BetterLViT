@@ -36,6 +36,7 @@ def parse_args():
             "a8_tcsrv2_freq_focal",
             "p1_tcsrv21_boundary_router",
             "p2_tcsrv22_single_hop_boundary",
+            "p3_tcsrv23_calibrated_gate",
         ),
     )
     parser.add_argument("--cpu", action="store_true")

@@ -101,6 +101,21 @@ tcsr_router_lr_scale = float(paper_experiment.get(
     'tcsr_router_lr_scale',
     1.0,
 ))
+tcsr_gate_min_probability = float(paper_experiment.get(
+    'tcsr_gate_min_probability', 0.0,
+))
+tcsr_gate_max_probability = float(paper_experiment.get(
+    'tcsr_gate_max_probability', 1.0,
+))
+tcsr_gate_target_min = float(paper_experiment.get(
+    'tcsr_gate_target_min', 0.0,
+))
+tcsr_gate_target_max = float(paper_experiment.get(
+    'tcsr_gate_target_max', 1.0,
+))
+tcsr_gate_calibration_weight = float(paper_experiment.get(
+    'tcsr_gate_calibration_weight', 0.0,
+))
 experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
 experiment_output_name = experiment_name + '_evaluation.json'
@@ -185,6 +200,11 @@ def get_CTranS_config():
     config.tcsr_gate_activation_budget = tcsr_gate_activation_budget
     config.tcsr_gate_budget_weight = tcsr_gate_budget_weight
     config.tcsr_gate_binary_weight = tcsr_gate_binary_weight
+    config.tcsr_gate_min_probability = tcsr_gate_min_probability
+    config.tcsr_gate_max_probability = tcsr_gate_max_probability
+    config.tcsr_gate_target_min = tcsr_gate_target_min
+    config.tcsr_gate_target_max = tcsr_gate_target_max
+    config.tcsr_gate_calibration_weight = tcsr_gate_calibration_weight
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True

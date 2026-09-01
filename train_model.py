@@ -675,13 +675,15 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         current_tcsr_stats['regularization_loss'],
                     )
                 )
-            elif current_tcsr_stats.get('architecture_version') == (
-                'tcsr_v2_2_single_hop_boundary_focused'
+            elif current_tcsr_stats.get('architecture_version') in (
+                'tcsr_v2_2_single_hop_boundary_focused',
+                'tcsr_v2_3_calibrated_single_hop_gate',
             ):
                 logger.info(
-                    'TCSR V2.2: routes={}; gates={}; closed={}; '
+                    'TCSR single-hop: version={}; routes={}; gates={}; closed={}; '
                     'spatial_means={}; boundary_focus={}; strengths={}; '
-                    'delta_rms_ratios={}'.format(
+                    'delta_rms_ratios={}; reg={:.6f}'.format(
+                        current_tcsr_stats['architecture_version'],
                         current_tcsr_stats['route_names'],
                         [round(value, 4) for value in current_tcsr_stats[
                             'route_gate_means'
@@ -701,6 +703,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         [round(value, 4) for value in current_tcsr_stats[
                             'delta_rms_ratios'
                         ]],
+                        current_tcsr_stats['regularization_loss'],
                     )
                 )
             else:

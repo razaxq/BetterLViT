@@ -148,6 +148,32 @@ PAPER_EXPERIMENTS = {
             "fam_eppa_v4b_dice_focal"
         ),
     },
+    "p3_tcsrv23_calibrated_gate": {
+        "paper_id": "P3",
+        "description": (
+            "Frozen CXR-BERT + calibrated-gate single-hop boundary-focused "
+            "TCSR V2.3 + FAM-EPPA V4-B + Dice/Focal"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "tcsr_enabled": True,
+        "tcsr_version": "v2.3",
+        "tcsr_routing_dim": 32,
+        "tcsr_max_residual_strength": 0.08,
+        "tcsr_initial_residual_strength": 0.04,
+        "tcsr_initial_gate_probability": 0.25,
+        "tcsr_gate_min_probability": 0.05,
+        "tcsr_gate_max_probability": 0.50,
+        "tcsr_gate_target_min": 0.15,
+        "tcsr_gate_target_max": 0.35,
+        "tcsr_gate_calibration_weight": 0.01,
+        "tcsr_router_lr_scale": 0.5,
+        "text_use_lora": False,
+        "loss_name": "dice_focal",
+        "architecture_version": (
+            "pilot_p3_frozen_tcsr_v2_3_calibrated_gate_"
+            "fam_eppa_v4b_dice_focal"
+        ),
+    },
 }
 
 

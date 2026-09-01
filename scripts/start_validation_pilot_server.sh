@@ -7,7 +7,8 @@ epochs="${3:-40}"
 batch_size="${4:-16}"
 
 if [ "$experiment" != "p1_tcsrv21_boundary_router" ] \
-  && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ]; then
+  && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ] \
+  && [ "$experiment" != "p3_tcsrv23_calibrated_gate" ]; then
   echo "Unsupported validation pilot: $experiment" >&2
   exit 2
 fi

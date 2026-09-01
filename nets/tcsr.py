@@ -1005,6 +1005,11 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
         max_residual_strength=0.08,
         initial_residual_strength=0.04,
         initial_gate_probability=0.25,
+        gate_min_probability=0.0,
+        gate_max_probability=1.0,
+        gate_target_min=0.0,
+        gate_target_max=1.0,
+        gate_calibration_weight=0.0,
     ):
         super().__init__()
         self.skip_channels = tuple(int(value) for value in skip_channels)
@@ -1014,6 +1019,11 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
         self.max_residual_strength = float(max_residual_strength)
         self.initial_residual_strength = float(initial_residual_strength)
         self.initial_gate_probability = float(initial_gate_probability)
+        self.gate_min_probability = float(gate_min_probability)
+        self.gate_max_probability = float(gate_max_probability)
+        self.gate_target_min = float(gate_target_min)
+        self.gate_target_max = float(gate_target_max)
+        self.gate_calibration_weight = float(gate_calibration_weight)
         if self.num_scales != 4:
             raise ValueError("TCSR V2.2 requires exactly four skip scales.")
         if self.routing_dim <= 0:
@@ -1023,8 +1033,25 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
                 "initial_residual_strength must be between zero and the "
                 "maximum residual strength."
             )
-        if not 0 < self.initial_gate_probability < 1:
-            raise ValueError("initial_gate_probability must be in (0, 1).")
+        if not 0 <= self.gate_min_probability < self.gate_max_probability <= 1:
+            raise ValueError("gate probability bounds must satisfy 0 <= min < max <= 1.")
+        if not (
+            self.gate_min_probability
+            < self.initial_gate_probability
+            < self.gate_max_probability
+        ):
+            raise ValueError(
+                "initial_gate_probability must be strictly inside the gate bounds."
+            )
+        if not (
+            self.gate_min_probability
+            <= self.gate_target_min
+            <= self.gate_target_max
+            <= self.gate_max_probability
+        ):
+            raise ValueError("gate target band must lie inside the gate bounds.")
+        if self.gate_calibration_weight < 0:
+            raise ValueError("gate_calibration_weight must be non-negative.")
 
         source_channels = self.skip_channels[self.source_index]
         target_channels = self.skip_channels[self.target_index]
@@ -1065,10 +1092,11 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
             nn.SiLU(),
             nn.Linear(score_width, 1),
         )
-        gate_bias = math.log(
-            self.initial_gate_probability
-            / (1.0 - self.initial_gate_probability)
+        gate_fraction = (
+            (self.initial_gate_probability - self.gate_min_probability)
+            / (self.gate_max_probability - self.gate_min_probability)
         )
+        gate_bias = math.log(gate_fraction / (1.0 - gate_fraction))
         nn.init.normal_(self.route_confidence[-1].weight, mean=0.0, std=0.01)
         nn.init.constant_(self.route_confidence[-1].bias, gate_bias)
 
@@ -1103,6 +1131,7 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
             torch.tensor(initial_logit, dtype=torch.float32)
         )
         self._last_stats = None
+        self._regularization_loss = self.residual_strength_logit * 0.0
 
     @staticmethod
     def _validated_text_mask(text, text_mask):
@@ -1139,8 +1168,7 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
         return 0.5 + 0.5 * torch.sigmoid(normalized - 1.0)
 
     def regularization_loss(self):
-        # V2.2 deliberately removes P1's global budget and binarization terms.
-        return self.residual_strength_logit * 0.0
+        return self._regularization_loss
 
     def forward(self, skips, text, text_mask=None):
         if len(skips) != self.num_scales:
@@ -1204,7 +1232,16 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
             (descriptor, attended, descriptor * attended),
             dim=1,
         )
-        route_gate = torch.sigmoid(self.route_confidence(score_input))
+        raw_route_gate = torch.sigmoid(self.route_confidence(score_input))
+        route_gate = self.gate_min_probability + (
+            self.gate_max_probability - self.gate_min_probability
+        ) * raw_route_gate
+        gate_mean = route_gate.mean()
+        gate_calibration_penalty = self.gate_calibration_weight * (
+            F.relu(self.gate_target_min - gate_mean).square()
+            + F.relu(gate_mean - self.gate_target_max).square()
+        )
+        self._regularization_loss = gate_calibration_penalty
         joint = torch.cat((descriptor, attended), dim=1)
         film_scale, film_shift = self.film_head(joint).chunk(2, dim=1)
         modulated = context * (
@@ -1244,7 +1281,16 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
                 "boundary_focus_means": [float(boundary_focus.mean().item())],
                 "effective_strengths": [float(effective_strength.item())],
                 "delta_rms_ratios": [float(delta_rms_ratio.item())],
-                "regularization_loss": 0.0,
+                "gate_min_probability": self.gate_min_probability,
+                "gate_max_probability": self.gate_max_probability,
+                "gate_target_min": self.gate_target_min,
+                "gate_target_max": self.gate_target_max,
+                "gate_calibration_penalty": float(
+                    gate_calibration_penalty.item()
+                ),
+                "regularization_loss": float(
+                    gate_calibration_penalty.item()
+                ),
                 "token_attention_entropies": [
                     float((- (
                         token_weights.clamp_min(1e-8)
@@ -1254,3 +1300,39 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
                 "identity_scales": ["x1", "x3", "x4"],
             }
         return tuple(routed)
+
+
+class CalibratedSingleHopBoundaryFocusedTextGuidedRouter(
+    SingleHopBoundaryFocusedTextGuidedRouter
+):
+    """V2.3: retain P2's route while preventing an always-on global gate."""
+
+    architecture_version = "tcsr_v2_3_calibrated_single_hop_gate"
+
+    def __init__(
+        self,
+        skip_channels,
+        text_dim=768,
+        routing_dim=32,
+        max_residual_strength=0.08,
+        initial_residual_strength=0.04,
+        initial_gate_probability=0.25,
+        gate_min_probability=0.05,
+        gate_max_probability=0.50,
+        gate_target_min=0.15,
+        gate_target_max=0.35,
+        gate_calibration_weight=0.01,
+    ):
+        super().__init__(
+            skip_channels=skip_channels,
+            text_dim=text_dim,
+            routing_dim=routing_dim,
+            max_residual_strength=max_residual_strength,
+            initial_residual_strength=initial_residual_strength,
+            initial_gate_probability=initial_gate_probability,
+            gate_min_probability=gate_min_probability,
+            gate_max_probability=gate_max_probability,
+            gate_target_min=gate_target_min,
+            gate_target_max=gate_target_max,
+            gate_calibration_weight=gate_calibration_weight,
+        )

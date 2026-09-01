@@ -1,0 +1,68 @@
+{
+  "experiment": "p3_tcsrv23_calibrated_gate",
+  "paper_id": "P3",
+  "status": "development_ready_for_cuda_preflight",
+  "description": "Frozen CXR-BERT + calibrated-gate single-hop boundary-focused TCSR V2.3 + FAM-EPPA V4-B + Dice/Focal",
+  "comparison_parent": {
+    "experiment": "a9_frozen_freq_focal",
+    "git_commit": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+    "reason": "strict control with the same frozen text encoder, decoder fusion and loss"
+  },
+  "diagnostic_parent": {
+    "experiment": "p2_tcsrv22_single_hop_boundary",
+    "git_commit": "58be4f092b4a1c2f141e510ff40766fb58d4519b",
+    "finding": "P2 gate saturated at 0.9898; validation Dice was 0.815267 and smallest-lesion-quartile Dice fell 0.020646 versus A9 best"
+  },
+  "protocol": {
+    "epochs": 40,
+    "batch_size": 16,
+    "seed": 1219,
+    "train_drop_last": true,
+    "deterministic": true,
+    "automatic_test_evaluation": false,
+    "test_split_allowed": false,
+    "primary_threshold": 0.5,
+    "primary_aggregation": "macro"
+  },
+  "controlled_factors": {
+    "text_encoder": "microsoft/BiomedVLP-CXR-BERT-specialized",
+    "text_use_lora": false,
+    "decoder_fusion_mode": "fam_eppa_v4b",
+    "loss_name": "dice_focal",
+    "boundary_loss_weight": 0.0
+  },
+  "single_variable_change": {
+    "from": "unbounded sigmoid route confidence that saturated near one",
+    "to": "bounded route confidence with an interior calibration band",
+    "unchanged": "x3_to_x2 topology, boundary focus, residual message, strength, decoder, loss, optimizer protocol and frozen text encoder"
+  },
+  "tcsr": {
+    "enabled": true,
+    "architecture_version": "tcsr_v2.3",
+    "routing_dim": 32,
+    "route": "x3_to_x2_only",
+    "identity_scales": ["x1", "x3", "x4"],
+    "max_residual_strength": 0.08,
+    "initial_residual_strength": 0.04,
+    "initial_gate_probability": 0.25,
+    "gate_probability_bounds": [0.05, 0.50],
+    "gate_target_band": [0.15, 0.35],
+    "gate_calibration_weight": 0.01,
+    "spatial_focus": "parameter_free_target_feature_transition_map",
+    "router_lr_scale": 0.5
+  },
+  "acceptance": {
+    "overall_validation_macro_dice_delta_min": 0.002,
+    "smallest_lesion_quartile_non_degradation": true,
+    "protected_scales_exact_identity": true,
+    "route_gate_inside_target_band": true,
+    "train_validation_gap_not_persistently_widening": true,
+    "failure_action": "stop_without_test",
+    "success_action": "extend_to_80_epoch_validation_only"
+  },
+  "provenance": {
+    "formal_git_commit": "recorded_after_two_deterministic_cuda_preflights",
+    "formal_tag": "pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+    "required_runtime_provenance": "GIT_COMMIT and checkpoint source_git_commit must equal the pilot commit"
+  }
+}

@@ -35,7 +35,8 @@ cd "$repo_root" || {
 }
 
 if [ "$experiment" != "p1_tcsrv21_boundary_router" ] \
-  && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ]; then
+  && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ] \
+  && [ "$experiment" != "p3_tcsrv23_calibrated_gate" ]; then
   write_status unsupported_experiment
   echo "Validation-only runner refuses experiment: $experiment" >&2
   exit 6
