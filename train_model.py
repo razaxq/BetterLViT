@@ -113,6 +113,31 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             'tcsr_initial_residual_strength',
             0.0,
         )),
+        'tcsr_initial_gate_probability': float(getattr(
+            config,
+            'tcsr_initial_gate_probability',
+            0.0,
+        )),
+        'tcsr_gate_activation_budget': float(getattr(
+            config,
+            'tcsr_gate_activation_budget',
+            0.0,
+        )),
+        'tcsr_gate_budget_weight': float(getattr(
+            config,
+            'tcsr_gate_budget_weight',
+            0.0,
+        )),
+        'tcsr_gate_binary_weight': float(getattr(
+            config,
+            'tcsr_gate_binary_weight',
+            0.0,
+        )),
+        'tcsr_router_lr_scale': float(getattr(
+            config,
+            'tcsr_router_lr_scale',
+            1.0,
+        )),
         'loss_name': getattr(config, 'loss_name', None),
         'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
         'seed': int(config.seed),
@@ -173,12 +198,22 @@ def compute_tcsr_stats(model):
     return dict(stats) if stats else {}
 
 
-def build_optimizer_parameter_groups(model, weight_decay):
-    """Keep residual gates and normalization parameters free of L2 decay."""
-    decay_parameters = []
-    no_decay_parameters = []
+def build_optimizer_parameter_groups(
+    model,
+    weight_decay,
+    base_lr,
+    router_lr_scale=1.0,
+):
+    """Apply no-decay rules and an optional lower TCSR learning rate."""
+    parameter_buckets = {
+        ('base', 'decay'): [],
+        ('base', 'no_decay'): [],
+        ('router', 'decay'): [],
+        ('router', 'no_decay'): [],
+    }
     decay_names = []
     no_decay_names = []
+    router_names = []
     for name, parameter in model.named_parameters():
         if not parameter.requires_grad:
             continue
@@ -191,23 +226,35 @@ def build_optimizer_parameter_groups(model, weight_decay):
             or 'norm' in normalized_name
         )
         if use_no_decay:
-            no_decay_parameters.append(parameter)
+            decay_kind = 'no_decay'
             no_decay_names.append(name)
         else:
-            decay_parameters.append(parameter)
+            decay_kind = 'decay'
             decay_names.append(name)
+        is_router = '.tcsr.' in '.{}.'.format(name)
+        model_kind = 'router' if is_router else 'base'
+        parameter_buckets[(model_kind, decay_kind)].append(parameter)
+        if is_router:
+            router_names.append(name)
     parameter_groups = []
-    if decay_parameters:
-        parameter_groups.append({
-            'params': decay_parameters,
-            'weight_decay': weight_decay,
-        })
-    if no_decay_parameters:
-        parameter_groups.append({
-            'params': no_decay_parameters,
-            'weight_decay': 0.0,
-        })
-    return parameter_groups, decay_names, no_decay_names
+    for model_kind in ('base', 'router'):
+        group_lr = (
+            base_lr * router_lr_scale
+            if model_kind == 'router'
+            else base_lr
+        )
+        for decay_kind in ('decay', 'no_decay'):
+            parameters = parameter_buckets[(model_kind, decay_kind)]
+            if parameters:
+                parameter_groups.append({
+                    'params': parameters,
+                    'weight_decay': (
+                        weight_decay if decay_kind == 'decay' else 0.0
+                    ),
+                    'lr': group_lr,
+                    'group_kind': '{}_{}'.format(model_kind, decay_kind),
+                })
+    return parameter_groups, decay_names, no_decay_names, router_names
 
 
 def worker_init_fn(worker_id):
@@ -390,18 +437,23 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             config.boundary_loss_weight,
         )
     )
-    optimizer_groups, decay_names, no_decay_names = (
+    optimizer_groups, decay_names, no_decay_names, router_names = (
         build_optimizer_parameter_groups(
             model,
             getattr(config, 'weight_decay', 0.0),
+            lr,
+            getattr(config, 'tcsr_router_lr_scale', 1.0),
         )
     )
     optimizer = torch.optim.Adam(optimizer_groups, lr=lr)
     logger.info(
-        'Optimizer groups: decay={} tensors, no_decay={} tensors; '
-        'EPPA residual gates are protected from L2 decay'.format(
+        'Optimizer groups: decay={} tensors, no_decay={} tensors, '
+        'TCSR={} tensors at {:.2f}x LR; residual gates and norms have no L2 '
+        'decay'.format(
             len(decay_names),
             len(no_decay_names),
+            len(router_names),
+            getattr(config, 'tcsr_router_lr_scale', 1.0),
         )
     )
     if config.cosineLR is True:
@@ -593,6 +645,34 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                         [round(value, 4) for value in current_tcsr_stats[
                             'delta_rms_ratios'
                         ]],
+                    )
+                )
+            elif current_tcsr_stats.get('architecture_version') == (
+                'tcsr_v2_1_boundary_asymmetric'
+            ):
+                logger.info(
+                    'TCSR V2.1: routes={}; gates={}; closed={}; '
+                    'spatial_means={}; strengths={}; delta_rms_ratios={}; '
+                    'gate_mean={:.4f}/{:.4f}; reg={:.6f}'.format(
+                        current_tcsr_stats['route_names'],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'route_gate_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'route_gate_closed_fractions'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'spatial_mask_means'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'effective_strengths'
+                        ]],
+                        [round(value, 4) for value in current_tcsr_stats[
+                            'delta_rms_ratios'
+                        ]],
+                        current_tcsr_stats['gate_activation_mean'],
+                        current_tcsr_stats['gate_budget'],
+                        current_tcsr_stats['regularization_loss'],
                     )
                 )
             else:

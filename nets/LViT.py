@@ -7,6 +7,7 @@ from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
 from .tcsr import (
+    BoundaryPreservingAsymmetricTextGuidedRouter,
     TextConditionedCrossScaleSkipRouter,
     TextConditionedCrossScaleSkipRouterV2,
 )
@@ -209,6 +210,7 @@ class LViT(nn.Module):
             router_types = {
                 'v1': TextConditionedCrossScaleSkipRouter,
                 'v2': TextConditionedCrossScaleSkipRouterV2,
+                'v2.1': BoundaryPreservingAsymmetricTextGuidedRouter,
             }
             if self.tcsr_version not in router_types:
                 raise ValueError(
@@ -229,12 +231,35 @@ class LViT(nn.Module):
                     1.0,
                 ),
             }
-            if self.tcsr_version == 'v2':
+            if self.tcsr_version in ('v2', 'v2.1'):
                 router_kwargs['initial_residual_strength'] = getattr(
                     config,
                     'tcsr_initial_residual_strength',
                     0.05,
                 )
+            if self.tcsr_version == 'v2.1':
+                router_kwargs.update({
+                    'initial_gate_probability': getattr(
+                        config,
+                        'tcsr_initial_gate_probability',
+                        0.15,
+                    ),
+                    'gate_activation_budget': getattr(
+                        config,
+                        'tcsr_gate_activation_budget',
+                        0.35,
+                    ),
+                    'gate_budget_weight': getattr(
+                        config,
+                        'tcsr_gate_budget_weight',
+                        0.02,
+                    ),
+                    'gate_binary_weight': getattr(
+                        config,
+                        'tcsr_gate_binary_weight',
+                        0.005,
+                    ),
+                })
             self.tcsr = router_types[self.tcsr_version](
                 **router_kwargs
             )

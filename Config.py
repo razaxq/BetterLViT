@@ -81,6 +81,26 @@ tcsr_initial_residual_strength = float(paper_experiment.get(
     'tcsr_initial_residual_strength',
     0.05,
 ))
+tcsr_initial_gate_probability = float(paper_experiment.get(
+    'tcsr_initial_gate_probability',
+    0.15,
+))
+tcsr_gate_activation_budget = float(paper_experiment.get(
+    'tcsr_gate_activation_budget',
+    0.35,
+))
+tcsr_gate_budget_weight = float(paper_experiment.get(
+    'tcsr_gate_budget_weight',
+    0.0,
+))
+tcsr_gate_binary_weight = float(paper_experiment.get(
+    'tcsr_gate_binary_weight',
+    0.0,
+))
+tcsr_router_lr_scale = float(paper_experiment.get(
+    'tcsr_router_lr_scale',
+    1.0,
+))
 experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
 experiment_output_name = experiment_name + '_evaluation.json'
@@ -161,6 +181,10 @@ def get_CTranS_config():
     config.tcsr_routing_dim = tcsr_routing_dim
     config.tcsr_max_residual_strength = tcsr_max_residual_strength
     config.tcsr_initial_residual_strength = tcsr_initial_residual_strength
+    config.tcsr_initial_gate_probability = tcsr_initial_gate_probability
+    config.tcsr_gate_activation_budget = tcsr_gate_activation_budget
+    config.tcsr_gate_budget_weight = tcsr_gate_budget_weight
+    config.tcsr_gate_binary_weight = tcsr_gate_binary_weight
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True

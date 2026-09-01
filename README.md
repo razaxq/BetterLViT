@@ -1,5 +1,15 @@
 # LViT
 
+## TCSR V2.1 validation-only pilot
+
+`p1_tcsrv21_boundary_router` is a staged mechanism test, not a formal Test-set
+experiment. It keeps the highest-resolution boundary skip unchanged, routes
+only `x4 -> x3 -> x2`, bounds RMS-normalized residuals to 15%, uses closable
+hard-sigmoid abstention gates with an activation budget, and trains router
+parameters at half the base learning rate. On the server, launch it only with
+`scripts/start_validation_pilot_server.sh`; that runner deliberately never
+invokes Test-set evaluation.
+
 
 This repo is the official implementation of "**LViT: Language meets Vision Transformer in Medical Image Segmentation**" 
 [Arxiv](https://arxiv.org/abs/2206.14718), [ResearchGate](https://www.researchgate.net/publication/371833348_LViT_Language_meets_Vision_Transformer_in_Medical_Image_Segmentation), [IEEEXplore](https://ieeexplore.ieee.org/document/10172039)

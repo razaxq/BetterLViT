@@ -75,7 +75,14 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         # ====================================================
 
         preds = model(images, input_ids, attention_mask)
-        out_loss = criterion(preds, masks.float())  # Loss
+        segmentation_loss = criterion(preds, masks.float())
+        router_regularization = segmentation_loss.new_zeros(())
+        if model.training:
+            target_model = model.module if hasattr(model, 'module') else model
+            router = getattr(target_model, 'tcsr', None)
+            if router is not None and hasattr(router, 'regularization_loss'):
+                router_regularization = router.regularization_loss()
+        out_loss = segmentation_loss + router_regularization
         with torch.no_grad():
             train_dice = criterion._show_dice(
                 preds.detach(),
@@ -89,6 +96,9 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
                 getattr(criterion, 'last_components', {})[name]
                 for name in component_names
             ]
+            if model.training and router_regularization.detach().item() != 0.0:
+                component_names.append('tcsr_regularization')
+                component_values.append(router_regularization.detach())
             snapshot = torch.stack([
                 out_loss.detach(),
                 train_iou,

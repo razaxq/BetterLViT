@@ -624,3 +624,356 @@ class TextConditionedCrossScaleSkipRouterV2(nn.Module):
                 ],
             }
         return tuple(routed_skips)
+
+
+class BoundaryPreservingAsymmetricTextGuidedRouter(nn.Module):
+    """Route coarse semantics toward finer skips without rewriting boundaries.
+
+    This V2.1 pilot deliberately leaves the highest-resolution ``x1`` skip
+    and the deepest ``x4`` skip unchanged.  It performs only two sequential
+    coarse-to-fine routes (``x4 -> x3`` and ``x3 -> x2``), so no fine feature
+    is average-pooled into a coarser representation.  Each residual is RMS
+    normalized, bounded to a small fraction of the target skip, and controlled
+    by a hard-sigmoid abstention gate that can become exactly zero.
+    """
+
+    architecture_version = "tcsr_v2_1_boundary_asymmetric"
+    route_names = ("x4_to_x3", "x3_to_x2")
+    route_pairs = ((3, 2), (2, 1))
+
+    def __init__(
+        self,
+        skip_channels,
+        text_dim=768,
+        routing_dim=32,
+        max_residual_strength=0.15,
+        initial_residual_strength=0.08,
+        initial_gate_probability=0.15,
+        gate_activation_budget=0.35,
+        gate_budget_weight=0.02,
+        gate_binary_weight=0.005,
+    ):
+        super().__init__()
+        self.skip_channels = tuple(int(value) for value in skip_channels)
+        self.num_scales = len(self.skip_channels)
+        self.text_dim = int(text_dim)
+        self.routing_dim = int(routing_dim)
+        self.max_residual_strength = float(max_residual_strength)
+        self.initial_residual_strength = float(initial_residual_strength)
+        self.initial_gate_probability = float(initial_gate_probability)
+        self.gate_activation_budget = float(gate_activation_budget)
+        self.gate_budget_weight = float(gate_budget_weight)
+        self.gate_binary_weight = float(gate_binary_weight)
+        if self.num_scales != 4:
+            raise ValueError("TCSR V2.1 requires exactly four skip scales.")
+        if self.routing_dim <= 0:
+            raise ValueError("routing_dim must be positive.")
+        if not 0 < self.initial_residual_strength < self.max_residual_strength:
+            raise ValueError(
+                "initial_residual_strength must be between zero and the "
+                "maximum residual strength."
+            )
+        if not 0 < self.initial_gate_probability < 1:
+            raise ValueError("initial_gate_probability must be in (0, 1).")
+        if not 0 < self.gate_activation_budget < 1:
+            raise ValueError("gate_activation_budget must be in (0, 1).")
+
+        self.visual_projections = nn.ModuleList([
+            nn.Sequential(
+                nn.Conv2d(channels, self.routing_dim, kernel_size=1),
+                nn.GroupNorm(1, self.routing_dim),
+                nn.SiLU(),
+            )
+            for channels in self.skip_channels
+        ])
+        self.route_fusions = nn.ModuleList([
+            nn.Sequential(
+                nn.Conv2d(
+                    2 * self.routing_dim,
+                    self.routing_dim,
+                    kernel_size=1,
+                ),
+                nn.GroupNorm(1, self.routing_dim),
+                nn.SiLU(),
+                nn.Conv2d(
+                    self.routing_dim,
+                    self.routing_dim,
+                    kernel_size=3,
+                    padding=1,
+                    groups=self.routing_dim,
+                ),
+                nn.GroupNorm(1, self.routing_dim),
+                nn.SiLU(),
+            )
+            for _ in self.route_pairs
+        ])
+        self.visual_norms = nn.ModuleList([
+            nn.LayerNorm(self.routing_dim)
+            for _ in self.route_pairs
+        ])
+        self.text_key = nn.Linear(self.text_dim, self.routing_dim)
+        self.text_value = nn.Linear(self.text_dim, self.routing_dim)
+        self.text_norms = nn.ModuleList([
+            nn.LayerNorm(self.routing_dim)
+            for _ in self.route_pairs
+        ])
+
+        joint_dim = self.routing_dim * 2
+        score_dim = self.routing_dim * 3
+        score_width = max(16, self.routing_dim)
+        self.abstention_heads = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(score_dim, score_width),
+                nn.SiLU(),
+                nn.Linear(score_width, 1),
+            )
+            for _ in self.route_pairs
+        ])
+        gate_bias = 6.0 * self.initial_gate_probability - 3.0
+        for head in self.abstention_heads:
+            nn.init.normal_(head[-1].weight, mean=0.0, std=0.01)
+            nn.init.constant_(head[-1].bias, gate_bias)
+
+        self.film_heads = nn.ModuleList([
+            nn.Linear(joint_dim, self.routing_dim * 2)
+            for _ in self.route_pairs
+        ])
+        self.spatial_heads = nn.ModuleList([
+            nn.Conv2d(self.routing_dim, 1, kernel_size=3, padding=1)
+            for _ in self.route_pairs
+        ])
+        self.channel_heads = nn.ModuleList([
+            nn.Linear(joint_dim, self.skip_channels[target_index])
+            for _, target_index in self.route_pairs
+        ])
+        self.message_heads = nn.ModuleList([
+            nn.Conv2d(
+                self.routing_dim,
+                self.skip_channels[target_index],
+                kernel_size=1,
+            )
+            for _, target_index in self.route_pairs
+        ])
+        for heads in (
+            self.film_heads,
+            self.spatial_heads,
+            self.channel_heads,
+            self.message_heads,
+        ):
+            for head in heads:
+                nn.init.normal_(head.weight, mean=0.0, std=0.01)
+                if head.bias is not None:
+                    nn.init.zeros_(head.bias)
+
+        initial_fraction = (
+            self.initial_residual_strength / self.max_residual_strength
+        )
+        initial_logit = math.log(initial_fraction / (1.0 - initial_fraction))
+        self.residual_strength_logit = nn.Parameter(
+            torch.full((len(self.route_pairs),), initial_logit)
+        )
+        self._last_stats = None
+        self._regularization_terms = None
+
+    @staticmethod
+    def _validated_text_mask(text, text_mask):
+        return TextConditionedCrossScaleSkipRouter._validated_text_mask(
+            text,
+            text_mask,
+        )
+
+    def _attend_text(self, descriptor, text_keys, text_values, text_mask, norm):
+        logits = torch.einsum("bd,bld->bl", descriptor, text_keys)
+        logits = logits / math.sqrt(self.routing_dim)
+        logits = logits.masked_fill(
+            ~text_mask,
+            torch.finfo(logits.dtype).min,
+        )
+        weights = torch.softmax(logits, dim=1)
+        attended = torch.einsum("bl,bld->bd", weights, text_values)
+        return norm(attended), weights
+
+    @staticmethod
+    def _rms_normalize_message(message, target):
+        message_rms = message.square().mean(
+            dim=(1, 2, 3),
+            keepdim=True,
+        ).sqrt().clamp_min(1e-6)
+        target_rms = target.square().mean(
+            dim=(1, 2, 3),
+            keepdim=True,
+        ).sqrt().clamp_min(1e-6)
+        return message * (target_rms / message_rms)
+
+    def regularization_loss(self):
+        """Return differentiable gate-budget and binarization penalties."""
+        if not self._regularization_terms:
+            return self.residual_strength_logit.sum() * 0.0
+        return self._regularization_terms["total"]
+
+    def forward(self, skips, text, text_mask=None):
+        if len(skips) != self.num_scales:
+            raise ValueError(
+                "Expected {} skip scales, received {}.".format(
+                    self.num_scales,
+                    len(skips),
+                )
+            )
+        if text.ndim != 3 or text.shape[-1] != self.text_dim:
+            raise ValueError(
+                "Expected text [B, L, {}], received {}.".format(
+                    self.text_dim,
+                    tuple(text.shape),
+                )
+            )
+        batch_size = text.shape[0]
+        for index, (skip, channels) in enumerate(zip(
+            skips,
+            self.skip_channels,
+        )):
+            if skip.ndim != 4:
+                raise ValueError(
+                    "Skip {} must be BCHW, received {}.".format(
+                        index,
+                        tuple(skip.shape),
+                    )
+                )
+            if skip.shape[0] != batch_size or skip.shape[1] != channels:
+                raise ValueError(
+                    "Skip {} expected [B, {}, H, W], received {}.".format(
+                        index,
+                        channels,
+                        tuple(skip.shape),
+                    )
+                )
+
+        mask = self._validated_text_mask(text, text_mask)
+        text_keys = self.text_key(text)
+        text_values = self.text_value(text)
+        routed = list(skips)
+        route_gates = []
+        spatial_masks = []
+        delta_rms_ratios = []
+        token_weights = []
+        effective_strengths = (
+            torch.sigmoid(self.residual_strength_logit)
+            * self.max_residual_strength
+        )
+
+        for route_index, (source_index, target_index) in enumerate(
+            self.route_pairs
+        ):
+            source = routed[source_index]
+            target = routed[target_index]
+            source_projected = self.visual_projections[source_index](source)
+            source_projected = F.interpolate(
+                source_projected,
+                size=target.shape[-2:],
+                mode="nearest",
+            )
+            target_projected = self.visual_projections[target_index](target)
+            context = self.route_fusions[route_index](torch.cat(
+                (target_projected, source_projected),
+                dim=1,
+            ))
+            descriptor = self.visual_norms[route_index](
+                context.mean(dim=(2, 3))
+            )
+            attended, weights = self._attend_text(
+                descriptor,
+                text_keys,
+                text_values,
+                mask,
+                self.text_norms[route_index],
+            )
+            score_input = torch.cat(
+                (descriptor, attended, descriptor * attended),
+                dim=1,
+            )
+            route_gate = F.hardsigmoid(
+                self.abstention_heads[route_index](score_input)
+            )
+            joint = torch.cat((descriptor, attended), dim=1)
+            film_scale, film_shift = self.film_heads[route_index](joint).chunk(
+                2,
+                dim=1,
+            )
+            modulated = context * (
+                1.0 + 0.25 * torch.tanh(film_scale)[:, :, None, None]
+            )
+            modulated = modulated + (
+                0.25 * torch.tanh(film_shift)[:, :, None, None]
+            )
+            spatial_mask = torch.sigmoid(
+                self.spatial_heads[route_index](modulated)
+            )
+            channel_delta = torch.tanh(
+                self.channel_heads[route_index](joint)
+            )[:, :, None, None]
+            message = self.message_heads[route_index](modulated)
+            message = message + target * channel_delta
+            normalized_message = self._rms_normalize_message(message, target)
+            delta = effective_strengths[route_index]
+            delta = delta * route_gate[:, :, None, None] * spatial_mask
+            delta = delta * normalized_message
+            routed[target_index] = target + delta
+
+            route_gates.append(route_gate)
+            spatial_masks.append(spatial_mask)
+            delta_rms_ratios.append(
+                delta.square().mean().sqrt()
+                / target.square().mean().sqrt().clamp_min(1e-8)
+            )
+            token_weights.append(weights)
+
+        gate_values = torch.cat(route_gates, dim=1)
+        gate_mean = gate_values.mean()
+        budget_penalty = F.relu(
+            gate_mean - self.gate_activation_budget
+        ).square()
+        binary_penalty = (gate_values * (1.0 - gate_values)).mean()
+        total_regularization = (
+            self.gate_budget_weight * budget_penalty
+            + self.gate_binary_weight * binary_penalty
+        )
+        self._regularization_terms = {
+            "total": total_regularization,
+            "budget": budget_penalty,
+            "binary": binary_penalty,
+        }
+
+        with torch.no_grad():
+            self._last_stats = {
+                "architecture_version": self.architecture_version,
+                "route_names": list(self.route_names),
+                "route_gate_means": [
+                    float(value.mean().item()) for value in route_gates
+                ],
+                "route_gate_closed_fractions": [
+                    float((value <= 0.01).float().mean().item())
+                    for value in route_gates
+                ],
+                "spatial_mask_means": [
+                    float(value.mean().item()) for value in spatial_masks
+                ],
+                "effective_strengths": [
+                    float(value.item()) for value in effective_strengths
+                ],
+                "delta_rms_ratios": [
+                    float(value.item()) for value in delta_rms_ratios
+                ],
+                "gate_activation_mean": float(gate_mean.item()),
+                "gate_budget": self.gate_activation_budget,
+                "gate_budget_penalty": float(budget_penalty.item()),
+                "gate_binary_penalty": float(binary_penalty.item()),
+                "regularization_loss": float(total_regularization.item()),
+                "token_attention_entropies": [
+                    float((-(
+                        weights.clamp_min(1e-8)
+                        * weights.clamp_min(1e-8).log()
+                    ).sum(dim=1).mean()).item())
+                    for weights in token_weights
+                ],
+                "identity_scales": ["x1", "x4"],
+            }
+        return tuple(routed)

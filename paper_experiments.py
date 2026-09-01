@@ -103,6 +103,30 @@ PAPER_EXPERIMENTS = {
         "loss_name": "dice_focal",
         "architecture_version": "paper_a9_frozen_fam_eppa_v4b_dice_focal",
     },
+    "p1_tcsrv21_boundary_router": {
+        "paper_id": "P1",
+        "description": (
+            "Frozen CXR-BERT + boundary-preserving asymmetric TCSR V2.1 "
+            "+ FAM-EPPA V4-B + Dice/Focal"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "tcsr_enabled": True,
+        "tcsr_version": "v2.1",
+        "tcsr_routing_dim": 32,
+        "tcsr_max_residual_strength": 0.15,
+        "tcsr_initial_residual_strength": 0.08,
+        "tcsr_initial_gate_probability": 0.15,
+        "tcsr_gate_activation_budget": 0.35,
+        "tcsr_gate_budget_weight": 0.02,
+        "tcsr_gate_binary_weight": 0.005,
+        "tcsr_router_lr_scale": 0.5,
+        "text_use_lora": False,
+        "loss_name": "dice_focal",
+        "architecture_version": (
+            "pilot_p1_frozen_tcsr_v2_1_boundary_asymmetric_"
+            "fam_eppa_v4b_dice_focal"
+        ),
+    },
 }
 
 
