@@ -1,7 +1,7 @@
 {
   "experiment": "p3_tcsrv23_calibrated_gate",
   "paper_id": "P3",
-  "status": "development_ready_for_cuda_preflight",
+  "status": "validation_pilot_preflight_passed",
   "description": "Frozen CXR-BERT + calibrated-gate single-hop boundary-focused TCSR V2.3 + FAM-EPPA V4-B + Dice/Focal",
   "comparison_parent": {
     "experiment": "a9_frozen_freq_focal",
@@ -61,8 +61,37 @@
     "success_action": "extend_to_80_epoch_validation_only"
   },
   "provenance": {
+    "development_git_commit": "7588925e81563927eb878640cde51be541c554b5",
     "formal_git_commit": "recorded_after_two_deterministic_cuda_preflights",
     "formal_tag": "pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
     "required_runtime_provenance": "GIT_COMMIT and checkpoint source_git_commit must equal the pilot commit"
+  },
+  "preflight": {
+    "date": "2026-09-02",
+    "module_cuda": {
+      "status": "ok",
+      "repeats": 2,
+      "batch_size": 16,
+      "deterministic_repeat_max_abs_error": 0.0,
+      "initial_delta_rms_ratios": [0.0, 0.0037491524, 0.0, 0.0],
+      "initial_gate_mean": 0.2494344562,
+      "gate_probability_bounds": [0.05, 0.50],
+      "protected_scales_exact_identity": true,
+      "all_required_gradients_nonzero": true,
+      "repeat_sha256": "c09a5a0341eba92e71d835c8a96bdfb32f066b8e68537bd5a8b45cd0e51c9b2f"
+    },
+    "full_model_cuda": {
+      "status": "ok",
+      "repeats": 2,
+      "batch_size": 16,
+      "loss_each_repeat": 0.2664355338,
+      "max_memory_allocated_gb": 15.695,
+      "max_memory_reserved_gb": 17.076,
+      "router_learning_rate": 0.00015,
+      "trainable_text_tensors": 0,
+      "lora_parameter_tensors": 0,
+      "trainable_tensors_with_gradient": 421,
+      "repeat_sha256": "e4f3d15666833e8536c625195d1ac2ce31fe6b684b0ea34a64a59e5255022857"
+    }
   }
 }
