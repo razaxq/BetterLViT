@@ -54,6 +54,7 @@ def main():
 
     import Config as config
     from nets.BetterLViT import BetterLViT
+    from train_model import build_optimizer_parameter_groups
     from utils import WeightedDiceBCE, WeightedDiceFocal
 
     torch.backends.cudnn.enabled = config.cudnn_enabled
@@ -143,10 +144,35 @@ def main():
             dice_weight=config.dice_loss_weight,
             BCE_weight=1.0 - config.dice_loss_weight,
         )
-    loss = criterion(output, labels)
+    segmentation_loss = criterion(output, labels)
+    router = getattr(model, "tcsr", None)
+    router_regularization = segmentation_loss.new_zeros(())
+    if router is not None and hasattr(router, "regularization_loss"):
+        router_regularization = router.regularization_loss()
+    loss = segmentation_loss + router_regularization
     if not torch.isfinite(loss):
         raise RuntimeError("Loss is non-finite.")
     loss.backward()
+
+    optimizer_groups, _, _, router_names = build_optimizer_parameter_groups(
+        model,
+        config.weight_decay,
+        config.learning_rate,
+        config.tcsr_router_lr_scale,
+    )
+    router_group_lrs = sorted({
+        float(group["lr"])
+        for group in optimizer_groups
+        if str(group.get("group_kind", "")).startswith("router_")
+    })
+    if config.tcsr_enabled and not router_names:
+        raise RuntimeError("TCSR profile has no router optimizer parameters.")
+    if config.tcsr_enabled and router_group_lrs != [
+        config.learning_rate * config.tcsr_router_lr_scale
+    ]:
+        raise RuntimeError(
+            "Unexpected router learning rates: {}".format(router_group_lrs)
+        )
 
     trainable_with_gradient = sum(
         1
@@ -182,6 +208,13 @@ def main():
             3,
         ) if device.type == "cuda" else 0.0,
         "loss": float(loss.detach().cpu()),
+        "segmentation_loss": float(segmentation_loss.detach().cpu()),
+        "tcsr_regularization_loss": float(
+            router_regularization.detach().cpu()
+        ),
+        "tcsr_stats": dict(getattr(router, "_last_stats", {}) or {}),
+        "router_optimizer_parameter_tensors": len(router_names),
+        "router_optimizer_learning_rates": router_group_lrs,
         "trainable_text_tensors": len(trainable_text),
         "lora_parameter_tensors": len(lora_parameters),
         "trainable_tensors_with_gradient": trainable_with_gradient,
