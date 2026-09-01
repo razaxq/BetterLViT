@@ -1,7 +1,7 @@
 {
   "experiment": "p2_tcsrv22_single_hop_boundary",
   "paper_id": "P2",
-  "status": "validation_pilot_preflight_pending",
+  "status": "validation_pilot_preflight_passed",
   "description": "Frozen CXR-BERT + single-hop boundary-focused TCSR V2.2 + FAM-EPPA V4-B + Dice/Focal",
   "comparison_parent": {
     "experiment": "a9_frozen_freq_focal",
@@ -55,8 +55,35 @@
     "success_action": "extend_to_80_epoch_validation_only"
   },
   "provenance": {
+    "development_git_commit": "ce71d021372279744ad9da2e2638bee5a68362f3",
     "formal_git_commit": "recorded_by_runtime_from_the_immutable_pilot_commit",
-    "formal_tag": "assigned_after_cuda_preflight",
+    "formal_tag": "pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
     "required_runtime_provenance": "GIT_COMMIT and checkpoint source_git_commit must equal the pilot commit"
+  },
+  "preflight": {
+    "date": "2026-09-02",
+    "module_cuda": {
+      "status": "ok",
+      "repeats": 2,
+      "batch_size": 16,
+      "deterministic_repeat_max_abs_error": 0.0,
+      "initial_delta_rms_ratios": [0.0, 0.0037433705, 0.0, 0.0],
+      "text_conditioning_max_abs_effect": 0.0024602413,
+      "adjacent_scale_max_abs_effect": 0.0013227463,
+      "protected_scales_exact_identity": true,
+      "all_required_gradients_nonzero": true
+    },
+    "full_model_cuda": {
+      "status": "ok",
+      "repeats": 2,
+      "batch_size": 16,
+      "loss_each_repeat": 0.2664355338,
+      "max_memory_allocated_gb": 15.695,
+      "max_memory_reserved_gb": 17.076,
+      "router_learning_rate": 0.00015,
+      "trainable_text_tensors": 0,
+      "lora_parameter_tensors": 0,
+      "trainable_tensors_with_gradient": 421
+    }
   }
 }

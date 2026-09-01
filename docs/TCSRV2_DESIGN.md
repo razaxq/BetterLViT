@@ -137,3 +137,9 @@ points, avoid degradation in the smallest-lesion quartile, preserve protected
 skips exactly, avoid gate collapse, and avoid a widening train-validation gap.
 Failure stops the branch without Test evaluation; success advances only to an
 80-epoch validation-only confirmation.
+
+The 4090D deterministic preflight passed twice at batch size 16.  Module-level
+repeat error was zero, initial x2 delta was 0.374% RMS, and x1/x3/x4 remained
+exact identities.  Two full-model forward/backward runs produced identical
+total loss `0.2664355338`; peak allocated/reserved memory was 15.695/17.076 GB,
+the router learning rate was `1.5e-4`, and LoRA parameter count was zero.
