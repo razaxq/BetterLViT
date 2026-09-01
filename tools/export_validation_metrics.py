@@ -149,7 +149,12 @@ def main():
                 batch["input_ids"].cuda(non_blocking=True),
                 batch["attention_mask"].cuda(non_blocking=True),
             )[:, 0].float().cpu()
-            labels = batch["label"][:, 0].bool()
+            labels = batch["label"].bool()
+            if labels.ndim != 3:
+                raise RuntimeError(
+                    "Expected validation labels [B, H, W], received {}."
+                    .format(tuple(labels.shape))
+                )
             predictions = probabilities > args.threshold
             intersection = (predictions & labels).sum(
                 dim=(1, 2),
