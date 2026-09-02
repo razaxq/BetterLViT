@@ -180,6 +180,11 @@ def main():
                 intersection / union,
                 torch.zeros_like(intersection),
             )
+            precision = torch.where(
+                prediction_sum > 0,
+                intersection / prediction_sum,
+                torch.zeros_like(intersection),
+            )
             for index, name in enumerate(names):
                 records.append({
                     "name": str(name),
@@ -187,6 +192,7 @@ def main():
                     "prediction_pixels": int(prediction_sum[index].item()),
                     "dice": float(dice[index].item()),
                     "iou": float(iou[index].item()),
+                    "precision": float(precision[index].item()),
                 })
 
     if len(records) != len(dataset):
@@ -198,7 +204,14 @@ def main():
         )
     dice_values = np.asarray([record["dice"] for record in records])
     iou_values = np.asarray([record["iou"] for record in records])
-    if not np.isfinite(dice_values).all() or not np.isfinite(iou_values).all():
+    precision_values = np.asarray([
+        record["precision"] for record in records
+    ])
+    if (
+        not np.isfinite(dice_values).all()
+        or not np.isfinite(iou_values).all()
+        or not np.isfinite(precision_values).all()
+    ):
         raise RuntimeError("Validation metrics contain non-finite values.")
 
     router = getattr(model, "tcsr", None)
@@ -216,6 +229,7 @@ def main():
         "samples": len(records),
         "macro_dice": float(dice_values.mean()),
         "macro_iou": float(iou_values.mean()),
+        "macro_precision": float(precision_values.mean()),
         "text_use_lora": bool(config.text_use_lora),
         "tcsr_enabled": bool(config.tcsr_enabled),
         "tcsr_version": config.tcsr_version,
