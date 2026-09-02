@@ -312,6 +312,57 @@ class WeightedDiceFocal(nn.Module):
         return total
 
 
+class BCDHObjective(nn.Module):
+    """Full-mask Dice/Focal for final and coarse BCDH predictions."""
+
+    def __init__(
+        self,
+        aux_weight=0.2,
+        dice_weight=0.5,
+        focal_weight=0.5,
+        focal_gamma=2.0,
+        focal_positive_weight=0.5,
+        focal_negative_weight=0.5,
+    ):
+        super().__init__()
+        if not 0.0 < aux_weight < 1.0:
+            raise ValueError("BCDH aux_weight must be in (0, 1)")
+        self.aux_weight = float(aux_weight)
+        self.segmentation = WeightedDiceFocal(
+            dice_weight=dice_weight,
+            focal_weight=focal_weight,
+            focal_gamma=focal_gamma,
+            focal_positive_weight=focal_positive_weight,
+            focal_negative_weight=focal_negative_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        return self.segmentation._show_dice(inputs, targets)
+
+    def forward(self, outputs, targets):
+        if not isinstance(outputs, dict):
+            raise TypeError("BCDH objective requires an output dictionary")
+        final = outputs.get("final")
+        coarse = outputs.get("coarse")
+        if final is None or coarse is None:
+            raise ValueError("BCDH outputs require final and coarse predictions")
+        main = self.segmentation(final, targets)
+        main_components = dict(self.segmentation.last_components)
+        auxiliary = self.segmentation(coarse, targets)
+        auxiliary_components = dict(self.segmentation.last_components)
+        total = main + self.aux_weight * auxiliary
+        self.last_components = {
+            "main_dice": main_components["dice"],
+            "main_focal": main_components["focal"],
+            "aux_dice": auxiliary_components["dice"],
+            "aux_focal": auxiliary_components["focal"],
+            "aux_weighted": (self.aux_weight * auxiliary).detach(),
+            "total": total.detach(),
+        }
+        return total
+
+
 class BoundaryDiceLoss(nn.Module):
     """Dice loss on differentiable morphological boundary maps."""
 

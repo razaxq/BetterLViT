@@ -1,6 +1,7 @@
 """Synthetic forward/backward validation for one paper ablation profile."""
 
 import argparse
+import hashlib
 import json
 import os
 import random
@@ -29,6 +30,8 @@ def parse_args():
             "a3_lora_fmiseg",
             "a4_lora_freq_focal",
             "a9_frozen_freq_focal",
+            "c1_bcdh_control",
+            "p6_bcdh_r_v1",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -48,7 +51,7 @@ def main():
 
     import Config as config
     from nets.BetterLViT import BetterLViT
-    from utils import WeightedDiceBCE, WeightedDiceFocal
+    from utils import BCDHObjective, WeightedDiceBCE, WeightedDiceFocal
 
     torch.backends.cudnn.enabled = config.cudnn_enabled
     torch.backends.cudnn.benchmark = False
@@ -113,7 +116,17 @@ def main():
         device=device,
     )
 
-    output = model(images, input_ids, attention_mask)
+    outputs = None
+    if config.bcdh_enabled:
+        outputs = model(
+            images,
+            input_ids,
+            attention_mask,
+            return_aux=True,
+        )
+        output = outputs["final"]
+    else:
+        output = model(images, input_ids, attention_mask)
     if tuple(output.shape) != tuple(labels.shape):
         raise RuntimeError(
             "Unexpected output shape: {} != {}".format(
@@ -123,8 +136,27 @@ def main():
         )
     if not torch.isfinite(output).all():
         raise RuntimeError("Model output contains non-finite values.")
+    output_sha256 = hashlib.sha256(
+        output.detach().cpu().contiguous().numpy().tobytes()
+    ).hexdigest()
 
-    if config.loss_name == "dice_focal":
+    identity_error = None
+    if config.bcdh_enabled:
+        identity_error = float(
+            (outputs["final"] - outputs["base"]).abs().max().item()
+        )
+        if identity_error != 0.0:
+            raise RuntimeError("BCDH zero-init output is not exact identity")
+        criterion = BCDHObjective(
+            aux_weight=config.bcdh_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+        loss = criterion(outputs, labels)
+    elif config.loss_name == "dice_focal":
         criterion = WeightedDiceFocal(
             dice_weight=config.dice_loss_weight,
             focal_weight=config.focal_loss_weight,
@@ -132,12 +164,13 @@ def main():
             focal_positive_weight=config.focal_positive_weight,
             focal_negative_weight=config.focal_negative_weight,
         )
+        loss = criterion(output, labels)
     else:
         criterion = WeightedDiceBCE(
             dice_weight=config.dice_loss_weight,
             BCE_weight=1.0 - config.dice_loss_weight,
         )
-    loss = criterion(output, labels)
+        loss = criterion(output, labels)
     if not torch.isfinite(loss):
         raise RuntimeError("Loss is non-finite.")
     loss.backward()
@@ -157,6 +190,10 @@ def main():
         "decoder_fusion_mode": config.decoder_fusion_mode,
         "loss_name": config.loss_name,
         "text_use_lora": config.text_use_lora,
+        "bcdh_enabled": config.bcdh_enabled,
+        "bcdh_identity_max_abs_error": identity_error,
+        "boundary_loss_weight": config.boundary_loss_weight,
+        "output_sha256": output_sha256,
         "device": str(device),
         "torch": torch.__version__,
         "cuda": torch.version.cuda,

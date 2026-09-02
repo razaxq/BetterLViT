@@ -74,8 +74,18 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         #             Compute loss
         # ====================================================
 
-        preds = model(images, input_ids, attention_mask)
-        out_loss = criterion(preds, masks.float())  # Loss
+        if getattr(config, 'bcdh_enabled', False):
+            outputs = model(
+                images,
+                input_ids,
+                attention_mask,
+                return_aux=True,
+            )
+            preds = outputs['final']
+            out_loss = criterion(outputs, masks.float())
+        else:
+            preds = model(images, input_ids, attention_mask)
+            out_loss = criterion(preds, masks.float())  # Loss
         with torch.no_grad():
             train_dice = criterion._show_dice(
                 preds.detach(),

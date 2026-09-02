@@ -17,6 +17,7 @@ from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
 from utils import (
+    BCDHObjective,
     CosineAnnealingWarmRestarts,
     WeightedDiceBCE,
     WeightedDiceFocal,
@@ -101,7 +102,22 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'experiment_paper_id': getattr(config, 'experiment_paper_id', None),
         'decoder_fusion_mode': getattr(config, 'decoder_fusion_mode', None),
         'loss_name': getattr(config, 'loss_name', None),
+        'boundary_loss_weight': float(
+            getattr(config, 'boundary_loss_weight', 0.0)
+        ),
         'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
+        'bcdh_enabled': bool(getattr(config, 'bcdh_enabled', False)),
+        'bcdh_config': {
+            'aux_weight': float(getattr(config, 'bcdh_aux_weight', 0.0)),
+            'hidden_channels': int(
+                getattr(config, 'bcdh_hidden_channels', 0)
+            ),
+            'delta_max': float(getattr(config, 'bcdh_delta_max', 0.0)),
+            'detach_cues': bool(
+                getattr(config, 'bcdh_detach_cues', False)
+            ),
+        },
+        'bcdh_stats': compute_bcdh_stats(model),
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
         'batch_size': int(config.batch_size),
@@ -148,6 +164,15 @@ def compute_decoder_fusion_stats(model):
             continue
         stats[stage] = dict(stage_stats)
     return stats
+
+
+def compute_bcdh_stats(model):
+    """Snapshot validation-time BCDH output-correction diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    module = getattr(target, 'bcdh', None)
+    if module is None:
+        return {}
+    return dict(getattr(module, '_last_stats', {}) or {})
 
 
 def build_optimizer_parameter_groups(model, weight_decay):
@@ -335,7 +360,20 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
     configured_loss = getattr(config, 'loss_name', 'dice_bce')
-    if configured_loss == 'dice_focal':
+    if getattr(config, 'bcdh_enabled', False):
+        if configured_loss != 'dice_focal':
+            raise ValueError('BCDH-R V1 requires dice_focal')
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError('BCDH-R V1 prohibits boundary supervision')
+        criterion = BCDHObjective(
+            aux_weight=config.bcdh_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif configured_loss == 'dice_focal':
         if config.boundary_loss_weight != 0.0:
             raise ValueError(
                 'dice_focal requires boundary_loss_weight=0.0'
@@ -507,6 +545,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'train_loss_components': train_loss_components,
             'val_loss_components': val_loss_components,
             'eppa_stats': compute_decoder_fusion_stats(model),
+            'bcdh_stats': compute_bcdh_stats(model),
         })
 
         # =============================================================
@@ -714,6 +753,24 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                             stage_stats['low_pass_kernel_delta_abs'],
                         )
                     )
+
+        current_bcdh_stats = epoch_history[-1].get('bcdh_stats') or {}
+        if current_bcdh_stats:
+            logger.info(
+                'BCDH: uncertainty={:.4f}, fine/coarse-only={:.4f}/{:.4f}, '
+                '|delta| mean/max={:.5f}/{:.5f}, positive/negative={:.4f}/{:.4f}, '
+                'top20/rest={:.5f}/{:.5f}'.format(
+                    current_bcdh_stats['uncertainty_mean'],
+                    current_bcdh_stats['fine_only_mean'],
+                    current_bcdh_stats['coarse_only_mean'],
+                    current_bcdh_stats['delta_abs_mean'],
+                    current_bcdh_stats['delta_abs_max'],
+                    current_bcdh_stats['delta_positive_fraction'],
+                    current_bcdh_stats['delta_negative_fraction'],
+                    current_bcdh_stats['uncertainty_top20_delta_abs_mean'],
+                    current_bcdh_stats['uncertainty_rest_delta_abs_mean'],
+                )
+            )
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')

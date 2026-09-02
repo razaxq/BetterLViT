@@ -73,6 +73,19 @@ experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
 experiment_output_name = experiment_name + '_evaluation.json'
 source_git_commit = os.environ.get('BETTERLVIT_GIT_COMMIT', '').strip()
+bcdh_enabled = bool(paper_experiment.get('bcdh_enabled', False))
+bcdh_aux_weight = float(paper_experiment.get('bcdh_aux_weight', 0.0))
+bcdh_hidden_channels = int(
+    paper_experiment.get('bcdh_hidden_channels', 32)
+)
+bcdh_delta_max = float(paper_experiment.get('bcdh_delta_max', 1.0))
+bcdh_detach_cues = bool(paper_experiment.get('bcdh_detach_cues', True))
+if boundary_loss_weight != 0.0:
+    raise ValueError('Every C1/P6 profile requires boundary_loss_weight=0.0')
+if bcdh_enabled and loss_name != 'dice_focal':
+    raise ValueError('BCDH-R V1 is preregistered only with Dice/Focal')
+if bcdh_enabled and not 0.0 < bcdh_aux_weight < 1.0:
+    raise ValueError('BCDH auxiliary weight must be in (0, 1)')
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -144,6 +157,10 @@ def get_CTranS_config():
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
     config.decoder_fusion_mode = decoder_fusion_mode
+    config.bcdh_enabled = bcdh_enabled
+    config.bcdh_hidden_channels = bcdh_hidden_channels
+    config.bcdh_delta_max = bcdh_delta_max
+    config.bcdh_detach_cues = bcdh_detach_cues
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True

@@ -77,7 +77,14 @@ def main():
 
     metrics = {}
     metric_arrays = {}
-    for metric_index, metric in enumerate(("dice", "iou", "precision")):
+    higher_is_better = (
+        "dice",
+        "iou",
+        "precision",
+        "recall",
+        "boundary_f1_tolerance_2",
+    )
+    for metric_index, metric in enumerate(higher_is_better):
         control = np.asarray([
             control_records[name][metric] for name in names
         ])
@@ -105,7 +112,7 @@ def main():
             "label_pixels_min": int(label_pixels[indices].min()),
             "label_pixels_max": int(label_pixels[indices].max()),
         }
-        for metric_index, metric in enumerate(("dice", "iou", "precision")):
+        for metric_index, metric in enumerate(higher_is_better):
             control, candidate = metric_arrays[metric]
             entry[metric] = metric_summary(
                 control[indices],
@@ -119,6 +126,24 @@ def main():
     dice_delta = metrics["dice"]["mean_delta"]
     smallest_delta = quartiles[0]["dice"]["mean_delta"]
     smallest_precision_delta = quartiles[0]["precision"]["mean_delta"]
+    overall_precision_delta = metrics["precision"]["mean_delta"]
+    boundary_f1_delta = metrics[
+        "boundary_f1_tolerance_2"
+    ]["mean_delta"]
+    control_brier = np.asarray([
+        control_records[name]["brier"] for name in names
+    ])
+    candidate_brier = np.asarray([
+        candidate_records[name]["brier"] for name in names
+    ])
+    brier = metric_summary(
+        control_brier,
+        candidate_brier,
+        "brier_lower_is_better",
+        args.bootstrap_samples,
+        args.seed + 50,
+    )
+    metrics["brier_lower_is_better"] = brier
     result = {
         "split": "validation",
         "test_split_accessed": False,
@@ -144,15 +169,21 @@ def main():
             "minimum_macro_dice_delta": 0.002,
             "minimum_smallest_quartile_dice_delta": 0.0,
             "minimum_smallest_quartile_precision_delta": 0.0,
+            "minimum_macro_precision_delta": 0.0,
+            "minimum_boundary_f1_delta": 0.0,
+            "maximum_brier_delta": 0.0,
         },
         "passes_numeric_screen": bool(
             dice_delta >= 0.002
             and smallest_delta >= 0.0
             and smallest_precision_delta >= 0.0
+            and overall_precision_delta >= 0.0
+            and boundary_f1_delta > 0.0
+            and brier["mean_delta"] <= 0.0
         ),
         "note": (
-            "Numeric screen only. Gate saturation and train-validation gap "
-            "must be reviewed separately before an 80-epoch extension."
+            "Numeric screen only. BCDH residual distribution and the "
+            "train-validation gap must also be reviewed before extension."
         ),
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)

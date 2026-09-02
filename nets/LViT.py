@@ -2,6 +2,7 @@
 import torch
 import torch.nn as nn
 
+from .bcdh import BCDHRefiner
 from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
@@ -383,8 +384,24 @@ class LViT(nn.Module):
         self.text_module3 = nn.Conv1d(in_channels=512, out_channels=256, kernel_size=3, padding=1)
         self.text_module2 = nn.Conv1d(in_channels=256, out_channels=128, kernel_size=3, padding=1)
         self.text_module1 = nn.Conv1d(in_channels=128, out_channels=64, kernel_size=3, padding=1)
+        self.bcdh_enabled = bool(getattr(config, 'bcdh_enabled', False))
+        if self.bcdh_enabled:
+            if n_classes != 1:
+                raise ValueError('BCDH-R V1 supports binary segmentation only')
+            self.bcdh = BCDHRefiner(
+                channels=in_channels,
+                hidden_channels=getattr(
+                    config,
+                    'bcdh_hidden_channels',
+                    32,
+                ),
+                delta_max=getattr(config, 'bcdh_delta_max', 1.0),
+                detach_cues=getattr(config, 'bcdh_detach_cues', True),
+            )
+        else:
+            self.bcdh = None
 
-    def forward(self, x, text, text_mask=None):
+    def forward(self, x, text, text_mask=None, return_aux=False):
         x = x.float()  # x [4,3,224,224]
         x1 = self.inc(x)  # x1 [4, 64, 224, 224]
         text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2) 
@@ -408,22 +425,28 @@ class LViT(nn.Module):
         plam3 = self.reconstruct3(y3)
         plam4 = self.reconstruct4(y4)
         if self.decoder_fusion_mode == 'legacy_plam':
-            x = self.up4(x5, x4 + plam4)
-            x = self.up3(x, x3 + plam3)
-            x = self.up2(x, x2 + plam2)
-            x = self.up1(x, x1 + plam1)
+            d4 = self.up4(x5, x4 + plam4)
+            d3 = self.up3(d4, x3 + plam3)
+            d2 = self.up2(d3, x2 + plam2)
+            d1 = self.up1(d2, x1 + plam1)
         elif self.decoder_fusion_mode == 'fmiseg_adapter':
-            x = self.up4(x5, x4, plam4, text, text_mask=text_mask)
-            x = self.up3(x, x3, plam3, text, text_mask=text_mask)
-            x = self.up2(x, x2, plam2, text, text_mask=text_mask)
-            x = self.up1(x, x1, plam1, text, text_mask=text_mask)
+            d4 = self.up4(x5, x4, plam4, text, text_mask=text_mask)
+            d3 = self.up3(d4, x3, plam3, text, text_mask=text_mask)
+            d2 = self.up2(d3, x2, plam2, text, text_mask=text_mask)
+            d1 = self.up1(d2, x1, plam1, text, text_mask=text_mask)
         else:
-            x = self.up4(x5, x4, plam4, text=text)
-            x = self.up3(x, x3, plam3, text=text)
-            x = self.up2(x, x2, plam2, text=text)
-            x = self.up1(x, x1, plam1, text=text)
+            d4 = self.up4(x5, x4, plam4, text=text)
+            d3 = self.up3(d4, x3, plam3, text=text)
+            d2 = self.up2(d3, x2, plam2, text=text)
+            d1 = self.up1(d2, x1, plam1, text=text)
+        base_logits = self.outc(d1)
+        if self.bcdh_enabled:
+            outputs = self.bcdh(d2, d1, base_logits)
+            if return_aux:
+                return outputs
+            return outputs['final']
         if self.n_classes == 1:
-            logits = self.last_activation(self.outc(x))
+            logits = self.last_activation(base_logits)
         else:
-            logits = self.outc(x)  # if not using BCEWithLogitsLoss or class>1
+            logits = base_logits  # if not using BCEWithLogitsLoss or class>1
         return logits
