@@ -77,7 +77,7 @@ def main():
 
     metrics = {}
     metric_arrays = {}
-    for metric_index, metric in enumerate(("dice", "iou")):
+    for metric_index, metric in enumerate(("dice", "iou", "precision")):
         control = np.asarray([
             control_records[name][metric] for name in names
         ])
@@ -105,7 +105,7 @@ def main():
             "label_pixels_min": int(label_pixels[indices].min()),
             "label_pixels_max": int(label_pixels[indices].max()),
         }
-        for metric_index, metric in enumerate(("dice", "iou")):
+        for metric_index, metric in enumerate(("dice", "iou", "precision")):
             control, candidate = metric_arrays[metric]
             entry[metric] = metric_summary(
                 control[indices],
@@ -118,6 +118,7 @@ def main():
 
     dice_delta = metrics["dice"]["mean_delta"]
     smallest_delta = quartiles[0]["dice"]["mean_delta"]
+    smallest_precision_delta = quartiles[0]["precision"]["mean_delta"]
     result = {
         "split": "validation",
         "test_split_accessed": False,
@@ -142,9 +143,12 @@ def main():
         "pilot_thresholds": {
             "minimum_macro_dice_delta": 0.002,
             "minimum_smallest_quartile_dice_delta": 0.0,
+            "minimum_smallest_quartile_precision_delta": 0.0,
         },
         "passes_numeric_screen": bool(
-            dice_delta >= 0.002 and smallest_delta >= 0.0
+            dice_delta >= 0.002
+            and smallest_delta >= 0.0
+            and smallest_precision_delta >= 0.0
         ),
         "note": (
             "Numeric screen only. Gate saturation and train-validation gap "
