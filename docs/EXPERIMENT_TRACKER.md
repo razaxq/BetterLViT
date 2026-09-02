@@ -48,19 +48,18 @@ P4 验证导出：`/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24/runtime_logs/p4_
 | ID | 配置 | 正式 Git SHA | 标签 | GPU 预检 | 当前状态 |
 |---|---|---|---|---|---|
 | C0 | Frozen CXR-BERT + 无 TCSR + FAM-EPPA V4-B + Dice/Tversky；LoRA=False | `281bc1b40c782f6f42b8caa332e1fe1045cb29e0` | `pilot-c0-tversky-frozen-b16-seed1219-20260902` | 两次 batch16 整模输出一致；SHA-256 `8475bc883e5150be77eeff1541fd2afb32fa3ba1961f75ee06589ae75d1fd3a6`；峰值 allocated/reserved 15.079/16.441 GB | 40 epoch 状态 0；best epoch 29；validation macro Dice/IoU/precision = 0.810587/0.708856/0.824030；1429 样本；未访问 Test |
-| P5 | 与 C0 相同，但启用 TCSR V2.5：`x3→x2` 单跳稀疏路由 + 训练期局部监督；LoRA=False | `7d3bfce1caf0444656abfa9e42531f99a495c539` | `pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902` | 模块 SHA-256 `3dc9354fbf4fd95761ac3ec9dd5658ac5faefd76def7bb3e6ac82b6c5e7bc060`；整模 SHA-256 `a20a520fdde460a1d5aca1ad0a3efd7a089a84a06b15fe120a00539549d1d407`；峰值 15.791/17.178 GB | 40-epoch validation-only 已启动；会话 `P5_Test_session_09.02_14h58`；未访问 Test |
+| P5 | 与 C0 相同，但启用 TCSR V2.5：`x3→x2` 单跳稀疏路由 + 训练期局部监督；LoRA=False | `7d3bfce1caf0444656abfa9e42531f99a495c539` | `pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902` | 模块 SHA-256 `3dc9354fbf4fd95761ac3ec9dd5658ac5faefd76def7bb3e6ac82b6c5e7bc060`；整模 SHA-256 `a20a520fdde460a1d5aca1ad0a3efd7a089a84a06b15fe120a00539549d1d407`；峰值 15.791/17.178 GB | 40 epoch 状态 0；best epoch 30；validation macro Dice/IoU/precision = 0.808773/0.706784/0.818106；数值门失败；未访问 Test |
 
 P5 局部监督：GT 边界 Dice 对齐 + `0.5 *` 边界外残差泄漏，总权重 0.02，前 5 epoch 线性 warmup；推理不需要标签。模块预检确认 V2.5 与 V2.4 推理误差为 0，重复误差为 0，`x1/x3/x4` 严格 identity，文本/跨尺度效应与所有必要梯度非零。
 
-### 当前运行状态
+### 最终验证状态
 
-- 活跃实验：`p5_tcsrv25_local_tversky`
-- 服务器目录：`/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25`
-- 会话：`P5_Test_session_09.02_14h58`
-- 协议：40 epochs，batch 16，seed 1219，deterministic，`drop_last=True`
-- 隔离：`AUTO_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`
-- C0 已完成并导出 best-checkpoint validation-only 结果；JSON 核对通过：`split=validation`、`test_split_accessed=false`、1429 样本、提交来源一致且包含 precision。
-- P5 于 2026-09-02 14:58（服务器时间）持久启动；提交、协议和 Test 隔离字段核对通过。
+- C0 和 P5 均已按 40 epochs、batch 16、seed 1219、deterministic、`drop_last=True` 完成，状态均为 0。
+- 两份 best-checkpoint validation-only JSON 均核对通过：`split=validation`、`test_split_accessed=false`、1429 样本、提交来源一致且包含 precision。
+- P5 相对 C0：macro Dice `-0.001814`，95% CI `[-0.004823, 0.001178]`；macro IoU `-0.002072`；macro precision `-0.005924`，95% CI `[-0.009139, -0.002782]`。
+- 最小病灶四分位：Dice `+0.000351`，但 precision `-0.004655`，因此未满足“小病灶 Dice 与 precision 均不下降”。
+- P5 gate `0.2583`，位于目标范围；`x1/x3/x4` identity 通过；边界外泄漏由训练中期约 `0.381` 降至 epoch 40 的 `0.280`；epoch 40 train-validation Dice gap 约 `0.0081`，未见异常。
+- 结论：P5 数值门失败，不扩展到 80 epoch，不访问 Test；当前无活跃训练。
 
 ### P5 阶段门
 
@@ -91,3 +90,4 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - 2026-09-02：C0/P5 完成确定性 GPU 预检、独立提交与标签锁定；C0 启动。
 - 2026-09-02：停止维护 `改动计划.xlsx`，后续只更新本 Markdown 台账。
 - 2026-09-02：C0 以状态 0 完成；best epoch 29 的 validation macro Dice/IoU/precision 为 0.810587/0.708856/0.824030，未访问 Test。随后按门控链启动 P5。
+- 2026-09-02：P5 以状态 0 完成，但相对 C0 的 macro Dice 为 -0.001814，最小病灶 precision 为 -0.004655；尽管 gate、identity、泄漏改善和 train-validation gap 通过，数值门仍失败。停止 P5，不进行 80 epoch 或 Test。
