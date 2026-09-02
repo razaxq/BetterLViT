@@ -91,3 +91,31 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - 2026-09-02：停止维护 `改动计划.xlsx`，后续只更新本 Markdown 台账。
 - 2026-09-02：C0 以状态 0 完成；best epoch 29 的 validation macro Dice/IoU/precision 为 0.810587/0.708856/0.824030，未访问 Test。随后按门控链启动 P5。
 - 2026-09-02：P5 以状态 0 完成，但相对 C0 的 macro Dice 为 -0.001814，最小病灶 precision 为 -0.004655；尽管 gate、identity、泄漏改善和 train-validation gap 通过，数值门仍失败。停止 P5，不进行 80 epoch 或 Test。
+
+## 研究反思与主线收敛
+
+### 已被证据支持的结论
+
+- FAM-EPPA V4-B 是目前最可信的架构贡献。A2 相对 A0、A4 相对 A1 均获得约 0.8–1.0 个百分点的 Test macro Dice 增益；在冻结文本编码器的 A6/A7 配对中，加入 FAM-EPPA 的 A7 也明显优于 original PLAM 的 A6。
+- LoRA 不是必要增益来源：A0 低于 B0，冻结文本编码器的 A9 仍接近历史最佳。因此后续保持 Frozen CXR-BERT、LoRA=False。
+- FMISeg 原理适配未形成可靠增益：A3/A5 均低于对应的 FAM-EPPA 实验；不能把局部借鉴描述成完整 FMISeg 复现或第二项已验证创新。
+- TCSR V1–V2.5 尚不能作为性能型核心创新。P1–P4 依次修复路由关闭、gate 饱和、支持区域过密等机制问题；P5 又加入直接局部监督并换用 Dice/Tversky。最终 gate、identity、泄漏下降和泛化间隙均正常，但相对严格 C0 对照仍降低 macro Dice 和 precision。
+- P5 的结果说明失败不只是“缺少边界监督”或“gate 没学好”。当前文本条件跳连路由与已有 FAM-EPPA/PLAM 的作用存在冗余或干扰，且更容易扩大预测区域、降低 precision；继续做 TCSR V2.6 式参数修补的研究价值很低。
+
+### 当前论文论点边界
+
+1. 第一项架构创新可以使用 FAM-EPPA：自适应频率感知的解码器融合，并由多组配对结果支撑。
+2. TCSR 目前只能作为系统探索及负结果，不能作为第二项已成立的核心创新。
+3. 历史 Focal 结果保留作记录，但后续主线不用 Focal；论文主口径继续使用逐样本 macro Dice/IoU。
+
+### 建议的第二项创新转向（尚未开发）
+
+停止继续修改文本路由，改为验证一个直接作用于最终分割边界的 **Boundary-Calibrated Dual-Head Decoder（暂名 BCDH）**：
+
+- 保留 Frozen CXR-BERT、LoRA=False、FAM-EPPA V4-B 和 Dice/Tversky 对照，不再启用 TCSR。
+- 从现有分割 mask 自动生成边界/距离目标，不需要额外人工标注。
+- 主分割头之外增加轻量边界头；边界特征只通过零初始化、幅度受限的残差修正最终 logits，避免再次扰动全部 skip features。
+- 辅助目标直接约束最终边界和假阳性区域，而不是只监督内部路由 mask；推理阶段不需要 GT。
+- 先做独立提交、确定性 batch16 预检和 40-epoch validation-only 配对；仍以 macro Dice `+0.002`、整体及最小病灶 precision 不下降为阶段门。通过后再做多 seed，最后才允许正式 Test。
+
+该方向的论文组合将是：**FAM-EPPA（频率感知融合） + BCDH（边界校准输出）**。两者分别解决特征融合和最终形状/假阳性校准，职责比 EPPA + TCSR 更正交。
