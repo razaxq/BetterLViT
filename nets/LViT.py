@@ -9,6 +9,7 @@ from .pixlevel import PixLevelModule
 from .tcsr import (
     BoundaryPreservingAsymmetricTextGuidedRouter,
     CalibratedSingleHopBoundaryFocusedTextGuidedRouter,
+    SparseBoundaryCalibratedTextGuidedRouter,
     SingleHopBoundaryFocusedTextGuidedRouter,
     TextConditionedCrossScaleSkipRouter,
     TextConditionedCrossScaleSkipRouterV2,
@@ -215,6 +216,7 @@ class LViT(nn.Module):
                 'v2.1': BoundaryPreservingAsymmetricTextGuidedRouter,
                 'v2.2': SingleHopBoundaryFocusedTextGuidedRouter,
                 'v2.3': CalibratedSingleHopBoundaryFocusedTextGuidedRouter,
+                'v2.4': SparseBoundaryCalibratedTextGuidedRouter,
             }
             if self.tcsr_version not in router_types:
                 raise ValueError(
@@ -235,7 +237,7 @@ class LViT(nn.Module):
                     1.0,
                 ),
             }
-            if self.tcsr_version in ('v2', 'v2.1', 'v2.2', 'v2.3'):
+            if self.tcsr_version in ('v2', 'v2.1', 'v2.2', 'v2.3', 'v2.4'):
                 router_kwargs['initial_residual_strength'] = getattr(
                     config,
                     'tcsr_initial_residual_strength',
@@ -270,7 +272,7 @@ class LViT(nn.Module):
                     'tcsr_initial_gate_probability',
                     0.25,
                 )
-            if self.tcsr_version == 'v2.3':
+            if self.tcsr_version in ('v2.3', 'v2.4'):
                 router_kwargs.update({
                     'initial_gate_probability': getattr(
                         config, 'tcsr_initial_gate_probability', 0.25,

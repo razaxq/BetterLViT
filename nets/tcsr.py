@@ -1336,3 +1336,38 @@ class CalibratedSingleHopBoundaryFocusedTextGuidedRouter(
             gate_target_max=gate_target_max,
             gate_calibration_weight=gate_calibration_weight,
         )
+
+
+class SparseBoundaryCalibratedTextGuidedRouter(
+    CalibratedSingleHopBoundaryFocusedTextGuidedRouter
+):
+    """V2.4: make P3's spatial support boundary-selective instead of dense.
+
+    P3 kept a 0.5 floor in its boundary map, producing a mean focus near 0.73
+    and applying coarse x3 semantics over most of x2.  This variant changes
+    only that fixed focus transform: a sharper no-floor sigmoid suppresses
+    non-transition regions while preserving the route, gate, message, loss,
+    decoder and optimizer protocol.
+    """
+
+    architecture_version = "tcsr_v2_4_sparse_boundary_calibrated_gate"
+
+    @staticmethod
+    def _boundary_focus(target_projected):
+        horizontal = F.pad(
+            (target_projected[:, :, :, 1:] - target_projected[:, :, :, :-1]).abs(),
+            (0, 1, 0, 0),
+        )
+        vertical = F.pad(
+            (target_projected[:, :, 1:, :] - target_projected[:, :, :-1, :]).abs(),
+            (0, 0, 0, 1),
+        )
+        boundary = (horizontal + vertical).mean(dim=1, keepdim=True)
+        boundary_rms = boundary.square().mean(
+            dim=(2, 3),
+            keepdim=True,
+        ).sqrt().clamp_min(1e-6)
+        normalized = boundary / boundary_rms
+        # The only P4 variable: remove P2/P3's 0.5 support floor and sharpen
+        # the transition threshold so flat regions receive near-zero routing.
+        return torch.sigmoid(4.0 * (normalized - 1.5))

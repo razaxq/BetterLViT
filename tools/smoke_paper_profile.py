@@ -37,6 +37,7 @@ def parse_args():
             "p1_tcsrv21_boundary_router",
             "p2_tcsrv22_single_hop_boundary",
             "p3_tcsrv23_calibrated_gate",
+            "p4_tcsrv24_sparse_boundary",
         ),
     )
     parser.add_argument("--cpu", action="store_true")

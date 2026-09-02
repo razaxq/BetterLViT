@@ -18,6 +18,7 @@ if str(REPO_ROOT) not in sys.path:
 from nets.tcsr import (
     BoundaryPreservingAsymmetricTextGuidedRouter,
     CalibratedSingleHopBoundaryFocusedTextGuidedRouter,
+    SparseBoundaryCalibratedTextGuidedRouter,
     SingleHopBoundaryFocusedTextGuidedRouter,
     TextConditionedCrossScaleSkipRouter,
     TextConditionedCrossScaleSkipRouterV2,
@@ -29,7 +30,7 @@ def parse_args():
     parser.add_argument("--cuda", action="store_true")
     parser.add_argument(
         "--version",
-        choices=("v1", "v2", "v2.1", "v2.2", "v2.3"),
+        choices=("v1", "v2", "v2.1", "v2.2", "v2.3", "v2.4"),
         default="v2",
     )
     parser.add_argument("--batch-size", type=int, default=2)
@@ -62,8 +63,13 @@ def main():
 
     channels = (8, 16, 32, 64)
     spatial_sizes = (32, 16, 8, 4)
-    if args.version == "v2.3":
-        router = CalibratedSingleHopBoundaryFocusedTextGuidedRouter(
+    if args.version in ("v2.3", "v2.4"):
+        router_type = (
+            SparseBoundaryCalibratedTextGuidedRouter
+            if args.version == "v2.4"
+            else CalibratedSingleHopBoundaryFocusedTextGuidedRouter
+        )
+        router = router_type(
             channels,
             text_dim=16,
             routing_dim=8,
@@ -159,7 +165,7 @@ def main():
                 initial_error
             )
         )
-    if args.version in ("v2", "v2.1", "v2.2", "v2.3") and max(initial_rms_ratios) >= 0.08:
+    if args.version in ("v2", "v2.1", "v2.2", "v2.3", "v2.4") and max(initial_rms_ratios) >= 0.08:
         raise RuntimeError(
             "V2 initial residual exceeded the 8% RMS safety bound: {}."
             .format(initial_rms_ratios)
@@ -225,7 +231,7 @@ def main():
             "spatial_head": router.spatial_heads[0].weight,
             "message_head": router.message_heads[0].weight,
         }
-    elif args.version in ("v2.2", "v2.3"):
+    elif args.version in ("v2.2", "v2.3", "v2.4"):
         gradient_checks = {
             "residual_strength_logit": router.residual_strength_logit,
             "source_projection": router.source_projection[0].weight,
@@ -266,7 +272,7 @@ def main():
         changed_skips = [source.detach().clone() for source in skips]
         if args.version == "v2.1":
             changed_source_index, changed_target_index = 3, 2
-        elif args.version in ("v2.2", "v2.3"):
+        elif args.version in ("v2.2", "v2.3", "v2.4"):
             changed_source_index, changed_target_index = 2, 1
         else:
             changed_source_index, changed_target_index = 0, 1
@@ -282,9 +288,9 @@ def main():
             active_outputs_1[changed_target_index].detach()
             - cross_scale_outputs[changed_target_index]
         ).abs().max().item()
-    if args.version in ("v2", "v2.1", "v2.2", "v2.3") and text_conditioning_effect == 0.0:
+    if args.version in ("v2", "v2.1", "v2.2", "v2.3", "v2.4") and text_conditioning_effect == 0.0:
         raise RuntimeError("V2 output is insensitive to text conditioning.")
-    if args.version in ("v2", "v2.1", "v2.2", "v2.3") and adjacent_scale_effect == 0.0:
+    if args.version in ("v2", "v2.1", "v2.2", "v2.3", "v2.4") and adjacent_scale_effect == 0.0:
         raise RuntimeError("V2 does not exchange adjacent-scale features.")
     if args.version == "v2.1":
         identity_error = max(
@@ -299,7 +305,7 @@ def main():
         regularization = router.regularization_loss()
         if not torch.isfinite(regularization):
             raise RuntimeError("V2.1 regularization is non-finite.")
-    elif args.version in ("v2.2", "v2.3"):
+    elif args.version in ("v2.2", "v2.3", "v2.4"):
         identity_error = max(
             (active_outputs_1[index] - skips[index]).abs().max().item()
             for index in (0, 2, 3)
@@ -315,10 +321,17 @@ def main():
             raise RuntimeError("Single-hop gate regularization is non-finite.")
         if args.version == "v2.2" and regularization.item() != 0.0:
             raise RuntimeError("V2.2 must not apply gate regularization.")
-        if args.version == "v2.3":
+        if args.version in ("v2.3", "v2.4"):
             gate_mean = active_stats["route_gate_means"][0]
             if not 0.05 <= gate_mean <= 0.50:
                 raise RuntimeError("V2.3 gate escaped its calibrated bounds.")
+        if args.version == "v2.4":
+            focus_mean = active_stats["boundary_focus_means"][0]
+            if not 0.0 < focus_mean < 0.50:
+                raise RuntimeError(
+                    "V2.4 sparse boundary focus is not selective: {:.4f}."
+                    .format(focus_mean)
+                )
 
     result = {
         "status": "ok",
@@ -353,7 +366,7 @@ def main():
             "identity_scales": active_stats["identity_scales"],
             "regularization_loss": active_stats["regularization_loss"],
         })
-    elif args.version in ("v2.2", "v2.3"):
+    elif args.version in ("v2.2", "v2.3", "v2.4"):
         result.update({
             "route_names": active_stats["route_names"],
             "route_gate_means": active_stats["route_gate_means"],
@@ -366,7 +379,7 @@ def main():
             "identity_scales": active_stats["identity_scales"],
             "regularization_loss": active_stats["regularization_loss"],
         })
-        if args.version == "v2.3":
+        if args.version in ("v2.3", "v2.4"):
             result.update({
                 "gate_min_probability": active_stats["gate_min_probability"],
                 "gate_max_probability": active_stats["gate_max_probability"],

@@ -34,6 +34,7 @@ ALLOWED_EXPERIMENTS = (
     "p1_tcsrv21_boundary_router",
     "p2_tcsrv22_single_hop_boundary",
     "p3_tcsrv23_calibrated_gate",
+    "p4_tcsrv24_sparse_boundary",
 )
 
 

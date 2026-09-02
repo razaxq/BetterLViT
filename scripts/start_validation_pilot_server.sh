@@ -9,8 +9,12 @@ batch_size="${4:-16}"
 if [ "$experiment" != "p1_tcsrv21_boundary_router" ] \
   && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ] \
   && [ "$experiment" != "p3_tcsrv23_calibrated_gate" ]; then
+  if [ "$experiment" = "p4_tcsrv24_sparse_boundary" ]; then
+    :
+  else
   echo "Unsupported validation pilot: $experiment" >&2
   exit 2
+  fi
 fi
 if ! [[ "$epochs" =~ ^[1-9][0-9]*$ ]] || [ "$epochs" -gt 80 ]; then
   echo "Pilot epochs must be an integer from 1 to 80." >&2

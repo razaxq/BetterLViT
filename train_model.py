@@ -678,6 +678,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             elif current_tcsr_stats.get('architecture_version') in (
                 'tcsr_v2_2_single_hop_boundary_focused',
                 'tcsr_v2_3_calibrated_single_hop_gate',
+                'tcsr_v2_4_sparse_boundary_calibrated_gate',
             ):
                 logger.info(
                     'TCSR single-hop: version={}; routes={}; gates={}; closed={}; '

@@ -37,9 +37,13 @@ cd "$repo_root" || {
 if [ "$experiment" != "p1_tcsrv21_boundary_router" ] \
   && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ] \
   && [ "$experiment" != "p3_tcsrv23_calibrated_gate" ]; then
+  if [ "$experiment" = "p4_tcsrv24_sparse_boundary" ]; then
+    :
+  else
   write_status unsupported_experiment
   echo "Validation-only runner refuses experiment: $experiment" >&2
   exit 6
+  fi
 fi
 
 "$python_bin" train_model.py
