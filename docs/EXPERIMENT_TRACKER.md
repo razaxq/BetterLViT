@@ -121,3 +121,15 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - 先建立相同 Dice/Focal、boundary loss 0 的 40-epoch validation-only 对照，再做 CPAR 配对；仍以 macro Dice `+0.002`、整体及最小病灶 precision 不下降为阶段门。通过后再做多 seed，最后才允许正式 Test。
 
 该方向的论文组合将是：**FAM-EPPA（频率感知融合） + CPAR（跨尺度预测一致性修正）**。两者分别解决特征融合和输出校准，不依赖被禁止的 boundary loss，也比 EPPA + TCSR 更正交。
+
+### BCDH 深入研究后的收敛设计（尚未开发）
+
+CPAR 已进一步具体化为 **BCDH-R V1（Boundary-Conscious Dual-Head Refiner）**。完整论证、公式、代码接入点、排除项与实验门见 [`BCDH_RESEARCH.md`](BCDH_RESEARCH.md)。
+
+- 不使用“分割头 + 边界头”，而使用 `112×112` 粗尺度完整 mask 头和 `224×224` 细尺度完整 mask 头；两头都只接受原始 segmentation mask 的 Dice/Focal 监督。
+- 从粗、细预测本身生成 uncertainty、fine-only disagreement 和 coarse-only disagreement；不生成 GT boundary/distance/direction target。
+- 在最终 logits 上使用零初始化、幅度受限的稠密 residual correction；初始化严格等价无 BCDH 基线。
+- 建议首轮为 C1（A9 式严格控制）对 P6（BCDH-R V1）的 40 epoch validation-only 配对，batch16、seed1219、`boundary_loss=0.0`，不访问 Test。
+- 阶段门除 macro Dice `+0.002` 外，还要求整体及最小病灶 precision 不下降、boundary F1 提升、Brier score 不恶化，并排除 residual 饱和或全图修正。
+- “双头”或普通 deep supervision 本身不是充分创新；论文论点必须落在 prediction-only 的有符号跨尺度误差提示与 exact-identity bounded residual correction 上。
+- 在 boundary F1/Brier/ECE 证据出现前，C 不解释为 *Calibrated*，避免未经验证的概率校准主张。
