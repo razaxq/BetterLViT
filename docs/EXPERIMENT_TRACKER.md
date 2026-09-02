@@ -133,3 +133,34 @@ CPAR 已进一步具体化为 **BCDH-R V1（Boundary-Conscious Dual-Head Refiner
 - 阶段门除 macro Dice `+0.002` 外，还要求整体及最小病灶 precision 不下降、boundary F1 提升、Brier score 不恶化，并排除 residual 饱和或全图修正。
 - “双头”或普通 deep supervision 本身不是充分创新；论文论点必须落在 prediction-only 的有符号跨尺度误差提示与 exact-identity bounded residual correction 上。
 - 在 boundary F1/Brier/ECE 证据出现前，C 不解释为 *Calibrated*，避免未经验证的概率校准主张。
+
+## BCDH-R V1 实施与当前训练：C1 → P6
+
+### 锁定实现
+
+- 开发提交：`8a0fe9b41bc0a5d515a353d52693cb06afeb3096`。
+- BCDH-R 使用 `up2` 粗尺度完整 mask 头、原有 `up1` 细尺度完整 mask 头、prediction-only uncertainty/disagreement cues，以及零初始化、`delta_max=1.0` 的 bounded logit residual。
+- P6 目标：`L_total = L_Dice/Focal(final) + 0.2 * L_Dice/Focal(coarse)`；两项都只使用完整 segmentation mask。
+- C1/P6 均为 Frozen CXR-BERT、LoRA=False、FAM-EPPA V4-B、Dice/Focal `0.5/0.5`、Focal gamma `2.0`、`boundary_loss_weight=0.0`。
+
+### 独立提交、标签与预检
+
+| ID | 完整 Git SHA | 标签 | 配置 | 预检 |
+|---|---|---|---|---|
+| C1 | `106aeab700ee98653b5ec27994a0aa15b60dac07` | `pilot-c1-bcdh-control-frozen-b16-seed1219-20260902` | BCDH 关闭的严格配对对照 | 两次 batch16 前/反向输出 SHA-256 均为 `d51177e6a9c6b162766de6c0e2eabfdeb4c62d10e815d601c3efdf30d9eb2c86`；loss 均为 0.2612988949；reserved 峰值 16.441 GiB |
+| P6 | `7217660e6ef16e2a495bab4f20c73403468f55e1` | `pilot-p6-bcdh-r-v1-frozen-b16-seed1219-20260902` | C1 + BCDH-R V1 + 0.2 粗头辅助完整-mask监督 | 两次 batch16 前/反向输出 SHA-256 与 C1 完全一致；loss 均为 0.3125534058；identity error 0；reserved 峰值 16.852 GiB |
+
+模块单测同时确认：零初始化 identity error 0、重复前向误差 0、粗头/输出投影/第二步 refiner trunk 梯度均非零，且未使用 boundary target。
+
+### 当前运行状态
+
+- 训练链于服务器时间 `2026-09-02T20:41:07+08:00` 启动，顺序为 C1 训练 → C1 best validation 导出 → P6 训练 → P6 best validation 导出 → 配对比较。
+- 两项均为 40 epochs、batch 16、seed 1219、deterministic CUDA、`drop_last=True`。
+- `AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`；本轮禁止访问 Test。
+- 当前阶段：C1 正式训练中；启动核对时为 epoch 1，GPU 利用率 100%，显存约 17.4 GiB，无异常。
+- 运行元数据：`/root/autodl-tmp/BetterLViT-paper-p6-bcdh/runtime_logs/bcdh_pair_current.env`。
+- 已建立自动监控；C1/P6 完成前不得把 validation pilot 写成正式 Test 结果。
+
+### 预注册阶段门
+
+P6 相对 C1 必须同时满足：validation macro Dice 至少 `+0.002`、整体 precision 不下降、最小病灶四分位 Dice/precision 均不下降、tolerance-2 boundary F1 提升、Brier 不恶化，并且 residual 统计不出现饱和或全图无差别修正。未通过则停止，不扩展训练、不访问 Test。
