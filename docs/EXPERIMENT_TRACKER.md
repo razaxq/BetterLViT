@@ -9,8 +9,8 @@
 - 论文主口径为逐样本 macro Dice/IoU；不在本台账维护 FMISeg 论文的 micro 口径。
 - 正式实验必须使用独立完整 Git SHA 和实验标签，运行环境、检查点 `source_git_commit` 与结果 JSON 必须一致。
 - 机制筛选 pilot 只使用 validation：`AUTO_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`。未通过阶段门不得扩展或访问 Test。
-- 当前及后续 TCSR 实验不使用 LoRA，也不再使用 Focal。
-- 当前非 Focal 目标为 `0.5 * Dice + 0.5 * Tversky`，其中 Tversky 的 FP/FN 权重为 `0.7/0.3`。
+- 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
+- C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
 ## 已完成的正式 Test 实验
 
@@ -48,9 +48,9 @@ P4 验证导出：`/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24/runtime_logs/p4_
 | ID | 配置 | 正式 Git SHA | 标签 | GPU 预检 | 当前状态 |
 |---|---|---|---|---|---|
 | C0 | Frozen CXR-BERT + 无 TCSR + FAM-EPPA V4-B + Dice/Tversky；LoRA=False | `281bc1b40c782f6f42b8caa332e1fe1045cb29e0` | `pilot-c0-tversky-frozen-b16-seed1219-20260902` | 两次 batch16 整模输出一致；SHA-256 `8475bc883e5150be77eeff1541fd2afb32fa3ba1961f75ee06589ae75d1fd3a6`；峰值 allocated/reserved 15.079/16.441 GB | 40 epoch 状态 0；best epoch 29；validation macro Dice/IoU/precision = 0.810587/0.708856/0.824030；1429 样本；未访问 Test |
-| P5 | 与 C0 相同，但启用 TCSR V2.5：`x3→x2` 单跳稀疏路由 + 训练期局部监督；LoRA=False | `7d3bfce1caf0444656abfa9e42531f99a495c539` | `pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902` | 模块 SHA-256 `3dc9354fbf4fd95761ac3ec9dd5658ac5faefd76def7bb3e6ac82b6c5e7bc060`；整模 SHA-256 `a20a520fdde460a1d5aca1ad0a3efd7a089a84a06b15fe120a00539549d1d407`；峰值 15.791/17.178 GB | 40 epoch 状态 0；best epoch 30；validation macro Dice/IoU/precision = 0.808773/0.706784/0.818106；数值门失败；未访问 Test |
+| P5 | 与 C0 相同，但启用 TCSR V2.5：`x3→x2` 单跳稀疏路由 + 训练期局部监督；LoRA=False | `7d3bfce1caf0444656abfa9e42531f99a495c539` | `pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902` | 模块 SHA-256 `3dc9354fbf4fd95761ac3ec9dd5658ac5faefd76def7bb3e6ac82b6c5e7bc060`；整模 SHA-256 `a20a520fdde460a1d5aca1ad0a3efd7a089a84a06b15fe120a00539549d1d407`；峰值 15.791/17.178 GB | 40 epoch 状态 0；best epoch 30；validation macro Dice/IoU/precision = 0.808773/0.706784/0.818106；数值门失败；其局部项包含边界监督，不符合最终方法约束；未访问 Test |
 
-P5 局部监督：GT 边界 Dice 对齐 + `0.5 *` 边界外残差泄漏，总权重 0.02，前 5 epoch 线性 warmup；推理不需要标签。模块预检确认 V2.5 与 V2.4 推理误差为 0，重复误差为 0，`x1/x3/x4` 严格 identity，文本/跨尺度效应与所有必要梯度非零。
+P5 局部监督：GT 边界 Dice 对齐 + `0.5 *` 边界外残差泄漏，总权重 0.02，前 5 epoch 线性 warmup；推理不需要标签。模块预检确认 V2.5 与 V2.4 推理误差为 0，重复误差为 0，`x1/x3/x4` 严格 identity，文本/跨尺度效应与所有必要梯度非零。该实验保留为诊断证据，但因使用了边界监督，不得成为最终方法或后续配置模板。
 
 ### 最终验证状态
 
@@ -85,12 +85,13 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 
 ## 决策日志
 
-- 2026-09-02：用户确认后续不使用 Focal；采用 Dice/Tversky，并以 FP 0.7、FN 0.3 强化假阳性惩罚。
-- 2026-09-02：P4 失败；不再围绕 Focal 对照迭代。
+- 2026-09-02：C0/P5 配对阶段采用 Dice/Tversky，并以 FP 0.7、FN 0.3 强化假阳性惩罚。
+- 2026-09-02：P4 失败；停止沿现有 TCSR 路由继续参数修补。
 - 2026-09-02：C0/P5 完成确定性 GPU 预检、独立提交与标签锁定；C0 启动。
 - 2026-09-02：停止维护 `改动计划.xlsx`，后续只更新本 Markdown 台账。
 - 2026-09-02：C0 以状态 0 完成；best epoch 29 的 validation macro Dice/IoU/precision 为 0.810587/0.708856/0.824030，未访问 Test。随后按门控链启动 P5。
 - 2026-09-02：P5 以状态 0 完成，但相对 C0 的 macro Dice 为 -0.001814，最小病灶 precision 为 -0.004655；尽管 gate、identity、泄漏改善和 train-validation gap 通过，数值门仍失败。停止 P5，不进行 80 epoch 或 Test。
+- 2026-09-02：用户澄清 Focal 可以使用，禁止的是 boundary loss。后续恢复 Dice/Focal 候选，所有正式配置保持 `boundary_loss=0.0`；P5 因包含边界监督仅作为历史诊断实验。
 
 ## 研究反思与主线收敛
 
@@ -100,22 +101,23 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - LoRA 不是必要增益来源：A0 低于 B0，冻结文本编码器的 A9 仍接近历史最佳。因此后续保持 Frozen CXR-BERT、LoRA=False。
 - FMISeg 原理适配未形成可靠增益：A3/A5 均低于对应的 FAM-EPPA 实验；不能把局部借鉴描述成完整 FMISeg 复现或第二项已验证创新。
 - TCSR V1–V2.5 尚不能作为性能型核心创新。P1–P4 依次修复路由关闭、gate 饱和、支持区域过密等机制问题；P5 又加入直接局部监督并换用 Dice/Tversky。最终 gate、identity、泄漏下降和泛化间隙均正常，但相对严格 C0 对照仍降低 macro Dice 和 precision。
-- P5 的结果说明失败不只是“缺少边界监督”或“gate 没学好”。当前文本条件跳连路由与已有 FAM-EPPA/PLAM 的作用存在冗余或干扰，且更容易扩大预测区域、降低 precision；继续做 TCSR V2.6 式参数修补的研究价值很低。
+- P5 的结果说明，即使加入额外局部监督，文本条件跳连路由仍未形成数值增益。当前路由与已有 FAM-EPPA/PLAM 的作用存在冗余或干扰，且更容易扩大预测区域、降低 precision；继续做 TCSR V2.6 式参数修补的研究价值很低。由于最终方法禁止 boundary loss，P5 的局部监督也不能继续沿用。
 
 ### 当前论文论点边界
 
 1. 第一项架构创新可以使用 FAM-EPPA：自适应频率感知的解码器融合，并由多组配对结果支撑。
 2. TCSR 目前只能作为系统探索及负结果，不能作为第二项已成立的核心创新。
-3. 历史 Focal 结果保留作记录，但后续主线不用 Focal；论文主口径继续使用逐样本 macro Dice/IoU。
+3. Focal 可以作为主线损失；禁止 boundary loss。论文主口径继续使用逐样本 macro Dice/IoU。
 
 ### 建议的第二项创新转向（尚未开发）
 
-停止继续修改文本路由，改为验证一个直接作用于最终分割边界的 **Boundary-Calibrated Dual-Head Decoder（暂名 BCDH）**：
+停止继续修改文本路由，改为验证不需要边界目标的 **Cross-Scale Prediction Agreement Refiner（暂名 CPAR）**：
 
-- 保留 Frozen CXR-BERT、LoRA=False、FAM-EPPA V4-B 和 Dice/Tversky 对照，不再启用 TCSR。
-- 从现有分割 mask 自动生成边界/距离目标，不需要额外人工标注。
-- 主分割头之外增加轻量边界头；边界特征只通过零初始化、幅度受限的残差修正最终 logits，避免再次扰动全部 skip features。
-- 辅助目标直接约束最终边界和假阳性区域，而不是只监督内部路由 mask；推理阶段不需要 GT。
-- 先做独立提交、确定性 batch16 预检和 40-epoch validation-only 配对；仍以 macro Dice `+0.002`、整体及最小病灶 precision 不下降为阶段门。通过后再做多 seed，最后才允许正式 Test。
+- 保留 Frozen CXR-BERT、LoRA=False、FAM-EPPA V4-B，恢复 Dice/Focal，明确 `boundary_loss=0.0`，不再启用 TCSR。
+- 在最终分割头之外增加一个来自较粗解码尺度的轻量辅助分割头；两个头都只使用原始 segmentation mask 和 Dice/Focal，不生成边界图、距离图或边界损失。
+- 使用粗、细两个预测的差异图作为不确定区域提示，让粗尺度上下文抑制孤立假阳性、细尺度分支保留局部结构。
+- 修正分支采用零初始化、幅度受限的 residual logits；初始化时必须严格等价于无 CPAR 基线。
+- 可加入预测一致性约束，但不能包含任何 boundary target/loss。推理阶段只保留主头与轻量修正，不需要 GT。
+- 先建立相同 Dice/Focal、boundary loss 0 的 40-epoch validation-only 对照，再做 CPAR 配对；仍以 macro Dice `+0.002`、整体及最小病灶 precision 不下降为阶段门。通过后再做多 seed，最后才允许正式 Test。
 
-该方向的论文组合将是：**FAM-EPPA（频率感知融合） + BCDH（边界校准输出）**。两者分别解决特征融合和最终形状/假阳性校准，职责比 EPPA + TCSR 更正交。
+该方向的论文组合将是：**FAM-EPPA（频率感知融合） + CPAR（跨尺度预测一致性修正）**。两者分别解决特征融合和输出校准，不依赖被禁止的 boundary loss，也比 EPPA + TCSR 更正交。
