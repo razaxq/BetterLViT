@@ -157,10 +157,21 @@ CPAR 已进一步具体化为 **BCDH-R V1（Boundary-Conscious Dual-Head Refiner
 - 训练链于服务器时间 `2026-09-02T20:41:07+08:00` 启动，顺序为 C1 训练 → C1 best validation 导出 → P6 训练 → P6 best validation 导出 → 配对比较。
 - 两项均为 40 epochs、batch 16、seed 1219、deterministic CUDA、`drop_last=True`。
 - `AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`；本轮禁止访问 Test。
-- 当前阶段：C1 正式训练中；启动核对时为 epoch 1，GPU 利用率 100%，显存约 17.4 GiB，无异常。
+- 最终状态：C1 与 P6 均完成 40 epochs，训练、best validation 导出和配对比较均成功；GPU 已空闲。
 - 运行元数据：`/root/autodl-tmp/BetterLViT-paper-p6-bcdh/runtime_logs/bcdh_pair_current.env`。
-- 已建立自动监控；C1/P6 完成前不得把 validation pilot 写成正式 Test 结果。
+- 两份 validation JSON 均为 1429 样本、提交一致、`test_split_accessed=false`；本轮未访问 Test。
 
 ### 预注册阶段门
 
 P6 相对 C1 必须同时满足：validation macro Dice 至少 `+0.002`、整体 precision 不下降、最小病灶四分位 Dice/precision 均不下降、tolerance-2 boundary F1 提升、Brier 不恶化，并且 residual 统计不出现饱和或全图无差别修正。未通过则停止，不扩展训练、不访问 Test。
+
+### 最终结果与结论
+
+| ID | Best epoch | Val macro Dice | IoU | Precision | Recall | Boundary F1 tol=2 | Brier |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| C1 | 40 | 0.816330 | 0.716653 | 0.785124 | 0.891991 | 0.726298 | 0.023294 |
+| P6 | 40 | 0.815978 | 0.716806 | 0.784709 | 0.890255 | 0.725759 | 0.022994 |
+
+P6 相对 C1：macro Dice `-0.000352`（95% CI `[-0.002388, 0.001636]`）、IoU `+0.000152`、precision `-0.000414`、recall `-0.001735`、boundary F1 `-0.000539`；Brier 改善 `-0.000300`（越低越好）。最小病灶四分位 Dice `-0.002482`、precision `-0.003837`、boundary F1 `-0.002898`。
+
+数值门失败。最终 BCDH residual 的平均绝对幅度为 `0.523526`，`98.87%` 为负修正；高 uncertainty 区的修正幅度 `0.486574` 反而低于其余区域 `0.532763`，说明分支主要学成全局单向收缩，而不是预期的不确定区域局部校正。P6 不扩展至 80/150 epochs，也不访问 Test；BCDH-R V1 只能保留为负结果与后续机制诊断依据。
