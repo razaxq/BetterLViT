@@ -6,16 +6,16 @@ seed="${2:-1219}"
 epochs="${3:-40}"
 batch_size="${4:-16}"
 
-if [ "$experiment" != "p1_tcsrv21_boundary_router" ] \
-  && [ "$experiment" != "p2_tcsrv22_single_hop_boundary" ] \
-  && [ "$experiment" != "p3_tcsrv23_calibrated_gate" ]; then
-  if [ "$experiment" = "p4_tcsrv24_sparse_boundary" ]; then
-    :
-  else
-  echo "Unsupported validation pilot: $experiment" >&2
-  exit 2
-  fi
-fi
+case "$experiment" in
+  p1_tcsrv21_boundary_router|p2_tcsrv22_single_hop_boundary|\
+  p3_tcsrv23_calibrated_gate|p4_tcsrv24_sparse_boundary|\
+  c0_frozen_freq_tversky|p5_tcsrv25_local_tversky)
+    ;;
+  *)
+    echo "Unsupported validation pilot: $experiment" >&2
+    exit 2
+    ;;
+esac
 if ! [[ "$epochs" =~ ^[1-9][0-9]*$ ]] || [ "$epochs" -gt 80 ]; then
   echo "Pilot epochs must be an integer from 1 to 80." >&2
   exit 2

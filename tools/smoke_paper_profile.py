@@ -38,6 +38,8 @@ def parse_args():
             "p2_tcsrv22_single_hop_boundary",
             "p3_tcsrv23_calibrated_gate",
             "p4_tcsrv24_sparse_boundary",
+            "c0_frozen_freq_tversky",
+            "p5_tcsrv25_local_tversky",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -58,7 +60,7 @@ def main():
     import Config as config
     from nets.BetterLViT import BetterLViT
     from train_model import build_optimizer_parameter_groups
-    from utils import WeightedDiceBCE, WeightedDiceFocal
+    from utils import WeightedDiceBCE, WeightedDiceFocal, WeightedDiceTversky
 
     torch.backends.cudnn.enabled = config.cudnn_enabled
     torch.backends.cudnn.benchmark = False
@@ -142,6 +144,13 @@ def main():
             focal_positive_weight=config.focal_positive_weight,
             focal_negative_weight=config.focal_negative_weight,
         )
+    elif config.loss_name == "dice_tversky":
+        criterion = WeightedDiceTversky(
+            dice_weight=config.dice_loss_weight,
+            tversky_weight=config.tversky_loss_weight,
+            tversky_fp_weight=config.tversky_fp_weight,
+            tversky_fn_weight=config.tversky_fn_weight,
+        )
     else:
         criterion = WeightedDiceBCE(
             dice_weight=config.dice_loss_weight,
@@ -152,7 +161,15 @@ def main():
     router_regularization = segmentation_loss.new_zeros(())
     if router is not None and hasattr(router, "regularization_loss"):
         router_regularization = router.regularization_loss()
-    loss = segmentation_loss + router_regularization
+    router_supervision = segmentation_loss.new_zeros(())
+    if router is not None and hasattr(
+        router, "supervised_localization_loss"
+    ):
+        router_supervision = router.supervised_localization_loss(
+            labels,
+            weight_scale=1.0,
+        )
+    loss = segmentation_loss + router_regularization + router_supervision
     if not torch.isfinite(loss):
         raise RuntimeError("Loss is non-finite.")
     loss.backward()
@@ -215,6 +232,18 @@ def main():
         "tcsr_regularization_loss": float(
             router_regularization.detach().cpu()
         ),
+        "tcsr_supervision_loss": float(
+            router_supervision.detach().cpu()
+        ),
+        "tcsr_localization_components": {
+            name: float(value.detach().cpu())
+            for name, value in (
+                router.localization_components().items()
+                if router is not None and hasattr(
+                    router, "localization_components"
+                ) else []
+            )
+        },
         "tcsr_stats": dict(getattr(router, "_last_stats", {}) or {}),
         "router_optimizer_parameter_tensors": len(router_names),
         "router_optimizer_learning_rates": router_group_lrs,

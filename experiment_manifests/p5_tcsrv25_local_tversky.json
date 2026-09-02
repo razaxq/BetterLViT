@@ -1,0 +1,68 @@
+{
+  "experiment": "p5_tcsrv25_local_tversky",
+  "paper_id": "P5",
+  "status": "development",
+  "description": "Frozen CXR-BERT + supervised-local TCSR V2.5 + FAM-EPPA V4-B + Dice/Tversky",
+  "comparison_parent": {
+    "experiment": "c0_frozen_freq_tversky",
+    "reason": "Same frozen text encoder, decoder and non-focal objective; only P5 enables TCSR and its local supervision"
+  },
+  "diagnostic_basis": {
+    "experiments": ["p1_tcsrv21_boundary_router", "p2_tcsrv22_single_hop_boundary", "p3_tcsrv23_calibrated_gate"],
+    "finding": "Earlier TCSR pilots increased false positives on the smallest lesion quartile and applied routing too broadly"
+  },
+  "protocol": {
+    "epochs": 40,
+    "batch_size": 16,
+    "seed": 1219,
+    "train_drop_last": true,
+    "deterministic": true,
+    "automatic_test_evaluation": false,
+    "test_split_allowed": false,
+    "primary_threshold": 0.5,
+    "primary_aggregation": "macro"
+  },
+  "controlled_factors": {
+    "text_encoder": "microsoft/BiomedVLP-CXR-BERT-specialized",
+    "text_use_lora": false,
+    "decoder_fusion_mode": "fam_eppa_v4b"
+  },
+  "objective": {
+    "name": "dice_tversky",
+    "dice_weight": 0.5,
+    "tversky_weight": 0.5,
+    "tversky_fp_weight": 0.7,
+    "tversky_fn_weight": 0.3,
+    "focal_used": false
+  },
+  "tcsr": {
+    "enabled": true,
+    "architecture_version": "tcsr_v2.5",
+    "route": "x3_to_x2_only",
+    "identity_scales": ["x1", "x3", "x4"],
+    "gate_probability_bounds": [0.05, 0.5],
+    "gate_target_band": [0.15, 0.35],
+    "sparse_boundary_focus": true,
+    "localization_weight": 0.02,
+    "localization_warmup_epochs": 5,
+    "localization_terms": {
+      "mask_boundary_dice": 1.0,
+      "outside_boundary_residual_leakage": 0.5
+    },
+    "inference_requires_label": false
+  },
+  "acceptance": {
+    "overall_validation_macro_dice_delta_min_vs_c0": 0.002,
+    "smallest_lesion_quartile_non_degradation": true,
+    "smallest_lesion_precision_non_degradation": true,
+    "protected_scales_exact_identity": true,
+    "route_gate_inside_target_band": true,
+    "boundary_localization_improves_over_training": true,
+    "failure_action": "stop_without_test",
+    "success_action": "extend_to_80_epoch_validation_only"
+  },
+  "provenance": {
+    "formal_git_commit": "recorded_after_deterministic_cuda_preflight",
+    "formal_tag": "pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+  }
+}

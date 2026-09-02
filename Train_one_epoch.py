@@ -77,12 +77,26 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         preds = model(images, input_ids, attention_mask)
         segmentation_loss = criterion(preds, masks.float())
         router_regularization = segmentation_loss.new_zeros(())
+        router_supervision = segmentation_loss.new_zeros(())
+        router = None
         if model.training:
             target_model = model.module if hasattr(model, 'module') else model
             router = getattr(target_model, 'tcsr', None)
             if router is not None and hasattr(router, 'regularization_loss'):
                 router_regularization = router.regularization_loss()
-        out_loss = segmentation_loss + router_regularization
+            if router is not None and hasattr(
+                router, 'supervised_localization_loss'
+            ):
+                localization_warmup = min(1.0, float(epoch + 1) / 5.0)
+                router_supervision = router.supervised_localization_loss(
+                    masks.float(),
+                    weight_scale=localization_warmup,
+                )
+        out_loss = (
+            segmentation_loss
+            + router_regularization
+            + router_supervision
+        )
         with torch.no_grad():
             train_dice = criterion._show_dice(
                 preds.detach(),
@@ -99,6 +113,12 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             if model.training and router_regularization.detach().item() != 0.0:
                 component_names.append('tcsr_regularization')
                 component_values.append(router_regularization.detach())
+            if model.training and router is not None and hasattr(
+                router, 'localization_components'
+            ):
+                for name, value in router.localization_components().items():
+                    component_names.append(name)
+                    component_values.append(value)
             snapshot = torch.stack([
                 out_loss.detach(),
                 train_iou,

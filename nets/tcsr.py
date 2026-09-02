@@ -1132,6 +1132,7 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
         )
         self._last_stats = None
         self._regularization_loss = self.residual_strength_logit * 0.0
+        self._localization_state = None
 
     @staticmethod
     def _validated_text_mask(text, text_mask):
@@ -1169,6 +1170,10 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
 
     def regularization_loss(self):
         return self._regularization_loss
+
+    def _capture_localization_state(self, spatial_mask, delta):
+        """Optional differentiable state hook used by supervised routers."""
+        self._localization_state = None
 
     def forward(self, skips, text, text_mask=None):
         if len(skips) != self.num_scales:
@@ -1262,6 +1267,7 @@ class SingleHopBoundaryFocusedTextGuidedRouter(nn.Module):
         )
         delta = effective_strength * route_gate[:, :, None, None]
         delta = delta * spatial_mask * normalized_message
+        self._capture_localization_state(spatial_mask, delta)
 
         routed = list(skips)
         routed[self.target_index] = target + delta
@@ -1371,3 +1377,132 @@ class SparseBoundaryCalibratedTextGuidedRouter(
         # The only P4 variable: remove P2/P3's 0.5 support floor and sharpen
         # the transition threshold so flat regions receive near-zero routing.
         return torch.sigmoid(4.0 * (normalized - 1.5))
+
+
+class SupervisedLocalSparseBoundaryTextGuidedRouter(
+    SparseBoundaryCalibratedTextGuidedRouter
+):
+    """V2.5: align routing support to label boundaries during training.
+
+    Labels are used only by the auxiliary training objective. Inference keeps
+    the exact V2.4 forward path and therefore requires no mask or extra input.
+    """
+
+    architecture_version = "tcsr_v2_5_supervised_local_sparse_boundary"
+
+    def __init__(
+        self,
+        skip_channels,
+        text_dim=768,
+        routing_dim=32,
+        max_residual_strength=0.08,
+        initial_residual_strength=0.04,
+        initial_gate_probability=0.25,
+        gate_min_probability=0.05,
+        gate_max_probability=0.50,
+        gate_target_min=0.15,
+        gate_target_max=0.35,
+        gate_calibration_weight=0.01,
+        localization_weight=0.02,
+        residual_leakage_weight=0.5,
+    ):
+        super().__init__(
+            skip_channels=skip_channels,
+            text_dim=text_dim,
+            routing_dim=routing_dim,
+            max_residual_strength=max_residual_strength,
+            initial_residual_strength=initial_residual_strength,
+            initial_gate_probability=initial_gate_probability,
+            gate_min_probability=gate_min_probability,
+            gate_max_probability=gate_max_probability,
+            gate_target_min=gate_target_min,
+            gate_target_max=gate_target_max,
+            gate_calibration_weight=gate_calibration_weight,
+        )
+        if localization_weight < 0.0:
+            raise ValueError("localization_weight must be non-negative")
+        if residual_leakage_weight < 0.0:
+            raise ValueError(
+                "residual_leakage_weight must be non-negative"
+            )
+        self.localization_weight = float(localization_weight)
+        self.residual_leakage_weight = float(residual_leakage_weight)
+        self._last_localization_components = {}
+
+    def _capture_localization_state(self, spatial_mask, delta):
+        if self.training:
+            self._localization_state = {
+                "spatial_mask": spatial_mask,
+                "delta_energy": delta.abs().mean(dim=1, keepdim=True),
+            }
+        else:
+            self._localization_state = None
+
+    @staticmethod
+    def _target_boundary(targets, size):
+        if targets.ndim == 3:
+            targets = targets.unsqueeze(1)
+        if targets.ndim != 4 or targets.shape[1] != 1:
+            raise ValueError(
+                "Expected binary masks [B, 1, H, W], received {}."
+                .format(tuple(targets.shape))
+            )
+        targets = (targets > 0.5).to(dtype=torch.float32)
+        targets = F.interpolate(targets, size=size, mode="nearest")
+        dilated = F.max_pool2d(targets, kernel_size=3, stride=1, padding=1)
+        eroded = -F.max_pool2d(
+            -targets,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+        )
+        return (dilated - eroded).clamp(0.0, 1.0)
+
+    def supervised_localization_loss(self, targets, weight_scale=1.0):
+        if not 0.0 <= float(weight_scale) <= 1.0:
+            raise ValueError("weight_scale must be in [0, 1]")
+        if not self._localization_state:
+            return self.residual_strength_logit.sum() * 0.0
+        spatial_mask = self._localization_state["spatial_mask"]
+        delta_energy = self._localization_state["delta_energy"]
+        boundary = self._target_boundary(
+            targets,
+            spatial_mask.shape[-2:],
+        ).to(device=spatial_mask.device, dtype=spatial_mask.dtype)
+        smooth = 1e-5
+        mask_flat = spatial_mask.flatten(1)
+        boundary_flat = boundary.flatten(1)
+        intersection = (mask_flat * boundary_flat).sum(dim=1)
+        mask_dice = (
+            2.0 * intersection + smooth
+        ) / (
+            mask_flat.sum(dim=1) + boundary_flat.sum(dim=1) + smooth
+        )
+        mask_alignment_loss = 1.0 - mask_dice.mean()
+
+        energy_flat = delta_energy.flatten(1)
+        outside_flat = (1.0 - boundary).flatten(1)
+        residual_leakage = (
+            (energy_flat * outside_flat).sum(dim=1)
+            / energy_flat.sum(dim=1).clamp_min(smooth)
+        ).mean()
+        unweighted = (
+            mask_alignment_loss
+            + self.residual_leakage_weight * residual_leakage
+        )
+        total = (
+            self.localization_weight * float(weight_scale) * unweighted
+        )
+        self._last_localization_components = {
+            "tcsr_mask_alignment": mask_alignment_loss.detach(),
+            "tcsr_residual_leakage": residual_leakage.detach(),
+            "tcsr_boundary_fraction": boundary.mean().detach(),
+            "tcsr_localization": total.detach(),
+            "tcsr_localization_weight_scale": total.new_tensor(
+                float(weight_scale)
+            ),
+        }
+        return total
+
+    def localization_components(self):
+        return dict(self._last_localization_components)

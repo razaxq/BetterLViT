@@ -56,10 +56,11 @@ cudnn_enabled = bool(int(os.environ.get('BETTERLVIT_CUDNN_ENABLED', '1')))
 # Backward-compatible alias used by the existing training entry point.
 miopen_enabled = cudnn_enabled
 
-# Pre-registered paper ablation. Boundary supervision is prohibited in every
-# profile; only LoRA, objective, decoder fusion and the registered TCSR switch
-# are allowed to differ.
-boundary_loss_weight = 0.0
+# Pre-registered paper ablation. Supervised routing is enabled only by an
+# immutable profile; legacy/formal profiles continue to use zero boundary loss.
+boundary_loss_weight = float(paper_experiment.get(
+    'boundary_loss_weight', 0.0,
+))
 boundary_kernel_size = 3
 loss_name = paper_experiment['loss_name']
 dice_loss_weight = 0.5
@@ -67,6 +68,15 @@ focal_loss_weight = 0.5
 focal_gamma = 2.0
 focal_positive_weight = 0.5
 focal_negative_weight = 0.5
+tversky_loss_weight = float(paper_experiment.get(
+    'tversky_loss_weight', 0.5,
+))
+tversky_fp_weight = float(paper_experiment.get(
+    'tversky_fp_weight', 0.7,
+))
+tversky_fn_weight = float(paper_experiment.get(
+    'tversky_fn_weight', 0.3,
+))
 experiment_name = paper_experiment['name']
 experiment_paper_id = paper_experiment['paper_id']
 decoder_fusion_mode = paper_experiment['decoder_fusion_mode']
@@ -115,6 +125,12 @@ tcsr_gate_target_max = float(paper_experiment.get(
 ))
 tcsr_gate_calibration_weight = float(paper_experiment.get(
     'tcsr_gate_calibration_weight', 0.0,
+))
+tcsr_localization_weight = float(paper_experiment.get(
+    'tcsr_localization_weight', 0.0,
+))
+tcsr_residual_leakage_weight = float(paper_experiment.get(
+    'tcsr_residual_leakage_weight', 0.5,
 ))
 experiment_architecture = paper_experiment['description']
 experiment_architecture_version = paper_experiment['architecture_version']
@@ -205,6 +221,8 @@ def get_CTranS_config():
     config.tcsr_gate_target_min = tcsr_gate_target_min
     config.tcsr_gate_target_max = tcsr_gate_target_max
     config.tcsr_gate_calibration_weight = tcsr_gate_calibration_weight
+    config.tcsr_localization_weight = tcsr_localization_weight
+    config.tcsr_residual_leakage_weight = tcsr_residual_leakage_weight
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True

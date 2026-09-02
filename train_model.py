@@ -20,6 +20,7 @@ from utils import (
     CosineAnnealingWarmRestarts,
     WeightedDiceBCE,
     WeightedDiceFocal,
+    WeightedDiceTversky,
     read_text,
 )
 
@@ -420,6 +421,18 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             focal_positive_weight=config.focal_positive_weight,
             focal_negative_weight=config.focal_negative_weight,
         )
+    elif configured_loss == 'dice_tversky':
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError(
+                'dice_tversky uses TCSR-local boundary supervision; '
+                'output boundary_loss_weight must remain 0.0'
+            )
+        criterion = WeightedDiceTversky(
+            dice_weight=config.dice_loss_weight,
+            tversky_weight=config.tversky_loss_weight,
+            tversky_fp_weight=config.tversky_fp_weight,
+            tversky_fn_weight=config.tversky_fn_weight,
+        )
     elif configured_loss == 'dice_bce':
         criterion = WeightedDiceBCE(
             dice_weight=0.5,
@@ -437,6 +450,15 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             config.boundary_loss_weight,
         )
     )
+    if configured_loss == 'dice_tversky':
+        logger.info(
+            'Tversky: loss_weight={:.3f}, FP_weight={:.3f}, '
+            'FN_weight={:.3f}; focal=False'.format(
+                config.tversky_loss_weight,
+                config.tversky_fp_weight,
+                config.tversky_fn_weight,
+            )
+        )
     optimizer_groups, decay_names, no_decay_names, router_names = (
         build_optimizer_parameter_groups(
             model,
@@ -679,6 +701,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 'tcsr_v2_2_single_hop_boundary_focused',
                 'tcsr_v2_3_calibrated_single_hop_gate',
                 'tcsr_v2_4_sparse_boundary_calibrated_gate',
+                'tcsr_v2_5_supervised_local_sparse_boundary',
             ):
                 logger.info(
                     'TCSR single-hop: version={}; routes={}; gates={}; closed={}; '

@@ -1,0 +1,37 @@
+{
+  "experiment": "c0_frozen_freq_tversky",
+  "paper_id": "C0",
+  "status": "development",
+  "description": "Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Tversky non-TCSR control",
+  "purpose": "Establish a no-focal control before attributing any gain to supervised-local TCSR",
+  "protocol": {
+    "epochs": 40,
+    "batch_size": 16,
+    "seed": 1219,
+    "train_drop_last": true,
+    "deterministic": true,
+    "automatic_test_evaluation": false,
+    "test_split_allowed": false,
+    "primary_threshold": 0.5,
+    "primary_aggregation": "macro"
+  },
+  "controlled_factors": {
+    "text_encoder": "microsoft/BiomedVLP-CXR-BERT-specialized",
+    "text_use_lora": false,
+    "decoder_fusion_mode": "fam_eppa_v4b",
+    "tcsr_enabled": false
+  },
+  "objective": {
+    "name": "dice_tversky",
+    "dice_weight": 0.5,
+    "tversky_weight": 0.5,
+    "tversky_fp_weight": 0.7,
+    "tversky_fn_weight": 0.3,
+    "focal_used": false
+  },
+  "acceptance_role": "paired_control_for_p5",
+  "provenance": {
+    "formal_git_commit": "recorded_after_deterministic_cuda_preflight",
+    "formal_tag": "pilot-c0-tversky-frozen-b16-seed1219-20260902"
+  }
+}

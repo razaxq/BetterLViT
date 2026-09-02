@@ -200,6 +200,54 @@ PAPER_EXPERIMENTS = {
             "fam_eppa_v4b_dice_focal"
         ),
     },
+    "c0_frozen_freq_tversky": {
+        "paper_id": "C0",
+        "description": (
+            "Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Tversky "
+            "non-TCSR control"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "tcsr_enabled": False,
+        "text_use_lora": False,
+        "loss_name": "dice_tversky",
+        "tversky_loss_weight": 0.5,
+        "tversky_fp_weight": 0.7,
+        "tversky_fn_weight": 0.3,
+        "architecture_version": (
+            "pilot_c0_frozen_fam_eppa_v4b_dice_tversky"
+        ),
+    },
+    "p5_tcsrv25_local_tversky": {
+        "paper_id": "P5",
+        "description": (
+            "Frozen CXR-BERT + supervised-local TCSR V2.5 + "
+            "FAM-EPPA V4-B + Dice/Tversky"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "tcsr_enabled": True,
+        "tcsr_version": "v2.5",
+        "tcsr_routing_dim": 32,
+        "tcsr_max_residual_strength": 0.08,
+        "tcsr_initial_residual_strength": 0.04,
+        "tcsr_initial_gate_probability": 0.25,
+        "tcsr_gate_min_probability": 0.05,
+        "tcsr_gate_max_probability": 0.50,
+        "tcsr_gate_target_min": 0.15,
+        "tcsr_gate_target_max": 0.35,
+        "tcsr_gate_calibration_weight": 0.01,
+        "tcsr_localization_weight": 0.02,
+        "tcsr_residual_leakage_weight": 0.5,
+        "tcsr_router_lr_scale": 0.5,
+        "text_use_lora": False,
+        "loss_name": "dice_tversky",
+        "tversky_loss_weight": 0.5,
+        "tversky_fp_weight": 0.7,
+        "tversky_fn_weight": 0.3,
+        "architecture_version": (
+            "pilot_p5_frozen_tcsr_v2_5_supervised_local_"
+            "fam_eppa_v4b_dice_tversky"
+        ),
+    },
 }
 
 

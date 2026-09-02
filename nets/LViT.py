@@ -11,6 +11,7 @@ from .tcsr import (
     CalibratedSingleHopBoundaryFocusedTextGuidedRouter,
     SparseBoundaryCalibratedTextGuidedRouter,
     SingleHopBoundaryFocusedTextGuidedRouter,
+    SupervisedLocalSparseBoundaryTextGuidedRouter,
     TextConditionedCrossScaleSkipRouter,
     TextConditionedCrossScaleSkipRouterV2,
 )
@@ -217,6 +218,7 @@ class LViT(nn.Module):
                 'v2.2': SingleHopBoundaryFocusedTextGuidedRouter,
                 'v2.3': CalibratedSingleHopBoundaryFocusedTextGuidedRouter,
                 'v2.4': SparseBoundaryCalibratedTextGuidedRouter,
+                'v2.5': SupervisedLocalSparseBoundaryTextGuidedRouter,
             }
             if self.tcsr_version not in router_types:
                 raise ValueError(
@@ -237,7 +239,9 @@ class LViT(nn.Module):
                     1.0,
                 ),
             }
-            if self.tcsr_version in ('v2', 'v2.1', 'v2.2', 'v2.3', 'v2.4'):
+            if self.tcsr_version in (
+                'v2', 'v2.1', 'v2.2', 'v2.3', 'v2.4', 'v2.5',
+            ):
                 router_kwargs['initial_residual_strength'] = getattr(
                     config,
                     'tcsr_initial_residual_strength',
@@ -272,7 +276,7 @@ class LViT(nn.Module):
                     'tcsr_initial_gate_probability',
                     0.25,
                 )
-            if self.tcsr_version in ('v2.3', 'v2.4'):
+            if self.tcsr_version in ('v2.3', 'v2.4', 'v2.5'):
                 router_kwargs.update({
                     'initial_gate_probability': getattr(
                         config, 'tcsr_initial_gate_probability', 0.25,
@@ -291,6 +295,15 @@ class LViT(nn.Module):
                     ),
                     'gate_calibration_weight': getattr(
                         config, 'tcsr_gate_calibration_weight', 0.01,
+                    ),
+                })
+            if self.tcsr_version == 'v2.5':
+                router_kwargs.update({
+                    'localization_weight': getattr(
+                        config, 'tcsr_localization_weight', 0.02,
+                    ),
+                    'residual_leakage_weight': getattr(
+                        config, 'tcsr_residual_leakage_weight', 0.5,
                     ),
                 })
             self.tcsr = router_types[self.tcsr_version](

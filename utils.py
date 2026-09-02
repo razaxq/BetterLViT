@@ -312,6 +312,92 @@ class WeightedDiceFocal(nn.Module):
         return total
 
 
+class SoftTverskyLoss(nn.Module):
+    """Per-image soft Tversky loss with explicit FP/FN weighting."""
+
+    def __init__(self, fp_weight=0.7, fn_weight=0.3, smooth=1e-5):
+        super().__init__()
+        if fp_weight < 0.0 or fn_weight < 0.0:
+            raise ValueError("Tversky FP/FN weights must be non-negative")
+        if fp_weight + fn_weight <= 0.0:
+            raise ValueError("Tversky requires a positive FP or FN weight")
+        self.fp_weight = float(fp_weight)
+        self.fn_weight = float(fn_weight)
+        self.smooth = float(smooth)
+
+    def forward(self, inputs, targets):
+        if targets.ndim == inputs.ndim - 1:
+            targets = targets.unsqueeze(1)
+        if inputs.shape != targets.shape:
+            raise ValueError(
+                "Tversky loss shape mismatch: "
+                f"{tuple(inputs.shape)} != {tuple(targets.shape)}"
+            )
+        probabilities = inputs.float().flatten(1)
+        binary_targets = targets.float().flatten(1)
+        true_positive = (probabilities * binary_targets).sum(dim=1)
+        false_positive = (
+            probabilities * (1.0 - binary_targets)
+        ).sum(dim=1)
+        false_negative = (
+            (1.0 - probabilities) * binary_targets
+        ).sum(dim=1)
+        score = (
+            true_positive + self.smooth
+        ) / (
+            true_positive
+            + self.fp_weight * false_positive
+            + self.fn_weight * false_negative
+            + self.smooth
+        )
+        return 1.0 - score.mean()
+
+
+class WeightedDiceTversky(nn.Module):
+    """Dice plus FP-heavy Tversky supervision; contains no focal term."""
+
+    def __init__(
+        self,
+        dice_weight=0.5,
+        tversky_weight=0.5,
+        tversky_fp_weight=0.7,
+        tversky_fn_weight=0.3,
+    ):
+        super().__init__()
+        if dice_weight < 0.0 or tversky_weight < 0.0:
+            raise ValueError("loss weights must be non-negative")
+        if dice_weight + tversky_weight <= 0.0:
+            raise ValueError("at least one loss term is required")
+        weight_sum = dice_weight + tversky_weight
+        self.dice_weight = float(dice_weight / weight_sum)
+        self.tversky_weight = float(tversky_weight / weight_sum)
+        self.dice_loss = WeightedDiceLoss(weights=[0.5, 0.5])
+        self.tversky_loss = SoftTverskyLoss(
+            fp_weight=tversky_fp_weight,
+            fn_weight=tversky_fn_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        predictions = (inputs >= 0.5).float()
+        binary_targets = (targets > 0.0).float()
+        return 1.0 - self.dice_loss(predictions, binary_targets)
+
+    def forward(self, inputs, targets):
+        dice = self.dice_loss(inputs, targets)
+        tversky = self.tversky_loss(inputs, targets)
+        total = (
+            self.dice_weight * dice
+            + self.tversky_weight * tversky
+        )
+        self.last_components = {
+            "dice": dice.detach(),
+            "tversky": tversky.detach(),
+            "total": total.detach(),
+        }
+        return total
+
+
 class BoundaryDiceLoss(nn.Module):
     """Dice loss on differentiable morphological boundary maps."""
 

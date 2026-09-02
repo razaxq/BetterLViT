@@ -35,6 +35,8 @@ ALLOWED_EXPERIMENTS = (
     "p2_tcsrv22_single_hop_boundary",
     "p3_tcsrv23_calibrated_gate",
     "p4_tcsrv24_sparse_boundary",
+    "c0_frozen_freq_tversky",
+    "p5_tcsrv25_local_tversky",
 )
 
 
