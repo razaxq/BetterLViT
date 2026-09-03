@@ -20,6 +20,7 @@ from utils import (
     BCDHObjective,
     CosineAnnealingWarmRestarts,
     DualHeadMaskObjective,
+    RACEObjective,
     WeightedDiceBCE,
     WeightedDiceFocal,
     read_text,
@@ -131,6 +132,17 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             ),
         },
         'cdrr_stats': compute_cdrr_stats(model),
+        'race_enabled': bool(getattr(config, 'race_enabled', False)),
+        'race_config': {
+            'aux_weight': float(getattr(config, 'race_aux_weight', 0.0)),
+            'hidden_channels': int(
+                getattr(config, 'race_hidden_channels', 0)
+            ),
+            'max_strength': float(
+                getattr(config, 'race_max_strength', 0.0)
+            ),
+        },
+        'race_stats': compute_race_stats(model),
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
         'batch_size': int(config.batch_size),
@@ -192,6 +204,15 @@ def compute_cdrr_stats(model):
     """Snapshot validation-time CDRR reliability diagnostics."""
     target = model.module if isinstance(model, nn.DataParallel) else model
     module = getattr(target, 'cdrr', None)
+    if module is None:
+        return {}
+    return dict(getattr(module, '_last_stats', {}) or {})
+
+
+def compute_race_stats(model):
+    """Snapshot validation-time RACE route diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    module = getattr(target, 'race', None)
     if module is None:
         return {}
     return dict(getattr(module, '_last_stats', {}) or {})
@@ -301,9 +322,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     logger.info(
-        'Controlled factors: decoder_fusion={}, LoRA={}, loss={}, seed={}'
+        'Controlled factors: decoder_fusion={}, RACE={}, LoRA={}, loss={}, seed={}'
         .format(
             getattr(config, 'decoder_fusion_mode', '?'),
+            getattr(config, 'race_enabled', False),
             getattr(config, 'text_use_lora', False),
             getattr(config, 'loss_name', '?'),
             config.seed,
@@ -402,6 +424,19 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             raise ValueError('CDRR V1 prohibits boundary supervision')
         criterion = DualHeadMaskObjective(
             aux_weight=config.cdrr_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif getattr(config, 'race_enabled', False):
+        if configured_loss != 'dice_focal':
+            raise ValueError('RACE-Fuse V1 requires dice_focal')
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError('RACE-Fuse V1 prohibits boundary supervision')
+        criterion = RACEObjective(
+            aux_weight=config.race_aux_weight,
             dice_weight=config.dice_loss_weight,
             focal_weight=config.focal_loss_weight,
             focal_gamma=config.focal_gamma,
@@ -582,6 +617,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'eppa_stats': compute_decoder_fusion_stats(model),
             'bcdh_stats': compute_bcdh_stats(model),
             'cdrr_stats': compute_cdrr_stats(model),
+            'race_stats': compute_race_stats(model),
         })
 
         # =============================================================
@@ -827,6 +863,27 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     current_cdrr_stats['delta_positive_active_fraction'],
                     current_cdrr_stats['delta_negative_active_fraction'],
                     current_cdrr_stats['delta_inactive_abs_max'],
+                )
+            )
+
+        current_race_stats = epoch_history[-1].get('race_stats') or {}
+        if current_race_stats:
+            logger.info(
+                'RACE: slot_mean={:.4f}, strengths={}, gates={}, '
+                'evidence={}, agreement={}'.format(
+                    current_race_stats['slot_probability_mean'],
+                    [round(value, 5) for value in current_race_stats[
+                        'route_strengths'
+                    ]],
+                    [round(value, 4) for value in current_race_stats[
+                        'route_gate_means'
+                    ]],
+                    [round(value, 4) for value in current_race_stats[
+                        'route_evidence_means'
+                    ]],
+                    [round(value, 4) for value in current_race_stats[
+                        'route_agreement_means'
+                    ]],
                 )
             )
 

@@ -369,6 +369,90 @@ class DualHeadMaskObjective(BCDHObjective):
     pass
 
 
+class RACEObjective(nn.Module):
+    """Dice/Focal segmentation plus lightweight report/anatomy supervision."""
+
+    def __init__(
+        self,
+        aux_weight=0.05,
+        dice_weight=0.5,
+        focal_weight=0.5,
+        focal_gamma=2.0,
+        focal_positive_weight=0.5,
+        focal_negative_weight=0.5,
+    ):
+        super().__init__()
+        if not 0.0 < aux_weight < 1.0:
+            raise ValueError("RACE aux_weight must be in (0, 1)")
+        self.aux_weight = float(aux_weight)
+        self.segmentation = WeightedDiceFocal(
+            dice_weight=dice_weight,
+            focal_weight=focal_weight,
+            focal_gamma=focal_gamma,
+            focal_positive_weight=focal_positive_weight,
+            focal_negative_weight=focal_negative_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        return self.segmentation._show_dice(inputs, targets)
+
+    def forward(self, outputs, targets):
+        if not isinstance(outputs, dict):
+            raise TypeError("RACE objective requires an output dictionary")
+        final = outputs.get("final")
+        slot_logits = outputs.get("slot_logits")
+        slot_targets = outputs.get("race_slot_targets")
+        zone_basis = outputs.get("race_zone_basis")
+        visual_zones = outputs.get("visual_zone_probabilities")
+        if any(value is None for value in (
+            final, slot_logits, slot_targets, zone_basis, visual_zones
+        )):
+            raise ValueError("Incomplete RACE outputs")
+
+        main = self.segmentation(final, targets)
+        main_components = dict(self.segmentation.last_components)
+        slot_targets = slot_targets.float()
+        text_zone = F.binary_cross_entropy_with_logits(
+            slot_logits[:, :6], slot_targets[:, :6]
+        )
+        count_target = slot_targets[:, 6:].argmax(dim=1)
+        text_count = F.cross_entropy(slot_logits[:, 6:], count_target)
+        slot_loss = 0.75 * text_zone + 0.25 * text_count
+
+        basis = zone_basis.float()
+        mask = targets.float().unsqueeze(1)
+        zone_fraction = (mask * basis).sum(dim=(2, 3)) / basis.sum(
+            dim=(2, 3)
+        ).clamp_min(1.0)
+        visual_target = (zone_fraction >= 0.005).float()
+        visual_loss = torch.stack([
+            F.binary_cross_entropy(probabilities, visual_target)
+            for probabilities in visual_zones
+        ]).mean()
+
+        mentioned = slot_targets[:, :6]
+        pu_terms = []
+        for probabilities in visual_zones:
+            positive = -torch.log(probabilities.clamp_min(1e-6)) * mentioned
+            pu_terms.append(
+                positive.sum() / mentioned.sum().clamp_min(1.0)
+            )
+        pu_consistency = torch.stack(pu_terms).mean()
+        auxiliary = 0.4 * slot_loss + 0.4 * visual_loss + 0.2 * pu_consistency
+        total = main + self.aux_weight * auxiliary
+        self.last_components = {
+            "main_dice": main_components["dice"],
+            "main_focal": main_components["focal"],
+            "race_text_slot": slot_loss.detach(),
+            "race_visual_zone": visual_loss.detach(),
+            "race_positive_consistency": pu_consistency.detach(),
+            "race_aux_weighted": (self.aux_weight * auxiliary).detach(),
+            "total": total.detach(),
+        }
+        return total
+
+
 class BoundaryDiceLoss(nn.Module):
     """Dice loss on differentiable morphological boundary maps."""
 

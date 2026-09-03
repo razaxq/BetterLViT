@@ -74,11 +74,21 @@ class BetterLViT(LViT):
             return outputs.last_hidden_state
         return outputs[0]
 
-    def forward(self, x, input_ids, attention_mask, return_aux=False):
+    def forward(
+        self,
+        x,
+        input_ids,
+        attention_mask,
+        return_aux=False,
+        race_slot_targets=None,
+        race_zone_basis=None,
+    ):
         text = self.encode_text(input_ids, attention_mask)
         return super().forward(
             x,
             text,
             text_mask=attention_mask,
             return_aux=return_aux,
+            race_slot_targets=race_slot_targets,
+            race_zone_basis=race_zone_basis,
         )

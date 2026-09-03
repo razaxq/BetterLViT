@@ -14,6 +14,7 @@ from torchvision.transforms import functional as F
 from transformers import AutoTokenizer
 
 import Config as config
+from race_semantics import make_zone_basis, parse_report_slots
 
 os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
 
@@ -42,21 +43,43 @@ class RandomGenerator(object):
     def __call__(self, sample):
         image, label = sample['image'], sample['label']
         image, label = image.astype(np.uint8), label.astype(np.uint8)
-        image, label = F.to_pil_image(image), F.to_pil_image(label)
-        x, y = image.size
+        zone_basis = np.asarray(sample['race_zone_basis'], dtype=np.float32)
+        x, y = image.shape[1], image.shape[0]
         if random.random() > 0.5:
-            image, label = random_rot_flip(image, label)
+            k = np.random.randint(0, 4)
+            image = np.rot90(image, k, axes=(0, 1))
+            label = np.rot90(label, k, axes=(0, 1))
+            zone_basis = np.rot90(zone_basis, k, axes=(1, 2))
+            axis = np.random.randint(0, 2)
+            image = np.flip(image, axis=axis).copy()
+            label = np.flip(label, axis=axis).copy()
+            zone_basis = np.flip(zone_basis, axis=axis + 1).copy()
         elif random.random() > 0.5:
-            image, label = random_rotate(image, label)
+            angle = np.random.randint(-20, 20)
+            image = ndimage.rotate(image, angle, order=0, reshape=False)
+            label = ndimage.rotate(label, angle, order=0, reshape=False)
+            zone_basis = ndimage.rotate(
+                zone_basis, angle, axes=(1, 2), order=0, reshape=False
+            )
 
         if x != self.output_size[0] or y != self.output_size[1]:
             image = zoom(image, (self.output_size[0] / x, self.output_size[1] / y), order=3)
             label = zoom(label, (self.output_size[0] / x, self.output_size[1] / y), order=0)
+            zone_basis = zoom(
+                zone_basis,
+                (1, self.output_size[0] / y, self.output_size[1] / x),
+                order=0,
+            )
+        image, label = F.to_pil_image(image.astype(np.uint8)), F.to_pil_image(label.astype(np.uint8))
         image = F.to_tensor(image)
         label = to_long_tensor(label)
         out = {'image': image, 'label': label,
                'input_ids': sample['input_ids'],
-               'attention_mask': sample['attention_mask']}
+               'attention_mask': sample['attention_mask'],
+               'race_slot_targets': sample['race_slot_targets'],
+               'race_zone_basis': torch.from_numpy(
+                   np.ascontiguousarray(zone_basis)
+               ).float()}
         return out
 
 
@@ -76,7 +99,11 @@ class ValGenerator(object):
         label = to_long_tensor(label)
         out = {'image': image, 'label': label,
                'input_ids': sample['input_ids'],
-               'attention_mask': sample['attention_mask']}
+               'attention_mask': sample['attention_mask'],
+               'race_slot_targets': sample['race_slot_targets'],
+               'race_zone_basis': torch.as_tensor(
+                   sample['race_zone_basis'], dtype=torch.float32
+               )}
         return out
 
 
@@ -144,6 +171,10 @@ class LV2D(Dataset):
             (self.rowtext[name] for name in self.mask_list),
             self.text_max_len,
         )
+        self.race_slot_targets = torch.stack([
+            parse_report_slots(self.rowtext[name]) for name in self.mask_list
+        ])
+        self.race_zone_basis = make_zone_basis(image_size, image_size)
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -168,7 +199,13 @@ class LV2D(Dataset):
             assert self.one_hot_mask > 0, 'one_hot_mask must be nonnegative'
             mask = torch.zeros((self.one_hot_mask, mask.shape[1], mask.shape[2])).scatter_(0, mask.long(), 1)
 
-        sample = {'label': mask, 'input_ids': input_ids, 'attention_mask': attention_mask}
+        sample = {
+            'label': mask,
+            'input_ids': input_ids,
+            'attention_mask': attention_mask,
+            'race_slot_targets': self.race_slot_targets[idx],
+            'race_zone_basis': self.race_zone_basis,
+        }
 
         return sample, mask_filename
 
@@ -209,6 +246,10 @@ class ImageToImage2D(Dataset):
             (self.rowtext[name] for name in self.mask_list),
             self.text_max_len,
         )
+        self.race_slot_targets = torch.stack([
+            parse_report_slots(self.rowtext[name]) for name in self.mask_list
+        ])
+        self.race_zone_basis = make_zone_basis(image_size, image_size)
 
         if joint_transform:
             self.joint_transform = joint_transform
@@ -244,7 +285,9 @@ class ImageToImage2D(Dataset):
             mask = torch.zeros((self.one_hot_mask, mask.shape[1], mask.shape[2])).scatter_(0, mask.long(), 1)
 
         sample = {'image': image, 'label': mask,
-                  'input_ids': input_ids, 'attention_mask': attention_mask}
+                  'input_ids': input_ids, 'attention_mask': attention_mask,
+                  'race_slot_targets': self.race_slot_targets[idx],
+                  'race_zone_basis': self.race_zone_basis}
 
         if self.joint_transform:
             sample = self.joint_transform(sample)

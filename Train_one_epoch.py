@@ -77,12 +77,20 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         if (
             getattr(config, 'bcdh_enabled', False)
             or getattr(config, 'cdrr_enabled', False)
+            or getattr(config, 'race_enabled', False)
         ):
+            race_slot_targets = sampled_batch.get('race_slot_targets')
+            race_zone_basis = sampled_batch.get('race_zone_basis')
+            if getattr(config, 'race_enabled', False):
+                race_slot_targets = race_slot_targets.cuda(non_blocking=True)
+                race_zone_basis = race_zone_basis.cuda(non_blocking=True)
             outputs = model(
                 images,
                 input_ids,
                 attention_mask,
                 return_aux=True,
+                race_slot_targets=race_slot_targets,
+                race_zone_basis=race_zone_basis,
             )
             preds = outputs['final']
             out_loss = criterion(outputs, masks.float())

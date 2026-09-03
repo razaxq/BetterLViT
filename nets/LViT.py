@@ -8,6 +8,7 @@ from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
+from .race_fuse import RACEFuse
 
 
 def get_activation(activation_type):
@@ -423,8 +424,28 @@ class LViT(nn.Module):
             )
         else:
             self.cdrr = None
+        self.race_enabled = bool(getattr(config, 'race_enabled', False))
+        if self.race_enabled and (self.bcdh_enabled or self.cdrr_enabled):
+            raise ValueError('RACE-Fuse cannot be combined with BCDH or CDRR')
+        if self.race_enabled:
+            self.race = RACEFuse(
+                channels=(64, 128, 256, 512),
+                text_dim=768,
+                hidden_channels=getattr(config, 'race_hidden_channels', 32),
+                max_strength=getattr(config, 'race_max_strength', 0.15),
+            )
+        else:
+            self.race = None
 
-    def forward(self, x, text, text_mask=None, return_aux=False):
+    def forward(
+        self,
+        x,
+        text,
+        text_mask=None,
+        return_aux=False,
+        race_slot_targets=None,
+        race_zone_basis=None,
+    ):
         x = x.float()  # x [4,3,224,224]
         x1 = self.inc(x)  # x1 [4, 64, 224, 224]
         text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2) 
@@ -447,6 +468,14 @@ class LViT(nn.Module):
         plam2 = self.reconstruct2(y2)
         plam3 = self.reconstruct3(y3)
         plam4 = self.reconstruct4(y4)
+        race_aux = None
+        if self.race_enabled:
+            (x1, x2, x3, x4), race_aux = self.race(
+                (x1, x2, x3, x4),
+                text,
+                text_mask,
+                race_zone_basis,
+            )
         if self.decoder_fusion_mode == 'legacy_plam':
             d4 = self.up4(x5, x4 + plam4)
             d3 = self.up3(d4, x3 + plam3)
@@ -473,6 +502,15 @@ class LViT(nn.Module):
             if return_aux:
                 return outputs
             return outputs['final']
+        if self.race_enabled:
+            final = self.last_activation(base_logits)
+            if return_aux:
+                outputs = dict(race_aux)
+                outputs['final'] = final
+                outputs['race_slot_targets'] = race_slot_targets
+                outputs['race_zone_basis'] = race_zone_basis
+                return outputs
+            return final
         if self.n_classes == 1:
             logits = self.last_activation(base_logits)
         else:

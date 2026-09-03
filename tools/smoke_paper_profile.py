@@ -34,6 +34,8 @@ def parse_args():
             "p6_bcdh_r_v1",
             "c2_cdrr_control",
             "p7_cdrr_v1",
+            "c3_race_control",
+            "p8_race_fuse_v1",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -56,6 +58,7 @@ def main():
     from utils import (
         BCDHObjective,
         DualHeadMaskObjective,
+        RACEObjective,
         WeightedDiceBCE,
         WeightedDiceFocal,
     )
@@ -122,14 +125,31 @@ def main():
         dtype=torch.float32,
         device=device,
     )
+    race_slot_targets = torch.zeros(args.batch_size, 9, device=device)
+    race_slot_targets[:, (0, 2, 4)] = 1.0
+    race_slot_targets[:, 7] = 1.0
+    race_zone_basis = torch.zeros(
+        args.batch_size, 6, config.img_size, config.img_size, device=device
+    )
+    for side in range(2):
+        for level in range(3):
+            race_zone_basis[
+                :, side * 3 + level,
+                level * config.img_size // 3:(level + 1) * config.img_size // 3,
+                side * config.img_size // 2:(side + 1) * config.img_size // 2,
+            ] = 1.0
 
     outputs = None
-    if config.bcdh_enabled or config.cdrr_enabled:
+    if config.bcdh_enabled or config.cdrr_enabled or config.race_enabled:
         outputs = model(
             images,
             input_ids,
             attention_mask,
             return_aux=True,
+            race_slot_targets=(
+                race_slot_targets if config.race_enabled else None
+            ),
+            race_zone_basis=(race_zone_basis if config.race_enabled else None),
         )
         output = outputs["final"]
     else:
@@ -178,6 +198,20 @@ def main():
             focal_negative_weight=config.focal_negative_weight,
         )
         loss = criterion(outputs, labels)
+    elif config.race_enabled:
+        strengths = model.race._last_stats["route_strengths"]
+        identity_error = max(abs(value) for value in strengths)
+        if identity_error != 0.0:
+            raise RuntimeError("RACE zero-init routes are not exact identity")
+        criterion = RACEObjective(
+            aux_weight=config.race_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+        loss = criterion(outputs, labels)
     elif config.loss_name == "dice_focal":
         criterion = WeightedDiceFocal(
             dice_weight=config.dice_loss_weight,
@@ -214,9 +248,13 @@ def main():
         "text_use_lora": config.text_use_lora,
         "bcdh_enabled": config.bcdh_enabled,
         "cdrr_enabled": config.cdrr_enabled,
+        "race_enabled": config.race_enabled,
         "bcdh_identity_max_abs_error": identity_error,
         "cdrr_identity_max_abs_error": (
             identity_error if config.cdrr_enabled else None
+        ),
+        "race_identity_strength_max_abs": (
+            identity_error if config.race_enabled else None
         ),
         "boundary_loss_weight": config.boundary_loss_weight,
         "output_sha256": output_sha256,

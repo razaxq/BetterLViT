@@ -36,6 +36,8 @@ ALLOWED_EXPERIMENTS = (
     "p6_bcdh_r_v1",
     "c2_cdrr_control",
     "p7_cdrr_v1",
+    "c3_race_control",
+    "p8_race_fuse_v1",
 )
 
 
@@ -209,6 +211,8 @@ def main():
         raise RuntimeError("Checkpoint BCDH flag does not match the profile.")
     if bool(checkpoint.get("cdrr_enabled", False)) != bool(config.cdrr_enabled):
         raise RuntimeError("Checkpoint CDRR flag does not match the profile.")
+    if bool(checkpoint.get("race_enabled", False)) != bool(config.race_enabled):
+        raise RuntimeError("Checkpoint RACE flag does not match the profile.")
 
     torch.backends.cudnn.enabled = config.cudnn_enabled
     torch.backends.cudnn.benchmark = False
@@ -235,6 +239,14 @@ def main():
                 images,
                 batch["input_ids"].cuda(non_blocking=True),
                 batch["attention_mask"].cuda(non_blocking=True),
+                race_slot_targets=(
+                    batch["race_slot_targets"].cuda(non_blocking=True)
+                    if config.race_enabled else None
+                ),
+                race_zone_basis=(
+                    batch["race_zone_basis"].cuda(non_blocking=True)
+                    if config.race_enabled else None
+                ),
             )[:, 0].float().cpu()
             laplacian, normalized_detail = image_frequency_scores(images)
             laplacian = laplacian.float().cpu()
@@ -330,6 +342,7 @@ def main():
 
     bcdh = getattr(model, "bcdh", None)
     cdrr = getattr(model, "cdrr", None)
+    race = getattr(model, "race", None)
     result = {
         "split": "validation",
         "test_split_accessed": False,
@@ -352,11 +365,15 @@ def main():
         "boundary_loss_weight": float(config.boundary_loss_weight),
         "bcdh_enabled": bool(config.bcdh_enabled),
         "cdrr_enabled": bool(config.cdrr_enabled),
+        "race_enabled": bool(config.race_enabled),
         "bcdh_stats_last_batch": dict(
             getattr(bcdh, "_last_stats", {}) or {}
         ),
         "cdrr_stats_last_batch": dict(
             getattr(cdrr, "_last_stats", {}) or {}
+        ),
+        "race_stats_last_batch": dict(
+            getattr(race, "_last_stats", {}) or {}
         ),
         "records": records,
     }

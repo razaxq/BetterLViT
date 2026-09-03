@@ -89,6 +89,14 @@ cdrr_delta_max = float(paper_experiment.get('cdrr_delta_max', 0.5))
 cdrr_active_fraction = float(
     paper_experiment.get('cdrr_active_fraction', 0.15)
 )
+race_enabled = bool(paper_experiment.get('race_enabled', False))
+race_aux_weight = float(paper_experiment.get('race_aux_weight', 0.0))
+race_hidden_channels = int(
+    paper_experiment.get('race_hidden_channels', 32)
+)
+race_max_strength = float(
+    paper_experiment.get('race_max_strength', 0.15)
+)
 if boundary_loss_weight != 0.0:
     raise ValueError('Every paper profile requires boundary_loss_weight=0.0')
 if bcdh_enabled and cdrr_enabled:
@@ -101,6 +109,12 @@ if cdrr_enabled and loss_name != 'dice_focal':
     raise ValueError('CDRR V1 is preregistered only with Dice/Focal')
 if cdrr_enabled and not 0.0 < cdrr_aux_weight < 1.0:
     raise ValueError('CDRR auxiliary weight must be in (0, 1)')
+if race_enabled and (bcdh_enabled or cdrr_enabled):
+    raise ValueError('RACE-Fuse cannot be combined with BCDH or CDRR')
+if race_enabled and loss_name != 'dice_focal':
+    raise ValueError('RACE-Fuse V1 is preregistered only with Dice/Focal')
+if race_enabled and not 0.0 < race_aux_weight < 1.0:
+    raise ValueError('RACE auxiliary weight must be in (0, 1)')
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
@@ -180,6 +194,9 @@ def get_CTranS_config():
     config.cdrr_hidden_channels = cdrr_hidden_channels
     config.cdrr_delta_max = cdrr_delta_max
     config.cdrr_active_fraction = cdrr_active_fraction
+    config.race_enabled = race_enabled
+    config.race_hidden_channels = race_hidden_channels
+    config.race_max_strength = race_max_strength
     # FAM-EPPA V4-B structural switches and residual bounds.
     config.eppa_use_decoder_guide = True
     config.eppa_use_dilated_edge = True
