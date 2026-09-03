@@ -210,7 +210,7 @@ CDRR（Cross-scale Detail Reliability Refiner）不使用边界标签或 boundar
 
 两项均锁定 40 epochs、batch 16、seed 1219、deterministic、`drop_last=True`、LoRA=False、`boundary_loss_weight=0.0`。训练链设置 `AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`，只允许 best-checkpoint validation 导出与配对比较。
 
-### 当前运行状态与阶段门
+### 运行状态与阶段门
 
 - C2→P7 链于服务器时间 `2026-09-03T12:27:26+08:00` 启动；运行元数据：`/root/autodl-tmp/BetterLViT-paper-p7-cdrr/runtime_logs/cdrr_pair_current.env`。
 - 最终状态为 `complete`：C2/P7 均完成 40 epochs、best-checkpoint validation 导出与配对比较；GPU 已空闲，训练/导出/比较日志无错误。
@@ -276,6 +276,23 @@ P6/P7 证明单纯在输出端做局部修补容易以 recall 换 precision，�
 
 - C3→P8 验证专用链于服务器时间 `2026-09-03T18:30:26+08:00` 启动；元数据：`/root/autodl-tmp/BetterLViT-race-p8/runtime_logs/race_pair_current.env`。
 - 两项均锁定 80 epochs、batch 16、seed 1219、deterministic、`drop_last=True`、LoRA=False、boundary loss=0；`AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`。
-- 启动核对：状态 `c3_training`，C3 第 1/80 epoch 正常推进，GPU 利用率约 95%，显存约 17.4/24.6 GB。
-- C3 训练和 validation 导出成功后才自动启动 P8；P8 完成后自动导出 validation 并生成配对比较。任何训练、导出、提交或检查点异常都会停止链，不自动重启。
+- 最终链状态为 `complete`：C3/P8 均完成 80 epochs，两个 best-checkpoint validation 导出和配对 bootstrap 比较均成功；GPU 已空闲，日志无训练、CUDA、数据或检查点错误。
+- 两组 Best/Last 均可严格加载，`source_git_commit` 分别匹配上表提交；均为 LoRA=False、boundary loss=0，且 Test 从未访问。
 - P8 相对 C3 的预注册门：macro Dice 至少 `+0.002`；整体 precision 不下降；最小病灶四分位 Dice 与 recall 不下降；Brier 不恶化；RACE 路由强度/门控/视觉 evidence/一致性统计不得坍缩或退化为全图均匀增强。模型选择完成前不访问 Test。
+
+### C3/P8 最终结果
+
+两份结果均为 `split=validation`、`test_split_accessed=false`、1429 样本、阈值 0.5，且 best epoch 都是 80。
+
+| ID | Val macro Dice | IoU | Precision | Recall | Boundary F1 tol=2 | Brier |
+|---|---:|---:|---:|---:|---:|---:|
+| C3 | 0.821214 | 0.722796 | 0.814701 | 0.864661 | 0.739182 | 0.021477 |
+| P8 | 0.823061 | 0.725566 | 0.813476 | 0.869796 | 0.743003 | 0.021082 |
+
+P8 相对 C3：macro Dice `+0.001848`，95% CI `[-0.001263, 0.005013]`；IoU `+0.002770`；precision `-0.001225`；recall `+0.005135`，95% CI `[0.000921, 0.009447]`；boundary F1 `+0.003821`；Brier 改善 `-0.000394`，95% CI `[-0.000628, -0.000159]`（越低越好）。
+
+最小病灶四分位（358 样本）Dice `+0.001947`、precision `+0.001469`、recall `+0.007525`，但区间均跨 0；boundary F1 `-0.002337`。高频最高四分位在两种预注册口径均为正：Laplacian Dice/precision `+0.005027/+0.002907`，归一化局部细节 `+0.002645/+0.000626`。
+
+RACE 末轮四路 strength 为 `[-0.05793, 0.06121, 0.06121, 0.08668]`，gate mean `0.3169–0.3592`，visual evidence mean `0.7187–0.7852`，agreement mean `0.8095–0.8581`；机制没有坍缩，也未退化为全图同号增强。
+
+结论：P8 获得方向一致的 Dice/IoU、recall、Brier 和高频分层改善，第一次避免了 P6/P7 的小病灶 recall 损失；但 macro Dice 距预注册 `+0.002` 门槛少 `0.000152`，整体 precision 又下降 `0.001225`，且 Dice CI 跨 0，因此严格数值门为失败。当前不得访问 Test 或直接进入 150 epochs；应先基于 validation 做机制归因，并用独立预注册改动验证能否保留 recall/Brier 增益同时恢复 precision。
