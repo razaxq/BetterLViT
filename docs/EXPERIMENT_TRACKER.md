@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-02（Australia/Sydney）
+更新时间：2026-09-03（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -92,6 +92,8 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - 2026-09-02：C0 以状态 0 完成；best epoch 29 的 validation macro Dice/IoU/precision 为 0.810587/0.708856/0.824030，未访问 Test。随后按门控链启动 P5。
 - 2026-09-02：P5 以状态 0 完成，但相对 C0 的 macro Dice 为 -0.001814，最小病灶 precision 为 -0.004655；尽管 gate、identity、泄漏改善和 train-validation gap 通过，数值门仍失败。停止 P5，不进行 80 epoch 或 Test。
 - 2026-09-02：用户澄清 Focal 可以使用，禁止的是 boundary loss。后续恢复 Dice/Focal 候选，所有正式配置保持 `boundary_loss=0.0`；P5 因包含边界监督仅作为历史诊断实验。
+- 2026-09-03：P6 的频率/分支分层诊断确认：粗头训练显著干扰共享主干，最终 residual 虽能救回大部分损失，却主要退化为全局负向置信度收缩；高局部纹理样本的救援幅度最弱。因此停止 BCDH-R 参数修补，转向梯度隔离、局部稀疏且正负平衡的 CDRR。
+- 2026-09-03：锁定并启动 C2→P7 的 40-epoch validation-only 配对。两项均为 Frozen CXR-BERT、FAM-EPPA V4-B、Dice/Focal、LoRA=False、`boundary_loss=0.0`，明确禁止 Test；C2 为严格控制，P7 仅增加 CDRR V1。
 
 ## 研究反思与主线收敛
 
@@ -175,3 +177,49 @@ P6 相对 C1 必须同时满足：validation macro Dice 至少 `+0.002`、整体
 P6 相对 C1：macro Dice `-0.000352`（95% CI `[-0.002388, 0.001636]`）、IoU `+0.000152`、precision `-0.000414`、recall `-0.001735`、boundary F1 `-0.000539`；Brier 改善 `-0.000300`（越低越好）。最小病灶四分位 Dice `-0.002482`、precision `-0.003837`、boundary F1 `-0.002898`。
 
 数值门失败。最终 BCDH residual 的平均绝对幅度为 `0.523526`，`98.87%` 为负修正；高 uncertainty 区的修正幅度 `0.486574` 反而低于其余区域 `0.532763`，说明分支主要学成全局单向收缩，而不是预期的不确定区域局部校正。P6 不扩展至 80/150 epochs，也不访问 Test；BCDH-R V1 只能保留为负结果与后续机制诊断依据。
+
+## BCDH 频率诊断与 CDRR V1：C2 → P7
+
+### P6 分支与高频分层诊断
+
+- 诊断工具提交：`5e7e708e5732cc455aa867e48a16962b0e007fce`；只读取 P6 best checkpoint 与 C1/P6 validation 结果，`training_performed=false`、`test_split_accessed=false`，样本数 1429。
+- P6 base 相对 C1：macro Dice `-0.018400`、precision `-0.055832`、recall `+0.040846`、Brier `+0.002975`，说明粗头辅助梯度已明显改变共享特征并扩大预测区域。
+- P6 coarse 相对 C1：macro Dice `-0.003289`、precision `-0.008741`；P6 final 相对 C1则为 Dice `-0.000352`、precision `-0.000414`、Brier `-0.000300`。final 相对 base 救回 Dice `+0.018047`、precision `+0.055418`，但没有越过控制组。
+- final residual 平均 `delta_mean=-0.456584`，只有 `9.48%` 像素为正修正；top-20% uncertainty 的绝对修正反而比其余区域低 `0.016780`。该分支主要学成全图负向收缩，而非局部双向纠错。
+- Haar 高频最高四分位上 final 相对 C1 的 Dice 为 `+0.002512`；但归一化局部细节最高四分位为 `-0.002740`，且 final 对 base 的救援仅 `+0.009033`，远低于最低局部细节四分位的 `+0.026507`。高频能量口径不一致，支持后续同时报告 Haar 与归一化局部细节，而不能只挑有利分层。
+- 诊断结果：`/root/autodl-tmp/BetterLViT-paper-p6-bcdh/runtime_logs/bcdh_frequency_diagnostic/p6_frequency_heads.json`。
+
+### CDRR V1 设计
+
+CDRR（Cross-scale Detail Reliability Refiner）不使用边界标签或 boundary loss，针对上述失败机制做三项结构限制：
+
+1. 粗头和 refiner 输入从 segmentation trunk `detach`，阻断辅助目标对主干的梯度干扰；主分割基线仍由原 Dice/Focal 独立优化。
+2. 使用细/粗尺度局部细节一致性、预测 disagreement 与 base uncertainty 构造 reliability，只选择确定性的 top-15% 像素支持集；支持集外 residual 严格为 0。
+3. 支持集内先做加权中心化，再施加 `0.5 * tanh` 有界 residual，使正负修正均可发生，避免再次退化为全局单向阈值偏移；末层零初始化保证初始预测与控制组逐位相同。
+
+开发提交：`45a2a5a6fa89ca80e399eab377005399a7fb3833`。模块检查确认 identity/repeat error 均为 0、支持率 `0.149992`、支持集外最大 residual 为 0、主干梯度隔离通过、refiner/粗头/base 梯度非零，正/负活动像素占比约 `45.58% / 54.42%`，未使用 boundary target。
+
+### 独立提交、标签与正式预检
+
+| ID | 完整 Git SHA | 标签 | 配置 | 正式提交 GPU 预检 |
+|---|---|---|---|---|
+| C2 | `06479cd3302a8ca11022eac0a6b62bdad097eb65` | `pilot-c2-cdrr-control-frozen-b16-seed1219-20260903` | Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal；CDRR 关闭 | 两次 batch16 前/反向输出 SHA-256 均为 `d51177e6a9c6b162766de6c0e2eabfdeb4c62d10e815d601c3efdf30d9eb2c86`；loss `0.2612988949`；allocated/reserved 峰值约 15.014/15.047 GiB |
+| P7 | `fe4547a0c60fe948c9a574d9afc7d691370aeb42` | `pilot-p7-cdrr-v1-frozen-b16-seed1219-20260903` | C2 + CDRR V1 + 0.1 粗头完整-mask辅助监督 | 两次输出 SHA-256 与 C2 逐位相同；loss `0.2869261503`；identity error 0；allocated/reserved 峰值约 15.224/15.439 GiB |
+
+两项均锁定 40 epochs、batch 16、seed 1219、deterministic、`drop_last=True`、LoRA=False、`boundary_loss_weight=0.0`。训练链设置 `AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`，只允许 best-checkpoint validation 导出与配对比较。
+
+### 当前运行状态与阶段门
+
+- C2→P7 链于服务器时间 `2026-09-03T12:27:26+08:00` 启动；运行元数据：`/root/autodl-tmp/BetterLViT-paper-p7-cdrr/runtime_logs/cdrr_pair_current.env`。
+- 当前状态为 `c2_training`。C2 成功训练并导出 1429 个 validation 样本后才会启动 P7；任一提交、训练、导出或比较失败都会停止，且不自动重启。
+- P7 相对 C2 的主阶段门：validation macro Dice 至少 `+0.002`；整体及最小病灶四分位 precision 不下降；tolerance-2 boundary F1 提升；Brier 不恶化；归一化局部细节最高四分位 Dice/precision 均不下降；支持率接近 15%，支持集外 residual 为 0，且修正不退化为单向全局偏移。
+- 阶段门失败则停止，不扩展 80/150 epochs、不访问 Test；通过后也先做多 seed validation 复核，再决定是否进入正式 Test。
+
+### 历史结果归档
+
+C1/P6 会话、清单、运行日志及频率诊断已按完整 Git SHA 归档到共享盘：
+
+- `/root/autodl-fs/betterlvit_5090_migration/paper_experiment_artifacts/106aeab700ee98653b5ec27994a0aa15b60dac07/`
+- `/root/autodl-fs/betterlvit_5090_migration/paper_experiment_artifacts/7217660e6ef16e2a495bab4f20c73403468f55e1/`
+
+两项会话均核对为 2862 个文件、源/目标字节数完全一致，四个 Best/Last 检查点 SHA-256 全部匹配。服务器本地的两个旧会话副本已删除以释放训练盘空间，完整归档可恢复。
