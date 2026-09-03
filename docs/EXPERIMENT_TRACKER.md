@@ -94,6 +94,7 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - 2026-09-02：用户澄清 Focal 可以使用，禁止的是 boundary loss。后续恢复 Dice/Focal 候选，所有正式配置保持 `boundary_loss=0.0`；P5 因包含边界监督仅作为历史诊断实验。
 - 2026-09-03：P6 的频率/分支分层诊断确认：粗头训练显著干扰共享主干，最终 residual 虽能救回大部分损失，却主要退化为全局负向置信度收缩；高局部纹理样本的救援幅度最弱。因此停止 BCDH-R 参数修补，转向梯度隔离、局部稀疏且正负平衡的 CDRR。
 - 2026-09-03：锁定并启动 C2→P7 的 40-epoch validation-only 配对。两项均为 Frozen CXR-BERT、FAM-EPPA V4-B、Dice/Focal、LoRA=False、`boundary_loss=0.0`，明确禁止 Test；C2 为严格控制，P7 仅增加 CDRR V1。
+- 2026-09-03：共享目录必须保持在 20 GB 以下。完成存储审计和裁剪后，`betterlvit_5090_migration` 从 24,266,917,767 bytes 降至 18,559,777,853 bytes；训练盘可用空间从 4.9 GB 提升至 7.3 GB。后续不得再把完整训练会话无条件复制到共享盘。
 
 ## 研究反思与主线收敛
 
@@ -211,7 +212,7 @@ CDRR（Cross-scale Detail Reliability Refiner）不使用边界标签或 boundar
 ### 当前运行状态与阶段门
 
 - C2→P7 链于服务器时间 `2026-09-03T12:27:26+08:00` 启动；运行元数据：`/root/autodl-tmp/BetterLViT-paper-p7-cdrr/runtime_logs/cdrr_pair_current.env`。
-- 当前状态为 `c2_training`。C2 成功训练并导出 1429 个 validation 样本后才会启动 P7；任一提交、训练、导出或比较失败都会停止，且不自动重启。
+- C2 已完成并成功交接；当前状态为 `p7_training`。截至服务器时间 2026-09-03 15:14（UTC+8），P7 正在 epoch 6，GPU 约 93–97%、显存约 17.2 GiB；任一训练、导出或比较失败都会停止，且不自动重启。
 - P7 相对 C2 的主阶段门：validation macro Dice 至少 `+0.002`；整体及最小病灶四分位 precision 不下降；tolerance-2 boundary F1 提升；Brier 不恶化；归一化局部细节最高四分位 Dice/precision 均不下降；支持率接近 15%，支持集外 residual 为 0，且修正不退化为单向全局偏移。
 - 阶段门失败则停止，不扩展 80/150 epochs、不访问 Test；通过后也先做多 seed validation 复核，再决定是否进入正式 Test。
 
@@ -223,3 +224,12 @@ C1/P6 会话、清单、运行日志及频率诊断已按完整 Git SHA 归档�
 - `/root/autodl-fs/betterlvit_5090_migration/paper_experiment_artifacts/7217660e6ef16e2a495bab4f20c73403468f55e1/`
 
 两项会话均核对为 2862 个文件、源/目标字节数完全一致，四个 Best/Last 检查点 SHA-256 全部匹配。服务器本地的两个旧会话副本已删除以释放训练盘空间，完整归档可恢复。
+
+### 服务器存储策略（20 GB 共享目录上限）
+
+- 2026-09-03 审计前：共享目录 24,266,917,767 bytes，本地训练盘仅余 4.9 GB。
+- 已从 6 个 8 月旧会话中删除可由 sibling Best 替代的 Last checkpoint；8 个历史 Best 全部保留，另保留 3 个 Last。删除前的 SHA-256、字节数与完整路径记录在 `/root/autodl-fs/betterlvit_5090_migration/runtime_logs/storage_optimization_20260903_deleted_legacy_last.sha256`。
+- 已删除共享盘中未被训练使用、可重建的旧 `huggingface-cache`；当前训练只使用 `root_cache/huggingface`。
+- 已删除本地无活跃进程使用的 `hf-upload-staging`、`wheelhouse-cu128` 和旧 `huggingface` 缓存。上传暂存区不是唯一结果来源；wheelhouse/缓存可重建。
+- 审计后：共享目录 18,559,777,853 bytes（约 18.56 GB），低于 20 GB；本地训练盘可用 7.3 GB，P7 训练保持正常。
+- 后续保留顺序：结果 JSON、manifest、Git SHA/标签、Best checkpoint 优先；Last 只在需要断点续训时保留。完整会话优先发布到已校验的 Hugging Face Bucket 或外部归档，不再默认写入共享盘。每次归档前必须先检查 20 GB 上限。
