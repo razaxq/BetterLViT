@@ -1,0 +1,60 @@
+{
+  "paper_id": "P7",
+  "experiment": "p7_cdrr_v1",
+  "description": "Frozen CXR-BERT + FAM-EPPA V4-B + CDRR V1 + Dice/Focal",
+  "parent_commit": "06479cd3302a8ca11022eac0a6b62bdad097eb65",
+  "git_tag": "pilot-p7-cdrr-v1-frozen-b16-seed1219-20260903",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 40,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": false,
+    "trainable": false
+  },
+  "decoder_fusion_mode": "fam_eppa_v4b",
+  "cdrr": {
+    "enabled": true,
+    "version": "cdrr_v1",
+    "aux_weight": 0.1,
+    "hidden_channels": 32,
+    "delta_max": 0.5,
+    "active_fraction": 0.15,
+    "detached_auxiliary_features": true,
+    "detached_refiner_inputs": true,
+    "support_weighted_centering": true,
+    "uses_boundary_target": false
+  },
+  "loss": {
+    "name": "dice_focal",
+    "dice_weight": 0.5,
+    "focal_weight": 0.5,
+    "focal_gamma": 2.0,
+    "boundary_weight": 0.0
+  },
+  "evaluation": {
+    "split": "validation",
+    "threshold": 0.5,
+    "automatic_test_evaluation": false,
+    "test_split_access_allowed": false,
+    "frequency_strata": [
+      "laplacian_energy_quartiles",
+      "normalized_local_detail_quartiles"
+    ]
+  },
+  "paired_reference": {
+    "paper_id": "C2",
+    "experiment": "c2_cdrr_control",
+    "git_commit": "06479cd3302a8ca11022eac0a6b62bdad097eb65",
+    "only_intended_change": "cdrr_enabled false to true with gradient-isolated complete-mask auxiliary supervision"
+  },
+  "provenance": "The full immutable Git commit is recorded at launch and inside every checkpoint."
+}
