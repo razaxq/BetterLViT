@@ -27,11 +27,11 @@ def main():
     routed_a, aux_a = module(skips, text, mask, basis)
     routed_b, aux_b = module(skips, text, mask, basis)
     identity_error = max(
-        float((before - after).abs().max())
+        float((before - after).detach().abs().max())
         for before, after in zip(skips, routed_a)
     )
     repeat_error = max(
-        float((first - second).abs().max())
+        float((first - second).detach().abs().max())
         for first, second in zip(routed_a, routed_b)
     )
     if identity_error != 0.0 or repeat_error != 0.0:

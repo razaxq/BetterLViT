@@ -421,7 +421,13 @@ class RACEObjective(nn.Module):
         slot_loss = 0.75 * text_zone + 0.25 * text_count
 
         basis = zone_basis.float()
-        mask = targets.float().unsqueeze(1)
+        mask = targets.float()
+        if mask.ndim == 3:
+            mask = mask.unsqueeze(1)
+        if mask.ndim != 4 or mask.shape[1] != 1:
+            raise ValueError(
+                "RACE targets must have shape [B,H,W] or [B,1,H,W]"
+            )
         zone_fraction = (mask * basis).sum(dim=(2, 3)) / basis.sum(
             dim=(2, 3)
         ).clamp_min(1.0)
