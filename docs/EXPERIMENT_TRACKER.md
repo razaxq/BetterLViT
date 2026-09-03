@@ -254,3 +254,28 @@ C1/P6 会话、清单、运行日志及频率诊断已按完整 Git SHA 归档�
 - 已删除本地无活跃进程使用的 `hf-upload-staging`、`wheelhouse-cu128` 和旧 `huggingface` 缓存。上传暂存区不是唯一结果来源；wheelhouse/缓存可重建。
 - 审计后：共享目录 18,559,777,853 bytes（约 18.56 GB），低于 20 GB；本地训练盘可用 7.3 GB，P7 训练保持正常。
 - 后续保留顺序：结果 JSON、manifest、Git SHA/标签、Best checkpoint 优先；Last 只在需要断点续训时保留。完整会话优先发布到已校验的 Hugging Face Bucket 或外部归档，不再默认写入共享盘。每次归档前必须先检查 20 GB 上限。
+
+## RACE-Fuse V1：C3 → P8（80 epochs）
+
+### 研究动机与机制
+
+P6/P7 证明单纯在输出端做局部修补容易以 recall 换 precision，尤其伤害小病灶。RACE-Fuse（Report-Anatomy Consistency and Evidence Fusion）改为在四层 encoder skip 上融合报告位置语义与视觉病灶证据：冻结 CXR-BERT 的 token 特征学习六区位置槽和三类病灶数量槽；每个尺度独立预测视觉 evidence；只有“报告正证据 × 局部视觉证据 × 图文一致性”共同成立时才开启有界加性路由。未提及区域按 unknown 处理，不作为病灶负标签；路由强度零初始化，未学习前与控制网络逐位相同。
+
+训练数据的随机旋转/翻转会同步作用于六区解剖基底，避免图像增强后文本方位与空间先验错位。RACE 不使用 LoRA，主目标固定 Dice/Focal `0.5/0.5`，辅助权重 `0.05`，`boundary_loss_weight=0.0`。
+
+### 独立提交、标签与预检
+
+| ID | 完整 Git SHA | 标签 | 配置 | 正式提交 GPU 预检 |
+|---|---|---|---|---|
+| C3 | `424f2824b737e4d311cdcb270bbc83e973dc067f` | `pilot-c3-race-control-frozen-b16-seed1219-80e-20260903` | Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal；RACE 关闭 | 两次 batch16 输出 SHA-256 均为 `d51177e6a9c6b162766de6c0e2eabfdeb4c62d10e815d601c3efdf30d9eb2c86`；loss `0.2612988949`；allocated/reserved 峰值约 15.10/16.46 GiB |
+| P8 | `48df2f185a28919e38e073322809d043e176d382` | `pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart2` | C3 + RACE-Fuse V1；aux weight 0.05；四尺度最大 residual strength 0.15 | 最终提交两次 batch16 输出 SHA-256 均与 C3 逐位相同；loss `0.2993894517`（含辅助项）；identity strength 0；allocated/reserved 峰值约 17.33/18.70 GiB；真实训练样本增强/六区基底数据契约检查通过 |
+
+早期 P8 提交 `d3ac4ad377447ed2fdb9d3176ae9369c106a77d4` 在首次 GPU 预检发现辅助 mask 多余通道维，未启动训练、无实验结果；`edb719c6245e2005853b220e233e9fcc76fae405` 修复后通过两次合成预检，但最终正式提交另加入真实 DataLoader 契约检查，因此两者均不得作为 P8 结果提交。
+
+### 当前运行状态与阶段门
+
+- C3→P8 验证专用链于服务器时间 `2026-09-03T18:30:26+08:00` 启动；元数据：`/root/autodl-tmp/BetterLViT-race-p8/runtime_logs/race_pair_current.env`。
+- 两项均锁定 80 epochs、batch 16、seed 1219、deterministic、`drop_last=True`、LoRA=False、boundary loss=0；`AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`。
+- 启动核对：状态 `c3_training`，C3 第 1/80 epoch 正常推进，GPU 利用率约 95%，显存约 17.4/24.6 GB。
+- C3 训练和 validation 导出成功后才自动启动 P8；P8 完成后自动导出 validation 并生成配对比较。任何训练、导出、提交或检查点异常都会停止链，不自动重启。
+- P8 相对 C3 的预注册门：macro Dice 至少 `+0.002`；整体 precision 不下降；最小病灶四分位 Dice 与 recall 不下降；Brier 不恶化；RACE 路由强度/门控/视觉 evidence/一致性统计不得坍缩或退化为全图均匀增强。模型选择完成前不访问 Test。
