@@ -74,7 +74,10 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         #             Compute loss
         # ====================================================
 
-        if getattr(config, 'bcdh_enabled', False):
+        if (
+            getattr(config, 'bcdh_enabled', False)
+            or getattr(config, 'cdrr_enabled', False)
+        ):
             outputs = model(
                 images,
                 input_ids,

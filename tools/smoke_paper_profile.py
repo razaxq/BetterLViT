@@ -32,6 +32,8 @@ def parse_args():
             "a9_frozen_freq_focal",
             "c1_bcdh_control",
             "p6_bcdh_r_v1",
+            "c2_cdrr_control",
+            "p7_cdrr_v1",
         ),
     )
     parser.add_argument("--cpu", action="store_true")
@@ -51,7 +53,12 @@ def main():
 
     import Config as config
     from nets.BetterLViT import BetterLViT
-    from utils import BCDHObjective, WeightedDiceBCE, WeightedDiceFocal
+    from utils import (
+        BCDHObjective,
+        DualHeadMaskObjective,
+        WeightedDiceBCE,
+        WeightedDiceFocal,
+    )
 
     torch.backends.cudnn.enabled = config.cudnn_enabled
     torch.backends.cudnn.benchmark = False
@@ -117,7 +124,7 @@ def main():
     )
 
     outputs = None
-    if config.bcdh_enabled:
+    if config.bcdh_enabled or config.cdrr_enabled:
         outputs = model(
             images,
             input_ids,
@@ -149,6 +156,21 @@ def main():
             raise RuntimeError("BCDH zero-init output is not exact identity")
         criterion = BCDHObjective(
             aux_weight=config.bcdh_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+        loss = criterion(outputs, labels)
+    elif config.cdrr_enabled:
+        identity_error = float(
+            (outputs["final"] - outputs["base"]).abs().max().item()
+        )
+        if identity_error != 0.0:
+            raise RuntimeError("CDRR zero-init output is not exact identity")
+        criterion = DualHeadMaskObjective(
+            aux_weight=config.cdrr_aux_weight,
             dice_weight=config.dice_loss_weight,
             focal_weight=config.focal_loss_weight,
             focal_gamma=config.focal_gamma,
@@ -191,7 +213,11 @@ def main():
         "loss_name": config.loss_name,
         "text_use_lora": config.text_use_lora,
         "bcdh_enabled": config.bcdh_enabled,
+        "cdrr_enabled": config.cdrr_enabled,
         "bcdh_identity_max_abs_error": identity_error,
+        "cdrr_identity_max_abs_error": (
+            identity_error if config.cdrr_enabled else None
+        ),
         "boundary_loss_weight": config.boundary_loss_weight,
         "output_sha256": output_sha256,
         "device": str(device),

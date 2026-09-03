@@ -363,6 +363,12 @@ class BCDHObjective(nn.Module):
         return total
 
 
+class DualHeadMaskObjective(BCDHObjective):
+    """Architecture-neutral alias for full-mask dual-head supervision."""
+
+    pass
+
+
 class BoundaryDiceLoss(nn.Module):
     """Dice loss on differentiable morphological boundary maps."""
 

@@ -19,6 +19,7 @@ from nets.BetterLViT import BetterLViT
 from utils import (
     BCDHObjective,
     CosineAnnealingWarmRestarts,
+    DualHeadMaskObjective,
     WeightedDiceBCE,
     WeightedDiceFocal,
     read_text,
@@ -118,6 +119,18 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             ),
         },
         'bcdh_stats': compute_bcdh_stats(model),
+        'cdrr_enabled': bool(getattr(config, 'cdrr_enabled', False)),
+        'cdrr_config': {
+            'aux_weight': float(getattr(config, 'cdrr_aux_weight', 0.0)),
+            'hidden_channels': int(
+                getattr(config, 'cdrr_hidden_channels', 0)
+            ),
+            'delta_max': float(getattr(config, 'cdrr_delta_max', 0.0)),
+            'active_fraction': float(
+                getattr(config, 'cdrr_active_fraction', 0.0)
+            ),
+        },
+        'cdrr_stats': compute_cdrr_stats(model),
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
         'batch_size': int(config.batch_size),
@@ -170,6 +183,15 @@ def compute_bcdh_stats(model):
     """Snapshot validation-time BCDH output-correction diagnostics."""
     target = model.module if isinstance(model, nn.DataParallel) else model
     module = getattr(target, 'bcdh', None)
+    if module is None:
+        return {}
+    return dict(getattr(module, '_last_stats', {}) or {})
+
+
+def compute_cdrr_stats(model):
+    """Snapshot validation-time CDRR reliability diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    module = getattr(target, 'cdrr', None)
     if module is None:
         return {}
     return dict(getattr(module, '_last_stats', {}) or {})
@@ -373,6 +395,19 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             focal_positive_weight=config.focal_positive_weight,
             focal_negative_weight=config.focal_negative_weight,
         )
+    elif getattr(config, 'cdrr_enabled', False):
+        if configured_loss != 'dice_focal':
+            raise ValueError('CDRR V1 requires dice_focal')
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError('CDRR V1 prohibits boundary supervision')
+        criterion = DualHeadMaskObjective(
+            aux_weight=config.cdrr_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
     elif configured_loss == 'dice_focal':
         if config.boundary_loss_weight != 0.0:
             raise ValueError(
@@ -546,6 +581,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'val_loss_components': val_loss_components,
             'eppa_stats': compute_decoder_fusion_stats(model),
             'bcdh_stats': compute_bcdh_stats(model),
+            'cdrr_stats': compute_cdrr_stats(model),
         })
 
         # =============================================================
@@ -769,6 +805,28 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     current_bcdh_stats['delta_negative_fraction'],
                     current_bcdh_stats['uncertainty_top20_delta_abs_mean'],
                     current_bcdh_stats['uncertainty_rest_delta_abs_mean'],
+                )
+            )
+
+        current_cdrr_stats = epoch_history[-1].get('cdrr_stats') or {}
+        if current_cdrr_stats:
+            logger.info(
+                'CDRR: support={:.4f}, reliability={:.4f}, '
+                'agreement={:.4f}, uncertainty/disagreement={:.4f}/{:.4f}, '
+                '|delta| mean/active/max={:.6f}/{:.6f}/{:.6f}, '
+                'positive/negative(active)={:.4f}/{:.4f}, inactive_max={:.3e}'
+                .format(
+                    current_cdrr_stats['support_fraction'],
+                    current_cdrr_stats['reliability_mean'],
+                    current_cdrr_stats['agreement_mean'],
+                    current_cdrr_stats['uncertainty_mean'],
+                    current_cdrr_stats['disagreement_mean'],
+                    current_cdrr_stats['delta_abs_mean'],
+                    current_cdrr_stats['delta_abs_active_mean'],
+                    current_cdrr_stats['delta_abs_max'],
+                    current_cdrr_stats['delta_positive_active_fraction'],
+                    current_cdrr_stats['delta_negative_active_fraction'],
+                    current_cdrr_stats['delta_inactive_abs_max'],
                 )
             )
 

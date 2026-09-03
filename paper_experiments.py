@@ -94,6 +94,39 @@ PAPER_EXPERIMENTS = {
             "pilot_p6_frozen_fam_eppa_v4b_bcdh_r_v1_dice_focal"
         ),
     },
+    "c2_cdrr_control": {
+        "paper_id": "C2",
+        "description": (
+            "Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal; "
+            "CDRR validation control"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "text_use_lora": False,
+        "loss_name": "dice_focal",
+        "bcdh_enabled": False,
+        "cdrr_enabled": False,
+        "architecture_version": (
+            "pilot_c2_frozen_fam_eppa_v4b_dice_focal_control"
+        ),
+    },
+    "p7_cdrr_v1": {
+        "paper_id": "P7",
+        "description": (
+            "Frozen CXR-BERT + FAM-EPPA V4-B + CDRR V1 + Dice/Focal"
+        ),
+        "decoder_fusion_mode": "fam_eppa_v4b",
+        "text_use_lora": False,
+        "loss_name": "dice_focal",
+        "bcdh_enabled": False,
+        "cdrr_enabled": True,
+        "cdrr_aux_weight": 0.1,
+        "cdrr_hidden_channels": 32,
+        "cdrr_delta_max": 0.5,
+        "cdrr_active_fraction": 0.15,
+        "architecture_version": (
+            "pilot_p7_frozen_fam_eppa_v4b_cdrr_v1_dice_focal"
+        ),
+    },
 }
 
 

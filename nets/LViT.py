@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 
 from .bcdh import BCDHRefiner
+from .cdrr import CDRRRefiner
 from .Vit import VisionTransformer, Reconstruct
 from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
@@ -400,6 +401,28 @@ class LViT(nn.Module):
             )
         else:
             self.bcdh = None
+        self.cdrr_enabled = bool(getattr(config, 'cdrr_enabled', False))
+        if self.bcdh_enabled and self.cdrr_enabled:
+            raise ValueError('BCDH and CDRR cannot be enabled together')
+        if self.cdrr_enabled:
+            if n_classes != 1:
+                raise ValueError('CDRR V1 supports binary segmentation only')
+            self.cdrr = CDRRRefiner(
+                channels=in_channels,
+                hidden_channels=getattr(
+                    config,
+                    'cdrr_hidden_channels',
+                    32,
+                ),
+                delta_max=getattr(config, 'cdrr_delta_max', 0.5),
+                active_fraction=getattr(
+                    config,
+                    'cdrr_active_fraction',
+                    0.15,
+                ),
+            )
+        else:
+            self.cdrr = None
 
     def forward(self, x, text, text_mask=None, return_aux=False):
         x = x.float()  # x [4,3,224,224]
@@ -442,6 +465,11 @@ class LViT(nn.Module):
         base_logits = self.outc(d1)
         if self.bcdh_enabled:
             outputs = self.bcdh(d2, d1, base_logits)
+            if return_aux:
+                return outputs
+            return outputs['final']
+        if self.cdrr_enabled:
+            outputs = self.cdrr(d2, d1, base_logits)
             if return_aux:
                 return outputs
             return outputs['final']

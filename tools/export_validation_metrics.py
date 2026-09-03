@@ -34,6 +34,8 @@ ALLOWED_EXPERIMENTS = (
     "a9_frozen_freq_focal",
     "c1_bcdh_control",
     "p6_bcdh_r_v1",
+    "c2_cdrr_control",
+    "p7_cdrr_v1",
 )
 
 
@@ -84,6 +86,24 @@ def boundary_f1(predictions, labels, tolerance=2):
     )
     both_empty = (predicted_count == 0) & (label_count == 0)
     return torch.where(both_empty, torch.ones_like(score), score)
+
+
+def image_frequency_scores(images):
+    """Prediction-independent image detail scores for validation strata."""
+    gray = images.float().mean(dim=1, keepdim=True)
+    laplacian_kernel = gray.new_tensor(
+        [[0.0, 1.0, 0.0], [1.0, -4.0, 1.0], [0.0, 1.0, 0.0]]
+    ).view(1, 1, 3, 3)
+    laplacian = F.conv2d(
+        F.pad(gray, (1, 1, 1, 1), mode="reflect"),
+        laplacian_kernel,
+    )
+    laplacian_energy = laplacian.square().mean((1, 2, 3))
+    local_mean = F.avg_pool2d(gray, kernel_size=5, stride=1, padding=2)
+    normalized_detail = (gray - local_mean).abs().mean((1, 2, 3)) / (
+        gray.std((1, 2, 3), unbiased=False).clamp_min(1e-6)
+    )
+    return laplacian_energy, normalized_detail
 
 
 def parse_args():
@@ -182,11 +202,13 @@ def main():
             .format(analysis_commit, checkpoint_commit)
         )
     if bool(checkpoint.get("text_use_lora", True)):
-        raise RuntimeError("C1/P6 validation pilots must not contain LoRA weights.")
+        raise RuntimeError("Validation pilots must not contain LoRA weights.")
     if float(checkpoint.get("boundary_loss_weight", 0.0)) != 0.0:
-        raise RuntimeError("C1/P6 checkpoint unexpectedly used boundary loss.")
+        raise RuntimeError("Validation checkpoint unexpectedly used boundary loss.")
     if bool(checkpoint.get("bcdh_enabled", False)) != bool(config.bcdh_enabled):
         raise RuntimeError("Checkpoint BCDH flag does not match the profile.")
+    if bool(checkpoint.get("cdrr_enabled", False)) != bool(config.cdrr_enabled):
+        raise RuntimeError("Checkpoint CDRR flag does not match the profile.")
 
     torch.backends.cudnn.enabled = config.cudnn_enabled
     torch.backends.cudnn.benchmark = False
@@ -208,11 +230,15 @@ def main():
             unit="batch",
             ncols=80,
         ):
+            images = batch["image"].cuda(non_blocking=True)
             probabilities = model(
-                batch["image"].cuda(non_blocking=True),
+                images,
                 batch["input_ids"].cuda(non_blocking=True),
                 batch["attention_mask"].cuda(non_blocking=True),
             )[:, 0].float().cpu()
+            laplacian, normalized_detail = image_frequency_scores(images)
+            laplacian = laplacian.float().cpu()
+            normalized_detail = normalized_detail.float().cpu()
             labels = batch["label"].bool()
             if labels.ndim != 3:
                 raise RuntimeError(
@@ -269,6 +295,10 @@ def main():
                     "recall": float(recall[index].item()),
                     "brier": float(brier[index].item()),
                     "boundary_f1_tolerance_2": float(boundary[index].item()),
+                    "hf_laplacian_energy": float(laplacian[index].item()),
+                    "hf_normalized_local_detail": float(
+                        normalized_detail[index].item()
+                    ),
                 })
 
     if len(records) != len(dataset):
@@ -299,6 +329,7 @@ def main():
         raise RuntimeError("Validation metrics contain non-finite values.")
 
     bcdh = getattr(model, "bcdh", None)
+    cdrr = getattr(model, "cdrr", None)
     result = {
         "split": "validation",
         "test_split_accessed": False,
@@ -320,8 +351,12 @@ def main():
         "text_use_lora": bool(config.text_use_lora),
         "boundary_loss_weight": float(config.boundary_loss_weight),
         "bcdh_enabled": bool(config.bcdh_enabled),
+        "cdrr_enabled": bool(config.cdrr_enabled),
         "bcdh_stats_last_batch": dict(
             getattr(bcdh, "_last_stats", {}) or {}
+        ),
+        "cdrr_stats_last_batch": dict(
+            getattr(cdrr, "_last_stats", {}) or {}
         ),
         "records": records,
     }

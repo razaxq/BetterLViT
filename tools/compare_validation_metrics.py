@@ -57,6 +57,39 @@ def metric_summary(control, candidate, metric, bootstrap_samples, seed):
     }
 
 
+def stratified_quartiles(
+    scores,
+    score_name,
+    metric_arrays,
+    metric_names,
+    bootstrap_samples,
+    seed,
+):
+    ordered_indices = np.argsort(scores, kind="stable")
+    quartiles = []
+    for quartile_index, indices in enumerate(
+        np.array_split(ordered_indices, 4), 1
+    ):
+        entry = {
+            "quartile": quartile_index,
+            "samples": int(len(indices)),
+            "score": score_name,
+            "score_min": float(scores[indices].min()),
+            "score_max": float(scores[indices].max()),
+        }
+        for metric_index, metric in enumerate(metric_names):
+            control, candidate = metric_arrays[metric]
+            entry[metric] = metric_summary(
+                control[indices],
+                candidate[indices],
+                metric,
+                bootstrap_samples,
+                seed + 100 * quartile_index + metric_index,
+            )
+        quartiles.append(entry)
+    return quartiles
+
+
 def main():
     args = parse_args()
     if args.bootstrap_samples <= 0:
@@ -100,28 +133,47 @@ def main():
             args.seed + metric_index,
         )
 
-    ordered_indices = np.argsort(label_pixels, kind="stable")
-    quartiles = []
-    for quartile_index, indices in enumerate(
-        np.array_split(ordered_indices, 4),
-        1,
+    quartiles = stratified_quartiles(
+        label_pixels,
+        "label_pixels",
+        metric_arrays,
+        higher_is_better,
+        args.bootstrap_samples,
+        args.seed,
+    )
+    for entry in quartiles:
+        entry["label_pixels_min"] = int(entry.pop("score_min"))
+        entry["label_pixels_max"] = int(entry.pop("score_max"))
+
+    frequency_quartiles = {}
+    frequency_fields = (
+        "hf_laplacian_energy",
+        "hf_normalized_local_detail",
+    )
+    if all(
+        field in control_records[names[0]]
+        and field in candidate_records[names[0]]
+        for field in frequency_fields
     ):
-        entry = {
-            "quartile": quartile_index,
-            "samples": int(len(indices)),
-            "label_pixels_min": int(label_pixels[indices].min()),
-            "label_pixels_max": int(label_pixels[indices].max()),
-        }
-        for metric_index, metric in enumerate(higher_is_better):
-            control, candidate = metric_arrays[metric]
-            entry[metric] = metric_summary(
-                control[indices],
-                candidate[indices],
-                metric,
+        for field_index, field in enumerate(frequency_fields):
+            control_scores = np.asarray([
+                control_records[name][field] for name in names
+            ])
+            candidate_scores = np.asarray([
+                candidate_records[name][field] for name in names
+            ])
+            if not np.allclose(control_scores, candidate_scores, atol=1e-9):
+                raise RuntimeError(
+                    "Control/candidate image frequency scores differ."
+                )
+            frequency_quartiles[field] = stratified_quartiles(
+                control_scores,
+                field,
+                metric_arrays,
+                higher_is_better,
                 args.bootstrap_samples,
-                args.seed + 100 * quartile_index + metric_index,
+                args.seed + 1000 * (field_index + 1),
             )
-        quartiles.append(entry)
 
     dice_delta = metrics["dice"]["mean_delta"]
     smallest_delta = quartiles[0]["dice"]["mean_delta"]
@@ -144,6 +196,22 @@ def main():
         args.seed + 50,
     )
     metrics["brier_lower_is_better"] = brier
+    high_frequency_pass = True
+    high_frequency_gate = {}
+    if frequency_quartiles:
+        for field, entries in frequency_quartiles.items():
+            highest = entries[-1]
+            dice_value = highest["dice"]["mean_delta"]
+            precision_value = highest["precision"]["mean_delta"]
+            high_frequency_gate[field] = {
+                "highest_quartile_dice_delta": dice_value,
+                "highest_quartile_precision_delta": precision_value,
+                "passes": bool(dice_value >= 0.0 and precision_value >= 0.0),
+            }
+            high_frequency_pass = (
+                high_frequency_pass
+                and high_frequency_gate[field]["passes"]
+            )
     result = {
         "split": "validation",
         "test_split_accessed": False,
@@ -165,6 +233,7 @@ def main():
         "samples": len(names),
         "overall": metrics,
         "lesion_size_quartiles": quartiles,
+        "image_frequency_quartiles": frequency_quartiles,
         "pilot_thresholds": {
             "minimum_macro_dice_delta": 0.002,
             "minimum_smallest_quartile_dice_delta": 0.0,
@@ -172,7 +241,10 @@ def main():
             "minimum_macro_precision_delta": 0.0,
             "minimum_boundary_f1_delta": 0.0,
             "maximum_brier_delta": 0.0,
+            "minimum_high_frequency_quartile_dice_delta": 0.0,
+            "minimum_high_frequency_quartile_precision_delta": 0.0,
         },
+        "high_frequency_gate": high_frequency_gate,
         "passes_numeric_screen": bool(
             dice_delta >= 0.002
             and smallest_delta >= 0.0
@@ -180,9 +252,10 @@ def main():
             and overall_precision_delta >= 0.0
             and boundary_f1_delta > 0.0
             and brier["mean_delta"] <= 0.0
+            and high_frequency_pass
         ),
         "note": (
-            "Numeric screen only. BCDH residual distribution and the "
+            "Numeric screen only. Refiner residual distribution and the "
             "train-validation gap must also be reviewed before extension."
         ),
     }
