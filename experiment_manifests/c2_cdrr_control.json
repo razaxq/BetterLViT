@@ -1,0 +1,44 @@
+{
+  "paper_id": "C2",
+  "experiment": "c2_cdrr_control",
+  "description": "Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal; CDRR disabled",
+  "parent_commit": "45a2a5a6fa89ca80e399eab377005399a7fb3833",
+  "git_tag": "pilot-c2-cdrr-control-frozen-b16-seed1219-20260903",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 40,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": false,
+    "trainable": false
+  },
+  "decoder_fusion_mode": "fam_eppa_v4b",
+  "cdrr_enabled": false,
+  "loss": {
+    "name": "dice_focal",
+    "dice_weight": 0.5,
+    "focal_weight": 0.5,
+    "focal_gamma": 2.0,
+    "boundary_weight": 0.0
+  },
+  "evaluation": {
+    "split": "validation",
+    "threshold": 0.5,
+    "automatic_test_evaluation": false,
+    "test_split_access_allowed": false,
+    "frequency_strata": [
+      "laplacian_energy_quartiles",
+      "normalized_local_detail_quartiles"
+    ]
+  },
+  "ablation_question": "Paired control for the isolated contribution of CDRR V1.",
+  "provenance": "The full immutable Git commit is recorded at launch and inside every checkpoint."
+}
