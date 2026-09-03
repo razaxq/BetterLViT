@@ -95,6 +95,7 @@ P5 只与相同损失、seed、batch 和训练长度的 C0 比较，必须同时
 - 2026-09-03：P6 的频率/分支分层诊断确认：粗头训练显著干扰共享主干，最终 residual 虽能救回大部分损失，却主要退化为全局负向置信度收缩；高局部纹理样本的救援幅度最弱。因此停止 BCDH-R 参数修补，转向梯度隔离、局部稀疏且正负平衡的 CDRR。
 - 2026-09-03：锁定并启动 C2→P7 的 40-epoch validation-only 配对。两项均为 Frozen CXR-BERT、FAM-EPPA V4-B、Dice/Focal、LoRA=False、`boundary_loss=0.0`，明确禁止 Test；C2 为严格控制，P7 仅增加 CDRR V1。
 - 2026-09-03：共享目录必须保持在 20 GB 以下。完成存储审计和裁剪后，`betterlvit_5090_migration` 从 24,266,917,767 bytes 降至 18,559,777,853 bytes；训练盘可用空间从 4.9 GB 提升至 7.3 GB。后续不得再把完整训练会话无条件复制到共享盘。
+- 2026-09-03：C2/P7 均完成 40 epochs、best validation 导出和配对比较，状态为 `complete`，未访问 Test。P7 相对 C2 的 macro Dice 显著下降 `-0.003694`，小病灶 Dice 下降 `-0.008555`，两个高频口径也未同时满足 Dice/precision 不下降；CDRR V1 数值门失败，不扩展训练。
 
 ## 研究反思与主线收敛
 
@@ -212,9 +213,29 @@ CDRR（Cross-scale Detail Reliability Refiner）不使用边界标签或 boundar
 ### 当前运行状态与阶段门
 
 - C2→P7 链于服务器时间 `2026-09-03T12:27:26+08:00` 启动；运行元数据：`/root/autodl-tmp/BetterLViT-paper-p7-cdrr/runtime_logs/cdrr_pair_current.env`。
-- C2 已完成并成功交接；当前状态为 `p7_training`。截至服务器时间 2026-09-03 15:14（UTC+8），P7 正在 epoch 6，GPU 约 93–97%、显存约 17.2 GiB；任一训练、导出或比较失败都会停止，且不自动重启。
+- 最终状态为 `complete`：C2/P7 均完成 40 epochs、best-checkpoint validation 导出与配对比较；GPU 已空闲，训练/导出/比较日志无错误。
 - P7 相对 C2 的主阶段门：validation macro Dice 至少 `+0.002`；整体及最小病灶四分位 precision 不下降；tolerance-2 boundary F1 提升；Brier 不恶化；归一化局部细节最高四分位 Dice/precision 均不下降；支持率接近 15%，支持集外 residual 为 0，且修正不退化为单向全局偏移。
 - 阶段门失败则停止，不扩展 80/150 epochs、不访问 Test；通过后也先做多 seed validation 复核，再决定是否进入正式 Test。
+
+### C2/P7 最终结果
+
+两份结果均核对为 `split=validation`、`test_split_accessed=false`、1429 样本、提交来源一致、LoRA=False、`boundary_loss_weight=0.0`。C2 best epoch 40；P7 best epoch 39。
+
+| ID | Val macro Dice | IoU | Precision | Recall | Boundary F1 tol=2 | Brier |
+|---|---:|---:|---:|---:|---:|---:|
+| C2 | 0.816330 | 0.716653 | 0.785124 | 0.891991 | 0.726298 | 0.023294 |
+| P7 | 0.812636 | 0.711743 | 0.787725 | 0.881132 | 0.724445 | 0.023394 |
+
+P7 相对 C2：macro Dice `-0.003694`，95% CI `[-0.006475, -0.000939]`；IoU `-0.004911`；precision `+0.002601`；recall `-0.010859`；boundary F1 `-0.001853`；Brier `+0.000100`（变差）。最小病灶四分位 Dice `-0.008555`、IoU `-0.010914`、precision `+0.011374`、recall `-0.035319`、boundary F1 `-0.009366`。
+
+高频最高四分位结果并不稳健：
+
+- Haar/Laplacian 能量口径：Dice `-0.001610`，precision `+0.009266`，未通过；
+- 归一化局部细节口径：Dice `+0.000302`，precision `-0.000873`，未通过。
+
+CDRR 机制约束本身工作正常：支持率 `0.149992`，支持集外 residual 最大值为 0，活动像素正/负修正约 `53.88% / 46.12%`，平均绝对 residual `0.021526`，未再次退化为全图单向收缩。但它通过提高 precision 换取了明显 recall 损失，尤其小病灶 recall 下降 `-0.035319`，导致整体 Dice、边界 F1 与 Brier 均未改善。
+
+结论：CDRR V1 数值门失败，不扩展至 80/150 epochs，不做多 seed 或 Test。该结果说明“梯度隔离 + 稀疏双向修正”解决了 BCDH 的机制退化，却没有解决支持区域选择对真阳性细节的误抑制；后续如继续研究，必须先做离线错误归因或重新设计 reliability，而不是直接调节 residual 幅度或训练轮数。
 
 ### 历史结果归档
 
