@@ -188,6 +188,12 @@ PAPER_EXPERIMENTS['p10_race_pe_v2'] = dict(PAPER_EXPERIMENTS['p9_race_pe'],
     architecture_version='pilot_p10_race_pe_v2_mentions')
 
 
+PAPER_EXPERIMENTS['c8_race_pe_v2_aux'] = dict(PAPER_EXPERIMENTS['p10_race_pe_v2'],
+    paper_id='C8', race_pe_route_enabled=False,
+    description='RACE-PE V2 matched auxiliary-only control',
+    architecture_version='pilot_c8_race_pe_v2_aux_mentions')
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

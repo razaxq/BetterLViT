@@ -40,6 +40,7 @@ ALLOWED_EXPERIMENTS = (
     "p8_race_fuse_v1",
     "c4_race_pe_control", "c5_race_v1_iou", "p9_race_pe",
     "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
+    "c8_race_pe_v2_aux", "p10_race_pe_v2",
 )
 
 
