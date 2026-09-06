@@ -1,0 +1,17 @@
+{
+  "profile": "p10_race_pe_v2",
+  "epochs": 80,
+  "seed": 1219,
+  "batch_size": 16,
+  "selection_metric": "iou",
+  "threshold": 0.5,
+  "test_split_allowed": false,
+  "auto_test_evaluate": false,
+  "boundary_loss": 0.0,
+  "lora": false,
+  "resume": false,
+  "diagnostic_head_loaded": false,
+  "race_pe_v2_enabled": true,
+  "route_enabled": true,
+  "baseline_commit": "add4908a0d6f702b0a10c4581725b535543829b8"
+}
