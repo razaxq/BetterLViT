@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-06（Australia/Sydney）
+更新时间：2026-09-07（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -316,3 +316,21 @@ RACE 末轮四路 strength 为 `[-0.05793, 0.06121, 0.06121, 0.08668]`，gate me
 - `TEST_SPLIT_ALLOWED=0`、`AUTO_TEST_EVALUATE=0`。完成训练后只导出validation并生成`c4_vs_p9.json`，不自动扩展训练。
 - 初筛门：macro IoU至少+0.003；整体Dice/precision、最小病灶四分位Dice/recall不下降，Brier不恶化。报告IoU配对bootstrap CI；即使单种子过门也不代表稳定增益。
 - 已注册但未启动：C5（原RACE、同IoU选择规则）、C6（匹配权重的像素辅助监督、无路由）、C7（全部PE辅助监督、无路由）。后续先完成机制归因，再预注册至少3个配对种子；方法锁定前不访问Test。
+
+
+### C4/P9 最终结果（2026-09-07核查）
+
+链于悉尼时间2026-09-07 01:02:07完成，状态`complete`。C4/P9均完成80 epochs，两个validation导出及配对比较成功；日志未发现Traceback/RuntimeError/CUDA OOM，GPU空闲。两份JSON均为1429样本、阈值0.5、seed1219、IoU选检查点、test_split_accessed=false，提交来源与预注册一致。未启动额外训练或访问Test。
+
+| 实验 | best epoch | Val macro Dice | IoU | Precision | Recall | Brier |
+|---|---:|---:|---:|---:|---:|---:|
+| C4 | 80 | 0.821214 | 0.722796 | 0.814701 | 0.864661 | 0.021477 |
+| P9 | 69 | 0.822059 | 0.724335 | 0.796023 | 0.889474 | 0.021950 |
+
+P9-C4：IoU +0.001538（95% CI [-0.001819, 0.004953]），Dice +0.000846；precision -0.018679（95% CI [-0.021869, -0.015604]），recall +0.024813；Brier +0.000473（恶化）。最小病灶四分位Dice -0.001677，IoU -0.000281，precision -0.035094，recall +0.047812。
+
+结论：`passes_single_seed_screen=false`，IoU未达到+0.003且CI跨0；整体precision、最小病灶Dice和Brier亦未过门。不能称为稳定增益，不自动扩展至150 epochs或Test。
+
+诊断线索：P9 best-checkpoint验证导出的最后一个batch中，文本槽概率均值0.998699；训练末轮均值0.9991。存在文本分支趋向全阳性的强烈信号；这些是末batch/末轮快照，不代表已经完成全验证集机制归因。V1使用positive-only文本监督，可能允许全阳性退化，需要单独诊断而非直接重启训练。
+
+本地原始结果：`D:/BetterLViT/outputs/race_pe_results_20260907/`。归档SHA-256 `15421e4266f010d58115a9411f10ed849757d82e62d966c4097aa2b71a11f91f`已与服务器一致核验。
