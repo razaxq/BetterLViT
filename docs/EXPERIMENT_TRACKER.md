@@ -397,3 +397,18 @@ V1的区域文本BCE只有正例、没有负例，允许全阳性解；报告区
 本次未访问Test，历史C4/P9已授权的Test访问事实不变。未启动新的完整分割训练，所有检查已结束，GPU空闲。
 
 下一步应在Train/Val做匹配训练消融，分离“辅助监督”和“实际路由”的作用，再按预注册IoU/precision门槛决定是否扩大实验。固定矩形与肺解剖的错位仍是风险；文本头可学不等于路由可带来稳定增益。
+
+
+### C8→P10 V2验证消融已启动（2026-09-07）
+
+用户明确要求“启动”。悉尼时间2026-09-07 04:20:47启动后台链，先C8辅助监督，再P10辅助监督+路由，各80epoch、seed1219、batch16、Val IoU选择、阈值0.5、确定性训练。从头训练，不载入诊断文本头。复用已完成C4验证导出作无辅助监督基线。当前只是启动记录，不代表已完成或有增益。
+
+- C8：`21606e02c2d64ae950c0f243f55163f58cbedf83`，tag `pilot-c8-race-pe-v2-80e-seed1219-20260907`。
+- P10：`2f33a71219ed2beb339db45d702ecc36a931e0c8`，tag `pilot-p10-race-pe-v2-80e-seed1219-20260907`。
+- 两组独立冻结manifest/工作树，仅路由开启与否不同；启动前batch16检查通过，初始loss0.5188546180725098和输出SHA完全一致。C8/P10峰值分配15.51/17.33GiB。
+- 已实际观察C8第1轮60/357batch、GPU86%、显存17684MiB，无异常；P10等待自动接续。链PID29701，训练PID29710。
+- 每组成功训练后自动导出完整Val，最终比较C4→C8、C4→P10、C8→P10。主门槛为P10对C4 macro IoU≥+0.003及既定非退化条件；路由归因还需C8→P10的正IoU区间且precision不退化。单种子不能证明稳定增益。
+- 本轮`AUTO_TEST_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`，不会自动扩展或访问Test。此前C4/P9已访问Test记录保留。
+- 远端输出：`/root/race_pe_v2_runs/c8_p10_20260907`。系统盘启动前可用20056121344字节，预计两组Best/Last加临时写入空间足够；不增加共享fs占用。
+
+本地启动快照：`D:/BetterLViT/outputs/race_pe_v2_launch_20260907/launch_snapshot.json`。正式完成需核对chain.status、两个Val导出、三个比较JSON及来源提交。预注册说明见V2工作树`docs/RACE_PE_V2_SEGMENTATION_PILOT.md`。
