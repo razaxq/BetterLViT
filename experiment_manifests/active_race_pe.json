@@ -1,0 +1,12 @@
+{
+  "profile": "c4_race_pe_control",
+  "epochs": 80,
+  "seed": 1219,
+  "batch_size": 16,
+  "selection_metric": "iou",
+  "threshold": 0.5,
+  "test_split_allowed": false,
+  "auto_test_evaluate": false,
+  "boundary_loss": 0.0,
+  "lora": false
+}
