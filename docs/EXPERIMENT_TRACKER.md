@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-03（Australia/Sydney）
+更新时间：2026-09-06（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -296,3 +296,23 @@ P8 相对 C3：macro Dice `+0.001848`，95% CI `[-0.001263, 0.005013]`；IoU `+0
 RACE 末轮四路 strength 为 `[-0.05793, 0.06121, 0.06121, 0.08668]`，gate mean `0.3169–0.3592`，visual evidence mean `0.7187–0.7852`，agreement mean `0.8095–0.8581`；机制没有坍缩，也未退化为全图同号增强。
 
 结论：P8 获得方向一致的 Dice/IoU、recall、Brier 和高频分层改善，第一次避免了 P6/P7 的小病灶 recall 损失；但 macro Dice 距预注册 `+0.002` 门槛少 `0.000152`，整体 precision 又下降 `0.001225`，且 Dice CI 跨 0，因此严格数值门为失败。当前不得访问 Test 或直接进入 150 epochs；应先基于 validation 做机制归因，并用独立预注册改动验证能否保留 recall/Brier 增益同时恢复 precision。
+
+
+## RACE-PE V1：C4 → P9（2026-09-06，80 epochs）
+
+用户选择 RACE-PE 后新增独立实现：区域 presence head 与像素 extent head 分开；presence 对齐文本存在性，extent 监督完整 mask，其区域均值对齐真实占比。文本位置缺失或含糊时使用 unknown；没有加入 boundary loss、LoRA 或 Lovasz。P8 的失败结论不变。
+
+| ID | 完整 Git SHA | Git tag | 配置 |
+|---|---|---|---|
+| C4 | `add4908a0d6f702b0a10c4581725b535543829b8` | `pilot-c4-race-pe-control-80e-seed1219-20260906` | Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal |
+| P9 | `8129c1f039ed77f78e70305aca0bb9708b3b56b1` | `pilot-p9-race-pe-80e-seed1219-20260906` | C4 + RACE-PE；aux=0.05；bounded strength=0.15 |
+
+- 开发提交：`8b31af87c6d1d7666d21100fb8f0183af790ecce`；设计说明：`D:/BetterLViT/race_pe_work/docs/RACE_PE_V1_DESIGN.md`。
+- 两项统一：80 epochs、seed1219、physical batch16、deterministic、drop_last=True、阈值0.5。新配对按 validation macro IoU 选检查点，前5 epochs不参与选择；历史实验仍保留其原选择规则。
+- 冻结源码的真实训练 batch16 前/反向分别重复两次，均通过且各自损失相同。四次初始输出 SHA-256 均为 `246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7`；C4/P9 allocated 峰值分别约15.10/17.33 GiB。单像素病灶、空mask、未知/否定文本、无效区域、辅助监督消融和IoU检查点选择行为检查均通过。
+- 训练集文本/坐标审计：5716样本，4030个有保守可解析方位；1111个可解析明确单侧病例中1070个与当前图像坐标侧别一致。保留当前约定，不能把矩形六区描述为真实肺分割。
+- 新服务器：`connect.westb.seetacloud.com:21465`，RTX4090D，PyTorch2.9.1+cu128。系统盘约22GiB可用，输出放在系统盘；不删除历史产物。
+- 已发起后台 C4→P9 链，PID2757。状态路径：`/root/race_pe_runs/c4_p9_20260906/chain.status`；源码：`/root/BetterLViT-race-pe-c4`、`/root/BetterLViT-race-pe-p9`。已核对状态 `c4_training`，C4第1/80轮至少完成100/357个batch，GPU利用率99%，暂无训练错误；P9尚未开始，尚无新验证结果。
+- `TEST_SPLIT_ALLOWED=0`、`AUTO_TEST_EVALUATE=0`。完成训练后只导出validation并生成`c4_vs_p9.json`，不自动扩展训练。
+- 初筛门：macro IoU至少+0.003；整体Dice/precision、最小病灶四分位Dice/recall不下降，Brier不恶化。报告IoU配对bootstrap CI；即使单种子过门也不代表稳定增益。
+- 已注册但未启动：C5（原RACE、同IoU选择规则）、C6（匹配权重的像素辅助监督、无路由）、C7（全部PE辅助监督、无路由）。后续先完成机制归因，再预注册至少3个配对种子；方法锁定前不访问Test。
