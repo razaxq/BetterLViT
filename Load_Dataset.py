@@ -14,7 +14,7 @@ from torchvision.transforms import functional as F
 from transformers import AutoTokenizer
 
 import Config as config
-from race_semantics import make_zone_basis, parse_report_slots
+from race_semantics import make_zone_basis, parse_report_slots, parse_report_slots_pe
 
 os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
 
@@ -172,7 +172,8 @@ class LV2D(Dataset):
             self.text_max_len,
         )
         self.race_slot_targets = torch.stack([
-            parse_report_slots(self.rowtext[name]) for name in self.mask_list
+            (parse_report_slots_pe if getattr(config, "race_pe_enabled", False)
+             else parse_report_slots)(self.rowtext[name]) for name in self.mask_list
         ])
         self.race_zone_basis = make_zone_basis(image_size, image_size)
 
@@ -247,7 +248,8 @@ class ImageToImage2D(Dataset):
             self.text_max_len,
         )
         self.race_slot_targets = torch.stack([
-            parse_report_slots(self.rowtext[name]) for name in self.mask_list
+            (parse_report_slots_pe if getattr(config, "race_pe_enabled", False)
+             else parse_report_slots)(self.rowtext[name]) for name in self.mask_list
         ])
         self.race_zone_basis = make_zone_basis(image_size, image_size)
 

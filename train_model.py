@@ -39,6 +39,10 @@ def bark_notify(body, title="训练通知"):
     except Exception as e:
         print(f"推送失败: {e}")
 
+from race_pe_objective import RACEPEObjective
+from checkpoint_selection import is_improvement
+
+
 def logger_config(log_path):
     loggerr = logging.getLogger()
     loggerr.setLevel(level=logging.INFO)
@@ -132,6 +136,11 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             ),
         },
         'cdrr_stats': compute_cdrr_stats(model),
+        'selection_metric': config.selection_metric,
+        'selection_value': next((h['val_' + config.selection_metric] for h in epoch_history if h['epoch'] == best_epoch), None),
+        'race_pe_enabled': config.race_pe_enabled,
+        'race_pe_pixel_only': config.race_pe_pixel_only,
+        'race_pe_route_enabled': config.race_pe_route_enabled,
         'race_enabled': bool(getattr(config, 'race_enabled', False)),
         'race_config': {
             'aux_weight': float(getattr(config, 'race_aux_weight', 0.0)),
@@ -311,7 +320,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                                 config.persistent_workers
                                 and config.num_workers > 0
                             ))
-                             
+
     lr = config.learning_rate
     logger.info(model_type)
     logger.info(
@@ -435,7 +444,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             raise ValueError('RACE-Fuse V1 requires dice_focal')
         if config.boundary_loss_weight != 0.0:
             raise ValueError('RACE-Fuse V1 prohibits boundary supervision')
-        criterion = RACEObjective(
+        objective_class = RACEPEObjective if config.race_pe_enabled else RACEObjective
+        pe_kwargs = {"pixel_only": config.race_pe_pixel_only} if config.race_pe_enabled else {}
+        criterion = objective_class(
+            **pe_kwargs,
             aux_weight=config.race_aux_weight,
             dice_weight=config.dice_loss_weight,
             focal_weight=config.focal_loss_weight,
@@ -509,6 +521,8 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         if os.path.isfile(config.resume_path):
             logger.info('Resuming from {}'.format(config.resume_path))
             ckpt = torch.load(config.resume_path, map_location='cuda')
+            if ckpt.get('selection_metric', 'dice') != config.selection_metric:
+                raise ValueError('Cannot resume with a different selection metric')
 
             expected_architecture = getattr(
                 config,
@@ -623,10 +637,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # =============================================================
         #       Save best model
         # =============================================================
-        if val_dice > max_dice:
+        if is_improvement(epoch_history, config.selection_metric):
             if epoch + 1 > 5:
                 logger.info(
-                    '\t Saving best model, mean dice increased from: {:.4f} to {:.4f}'.format(max_dice, val_dice))
+                    '\t Saving best model by {}: {:.6f}'.format(config.selection_metric, epoch_history[-1]['val_' + config.selection_metric]))
                 max_dice = val_dice
                 best_epoch = epoch + 1
                 best_state = build_checkpoint_state(
@@ -634,10 +648,9 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     val_loss, max_dice, best_epoch, epoch_history, is_best=True,
                     train_generator=train_generator, val_generator=val_generator)
                 save_checkpoint(best_state, config.model_path)
-                bark_notify(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
+                bark_notify(f"Best {config.selection_metric} checkpoint updated", title="BetterLViT")
         else:
-            logger.info('\t Mean dice:{:.4f} does not increase, '
-                        'the best is still: {:.4f} in epoch {}'.format(val_dice, max_dice, best_epoch))
+            logger.info('\t No {} improvement; selected epoch {}'.format(config.selection_metric, best_epoch))
         early_stopping_count = epoch - best_epoch + 1
         logger.info('\t early_stopping_count: {}/{}'.format(early_stopping_count, config.early_stopping_patience))
 

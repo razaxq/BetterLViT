@@ -89,6 +89,10 @@ cdrr_delta_max = float(paper_experiment.get('cdrr_delta_max', 0.5))
 cdrr_active_fraction = float(
     paper_experiment.get('cdrr_active_fraction', 0.15)
 )
+race_pe_enabled = bool(paper_experiment.get('race_pe_enabled', False))
+race_pe_route_enabled = bool(paper_experiment.get('race_pe_route_enabled', True))
+race_pe_pixel_only = bool(paper_experiment.get('race_pe_pixel_only', False))
+selection_metric = paper_experiment.get('selection_metric', 'dice')
 race_enabled = bool(paper_experiment.get('race_enabled', False))
 race_aux_weight = float(paper_experiment.get('race_aux_weight', 0.0))
 race_hidden_channels = int(
@@ -195,6 +199,8 @@ def get_CTranS_config():
     config.cdrr_delta_max = cdrr_delta_max
     config.cdrr_active_fraction = cdrr_active_fraction
     config.race_enabled = race_enabled
+    config.race_pe_enabled = race_pe_enabled
+    config.race_pe_route_enabled = race_pe_route_enabled
     config.race_hidden_channels = race_hidden_channels
     config.race_max_strength = race_max_strength
     # FAM-EPPA V4-B structural switches and residual bounds.

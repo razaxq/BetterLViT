@@ -9,6 +9,7 @@ from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
 from .race_fuse import RACEFuse
+from .race_pe import RACEPE
 
 
 def get_activation(activation_type):
@@ -428,12 +429,15 @@ class LViT(nn.Module):
         if self.race_enabled and (self.bcdh_enabled or self.cdrr_enabled):
             raise ValueError('RACE-Fuse cannot be combined with BCDH or CDRR')
         if self.race_enabled:
-            self.race = RACEFuse(
+            race_class = RACEPE if getattr(config, "race_pe_enabled", False) else RACEFuse
+            self.race = race_class(
                 channels=(64, 128, 256, 512),
                 text_dim=768,
                 hidden_channels=getattr(config, 'race_hidden_channels', 32),
                 max_strength=getattr(config, 'race_max_strength', 0.15),
             )
+            if getattr(config, "race_pe_enabled", False):
+                self.race.route_enabled = getattr(config, "race_pe_route_enabled", True)
         else:
             self.race = None
 
@@ -448,7 +452,7 @@ class LViT(nn.Module):
     ):
         x = x.float()  # x [4,3,224,224]
         x1 = self.inc(x)  # x1 [4, 64, 224, 224]
-        text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2) 
+        text4 = self.text_module4(text.transpose(1, 2)).transpose(1, 2)
         text3 = self.text_module3(text4.transpose(1, 2)).transpose(1, 2)
         text2 = self.text_module2(text3.transpose(1, 2)).transpose(1, 2)
         text1 = self.text_module1(text2.transpose(1, 2)).transpose(1, 2)

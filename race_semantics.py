@@ -82,3 +82,30 @@ def make_zone_basis(height, width):
                   y_edges[level]:y_edges[level + 1],
                   x_edges[side]:x_edges[side + 1]] = 1.0
     return basis
+
+
+def parse_report_slots_pe(text):
+    """Conservative positive-only slots; -1 means unknown, including counts.
+
+    Require explicit side AND vertical location within a clause. Ambiguous,
+    negated or location-free clauses cannot invent six positive regions.
+    """
+    normalized = " ".join(str(text).lower().replace("-", " ").split())
+    result = torch.full((9,), -1.0)
+    for clause in re.split(r"[,.;]|\band\b|\bbut\b", normalized):
+        if re.search(r"\b(no|not|without|absent|negative)\b", clause):
+            continue
+        side = re.search(r"\b(left|lt|right|rt|bilateral|both)\b", clause)
+        level = re.search(r"\b(upper|superior|apical|mid|middle|perihilar|lower|inferior|basal|base)\b", clause)
+        if side and level:
+            positive = parse_report_slots(clause)[:6] == 1
+            result[:6][positive] = 1.0
+    counts = []
+    for index, pattern in enumerate((r"\b(one|1|single)\b", r"\b(two|2|double)\b",
+                                     r"\b(three|3)\b")):
+        if re.search(pattern, normalized):
+            counts.append(index)
+    if len(counts) == 1 and not re.search(r"\b(no|not|without)\b", normalized):
+        result[6:] = 0
+        result[6 + counts[0]] = 1
+    return result

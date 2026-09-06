@@ -38,6 +38,8 @@ ALLOWED_EXPERIMENTS = (
     "p7_cdrr_v1",
     "c3_race_control",
     "p8_race_fuse_v1",
+    "c4_race_pe_control", "c5_race_v1_iou", "p9_race_pe",
+    "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
 )
 
 
@@ -187,6 +189,8 @@ def main():
                 checkpoint.get("experiment_name"),
             )
         )
+    if checkpoint.get("selection_metric", "dice") != config.selection_metric:
+        raise RuntimeError("Checkpoint selection metric differs from profile")
     expected_architecture = config.experiment_architecture_version
     if checkpoint.get("architecture_version") != expected_architecture:
         raise RuntimeError(
@@ -353,6 +357,10 @@ def main():
         "checkpoint_git_commit": checkpoint_commit,
         "analysis_git_commit": analysis_commit,
         "checkpoint_best_epoch": int(checkpoint.get("best_epoch", -1)),
+        "selection_metric": config.selection_metric,
+        "seed": int(checkpoint.get("seed", -1)),
+        "epochs": int(checkpoint.get("epochs", -1)),
+        "race_pe_enabled": config.race_pe_enabled,
         "threshold": float(args.threshold),
         "samples": len(records),
         "macro_dice": float(dice_values.mean()),

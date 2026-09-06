@@ -165,6 +165,23 @@ PAPER_EXPERIMENTS = {
 }
 
 
+# New validation-only screen. Historical profiles keep Dice selection.
+for _name, _id, _mode in (
+    ('c4_race_pe_control', 'C4', 'control'),
+    ('c5_race_v1_iou', 'C5', 'v1'),
+    ('p9_race_pe', 'P9', 'pe'),
+    ('c6_race_pe_pixel_aux', 'C6', 'pixel'),
+    ('c7_race_pe_aux_only', 'C7', 'aux'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['p8_race_fuse_v1'])
+    _profile.update(paper_id=_id, description='RACE-PE 80e validation screen: ' + _mode,
+        selection_metric='iou', race_enabled=_mode != 'control',
+        race_pe_enabled=_mode in ('pe', 'pixel', 'aux'),
+        race_pe_route_enabled=_mode == 'pe', race_pe_pixel_only=_mode == 'pixel',
+        architecture_version='pilot_' + _name + '_v1')
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()
