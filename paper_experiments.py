@@ -182,6 +182,12 @@ for _name, _id, _mode in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+PAPER_EXPERIMENTS['p10_race_pe_v2'] = dict(PAPER_EXPERIMENTS['p9_race_pe'],
+    paper_id='P10', race_pe_v2_enabled=True,
+    description='RACE-PE V2: explicit report mentions; no report-region consistency',
+    architecture_version='pilot_p10_race_pe_v2_mentions')
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

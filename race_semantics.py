@@ -109,3 +109,24 @@ def parse_report_slots_pe(text):
         result[6:] = 0
         result[6 + counts[0]] = 1
     return result
+
+
+def parse_report_mentions(text):
+    """Explicit positive location mentions, NOT disease-presence labels.
+
+    Zero means no explicit positive mention. Unresolved negation/uncertainty
+    masks all locations. Call on the text actually visible to the encoder.
+    """
+    normalized = " ".join(str(text).lower().replace("-", " ").split())
+    result = parse_report_slots_pe(normalized)
+    if not normalized or re.search(r"\b(no|not|without|absent|negative|possible|possibly|uncertain)\b", normalized):
+        result[:6] = -1
+        return result
+    result[:6] = 0
+    for clause in re.split(r"[,.;]|\band\b|\bbut\b", normalized):
+        side = re.search(r"\b(left|lt|right|rt|bilateral|both)\b", clause)
+        level = re.search(r"\b(upper|superior|apical|mid|middle|perihilar|lower|inferior|basal|base)\b", clause)
+        if side and (level or re.search(r"\ball\b", clause)):
+            positive = parse_report_slots(clause)[:6] == 1
+            result[:6][positive] = 1
+    return result

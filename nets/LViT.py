@@ -9,7 +9,7 @@ from .eppa import EPPA
 from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
 from .race_fuse import RACEFuse
-from .race_pe import RACEPE
+from .race_pe import RACEPE, RACEPEV2
 
 
 def get_activation(activation_type):
@@ -430,6 +430,8 @@ class LViT(nn.Module):
             raise ValueError('RACE-Fuse cannot be combined with BCDH or CDRR')
         if self.race_enabled:
             race_class = RACEPE if getattr(config, "race_pe_enabled", False) else RACEFuse
+            if getattr(config, "race_pe_v2_enabled", False):
+                race_class = RACEPEV2
             self.race = race_class(
                 channels=(64, 128, 256, 512),
                 text_dim=768,

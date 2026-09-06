@@ -10,11 +10,12 @@ def masked_mean(values, valid):
 
 
 class RACEPEObjective(nn.Module):
-    def __init__(self, aux_weight=0.05, pixel_only=False, **kwargs):
+    def __init__(self, aux_weight=0.05, pixel_only=False, drop_report_consistency=False, **kwargs):
         super().__init__()
         self.segmentation = WeightedDiceFocal(**kwargs)
         self.aux_weight = aux_weight
         self.pixel_only = pixel_only
+        self.drop_report_consistency = drop_report_consistency
         self.last_components = {}
 
     def _show_dice(self, inputs, targets):
@@ -63,7 +64,8 @@ class RACEPEObjective(nn.Module):
         consistency = torch.stack(consistency_losses).mean()
         auxiliary = 0.4 * pixel if self.pixel_only else (
             0.4 * pixel + 0.2 * presence + 0.1 * occupancy_loss
-            + 0.2 * (0.75 * text_loss + 0.25 * count_loss) + 0.1 * consistency
+            + 0.2 * (0.75 * text_loss + 0.25 * count_loss)
+            + (0.0 if self.drop_report_consistency else 0.1) * consistency
         )
         self.last_components = {"main": main.detach(), "pe_pixel": pixel.detach(),
             "pe_presence": presence.detach(), "pe_occupancy": occupancy_loss.detach(),

@@ -14,7 +14,7 @@ from torchvision.transforms import functional as F
 from transformers import AutoTokenizer
 
 import Config as config
-from race_semantics import make_zone_basis, parse_report_slots, parse_report_slots_pe
+from race_semantics import make_zone_basis, parse_report_slots, parse_report_slots_pe, parse_report_mentions
 
 os.environ.setdefault('TOKENIZERS_PARALLELISM', 'false')
 
@@ -175,6 +175,9 @@ class LV2D(Dataset):
             (parse_report_slots_pe if getattr(config, "race_pe_enabled", False)
              else parse_report_slots)(self.rowtext[name]) for name in self.mask_list
         ])
+        if getattr(config, "race_pe_v2_enabled", False):
+            visible = tokenizer.batch_decode(self.input_ids, skip_special_tokens=True)
+            self.race_slot_targets = torch.stack([parse_report_mentions(t) for t in visible])
         self.race_zone_basis = make_zone_basis(image_size, image_size)
 
         if joint_transform:
@@ -251,6 +254,9 @@ class ImageToImage2D(Dataset):
             (parse_report_slots_pe if getattr(config, "race_pe_enabled", False)
              else parse_report_slots)(self.rowtext[name]) for name in self.mask_list
         ])
+        if getattr(config, "race_pe_v2_enabled", False):
+            visible = tokenizer.batch_decode(self.input_ids, skip_special_tokens=True)
+            self.race_slot_targets = torch.stack([parse_report_mentions(t) for t in visible])
         self.race_zone_basis = make_zone_basis(image_size, image_size)
 
         if joint_transform:

@@ -10,6 +10,7 @@ class _PERoute(_RACERoute):
     def __init__(self, channels, hidden_channels, max_strength):
         super().__init__(channels, hidden_channels, max_strength)
         self.presence = nn.Linear(channels, 1)
+        self.mention_mode = False
 
     def forward(self, skip, prior, zone_basis, text_zones):
         basis = F.interpolate(zone_basis.float(), skip.shape[-2:], mode="nearest")
@@ -23,6 +24,10 @@ class _PERoute(_RACERoute):
         occupancy = (extent * basis).sum((2, 3)) / mass.clamp_min(1)
         # Presence compares with presence; occupancy never compares with text.
         agreement_zones = 1 - (presence - text_zones).abs()
+        # In V2, mention and disease existence are different events. Combine
+        # their positive evidence; do not train or claim probability equality.
+        if self.mention_mode:
+            agreement_zones = presence
         support = (text_zones * agreement_zones * (mass > 0)).unsqueeze(-1).unsqueeze(-1)
         gate = (support * basis).sum(1, keepdim=True) * extent
         strength = self.max_strength * self.strength_logit.tanh()
@@ -76,3 +81,12 @@ class RACEPE(RACEFuse):
             )},
         }
         return tuple(routed), {"slot_logits": slots, "pe_routes": routes}
+
+
+class RACEPEV2(RACEPE):
+    architecture_version = "race_pe_v2_mentions"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for route in self.routes:
+            route.mention_mode = True

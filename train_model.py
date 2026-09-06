@@ -445,7 +445,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         if config.boundary_loss_weight != 0.0:
             raise ValueError('RACE-Fuse V1 prohibits boundary supervision')
         objective_class = RACEPEObjective if config.race_pe_enabled else RACEObjective
-        pe_kwargs = {"pixel_only": config.race_pe_pixel_only} if config.race_pe_enabled else {}
+        pe_kwargs = {"pixel_only": config.race_pe_pixel_only, "drop_report_consistency": config.race_pe_v2_enabled} if config.race_pe_enabled else {}
         criterion = objective_class(
             **pe_kwargs,
             aux_weight=config.race_aux_weight,

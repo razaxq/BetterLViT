@@ -44,7 +44,7 @@ def main():
         return_aux=config.race_enabled, race_slot_targets=b['race_slot_targets'],
         race_zone_basis=b['race_zone_basis'])
     if config.race_pe_enabled:
-        objective = RACEPEObjective(pixel_only=config.race_pe_pixel_only)
+        objective = RACEPEObjective(pixel_only=config.race_pe_pixel_only, drop_report_consistency=config.race_pe_v2_enabled)
     elif config.race_enabled:
         objective = RACEObjective(aux_weight=.05)
     else:
