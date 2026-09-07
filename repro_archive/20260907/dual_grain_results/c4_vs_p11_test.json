@@ -1,0 +1,50 @@
+{
+  "split": "test",
+  "primary_metric": "macro_iou",
+  "control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+  "candidate_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+  "samples": 2113,
+  "threshold": 0.5,
+  "metrics": {
+    "iou": {
+      "control": 0.7563962019429644,
+      "candidate": 0.7556613562348183,
+      "delta": -0.0007348457081459685,
+      "paired_case_bootstrap_95_ci": [
+        -0.002823063133440332,
+        0.0013455613399165085
+      ]
+    },
+    "dice": {
+      "control": 0.8429885535534682,
+      "candidate": 0.8423349660871143,
+      "delta": -0.0006535874663540119,
+      "paired_case_bootstrap_95_ci": [
+        -0.0025011013545713527,
+        0.001170055519597775
+      ]
+    },
+    "precision": {
+      "control": 0.8393630546179613,
+      "candidate": 0.8494757221128231,
+      "delta": 0.010112667494861699,
+      "paired_case_bootstrap_95_ci": [
+        0.007984636673785739,
+        0.012232296854068243
+      ]
+    },
+    "recall": {
+      "control": 0.8743782985894707,
+      "candidate": 0.8633470742167229,
+      "delta": -0.011031224372747752,
+      "paired_case_bootstrap_95_ci": [
+        -0.013457561992567433,
+        -0.008585671671620403
+      ]
+    }
+  },
+  "smallest_area_quartile_iou_delta": -0.0001157416795305967,
+  "single_seed_iou_increased": false,
+  "stable_gain_proven": false,
+  "limitation": "Case bootstrap does not establish stability across training seeds; Test is exploratory."
+}

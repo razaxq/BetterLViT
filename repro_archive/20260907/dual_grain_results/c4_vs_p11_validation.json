@@ -1,0 +1,50 @@
+{
+  "split": "validation",
+  "primary_metric": "macro_iou",
+  "control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+  "candidate_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+  "samples": 1429,
+  "threshold": 0.5,
+  "metrics": {
+    "iou": {
+      "control": 0.7227963241858801,
+      "candidate": 0.7239046275818884,
+      "delta": 0.0011083033960082327,
+      "paired_case_bootstrap_95_ci": [
+        -0.0013674964626389252,
+        0.003656371470420729
+      ]
+    },
+    "dice": {
+      "control": 0.8212136349344947,
+      "candidate": 0.821949608741249,
+      "delta": 0.0007359738067541209,
+      "paired_case_bootstrap_95_ci": [
+        -0.0014623673239553426,
+        0.0029870521153347396
+      ]
+    },
+    "precision": {
+      "control": 0.8147013661494736,
+      "candidate": 0.8233799294439968,
+      "delta": 0.008678563294523304,
+      "paired_case_bootstrap_95_ci": [
+        0.0065765083668456546,
+        0.010809081297535938
+      ]
+    },
+    "recall": {
+      "control": 0.8646610103975065,
+      "candidate": 0.8559436441748872,
+      "delta": -0.00871736622261912,
+      "paired_case_bootstrap_95_ci": [
+        -0.012145730451780695,
+        -0.005392256385895817
+      ]
+    }
+  },
+  "smallest_area_quartile_iou_delta": 0.004430317665564061,
+  "single_seed_iou_increased": true,
+  "stable_gain_proven": false,
+  "limitation": "Case bootstrap does not establish stability across training seeds; Test is exploratory."
+}
