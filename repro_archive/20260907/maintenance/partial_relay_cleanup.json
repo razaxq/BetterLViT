@@ -1,0 +1,22 @@
+[
+  {
+    "path": "D:\\BetterLViT\\outputs\\maintenance_20260907\\local_model_backup\\add4908a\\models\\last_model-BetterLViT.pth.tar",
+    "bytes": 134381568,
+    "hf_verified": "add4908a/models/last_model-BetterLViT.pth.tar"
+  },
+  {
+    "path": "D:\\BetterLViT\\outputs\\maintenance_20260907\\prefetched\\8129c1f0\\models\\best_model-BetterLViT.pth.tar.partial",
+    "bytes": 524288000,
+    "hf_verified": "8129c1f0/models/best_model-BetterLViT.pth.tar"
+  },
+  {
+    "path": "D:\\BetterLViT\\outputs\\maintenance_20260907\\prefetched\\8129c1f0\\models\\last_model-BetterLViT.pth.tar.partial",
+    "bytes": 554434560,
+    "hf_verified": "8129c1f0/models/last_model-BetterLViT.pth.tar"
+  },
+  {
+    "path": "D:\\BetterLViT\\outputs\\maintenance_20260907\\prefetched\\21606e02\\models\\best_model-BetterLViT.pth.tar.partial",
+    "bytes": 567541760,
+    "hf_verified": "21606e02/models/best_model-BetterLViT.pth.tar"
+  }
+]

@@ -1,0 +1,382 @@
+[
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-ablation",
+    "commit": "a1d40d3a305a34abc0e96885fae68532007485b2",
+    "published_refs": [
+      "refs/heads/analysis/cdrr-frequency-diagnostic",
+      "refs/heads/analysis/p1-validation-acceptance",
+      "refs/heads/archive/server-tcsrv2-draft-20260907",
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/a8-tcsrv2-formal",
+      "refs/heads/paper/a9-frozen-freq-focal",
+      "refs/heads/paper/bcdh-development",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/c4-race-pe-control",
+      "refs/heads/paper/cdrr-development",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/heads/paper/p9-race-pe",
+      "refs/heads/paper/race-development",
+      "refs/heads/paper/race-pe-development",
+      "refs/heads/paper/race-pe-v2-c8",
+      "refs/heads/paper/race-pe-v2-development",
+      "refs/heads/paper/race-pe-v2-p10",
+      "refs/heads/paper/tcsr-development",
+      "refs/heads/paper/tcsr-v2-development",
+      "refs/heads/paper/tcsrv21-boundary-router-pilot",
+      "refs/tags/diagnostic-race-pe-v2-mentions-20260907",
+      "refs/tags/paper-a4-b16-seed1219-20260829",
+      "refs/tags/paper-a6-b16-seed1219-20260830",
+      "refs/tags/paper-a6-frozen-b16-seed1219-20260830-restart",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart2",
+      "refs/tags/paper-a8-tcsrv2-frozen-b16-seed1219-20260901",
+      "refs/tags/paper-a9-frozen-b16-seed1219-20260831",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-c1-bcdh-control-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-c2-cdrr-control-frozen-b16-seed1219-20260903",
+      "refs/tags/pilot-c3-race-control-frozen-b16-seed1219-80e-20260903",
+      "refs/tags/pilot-c4-race-pe-control-80e-seed1219-20260906",
+      "refs/tags/pilot-c8-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p1-tcsrv21-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p10-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p6-bcdh-r-v1-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p7-cdrr-v1-frozen-b16-seed1219-20260903",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart2",
+      "refs/tags/pilot-p9-race-pe-80e-seed1219-20260906"
+    ]
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-c4",
+    "commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "published_refs": [
+      "refs/heads/paper/c4-race-pe-control",
+      "refs/tags/pilot-c4-race-pe-control-80e-seed1219-20260906"
+    ]
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-p9",
+    "commit": "8129c1f039ed77f78e70305aca0bb9708b3b56b1",
+    "published_refs": [
+      "refs/heads/paper/p9-race-pe",
+      "refs/tags/pilot-p9-race-pe-80e-seed1219-20260906"
+    ]
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-v2",
+    "commit": "2f66ba898517dbee876ff6da735ac342943a08a2",
+    "published_refs": [
+      "refs/heads/paper/race-pe-v2-c8",
+      "refs/heads/paper/race-pe-v2-development",
+      "refs/heads/paper/race-pe-v2-p10",
+      "refs/tags/diagnostic-race-pe-v2-mentions-20260907",
+      "refs/tags/pilot-c8-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p10-race-pe-v2-80e-seed1219-20260907"
+    ]
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-v2-c8",
+    "commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "published_refs": [
+      "refs/heads/paper/race-pe-v2-c8",
+      "refs/tags/pilot-c8-race-pe-v2-80e-seed1219-20260907"
+    ]
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-v2-p10",
+    "commit": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+    "published_refs": [
+      "refs/heads/paper/race-pe-v2-p10",
+      "refs/tags/pilot-p10-race-pe-v2-80e-seed1219-20260907"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-analysis-p1",
+    "commit": "7f8e4a733c6080ba5ed0bdb7c86af0b44897c7b4",
+    "published_refs": [
+      "refs/heads/analysis/p1-validation-acceptance",
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a5",
+    "commit": "4ef4bf0616975e4ebbab37ad660d63ee99b61216",
+    "published_refs": [
+      "refs/tags/paper-a5-b16-seed1219-20260830"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a6",
+    "commit": "5aa4ceec87d49d891ae3955b4513302c096dd2c5",
+    "published_refs": [
+      "refs/heads/paper/tcsr-development",
+      "refs/tags/paper-a6-b16-seed1219-20260830",
+      "refs/tags/paper-a6-frozen-b16-seed1219-20260830-restart",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart2"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a6-frozen",
+    "commit": "01cd2f7501804f07e04ad4595de2fc9e2c511ede",
+    "published_refs": [
+      "refs/heads/paper/tcsr-development",
+      "refs/tags/paper-a6-frozen-b16-seed1219-20260830-restart",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart2"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a7-frozen",
+    "commit": "75b6ed284f8e137fa6424040f578b8bc7afd1c5c",
+    "published_refs": [
+      "refs/heads/paper/tcsr-development",
+      "refs/tags/paper-a7-frozen-b16-seed1219-20260831-restart2"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a8-tcsrv2",
+    "commit": "3e00c9016023f23fce690586150d6d524b3d6ecf",
+    "published_refs": [
+      "refs/heads/analysis/p1-validation-acceptance",
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/a8-tcsrv2-formal",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/heads/paper/tcsrv21-boundary-router-pilot",
+      "refs/tags/paper-a8-tcsrv2-frozen-b16-seed1219-20260901",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p1-tcsrv21-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a9-frozen",
+    "commit": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+    "published_refs": [
+      "refs/heads/analysis/cdrr-frequency-diagnostic",
+      "refs/heads/analysis/p1-validation-acceptance",
+      "refs/heads/archive/server-tcsrv2-draft-20260907",
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/a8-tcsrv2-formal",
+      "refs/heads/paper/a9-frozen-freq-focal",
+      "refs/heads/paper/bcdh-development",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/c4-race-pe-control",
+      "refs/heads/paper/cdrr-development",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/heads/paper/p9-race-pe",
+      "refs/heads/paper/race-development",
+      "refs/heads/paper/race-pe-development",
+      "refs/heads/paper/race-pe-v2-c8",
+      "refs/heads/paper/race-pe-v2-development",
+      "refs/heads/paper/race-pe-v2-p10",
+      "refs/heads/paper/tcsr-v2-development",
+      "refs/heads/paper/tcsrv21-boundary-router-pilot",
+      "refs/tags/diagnostic-race-pe-v2-mentions-20260907",
+      "refs/tags/paper-a8-tcsrv2-frozen-b16-seed1219-20260901",
+      "refs/tags/paper-a9-frozen-b16-seed1219-20260831",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-c1-bcdh-control-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-c2-cdrr-control-frozen-b16-seed1219-20260903",
+      "refs/tags/pilot-c3-race-control-frozen-b16-seed1219-80e-20260903",
+      "refs/tags/pilot-c4-race-pe-control-80e-seed1219-20260906",
+      "refs/tags/pilot-c8-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p1-tcsrv21-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p10-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p6-bcdh-r-v1-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p7-cdrr-v1-frozen-b16-seed1219-20260903",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart2",
+      "refs/tags/pilot-p9-race-pe-80e-seed1219-20260906"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky",
+    "commit": "281bc1b40c782f6f42b8caa332e1fe1045cb29e0",
+    "published_refs": [
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21",
+    "commit": "e00138529f5ce5ac3996f58e54f764274789081e",
+    "published_refs": [
+      "refs/heads/analysis/p1-validation-acceptance",
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/heads/paper/tcsrv21-boundary-router-pilot",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p1-tcsrv21-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22",
+    "commit": "58be4f092b4a1c2f141e510ff40766fb58d4519b",
+    "published_refs": [
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23",
+    "commit": "874adf6b51e9e3a30b5295b36a1992b6c9098abb",
+    "published_refs": [
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24",
+    "commit": "e07924b22956099207203f792eb3c36eb3dd11db",
+    "published_refs": [
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25",
+    "commit": "7d3bfce1caf0444656abfa9e42531f99a495c539",
+    "published_refs": [
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-tcsrv2-96ab521",
+    "commit": "96ab521b021fc32adf834fac994e806bb6d1de18",
+    "published_refs": [
+      "refs/heads/analysis/p1-validation-acceptance",
+      "refs/heads/docs/experiment-tracker",
+      "refs/heads/paper/a8-tcsrv2-formal",
+      "refs/heads/paper/c0-frozen-freq-tversky-pilot",
+      "refs/heads/paper/p2-tcsrv22-single-hop-pilot",
+      "refs/heads/paper/p3-tcsrv23-calibrated-gate-pilot",
+      "refs/heads/paper/p4-tcsrv24-sparse-boundary-pilot",
+      "refs/heads/paper/p5-tcsrv25-local-tversky-pilot",
+      "refs/heads/paper/tcsr-v2-development",
+      "refs/heads/paper/tcsrv21-boundary-router-pilot",
+      "refs/tags/paper-a8-tcsrv2-frozen-b16-seed1219-20260901",
+      "refs/tags/pilot-c0-tversky-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p1-tcsrv21-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p2-tcsrv22-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p3-tcsrv23-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p4-tcsrv24-frozen-b16-seed1219-20260902",
+      "refs/tags/pilot-p5-tcsrv25-tversky-frozen-b16-seed1219-20260902"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-tcsrv2-dev",
+    "commit": "5995632ff42cfb8b45e631d03cd732abb8f783d5",
+    "published_refs": [
+      "refs/heads/archive/server-tcsrv2-draft-20260907"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-race-c3",
+    "commit": "424f2824b737e4d311cdcb270bbc83e973dc067f",
+    "published_refs": [
+      "refs/heads/paper/c4-race-pe-control",
+      "refs/heads/paper/p9-race-pe",
+      "refs/heads/paper/race-development",
+      "refs/heads/paper/race-pe-development",
+      "refs/heads/paper/race-pe-v2-c8",
+      "refs/heads/paper/race-pe-v2-development",
+      "refs/heads/paper/race-pe-v2-p10",
+      "refs/tags/diagnostic-race-pe-v2-mentions-20260907",
+      "refs/tags/pilot-c3-race-control-frozen-b16-seed1219-80e-20260903",
+      "refs/tags/pilot-c4-race-pe-control-80e-seed1219-20260906",
+      "refs/tags/pilot-c8-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p10-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart2",
+      "refs/tags/pilot-p9-race-pe-80e-seed1219-20260906"
+    ]
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-race-p8",
+    "commit": "48df2f185a28919e38e073322809d043e176d382",
+    "published_refs": [
+      "refs/heads/paper/c4-race-pe-control",
+      "refs/heads/paper/p9-race-pe",
+      "refs/heads/paper/race-development",
+      "refs/heads/paper/race-pe-development",
+      "refs/heads/paper/race-pe-v2-c8",
+      "refs/heads/paper/race-pe-v2-development",
+      "refs/heads/paper/race-pe-v2-p10",
+      "refs/tags/diagnostic-race-pe-v2-mentions-20260907",
+      "refs/tags/pilot-c4-race-pe-control-80e-seed1219-20260906",
+      "refs/tags/pilot-c8-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p10-race-pe-v2-80e-seed1219-20260907",
+      "refs/tags/pilot-p8-race-fuse-v1-frozen-b16-seed1219-80e-20260903-restart2",
+      "refs/tags/pilot-p9-race-pe-80e-seed1219-20260906"
+    ]
+  }
+]

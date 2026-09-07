@@ -10,7 +10,7 @@ if not script.replace('_','').replace('.','').isalnum(): raise SystemExit('Inval
 command=('source /etc/network_turbo >/dev/null 2>&1; '
          'export HF_XET_CACHE=/root/maintenance_20260907/xet_clean_cache; '
          'export HF_XET_DEDUPLICATION_GLOBAL_DEDUP_QUERY_ENABLED=false; '
-         'export PYTHONPATH=/root/maintenance_20260907/hf_xet_143:/root/autodl-tmp/hf-bucket-client; '
+         'export PYTHONPATH=/root/autodl-tmp/hf-bucket-client; '
          'exec /root/autodl-tmp/envs/betterlvit-paper/bin/python '
          '/root/maintenance_20260907/'+script)
 proc=subprocess.run(['ssh','-i','C:/Users/dtftn/.ssh/seetacloud_betterlvit_ed25519_4090d',

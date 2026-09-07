@@ -27,6 +27,16 @@ Shared storage remained 18,559,782,256 apparent bytes, below its explicit
 
 ## Current-result backup
 
+Completed: all four prefixes and all 20 files were re-read from the Bucket and
+matched source byte sizes and Xet hashes, totaling 6,800,659,149 logical bytes.
+See `new_runs_upload_verified.json`. The successful server fallback used academic
+acceleration, the isolated hf_xet 1.6.0 client, fixed upload concurrency 1, disabled
+global dedup queries, and the API's raw-bytes upload path. These settings were
+changed together, so this does not isolate which change resolved the stalls.
+The redundant local relay/prefetch was stopped after HF verification; a verified
+local C4 Best copy is retained. The 23-worktree publication audit is recorded in
+`published_sources_verified.json`.
+
 `transfer_manifest.json` records the exact 20 source artifacts for completed
 80-epoch C4/P9/C8/P10 exploratory experiments: four sets of session log, Test
 evaluation JSON, Best, Last, and TensorBoard event. Full source commit, checkpoint

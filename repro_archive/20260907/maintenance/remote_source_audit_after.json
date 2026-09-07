@@ -1,0 +1,117 @@
+[
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-ablation",
+    "commit": "a1d40d3a305a34abc0e96885fae68532007485b2",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-c4",
+    "commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-p9",
+    "commit": "8129c1f039ed77f78e70305aca0bb9708b3b56b1",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-v2",
+    "commit": "2f66ba898517dbee876ff6da735ac342943a08a2",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-v2-c8",
+    "commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/BetterLViT-race-pe-v2-p10",
+    "commit": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-analysis-p1",
+    "commit": "7f8e4a733c6080ba5ed0bdb7c86af0b44897c7b4",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a5",
+    "commit": "4ef4bf0616975e4ebbab37ad660d63ee99b61216",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a6",
+    "commit": "5aa4ceec87d49d891ae3955b4513302c096dd2c5",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a6-frozen",
+    "commit": "01cd2f7501804f07e04ad4595de2fc9e2c511ede",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a7-frozen",
+    "commit": "75b6ed284f8e137fa6424040f578b8bc7afd1c5c",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a8-tcsrv2",
+    "commit": "3e00c9016023f23fce690586150d6d524b3d6ecf",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-a9-frozen",
+    "commit": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky",
+    "commit": "281bc1b40c782f6f42b8caa332e1fe1045cb29e0",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21",
+    "commit": "e00138529f5ce5ac3996f58e54f764274789081e",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22",
+    "commit": "58be4f092b4a1c2f141e510ff40766fb58d4519b",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23",
+    "commit": "874adf6b51e9e3a30b5295b36a1992b6c9098abb",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24",
+    "commit": "e07924b22956099207203f792eb3c36eb3dd11db",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25",
+    "commit": "7d3bfce1caf0444656abfa9e42531f99a495c539",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-tcsrv2-96ab521",
+    "commit": "96ab521b021fc32adf834fac994e806bb6d1de18",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-paper-tcsrv2-dev",
+    "commit": "5995632ff42cfb8b45e631d03cd732abb8f783d5",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-race-c3",
+    "commit": "424f2824b737e4d311cdcb270bbc83e973dc067f",
+    "status": "?? datasets\n"
+  },
+  {
+    "path": "/root/autodl-tmp/BetterLViT-race-p8",
+    "commit": "48df2f185a28919e38e073322809d043e176d382",
+    "status": "?? datasets\n"
+  }
+]
