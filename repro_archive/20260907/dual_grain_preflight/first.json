@@ -1,0 +1,28 @@
+{
+  "unit": {
+    "identity_at_initialization": true,
+    "all_gradients_nonzero_after_second_update": true,
+    "subpatch_variation": true,
+    "coarse_context_used": true
+  },
+  "initialization": {
+    "common_initial_weights_identical": true,
+    "initialization_rng_identical": true
+  },
+  "real_batch": {
+    "batch_size": 16,
+    "train_samples": 5716,
+    "losses": [
+      0.48949211835861206,
+      0.43545711040496826
+    ],
+    "two_steps_seconds": 1.6442001517862082,
+    "output_sha256": "7a7710fe70ca4b6edd0d7894dfaea001a97c2f25d34fa7f4dd8cd3b2e9df9857",
+    "peak_allocated_gib": 15.725373268127441,
+    "peak_reserved_gib": 16.556640625,
+    "added_parameters": 30016,
+    "test_split_accessed": false,
+    "formal_training_performed": false
+  },
+  "status": "ok"
+}
