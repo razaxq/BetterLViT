@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
+import re
 import time
 
 import ml_collections
@@ -10,13 +11,24 @@ save_model = True
 tensorboard = True
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 use_cuda = torch.cuda.is_available()
-seed = 1219
-os.environ['PYTHONHASHSEED'] = str(seed)
+seed = int(os.environ.get('BETTERLVIT_SEED', '1219'))
+# These streams must stay independent so adding a model branch cannot change
+# sample order or augmentation randomness in a paired experiment.
+model_seed = seed
+training_seed = seed + 100_003
+sampler_seed = seed + 200_003
+worker_seed = seed + 300_007
+validation_worker_seed = seed + 400_009
+text_modality_dropout_seed = seed + 500_009
+strict_reproducibility = True
+git_commit = os.environ.get('BETTERLVIT_GIT_COMMIT', '').strip()
+if git_commit and not re.fullmatch(r'[0-9a-f]{40}', git_commit):
+    raise ValueError('BETTERLVIT_GIT_COMMIT must be a lowercase 40-hex hash')
 
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
-epochs = 200
+epochs = int(os.environ.get('BETTERLVIT_EPOCHS', '200'))
 img_size = 224
 print_frequency = 20
 tensorboard_frequency = 20
@@ -33,9 +45,11 @@ pretrain = False
 task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
 weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
-batch_size = 16  # For LViT-T, 2 is better than 4
-num_workers = 4
-persistent_workers = True
+batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '16'))
+num_workers = int(os.environ.get('BETTERLVIT_NUM_WORKERS', '4'))
+# Restarting workers at every epoch lets an epoch-boundary checkpoint restore
+# their random streams exactly. Persistent worker RNG state is not serializable.
+persistent_workers = False
 
 # FAM-EPPA V4-B architecture ablation. V4-A remains intact, while up4/up3 add
 # efficient spatially adaptive low/high-pass routing. Boundary supervision
@@ -66,6 +80,11 @@ shutdown_after_training = False
 # resume_max_dice is only used as a fallback when the loaded checkpoint
 # predates this resume infrastructure (no 'max_dice' field).
 resume_path = os.environ.get('BETTERLVIT_RESUME_PATH', '').strip()
+resume_sha256 = os.environ.get('BETTERLVIT_RESUME_SHA256', '').strip().lower()
+if resume_path and not re.fullmatch(r'[0-9a-f]{64}', resume_sha256):
+    raise ValueError(
+        'BETTERLVIT_RESUME_SHA256 is required with BETTERLVIT_RESUME_PATH'
+    )
 resume_max_dice = 0.0
 require_checkpoint_architecture_match = True
 
@@ -87,11 +106,56 @@ text_lora_target_modules = (
     'intermediate.dense', 'output.dense',
 )
 
-train_dataset = './datasets/' + task_name + '/Train_Folder/'
-val_dataset = './datasets/' + task_name + '/Val_Folder/'
-test_dataset = './datasets/' + task_name + '/Test_Folder/'
-task_dataset = './datasets/' + task_name + '/Train_Folder/'
-session_name = 'Test_session' + '_' + time.strftime('%m.%d_%Hh%M')
+# Pre-registered next-stage variable. The grouped V4-B rebaseline uses 0.0;
+# its paired candidate uses exactly 0.5 with every other setting unchanged.
+text_modality_dropout_prob = float(os.environ.get(
+    'BETTERLVIT_TEXT_MODALITY_DROPOUT_PROB',
+    '0.0',
+))
+if text_modality_dropout_prob not in (0.0, 0.5):
+    raise ValueError(
+        'BETTERLVIT_TEXT_MODALITY_DROPOUT_PROB must be 0.0 or 0.5'
+    )
+text_modality_dropout_prompt = 'No report available.'
+
+dataset_root = './datasets/' + task_name + '/'
+train_dataset = dataset_root + 'Train_Folder/'
+val_dataset = dataset_root + 'Val_Folder/'
+test_dataset = dataset_root + 'Test_Folder/'
+task_dataset = train_dataset
+
+# ``legacy`` preserves the published LViT image-level split. The grouped
+# protocol uses a committed manifest generated only from the original 7,145
+# train+validation pool; the official test folder remains locked.
+split_protocol = os.environ.get(
+    'BETTERLVIT_SPLIT_PROTOCOL',
+    'legacy',
+).strip()
+split_manifest_path = os.environ.get(
+    'BETTERLVIT_SPLIT_MANIFEST',
+    '',
+).strip()
+allowed_split_protocols = {
+    'legacy',
+    'known_patient_grouped_sensitivity_v1',
+}
+if split_protocol not in allowed_split_protocols:
+    raise ValueError('Unsupported BETTERLVIT_SPLIT_PROTOCOL: {!r}'.format(
+        split_protocol
+    ))
+if split_protocol != 'legacy' and not split_manifest_path:
+    raise ValueError(
+        'BETTERLVIT_SPLIT_MANIFEST is required for grouped training'
+    )
+
+session_name = os.environ.get(
+    'BETTERLVIT_SESSION_NAME',
+    'Test_session_' + time.strftime('%Y%m%d_%H%M%S'),
+).strip()
+if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,127}', session_name):
+    raise ValueError('Unsafe BETTERLVIT_SESSION_NAME: {!r}'.format(
+        session_name
+    ))
 save_path = task_name + '/' + model_name + '/' + session_name + '/'
 model_path = save_path + 'models/'
 tensorboard_folder = save_path + 'tensorboard_logs/'

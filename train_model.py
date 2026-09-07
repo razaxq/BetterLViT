@@ -1,21 +1,34 @@
 # -*- coding: utf-8 -*-
 import logging
 import os
-import random
+from pathlib import Path
+import subprocess
 
-import numpy as np
 import requests
 import torch.nn as nn
 import torch.optim
 from tensorboardX import SummaryWriter
-from torch.backends import cudnn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, RandomSampler
 from torchvision import transforms
 
 import Config as config
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
+from reproducibility import (
+    PROTOCOL_VERSION,
+    build_run_fingerprint,
+    capture_rng_state,
+    configure_determinism,
+    make_generator,
+    named_file_set_sha256,
+    reset_global_seed,
+    restore_rng_state,
+    seed_worker,
+    sha256_file,
+    validate_resume_fingerprint,
+)
+from split_protocol import load_grouped_manifest
 from utils import (
     CosineAnnealingWarmRestarts,
     WeightedDiceBCE,
@@ -50,6 +63,38 @@ def logger_config(log_path):
     return loggerr
 
 
+def verify_source_checkout(expected_commit):
+    repository = Path(__file__).resolve().parent
+    try:
+        actual_commit = subprocess.run(
+            ['git', 'rev-parse', 'HEAD'],
+            cwd=repository,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+        dirty = subprocess.run(
+            ['git', 'status', '--porcelain=v1'],
+            cwd=repository,
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise RuntimeError('Unable to verify source Git checkout') from exc
+    if actual_commit != expected_commit:
+        raise RuntimeError(
+            'Source commit mismatch: {} != {}'.format(
+                actual_commit,
+                expected_commit,
+            )
+        )
+    if dirty:
+        raise RuntimeError(
+            'Refusing to train from a dirty worktree:\n{}'.format(dirty)
+        )
+
+
 def save_checkpoint(state, save_path, verbose=True):
     '''
         Save model checkpoint. best_model=True writes best_model-{model}.pth.tar;
@@ -67,11 +112,25 @@ def save_checkpoint(state, save_path, verbose=True):
         filename = save_path + '/' + 'last_model-{}.pth.tar'.format(model)
     if verbose:
         logger.info('\t Saving to {}'.format(filename))
-    torch.save(state, filename)
+    temporary = filename + '.tmp'
+    torch.save(state, temporary)
+    os.replace(temporary, filename)
 
 
-def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
-                           val_loss, max_dice, best_epoch, epoch_history, is_best):
+def build_checkpoint_state(
+    model,
+    optimizer,
+    lr_scheduler,
+    model_type,
+    epoch,
+    val_loss,
+    max_dice,
+    best_epoch,
+    epoch_history,
+    is_best,
+    run_fingerprint,
+    rng_generators,
+):
     return {
         'epoch': epoch,
         'best_model': is_best,
@@ -93,6 +152,11 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             'experiment_architecture_version',
             None,
         ),
+        'reproducibility_protocol': PROTOCOL_VERSION,
+        'text_modality_dropout_prob': config.text_modality_dropout_prob,
+        'text_modality_dropout_prompt': config.text_modality_dropout_prompt,
+        'run_fingerprint': run_fingerprint,
+        'rng_state': capture_rng_state(rng_generators),
     }
 
 
@@ -147,8 +211,77 @@ def build_optimizer_parameter_groups(model, weight_decay):
     return parameter_groups, decay_names, no_decay_names
 
 
-def worker_init_fn(worker_id):
-    random.seed(config.seed + worker_id)
+def _load_datasets(train_tf, val_tf):
+    split_context = {
+        'manifest_path': '',
+        'manifest_sha256': '',
+        'text_workbook_paths': [],
+    }
+    if config.task_name == 'MoNuSeg':
+        if config.split_protocol != 'legacy':
+            raise RuntimeError('Grouped protocol is implemented only for Covid19')
+        train_text_path = config.train_dataset + 'Train_text.xlsx'
+        val_text_path = config.val_dataset + 'Val_text.xlsx'
+        train_text = read_text(train_text_path)
+        val_text = read_text(val_text_path)
+        split_context['text_workbook_paths'] = [
+            ('train_text', train_text_path),
+            ('validation_text', val_text_path),
+        ]
+        train_dataset = ImageToImage2D(
+            config.train_dataset,
+            config.task_name,
+            train_text,
+            train_tf,
+            image_size=config.img_size,
+        )
+        val_dataset = ImageToImage2D(
+            config.val_dataset,
+            config.task_name,
+            val_text,
+            val_tf,
+            image_size=config.img_size,
+        )
+        return train_dataset, val_dataset, split_context
+
+    if config.task_name != 'Covid19':
+        raise RuntimeError('Unsupported task: {}'.format(config.task_name))
+    text_workbook_path = config.task_dataset + 'Train_Val_text.xlsx'
+    text = read_text(text_workbook_path)
+    split_context['text_workbook_paths'] = [
+        ('train_validation_text', text_workbook_path),
+    ]
+    train_records = None
+    validation_records = None
+    if config.split_protocol != 'legacy':
+        grouped = load_grouped_manifest(
+            config.split_manifest_path,
+            config.dataset_root,
+            config.split_protocol,
+        )
+        train_records = grouped['train_records']
+        validation_records = grouped['validation_records']
+        split_context.update({
+            'manifest_path': grouped['manifest_path'],
+            'manifest_sha256': grouped['manifest_sha256'],
+        })
+    train_dataset = ImageToImage2D(
+        config.train_dataset,
+        config.task_name,
+        text,
+        train_tf,
+        image_size=config.img_size,
+        sample_records=train_records,
+    )
+    val_dataset = ImageToImage2D(
+        config.val_dataset,
+        config.task_name,
+        text,
+        val_tf,
+        image_size=config.img_size,
+        sample_records=validation_records,
+    )
+    return train_dataset, val_dataset, split_context
 
 
 ##################################################################################
@@ -160,45 +293,147 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     # Load train and val data
     train_tf = transforms.Compose([RandomGenerator(output_size=[config.img_size, config.img_size])])
     val_tf = ValGenerator(output_size=[config.img_size, config.img_size])
-    if config.task_name == 'MoNuSeg':
-        train_text = read_text(config.train_dataset + 'Train_text.xlsx')
-        val_text = read_text(config.val_dataset + 'Val_text.xlsx')
-        train_dataset = ImageToImage2D(config.train_dataset, config.task_name, train_text, train_tf,
-                                       image_size=config.img_size)
-        val_dataset = ImageToImage2D(config.val_dataset, config.task_name, val_text, val_tf, image_size=config.img_size)
-    elif config.task_name == 'Covid19':
-        text = read_text(config.task_dataset + 'Train_Val_text.xlsx')
-        train_dataset = ImageToImage2D(config.train_dataset, config.task_name, text, train_tf,
-                                       image_size=config.img_size)
-        val_dataset = ImageToImage2D(config.val_dataset, config.task_name, text, val_tf, image_size=config.img_size)
+    train_dataset, val_dataset, split_context = _load_datasets(
+        train_tf,
+        val_tf,
+    )
+    dataset_artifact_paths = []
+    for split_name, dataset in (
+        ('train', train_dataset),
+        ('validation', val_dataset),
+    ):
+        for record in dataset.sample_records:
+            image_name = record['image_name']
+            dataset_artifact_paths.extend((
+                (
+                    '{}/image/{}'.format(split_name, image_name),
+                    record['image_path'],
+                ),
+                (
+                    '{}/mask/{}'.format(split_name, record['mask_name']),
+                    record['mask_path'],
+                ),
+            ))
+    dataset_artifacts_sha256 = named_file_set_sha256(
+        dataset_artifact_paths
+    )
+    text_workbook_sha256 = named_file_set_sha256(
+        split_context['text_workbook_paths']
+    )
+    rng_generators = {
+        'train_sampler': make_generator(config.sampler_seed),
+        'train_workers': make_generator(config.worker_seed),
+        'validation_workers': make_generator(config.validation_worker_seed),
+        'text_modality_dropout': make_generator(
+            config.text_modality_dropout_seed
+        ),
+    }
+    text_dropout_context = {
+        'probability': config.text_modality_dropout_prob,
+        'generator': rng_generators['text_modality_dropout'],
+        'neutral_input_ids': train_dataset.neutral_input_ids,
+        'neutral_attention_mask': train_dataset.neutral_attention_mask,
+    }
+    train_sampler = RandomSampler(
+        train_dataset,
+        generator=rng_generators['train_sampler'],
+    )
+    train_loader = DataLoader(
+        train_dataset,
+        batch_size=config.batch_size,
+        sampler=train_sampler,
+        worker_init_fn=seed_worker,
+        generator=rng_generators['train_workers'],
+        num_workers=config.num_workers,
+        pin_memory=True,
+        persistent_workers=(
+            config.persistent_workers and config.num_workers > 0
+        ),
+    )
 
-
-    train_loader = DataLoader(train_dataset,
-                              batch_size=config.batch_size,
-                              shuffle=True,
-                              worker_init_fn=worker_init_fn,
-                              num_workers=config.num_workers,
-                              pin_memory=True,
-                              persistent_workers=(
-                                  config.persistent_workers
-                                  and config.num_workers > 0
-                              ))
-
-    val_loader = DataLoader(val_dataset,
-                            batch_size=config.batch_size,
-                            shuffle=False,
-                            worker_init_fn=worker_init_fn,
-                            num_workers=config.num_workers,
-                            pin_memory=True,
-                            persistent_workers=(
-                                config.persistent_workers
-                                and config.num_workers > 0
-                            ))
+    val_loader = DataLoader(
+        val_dataset,
+        batch_size=config.batch_size,
+        shuffle=False,
+        worker_init_fn=seed_worker,
+        generator=rng_generators['validation_workers'],
+        num_workers=config.num_workers,
+        pin_memory=True,
+        persistent_workers=(
+            config.persistent_workers and config.num_workers > 0
+        ),
+    )
+    run_fingerprint = build_run_fingerprint(
+        seed=config.seed,
+        split_protocol=config.split_protocol,
+        split_manifest_path=split_context['manifest_path'],
+        split_manifest_sha256=split_context['manifest_sha256'],
+        train_names=train_dataset.images_list,
+        validation_names=val_dataset.images_list,
+        text_modality_dropout_prob=config.text_modality_dropout_prob,
+        text_modality_dropout_prompt=config.text_modality_dropout_prompt,
+        git_commit=config.git_commit,
+        dataset_artifacts_sha256=dataset_artifacts_sha256,
+        text_workbook_sha256=text_workbook_sha256,
+        training_configuration={
+            'architecture_version': config.experiment_architecture_version,
+            'model_name': config.model_name,
+            'epochs': config.epochs,
+            'batch_size': config.batch_size,
+            'num_workers': config.num_workers,
+            'persistent_workers': config.persistent_workers,
+            'image_size': config.img_size,
+            'learning_rate': config.learning_rate,
+            'weight_decay': config.weight_decay,
+            'cosine_lr': config.cosineLR,
+            'early_stopping_patience': config.early_stopping_patience,
+            'loss_name': config.loss_name,
+            'dice_loss_weight': config.dice_loss_weight,
+            'focal_loss_weight': config.focal_loss_weight,
+            'focal_gamma': config.focal_gamma,
+            'focal_positive_weight': config.focal_positive_weight,
+            'focal_negative_weight': config.focal_negative_weight,
+            'boundary_loss_weight': config.boundary_loss_weight,
+            'text_encoder_name': config.text_encoder_name,
+            'text_max_len': config.text_max_len,
+            'text_use_lora': config.text_use_lora,
+            'text_lora_r': config.text_lora_r,
+            'text_lora_alpha': config.text_lora_alpha,
+            'text_lora_dropout': config.text_lora_dropout,
+            'text_lora_target_modules': config.text_lora_target_modules,
+            'model_seed': config.model_seed,
+            'training_seed': config.training_seed,
+            'sampler_seed': config.sampler_seed,
+            'worker_seed': config.worker_seed,
+            'validation_worker_seed': config.validation_worker_seed,
+            'text_modality_dropout_seed': (
+                config.text_modality_dropout_seed
+            ),
+        },
+    )
+    logger.info('Reproducibility fingerprint: {}'.format(
+        run_fingerprint['fingerprint_sha256']
+    ))
+    logger.info(
+        'Data artifacts: samples_sha256={}, text_workbook_sha256={}'.format(
+            dataset_artifacts_sha256,
+            text_workbook_sha256,
+        )
+    )
+    logger.info(
+        'Split protocol: {} (train={}, validation={}, manifest_sha256={})'.format(
+            config.split_protocol,
+            len(train_dataset),
+            len(val_dataset),
+            split_context['manifest_sha256'] or 'none',
+        )
+    )
                              
     lr = config.learning_rate
     logger.info(model_type)
 
     if model_type in ('LViT', 'BetterLViT'):
+        reset_global_seed(config.model_seed)
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
@@ -219,6 +454,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
 
     elif model_type == 'LViT_pretrain':
+        reset_global_seed(config.model_seed)
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
@@ -316,6 +552,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     else:
         writer = None
 
+    # Model construction is intentionally isolated from the operation RNG.
+    # Paired candidates therefore start with identical shared weights and
+    # identical dropout/random-op streams.
+    reset_global_seed(config.training_seed)
     max_dice = 0.0
     best_epoch = 1
     epoch_history = []
@@ -325,7 +565,21 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     if config.resume_path:
         if os.path.isfile(config.resume_path):
             logger.info('Resuming from {}'.format(config.resume_path))
-            ckpt = torch.load(config.resume_path, map_location='cuda')
+            actual_resume_sha256 = sha256_file(config.resume_path)
+            if actual_resume_sha256 != config.resume_sha256:
+                raise RuntimeError(
+                    'Resume checkpoint SHA-256 mismatch: {} != {}'.format(
+                        actual_resume_sha256,
+                        config.resume_sha256,
+                    )
+                )
+            # Resume checkpoints are self-generated trusted artifacts and
+            # include Python/NumPy RNG state in addition to tensor weights.
+            ckpt = torch.load(
+                config.resume_path,
+                map_location='cpu',
+                weights_only=False,
+            )
 
             expected_architecture = getattr(
                 config,
@@ -351,7 +605,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 )
 
             target = model.module if isinstance(model, nn.DataParallel) else model
-            target.load_state_dict(ckpt['state_dict'], strict=False)
+            target.load_state_dict(ckpt['state_dict'], strict=True)
+            validate_resume_fingerprint(
+                ckpt.get('run_fingerprint'),
+                run_fingerprint,
+            )
             optimizer.load_state_dict(ckpt['optimizer'])
 
             start_epoch = ckpt['epoch'] + 1
@@ -360,20 +618,31 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 if ckpt.get('lr_scheduler') is not None:
                     lr_scheduler.load_state_dict(ckpt['lr_scheduler'])
                 else:
-                    # Old-format ckpt: fast-forward scheduler. In our codebase scheduler.step()
-                    # runs inside the val pass, so by the time we save with epoch=N, the
-                    # scheduler has already stepped to last_epoch=N+1 (== start_epoch).
-                    lr_scheduler.step(start_epoch)
+                    raise RuntimeError(
+                        'Strict resume requires lr_scheduler state'
+                    )
 
             max_dice = float(ckpt.get('max_dice', config.resume_max_dice))
             best_epoch = int(ckpt.get('best_epoch', start_epoch))
             epoch_history = ckpt.get('epoch_history', []) or []
+            if (
+                len(epoch_history) != start_epoch
+                or not epoch_history
+                or int(epoch_history[-1].get('epoch', -1)) != start_epoch
+            ):
+                raise RuntimeError(
+                    'Checkpoint epoch_history is incomplete or inconsistent'
+                )
+            restore_rng_state(ckpt.get('rng_state'), rng_generators)
 
             logger.info('Resumed at epoch {}, max_dice={:.4f}, best_epoch={}, history rows={}'.format(
                 start_epoch + 1, max_dice, best_epoch, len(epoch_history)))
         else:
-            logger.info('resume_path set but file not found: {}; training from scratch'.format(
-                config.resume_path))
+            raise FileNotFoundError(
+                'resume_path set but file not found: {}'.format(
+                    config.resume_path
+                )
+            )
     # --------------------------------------------------------------------------
 
     for epoch in range(start_epoch, config.epochs):  # loop over the dataset multiple times
@@ -386,9 +655,13 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         model.train(True)
         logger.info('Training with batch size : {}'.format(batch_size))
         train_loss, train_dice, train_iou = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
-                                                            model_type, logger)  # sup
+                                                            model_type, logger,
+                                                            text_dropout_context=text_dropout_context)  # sup
         train_loss_components = dict(
             getattr(criterion, 'last_epoch_components', {})
+        )
+        train_text_dropout_stats = dict(
+            getattr(criterion, 'last_text_dropout_stats', {})
         )
 
         # evaluate on validation set
@@ -414,6 +687,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             'val_iou': float(val_iou),
             'lr': float(epoch_lr),
             'train_loss_components': train_loss_components,
+            'train_text_dropout': train_text_dropout_stats,
             'val_loss_components': val_loss_components,
             'eppa_stats': compute_eppa_stats(model),
         })
@@ -429,7 +703,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                 best_epoch = epoch + 1
                 best_state = build_checkpoint_state(
                     model, optimizer, lr_scheduler, model_type, epoch,
-                    val_loss, max_dice, best_epoch, epoch_history, is_best=True)
+                    val_loss, max_dice, best_epoch, epoch_history,
+                    is_best=True,
+                    run_fingerprint=run_fingerprint,
+                    rng_generators=rng_generators,
+                )
                 save_checkpoint(best_state, config.model_path)
                 bark_notify(f"当前最高 Dice 刷新为: {max_dice:.4f}！", title="nb 兄弟")
         else:
@@ -442,7 +720,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         # interruption point, not just from the best.
         last_state = build_checkpoint_state(
             model, optimizer, lr_scheduler, model_type, epoch,
-            val_loss, max_dice, best_epoch, epoch_history, is_best=False)
+            val_loss, max_dice, best_epoch, epoch_history,
+            is_best=False,
+            run_fingerprint=run_fingerprint,
+            rng_generators=rng_generators,
+        )
         save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
         logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
@@ -613,20 +895,28 @@ if __name__ == '__main__':
     print("[boot] entered __main__, sending Bark start notification...", flush=True)
     bark_notify("模型开始训练了，请耐心等待！", title="🚀 训练开始")
     print("[boot] Bark call returned, continuing setup...", flush=True)
-    deterministic = True
-    if not deterministic:
-        cudnn.benchmark = True
-        cudnn.deterministic = False
-    else:
-        cudnn.benchmark = False
-        cudnn.deterministic = True
-    random.seed(config.seed)
-    np.random.seed(config.seed)
-    torch.manual_seed(config.seed)
-    torch.cuda.manual_seed(config.seed)
-    torch.cuda.manual_seed_all(config.seed)
-    if not os.path.isdir(config.save_path):
-        os.makedirs(config.save_path)
+    configure_determinism(config.seed)
+    if not torch.cuda.is_available() or torch.cuda.device_count() != 1:
+        raise RuntimeError(
+            'Strict paired training requires exactly one visible CUDA GPU'
+        )
+    if config.persistent_workers:
+        raise RuntimeError(
+            'Strict epoch-boundary resume requires persistent_workers=False'
+        )
+    if len(config.git_commit) != 40:
+        raise RuntimeError(
+            'BETTERLVIT_GIT_COMMIT must identify the reviewed source commit'
+        )
+    verify_source_checkout(config.git_commit)
+    output_directory = Path(config.save_path).resolve()
+    if output_directory.exists():
+        raise FileExistsError(
+            'Refusing to reuse session directory: {}'.format(
+                output_directory
+            )
+        )
+    output_directory.mkdir(parents=True, exist_ok=False)
 
     logger = logger_config(log_path=config.logger_path)
     model = main_loop(model_type=config.model_name, tensorboard=True)

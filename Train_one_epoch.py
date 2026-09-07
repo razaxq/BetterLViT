@@ -9,6 +9,39 @@ from torchinfo import summary
 warnings.filterwarnings("ignore")
 
 
+def apply_text_modality_dropout(
+    input_ids,
+    attention_mask,
+    *,
+    probability,
+    generator,
+    neutral_input_ids,
+    neutral_attention_mask,
+):
+    if probability == 0.0:
+        return input_ids, attention_mask, 0
+    if probability != 0.5:
+        raise RuntimeError('Pre-registered text dropout probability must be 0.5')
+    if generator is None:
+        raise RuntimeError('Text dropout requires a dedicated generator')
+    decisions = torch.rand(
+        input_ids.shape[0],
+        generator=generator,
+        device='cpu',
+    ) < probability
+    neutral_ids = neutral_input_ids.unsqueeze(0).expand_as(input_ids)
+    neutral_mask = neutral_attention_mask.unsqueeze(0).expand_as(
+        attention_mask
+    )
+    input_ids = torch.where(decisions[:, None], neutral_ids, input_ids)
+    attention_mask = torch.where(
+        decisions[:, None],
+        neutral_mask,
+        attention_mask,
+    )
+    return input_ids, attention_mask, int(decisions.sum().item())
+
+
 def print_summary(epoch, i, nb_batch, loss, loss_name, batch_time,
                   average_loss, average_time, iou, average_iou,
                   dice, average_dice, acc, average_acc, mode, lr, logger):
@@ -40,13 +73,25 @@ def print_summary(epoch, i, nb_batch, loss, loss_name, batch_time,
 #          Train One Epoch
 #=================================================================================
 ##################################################################################
-def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_scheduler, model_type, logger):
+def train_one_epoch(
+    loader,
+    model,
+    criterion,
+    optimizer,
+    writer,
+    epoch,
+    lr_scheduler,
+    model_type,
+    logger,
+    text_dropout_context=None,
+):
     logging_mode = 'Train' if model.training else 'Val'
     epoch_start = time.time()
     loss_sum = None
     dice_sum = None
     iou_sum = None
     sample_count = 0
+    text_dropout_count = 0
     component_sums = {}
     for i, (sampled_batch, names) in enumerate(loader, 1):
 
@@ -59,6 +104,18 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         images, masks = sampled_batch['image'], sampled_batch['label']
         input_ids = sampled_batch['input_ids']
         attention_mask = sampled_batch['attention_mask']
+        if model.training and text_dropout_context is not None:
+            input_ids, attention_mask, dropped = apply_text_modality_dropout(
+                input_ids,
+                attention_mask,
+                probability=text_dropout_context['probability'],
+                generator=text_dropout_context['generator'],
+                neutral_input_ids=text_dropout_context['neutral_input_ids'],
+                neutral_attention_mask=(
+                    text_dropout_context['neutral_attention_mask']
+                ),
+            )
+            text_dropout_count += dropped
 
         images = images.cuda(non_blocking=True)
         masks = masks.cuda(non_blocking=True)
@@ -87,7 +144,11 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             )
             train_iou = iou_on_batch_gpu(masks, preds.detach())
 
-        if epoch % config.vis_frequency == 0 and logging_mode == 'Val':
+        if (
+            config.vis_frequency > 0
+            and epoch % config.vis_frequency == 0
+            and logging_mode == 'Val'
+        ):
             vis_path = config.visualize_path+str(epoch)+'/'
             if not os.path.isdir(vis_path):
                 os.makedirs(vis_path)
@@ -205,6 +266,31 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
     criterion.last_epoch_components = dict(
         zip(epoch_names, component_values)
     )
+    configured_probability = (
+        float(text_dropout_context['probability'])
+        if text_dropout_context is not None and model.training
+        else 0.0
+    )
+    criterion.last_text_dropout_stats = {
+        'configured_probability': configured_probability,
+        'dropped_samples': int(text_dropout_count),
+        'total_samples': int(sample_count),
+        'realized_fraction': (
+            float(text_dropout_count / sample_count)
+            if sample_count
+            else 0.0
+        ),
+    }
+    if model.training:
+        logger.info(
+            '   [Train] Text modality dropout: configured={:.3f}, '
+            'dropped={}/{}, realized={:.4f}'.format(
+                configured_probability,
+                text_dropout_count,
+                sample_count,
+                criterion.last_text_dropout_stats['realized_fraction'],
+            )
+        )
     if criterion.last_epoch_components:
         logger.info(
             '   [{}] Loss components: {}'.format(
