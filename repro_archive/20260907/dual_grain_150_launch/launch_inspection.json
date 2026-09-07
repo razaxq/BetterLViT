@@ -1,0 +1,10 @@
+{
+  "inspected_unix": 1788784075.0878587,
+  "statuses": {
+    "chain.status": "training"
+  },
+  "training_log_tail": "[boot] entered __main__, sending Bark start notification...\n[boot] Bark call returned, continuing setup...\nBetterLViT\nPaper experiment P11 / p11_dual_grain: EPPA plus dual-grain shallow visual guides; unchanged Dice/Focal\nControlled factors: decoder_fusion=fam_eppa_v4b, RACE=False, LoRA=False, loss=dice_focal, seed=1219\nLocal runtime: batch_size=16, train_drop_last=True, deterministic=True, MIOpen=True, MIOPEN_FIND_MODE=unset\ntransformer head num: 4\ntransformer layers num: 4\ntransformer expand ratio: 4\ntotal params: 149284119 (149.28M)\ntrainable params: 39654621 (39.65M, 26.56%)\nObjective: dice_focal (boundary_weight=0.0)\nOptimizer groups: decay=184 tensors, no_decay=340 tensors; EPPA residual gates are protected from L2 decay\nlog dir: \nResuming from /root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/last_model-BetterLViT.pth.tar\nRestored global, CUDA, sampler and worker RNG state\nResumed at epoch 81, max_dice=0.8219, best_epoch=80, history rows=80\n\n========= Epoch [81/150] =========\nP11_Test_session_09.07_20h26\nTraining with batch size : 16\n   [Train] Epoch: [81][20/357]  Loss:0.105 (Avg 0.0982) IoU:0.721 (Avg 0.7129) Dice:0.8226 (Avg 0.8149) LR 3.00e-04   (AvgTime 0.7)   \n   [Train] Epoch: [81][40/357]  Loss:0.126 (Avg 0.0981) IoU:0.665 (Avg 0.7194) Dice:0.7737 (Avg 0.8197) LR 3.00e-04   (AvgTime 0.6)   \n   [Train] Epoch: [81][60/357]  Loss:0.124 (Avg 0.1014) IoU:0.631 (Avg 0.7116) Dice:0.7572 (Avg 0.8127) LR 3.00e-04   (AvgTime 0.6)   \n",
+  "launcher_log_tail": "",
+  "gpu": "69346, 17966 MiB\n",
+  "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a"
+}

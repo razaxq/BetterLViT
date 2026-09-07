@@ -1,0 +1,20 @@
+{
+  "experiment": "p11_dual_grain_80_to_150",
+  "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a",
+  "remote_run": "/root/dual_grain_runs/p11_150_20260907",
+  "max_inspections": 2,
+  "inspections_completed": 1,
+  "launch_inspection_completed": true,
+  "launch_inspection_utc": "2026-09-07T12:27:55.087859+00:00",
+  "launch_inspection_epoch": 81,
+  "final_inspection_completed": false,
+  "monitor_mode": "predicted_one_shot",
+  "persistent_connection": false,
+  "automation_id": "p11",
+  "training_started_utc": "2026-09-07T12:26:53.624264+00:00",
+  "prediction_seconds_per_epoch": 220.75676616430283,
+  "predicted_training_finish_utc": "2026-09-07T16:44:26.597896+00:00",
+  "scheduled_final_inspection_utc": "2026-09-07T17:00:00+00:00",
+  "scheduled_final_inspection_sydney": "2026-09-08T03:00:00+10:00",
+  "final_inspection_deadline_minutes_after_training": 30
+}

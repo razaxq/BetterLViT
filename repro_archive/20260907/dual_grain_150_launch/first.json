@@ -1,0 +1,30 @@
+{
+  "status": "ok",
+  "resumed_epoch": 81,
+  "history_rows": 80,
+  "model_optimizer_scheduler_rng_restored": true,
+  "batch_size": 16,
+  "names": [
+    "sub-S11335_ses-E20354_run-1_bp-chest_cr.png",
+    "sub-S10405_ses-E22704_run-1_bp-chest_vp-ap_dx.png",
+    "sub-S12101_ses-E23822_run-1_bp-chest_vp-ap_cr.png",
+    "sub-S11516_ses-E21070_run-1_bp-chest_vp-pa_dx.png",
+    "sub-S10409_ses-E18280_run-1_bp-chest_vp-ap_cr.png",
+    "sub-S10618_ses-E18709_run-1_bp-chest_cr.png",
+    "sub-S11829_ses-E22513_run-1_bp-chest_vp-pa_dx.png",
+    "sub-S10821_ses-E20252_run-1_bp-chest_vp-ap_cr.png",
+    "covid_9.png",
+    "sub-S11060_ses-E24841_run-1_bp-chest_vp-ap_dx.png",
+    "covid_4007.png",
+    "sub-S10826_ses-E18831_run-1_bp-chest_vp-pa_cr.png",
+    "covid_1364.png",
+    "sub-S10317_ses-E20901_acq-1_run-1_bp-chest_vp-pa_dx.png",
+    "sub-S11701_ses-E21925_run-1_bp-chest_vp-ap_dx.png",
+    "sub-S11173_ses-E19749_acq-1_run-1_bp-chest_vp-ap_cr.png"
+  ],
+  "loss": 0.06378151476383209,
+  "prediction_sha256": "b4a18dbb7b5d0a3d617c46e2e1e9314c3337521b325166f90f20cd67c0137b79",
+  "updated_trainable_weights_sha256": "0ba5064056e1e39aa816d478634fb1f42ee58c904bd18c0d626ab3581410f97e",
+  "test_split_accessed": false,
+  "checkpoint_written": false
+}
