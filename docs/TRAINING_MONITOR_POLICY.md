@@ -6,22 +6,26 @@ the final inspection until after training ends, and begin it no later than
 
 1. One progress inspection around the midpoint. Skip it if training has already
    finished. User-requested ad hoc checks are not silently repeated by timers.
-2. One final inspection, triggered by completion. For the Train -> Val -> Test
-   runner, wait for the result chain to complete, with a maximum 20-minute grace
-   after `training.status` is written. If evaluation is still pending, report that
-   fact without inventing metrics. Training failures trigger the final inspection
-   immediately. Do not launch a third scheduled inspection.
+2. Predict the finish time from the existing midpoint timing, and schedule one
+   final inspection about 15 minutes later. Connect briefly only at that appointment.
+   Report actual completion time and the gap; if training/testing is still pending,
+   state that fact without inventing results. Do not add a third inspection.
 
-Between these inspections, an operating-system event wait may listen for the
-status file or runner exit. It does not query training logs, checkpoints or the
-GPU. Do not replace this with repeated model inspections or repeated status
-reports. Stop the scheduled task once the final report has been delivered.
+Latest user clarification: use prediction, not a continuously connected wait.
+No persistent SSH session, completion listener or polling between inspections.
+Stop the scheduled task after its one final invocation. Prediction error, early
+failure, sleep or network outages can invalidate the desired completion window;
+report that honestly rather than claiming an unconditional 30-minute guarantee.
 
 For current P11, the setup-time inspection at epoch 40/80 is inspection 1. Only
 the final inspection remains. Its source is frozen at
 `2fc6ab5c8e4662d741fd8b994e55b780391948ac`; live output is
-`/root/dual_grain_runs/p11_20260907`. `tools/wait_training_completion.py` supports
-the runner's existing status files without modifying the frozen training source.
+`/root/dual_grain_runs/p11_20260907`. Training began at 17:00:47 Sydney time;
+epoch 40 was nearly complete at 19:27. Predicted finish is approximately 21:54,
+with the sole remaining inspection at 22:10 on 2026-09-07 (Australia/Sydney).
+The initial persistent listener was stopped and its automation was replaced.
+`tools/wait_training_completion.py` and its test remain archived history only;
+they are no longer used for P11 monitoring. The frozen training source is unchanged.
 
 This controls inspections, not the 80-epoch optimization or automatic Test
 evaluation. A single-seed Test result is not proof of stable gain. For local
