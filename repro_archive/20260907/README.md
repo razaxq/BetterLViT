@@ -26,7 +26,7 @@ contains the V2 learnability probe and paired launcher. Test evaluator scripts
 are preserved under `race_pe_test_20260907` and `race_pe_v2_test_20260907`.
 They import model code from `RACE_EVAL_REPO`, select profiles through
 `BETTERLVIT_EXPERIMENT`, and accept explicit checkpoint/output arguments.
-Training used Python 3.11, torch 2.9.1+cu128, a 4090D, deterministic settings,
+Training used Python 3.12.3, torch 2.9.1+cu128, a 4090D, deterministic settings,
 seed 1219, batch 16, frozen CXR-BERT, 224x224 input and threshold 0.5.
 
 Historical wrapper scripts retain their original absolute server paths to
