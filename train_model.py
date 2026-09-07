@@ -521,7 +521,9 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     if config.resume_path:
         if os.path.isfile(config.resume_path):
             logger.info('Resuming from {}'.format(config.resume_path))
-            ckpt = torch.load(config.resume_path, map_location='cuda')
+            # RNG and sampler states must remain CPU ByteTensors. Model and
+            # optimizer loaders move parameter state to the CUDA target.
+            ckpt = torch.load(config.resume_path, map_location='cpu', weights_only=True)
             if ckpt.get('selection_metric', 'dice') != config.selection_metric:
                 raise ValueError('Cannot resume with a different selection metric')
 
@@ -585,6 +587,7 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
             logger.info('Resumed at epoch {}, max_dice={:.4f}, best_epoch={}, history rows={}'.format(
                 start_epoch + 1, max_dice, best_epoch, len(epoch_history)))
+            del ckpt
         else:
             logger.info('resume_path set but file not found: {}; training from scratch'.format(
                 config.resume_path))
