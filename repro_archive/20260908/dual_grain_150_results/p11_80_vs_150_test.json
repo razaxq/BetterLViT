@@ -1,0 +1,48 @@
+{
+  "split": "test",
+  "comparison": "P11 80 versus continued 150",
+  "completed_epochs": 150,
+  "best_epoch": 80,
+  "metrics": {
+    "iou": {
+      "parent_80": 0.7556613562348183,
+      "continued_150": 0.7556613562348183,
+      "delta": 0.0,
+      "paired_case_bootstrap_95_ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "dice": {
+      "parent_80": 0.8423349660871143,
+      "continued_150": 0.8423349660871143,
+      "delta": 0.0,
+      "paired_case_bootstrap_95_ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "precision": {
+      "parent_80": 0.8494757221128231,
+      "continued_150": 0.8494757221128231,
+      "delta": 0.0,
+      "paired_case_bootstrap_95_ci": [
+        0.0,
+        0.0
+      ]
+    },
+    "recall": {
+      "parent_80": 0.8633470742167229,
+      "continued_150": 0.8633470742167229,
+      "delta": 0.0,
+      "paired_case_bootstrap_95_ci": [
+        0.0,
+        0.0
+      ]
+    }
+  },
+  "parent_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+  "candidate_checkpoint_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+  "stable_gain_proven": false,
+  "limitation": "Post-Test user-requested extension, single seed; unequal budgets. Not a matched C4 ablation."
+}

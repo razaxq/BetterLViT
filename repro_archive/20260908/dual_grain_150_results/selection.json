@@ -1,0 +1,9 @@
+{
+  "completed_epochs": 150,
+  "best_epoch": 80,
+  "checkpoint": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+  "checkpoint_sha256": "405d0cdced5f85adfcfbc76190cac5c201ebe3a5224dd087060e32a94fbae51f",
+  "evaluation_repository": "/root/autodl-tmp/BetterLViT-dual-grain-p11",
+  "selection_scope": "all 150 validation epochs",
+  "threshold": 0.5
+}
