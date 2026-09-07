@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import select
+import re
 import time
 
 
@@ -26,7 +27,19 @@ def wait_for_completion(run, grace_seconds=1200):
             raise OSError(ctypes.get_errno(), 'inotify_add_watch')
         runtime = json.loads((run / 'runtime.json').read_text())
         try:
-            pid_fd = os.pidfd_open(int(runtime['pid']))
+            if hasattr(os, 'pidfd_open'):
+                pid_fd = os.pidfd_open(int(runtime['pid']))
+            else:
+                # The server's Conda Python omits this wrapper. Use the syscall
+                # number declared by its installed Linux x86_64 headers.
+                if os.uname().machine != 'x86_64':
+                    raise RuntimeError('pidfd fallback supports the verified x86_64 server only')
+                header = Path('/usr/include/x86_64-linux-gnu/asm/unistd_64.h').read_text()
+                number = int(re.search(r'#define __NR_pidfd_open (\d+)', header).group(1))
+                pid_fd = libc.syscall(ctypes.c_long(number), ctypes.c_int(runtime['pid']), ctypes.c_uint(0))
+                if pid_fd < 0:
+                    pid_fd = None
+                    raise OSError(ctypes.get_errno(), 'pidfd_open')
         except ProcessLookupError:
             pass
         while True:

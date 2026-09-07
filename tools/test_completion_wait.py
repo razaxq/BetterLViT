@@ -22,8 +22,10 @@ def check(mode):
                 (run / 'chain.status').write_text('complete\n')
         writer = threading.Thread(target=finish)
         writer.start()
-        result = wait_for_completion(run, grace_seconds=.4)
-        writer.join()
+        try:
+            result = wait_for_completion(run, grace_seconds=.4)
+        finally:
+            writer.join()
         expected = {'complete': 'training_and_evaluation_complete', 'failed': 'run_failed',
                     'timeout': 'evaluation_grace_expired'}[mode]
         assert result['reason'] == expected, result
