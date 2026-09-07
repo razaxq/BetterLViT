@@ -1,0 +1,633 @@
+{
+  "as_of": "2026-09-07",
+  "formal": [
+    {
+      "id": "B0",
+      "config": "Frozen CXR-BERT + original PLAM + Dice/BCE",
+      "sha": "77f43ba26487c73b56da1080f83706eececb8203",
+      "best": 120,
+      "dice": 0.835266,
+      "iou": 0.748076,
+      "threshold": 0.656,
+      "cal_dice": 0.840582,
+      "cal_iou": 0.756348
+    },
+    {
+      "id": "A0",
+      "config": "CXR-BERT LoRA + original PLAM + Dice/BCE",
+      "sha": "7e8fc4f9cc0602e98ce12dadcbc6d55052c4c331",
+      "best": 109,
+      "dice": 0.83157,
+      "iou": 0.743281,
+      "threshold": 0.626,
+      "cal_dice": 0.834767,
+      "cal_iou": 0.748608
+    },
+    {
+      "id": "A1",
+      "config": "CXR-BERT LoRA + original PLAM + Dice/Focal",
+      "sha": "3e46ab48e4eb7c077e789d6d9afc0158cda18a73",
+      "best": 80,
+      "dice": 0.835233,
+      "iou": 0.747126,
+      "threshold": 0.56,
+      "cal_dice": 0.837367,
+      "cal_iou": 0.751033
+    },
+    {
+      "id": "A2",
+      "config": "CXR-BERT LoRA + FAM-EPPA V4-B + Dice/BCE",
+      "sha": "994094f989069a4d5b7263dc4ad45d333e9d0ede",
+      "best": 80,
+      "dice": 0.844099,
+      "iou": 0.757901,
+      "threshold": 0.55,
+      "cal_dice": 0.844966,
+      "cal_iou": 0.759453
+    },
+    {
+      "id": "A3",
+      "config": "CXR-BERT LoRA + FMISeg-adapted fusion + Dice/BCE",
+      "sha": "1c0b7dae263b27860a3fd672431d6968f7beec0c",
+      "best": 80,
+      "dice": 0.836136,
+      "iou": 0.749682,
+      "threshold": 0.54,
+      "cal_dice": 0.836527,
+      "cal_iou": 0.750792
+    },
+    {
+      "id": "A4",
+      "config": "CXR-BERT LoRA + FAM-EPPA V4-B + Dice/Focal",
+      "sha": "a1d40d3a305a34abc0e96885fae68532007485b2",
+      "best": 80,
+      "dice": 0.844932,
+      "iou": 0.759909,
+      "threshold": 0.516,
+      "cal_dice": 0.845191,
+      "cal_iou": 0.760446
+    },
+    {
+      "id": "A5",
+      "config": "CXR-BERT LoRA + FMISeg-adapted fusion + Dice/Focal",
+      "sha": "4ef4bf0616975e4ebbab37ad660d63ee99b61216",
+      "best": 139,
+      "dice": 0.835314,
+      "iou": 0.746882,
+      "threshold": 0.562,
+      "cal_dice": 0.838524,
+      "cal_iou": 0.752085
+    },
+    {
+      "id": "A6",
+      "config": "Frozen CXR-BERT + TCSR V1 + original PLAM + Dice/BCE",
+      "sha": "01cd2f7501804f07e04ad4595de2fc9e2c511ede",
+      "best": 139,
+      "dice": 0.83481,
+      "iou": 0.747394,
+      "threshold": 0.556,
+      "cal_dice": 0.836082,
+      "cal_iou": 0.749756
+    },
+    {
+      "id": "A7",
+      "config": "Frozen CXR-BERT + TCSR V1 + FAM-EPPA V4-B + Dice/BCE",
+      "sha": "75b6ed284f8e137fa6424040f578b8bc7afd1c5c",
+      "best": 80,
+      "dice": 0.843212,
+      "iou": 0.757207,
+      "threshold": 0.508,
+      "cal_dice": 0.843273,
+      "cal_iou": 0.757351
+    },
+    {
+      "id": "A8",
+      "config": "Frozen CXR-BERT + TCSR V2 + FAM-EPPA V4-B + Dice/Focal",
+      "sha": "3e00c9016023f23fce690586150d6d524b3d6ecf",
+      "best": 80,
+      "dice": 0.843154,
+      "iou": 0.757541,
+      "threshold": 0.498,
+      "cal_dice": 0.843147,
+      "cal_iou": 0.757523
+    },
+    {
+      "id": "A9",
+      "config": "Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal",
+      "sha": "494ec30ce1cd94fac566b480877ea3391f5d64ed",
+      "best": 150,
+      "dice": 0.842435,
+      "iou": 0.755412,
+      "threshold": 0.548,
+      "cal_dice": 0.843717,
+      "cal_iou": 0.757799
+    }
+  ],
+  "recent": [
+    {
+      "split": "test",
+      "test_split_accessed": true,
+      "user_authorized_test": true,
+      "threshold_selected_on_test": false,
+      "evaluation_script_sha256": "2a4bdfa291c9b62789ef04f88e52c6610ee99b87626c8c9263f6264b5c1b0ab7",
+      "experiment": "c4_race_pe_control",
+      "paper_id": "C4",
+      "architecture_version": "pilot_c4_race_pe_control_v1",
+      "checkpoint": "/root/BetterLViT-race-pe-c4/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.06_12h38/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "analysis_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "checkpoint_best_epoch": 80,
+      "selection_metric": "iou",
+      "seed": 1219,
+      "epochs": 80,
+      "race_pe_enabled": false,
+      "threshold": 0.5,
+      "samples": 2113,
+      "macro_dice": 0.8429885535534682,
+      "macro_iou": 0.7563962019429644,
+      "macro_precision": 0.8393630546179613,
+      "macro_recall": 0.8743782985894707,
+      "macro_brier": 0.016937876562319997,
+      "macro_boundary_f1_tolerance_2": 0.7843706882245175,
+      "text_use_lora": false,
+      "boundary_loss_weight": 0.0,
+      "bcdh_enabled": false,
+      "cdrr_enabled": false,
+      "race_enabled": false,
+      "bcdh_stats_last_batch": {},
+      "cdrr_stats_last_batch": {},
+      "race_stats_last_batch": {}
+    },
+    {
+      "split": "test",
+      "test_split_accessed": true,
+      "user_authorized_test": true,
+      "threshold_selected_on_test": false,
+      "evaluation_script_sha256": "2a4bdfa291c9b62789ef04f88e52c6610ee99b87626c8c9263f6264b5c1b0ab7",
+      "experiment": "p9_race_pe",
+      "paper_id": "P9",
+      "architecture_version": "pilot_p9_race_pe_v1",
+      "checkpoint": "/root/BetterLViT-race-pe-p9/Covid19/BetterLViT/p9_race_pe/P9_Test_session_09.06_17h41/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_git_commit": "8129c1f039ed77f78e70305aca0bb9708b3b56b1",
+      "analysis_git_commit": "8129c1f039ed77f78e70305aca0bb9708b3b56b1",
+      "checkpoint_best_epoch": 69,
+      "selection_metric": "iou",
+      "seed": 1219,
+      "epochs": 80,
+      "race_pe_enabled": true,
+      "threshold": 0.5,
+      "samples": 2113,
+      "macro_dice": 0.8417767430147088,
+      "macro_iou": 0.7553509598967646,
+      "macro_precision": 0.8201422464742502,
+      "macro_recall": 0.895347827970385,
+      "macro_brier": 0.01754597061991616,
+      "macro_boundary_f1_tolerance_2": 0.7810228897069398,
+      "text_use_lora": false,
+      "boundary_loss_weight": 0.0,
+      "bcdh_enabled": false,
+      "cdrr_enabled": false,
+      "race_enabled": true,
+      "bcdh_stats_last_batch": {},
+      "cdrr_stats_last_batch": {},
+      "race_stats_last_batch": {
+        "architecture_version": "race_pe_v1",
+        "slot_probability_mean": 0.9992223978042603,
+        "route_strengths": [
+          0.029020007699728012,
+          0.013316023163497448,
+          0.0006035046535544097,
+          0.056799519807100296
+        ],
+        "route_gate_means": [
+          0.032277852296829224,
+          0.03913223370909691,
+          0.07433819025754929,
+          0.1513475626707077
+        ],
+        "route_evidence_means": [
+          0.050158217549324036,
+          0.05477389320731163,
+          0.0938485637307167,
+          0.17685069143772125
+        ],
+        "route_agreement_means": [
+          0.6471530795097351,
+          0.7167088985443115,
+          0.783134937286377,
+          0.8295316100120544
+        ],
+        "route_presence_means": [
+          0.6463754177093506,
+          0.7159312963485718,
+          0.7823572158813477,
+          0.8287539482116699
+        ],
+        "route_occupancy_means": [
+          0.05020531266927719,
+          0.054753921926021576,
+          0.0931185930967331,
+          0.17805004119873047
+        ]
+      }
+    },
+    {
+      "split": "test",
+      "test_split_accessed": true,
+      "user_authorized_test": true,
+      "threshold_selected_on_test": false,
+      "evaluation_script_sha256": "eb7b5912c31ac8f4c8aa5c2c4e0aa90d3e06207701d4efe89d00d93dcba5d316",
+      "experiment": "c8_race_pe_v2_aux",
+      "paper_id": "C8",
+      "architecture_version": "pilot_c8_race_pe_v2_aux_mentions",
+      "checkpoint": "/root/BetterLViT-race-pe-v2-c8/Covid19/BetterLViT/c8_race_pe_v2_aux/C8_Test_session_09.07_02h20/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_git_commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+      "analysis_git_commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+      "checkpoint_best_epoch": 80,
+      "selection_metric": "iou",
+      "seed": 1219,
+      "epochs": 80,
+      "race_pe_enabled": true,
+      "threshold": 0.5,
+      "samples": 2113,
+      "macro_dice": 0.8443128741984957,
+      "macro_iou": 0.7586117021415549,
+      "macro_precision": 0.8432072707715373,
+      "macro_recall": 0.873426871684397,
+      "macro_brier": 0.01674025071672856,
+      "macro_boundary_f1_tolerance_2": 0.7887826851610578,
+      "text_use_lora": false,
+      "boundary_loss_weight": 0.0,
+      "bcdh_enabled": false,
+      "cdrr_enabled": false,
+      "race_enabled": true,
+      "bcdh_stats_last_batch": {},
+      "cdrr_stats_last_batch": {},
+      "race_stats_last_batch": {
+        "architecture_version": "race_pe_v2_mentions",
+        "slot_probability_mean": 0.49976277351379395,
+        "route_strengths": [
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "route_gate_means": [
+          0.010974634438753128,
+          0.01638946123421192,
+          0.01984710805118084,
+          0.02640809677541256
+        ],
+        "route_evidence_means": [
+          0.045239098370075226,
+          0.0669652670621872,
+          0.06929241120815277,
+          0.08419810980558395
+        ],
+        "route_agreement_means": [
+          0.5837231874465942,
+          0.633427083492279,
+          0.656593918800354,
+          0.6505784392356873
+        ],
+        "route_presence_means": [
+          0.5837231874465942,
+          0.633427083492279,
+          0.656593918800354,
+          0.6505784392356873
+        ],
+        "route_occupancy_means": [
+          0.04528336971998215,
+          0.06685058027505875,
+          0.06879003345966339,
+          0.08557043969631195
+        ]
+      }
+    },
+    {
+      "split": "test",
+      "test_split_accessed": true,
+      "user_authorized_test": true,
+      "threshold_selected_on_test": false,
+      "evaluation_script_sha256": "eb7b5912c31ac8f4c8aa5c2c4e0aa90d3e06207701d4efe89d00d93dcba5d316",
+      "experiment": "p10_race_pe_v2",
+      "paper_id": "P10",
+      "architecture_version": "pilot_p10_race_pe_v2_mentions",
+      "checkpoint": "/root/BetterLViT-race-pe-v2-p10/Covid19/BetterLViT/p10_race_pe_v2/P10_Test_session_09.07_07h31/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_git_commit": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+      "analysis_git_commit": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+      "checkpoint_best_epoch": 80,
+      "selection_metric": "iou",
+      "seed": 1219,
+      "epochs": 80,
+      "race_pe_enabled": true,
+      "threshold": 0.5,
+      "samples": 2113,
+      "macro_dice": 0.84395084668885,
+      "macro_iou": 0.7580904188337035,
+      "macro_precision": 0.8322866758711326,
+      "macro_recall": 0.8855604763402916,
+      "macro_brier": 0.016846244154145238,
+      "macro_boundary_f1_tolerance_2": 0.7873701506468735,
+      "text_use_lora": false,
+      "boundary_loss_weight": 0.0,
+      "bcdh_enabled": false,
+      "cdrr_enabled": false,
+      "race_enabled": true,
+      "bcdh_stats_last_batch": {},
+      "cdrr_stats_last_batch": {},
+      "race_stats_last_batch": {
+        "architecture_version": "race_pe_v2_mentions",
+        "slot_probability_mean": 0.495604932308197,
+        "route_strengths": [
+          -0.07905921339988708,
+          0.09395989775657654,
+          0.05654286965727806,
+          -0.08913739025592804
+        ],
+        "route_gate_means": [
+          0.018389355391263962,
+          0.01862623170018196,
+          0.021207137033343315,
+          0.03939490020275116
+        ],
+        "route_evidence_means": [
+          0.07440806925296783,
+          0.07363272458314896,
+          0.07565050572156906,
+          0.13533854484558105
+        ],
+        "route_agreement_means": [
+          0.5749472379684448,
+          0.6327910423278809,
+          0.6601096987724304,
+          0.6647871732711792
+        ],
+        "route_presence_means": [
+          0.5749472379684448,
+          0.6327910423278809,
+          0.6601096987724304,
+          0.6647871732711792
+        ],
+        "route_occupancy_means": [
+          0.07446793466806412,
+          0.0736142098903656,
+          0.07497190684080124,
+          0.13569986820220947
+        ]
+      }
+    }
+  ],
+  "val_groups": [
+    {
+      "n": 358,
+      "min": 202,
+      "max": 2075,
+      "iou": 0.5304012647647384,
+      "precision": 0.6406986781482479,
+      "recall": 0.7868860215257528
+    },
+    {
+      "n": 357,
+      "min": 2076,
+      "max": 4989,
+      "iou": 0.6912422669092443,
+      "precision": 0.82094353356649,
+      "recall": 0.8278113680783126
+    },
+    {
+      "n": 357,
+      "min": 4997,
+      "max": 8775,
+      "iou": 0.7947516473862544,
+      "precision": 0.8792162878941874,
+      "recall": 0.8942281659483444
+    },
+    {
+      "n": 357,
+      "min": 8852,
+      "max": 30339,
+      "iou": 0.8753290394183569,
+      "precision": 0.9184343674763674,
+      "recall": 0.9499363431493014
+    }
+  ],
+  "c8_delta": {
+    "split": "test",
+    "test_split_accessed": true,
+    "user_authorized_test": true,
+    "samples": 2113,
+    "threshold": 0.5,
+    "threshold_selected_on_test": false,
+    "checkpoint_selection": "previous validation best IoU",
+    "control_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "candidate_git_commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "overall": {
+      "dice": {
+        "control_mean": 0.8429885535534682,
+        "candidate_mean": 0.8443128741984957,
+        "mean_delta": 0.00132432064502727,
+        "paired_image_bootstrap_95_ci": [
+          -0.0006046324843332327,
+          0.0032902387798268745
+        ]
+      },
+      "iou": {
+        "control_mean": 0.7563962019429644,
+        "candidate_mean": 0.7586117021415549,
+        "mean_delta": 0.002215500198590665,
+        "paired_image_bootstrap_95_ci": [
+          -4.467094779456424e-06,
+          0.0044630123051547
+        ]
+      },
+      "precision": {
+        "control_mean": 0.8393630546179613,
+        "candidate_mean": 0.8432072707715373,
+        "mean_delta": 0.0038442161535760487,
+        "paired_image_bootstrap_95_ci": [
+          0.0018230377834776918,
+          0.005843872380798679
+        ]
+      },
+      "recall": {
+        "control_mean": 0.8743782985894707,
+        "candidate_mean": 0.873426871684397,
+        "mean_delta": -0.0009514269050736143,
+        "paired_image_bootstrap_95_ci": [
+          -0.003738440091097586,
+          0.0018277785815404549
+        ]
+      },
+      "brier": {
+        "control_mean": 0.016937876562319997,
+        "candidate_mean": 0.01674025071672856,
+        "mean_delta": -0.00019762584559143424,
+        "paired_image_bootstrap_95_ci": [
+          -0.0003271791505744832,
+          -6.295241491966714e-05
+        ]
+      }
+    }
+  },
+  "route_delta": {
+    "split": "test",
+    "test_split_accessed": true,
+    "user_authorized_test": true,
+    "samples": 2113,
+    "threshold": 0.5,
+    "threshold_selected_on_test": false,
+    "checkpoint_selection": "previous validation best IoU",
+    "control_git_commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "candidate_git_commit": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+    "overall": {
+      "dice": {
+        "control_mean": 0.8443128741984957,
+        "candidate_mean": 0.84395084668885,
+        "mean_delta": -0.00036202750964553244,
+        "paired_image_bootstrap_95_ci": [
+          -0.0027682605854640356,
+          0.0019385059506197766
+        ]
+      },
+      "iou": {
+        "control_mean": 0.7586117021415549,
+        "candidate_mean": 0.7580904188337035,
+        "mean_delta": -0.0005212833078515336,
+        "paired_image_bootstrap_95_ci": [
+          -0.003270918990812065,
+          0.00209222833934494
+        ]
+      },
+      "precision": {
+        "control_mean": 0.8432072707715373,
+        "candidate_mean": 0.8322866758711326,
+        "mean_delta": -0.010920594900404739,
+        "paired_image_bootstrap_95_ci": [
+          -0.013471419037127475,
+          -0.008406730558556792
+        ]
+      },
+      "recall": {
+        "control_mean": 0.873426871684397,
+        "candidate_mean": 0.8855604763402916,
+        "mean_delta": 0.012133604655894432,
+        "paired_image_bootstrap_95_ci": [
+          0.008876577748017107,
+          0.015427215942162254
+        ]
+      },
+      "brier": {
+        "control_mean": 0.01674025071672856,
+        "candidate_mean": 0.016846244154145238,
+        "mean_delta": 0.000105993437416676,
+        "paired_image_bootstrap_95_ci": [
+          -8.229719333334819e-05,
+          0.0002969071537773838
+        ]
+      }
+    }
+  },
+  "preflight": {
+    "unit": {
+      "identity_at_initialization": true,
+      "all_gradients_nonzero_after_second_update": true,
+      "subpatch_variation": true,
+      "coarse_context_used": true
+    },
+    "initialization": {
+      "common_initial_weights_identical": true,
+      "initialization_rng_identical": true
+    },
+    "real_batch": {
+      "batch_size": 16,
+      "train_samples": 5716,
+      "losses": [
+        0.48949211835861206,
+        0.43545711040496826
+      ],
+      "two_steps_seconds": 1.6442001517862082,
+      "output_sha256": "7a7710fe70ca4b6edd0d7894dfaea001a97c2f25d34fa7f4dd8cd3b2e9df9857",
+      "peak_allocated_gib": 15.725373268127441,
+      "peak_reserved_gib": 16.556640625,
+      "added_parameters": 30016,
+      "test_split_accessed": false,
+      "formal_training_performed": false
+    },
+    "status": "ok"
+  },
+  "runtime": {
+    "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "manifest": {
+      "profile": "p11_dual_grain",
+      "paper_id": "P11",
+      "classification": "exploratory_80e",
+      "parent_control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "epochs": 80,
+      "seed": 1219,
+      "batch_size": 16,
+      "learning_rate": 0.0003,
+      "weight_decay": 0.0001,
+      "loss": "dice_focal",
+      "auxiliary_loss_added": false,
+      "selection_metric": "validation_macro_iou",
+      "threshold": 0.5,
+      "train_samples": 5716,
+      "validation_samples": 1429,
+      "test_samples": 2113,
+      "test_split_allowed_after_training": true,
+      "automatic_test_evaluation": true,
+      "training_from_scratch": true,
+      "coarse_grid": [
+        14,
+        14
+      ],
+      "fine_grid": [
+        28,
+        28
+      ],
+      "stages": [
+        1,
+        2
+      ],
+      "hidden_channels": 32,
+      "attention_heads": 4,
+      "stable_gain_requires_additional_seeds": true
+    },
+    "python": "3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]",
+    "torch": "2.9.1+cu128",
+    "cuda": "12.8",
+    "gpu": "NVIDIA GeForce RTX 4090 D",
+    "versions": {
+      "transformers": "4.57.6",
+      "timm": "1.0.28",
+      "numpy": "1.26.4",
+      "peft": "0.20.0"
+    },
+    "started_utc": "2026-09-07T07:00:47.580720+00:00",
+    "pid": 56946,
+    "repository": "/root/autodl-tmp/BetterLViT-dual-grain-p11",
+    "auto_test_after_successful_training": true,
+    "control_validation": "/root/race_pe_runs/c4_p9_20260906/c4_validation.json",
+    "control_test": "/root/race_pe_test_20260907/c4_test.json"
+  },
+  "monitor": {
+    "experiment": "p11_dual_grain",
+    "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "remote_run": "/root/dual_grain_runs/p11_20260907",
+    "max_inspections": 2,
+    "midpoint_inspection_completed": true,
+    "midpoint_inspection_epoch": 40,
+    "midpoint_inspection_utc": "2026-09-07T09:27:04Z",
+    "final_inspection_completed": false,
+    "final_inspection_deadline_minutes_after_training": 30,
+    "automation_id": "p11",
+    "schedule": "one inspection at 2026-09-07 22:10 Australia/Sydney",
+    "monitor_source_commit": "0c7cb07",
+    "monitor_mode": "predicted_one_shot",
+    "persistent_connection_stopped": true,
+    "predicted_training_finish_utc": "2026-09-07T11:54:00Z",
+    "scheduled_final_inspection_utc": "2026-09-07T12:10:00Z",
+    "prediction_based_on_existing_midpoint": true
+  }
+}
