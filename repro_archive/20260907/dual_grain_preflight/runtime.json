@@ -1,0 +1,55 @@
+{
+  "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+  "manifest": {
+    "profile": "p11_dual_grain",
+    "paper_id": "P11",
+    "classification": "exploratory_80e",
+    "parent_control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "epochs": 80,
+    "seed": 1219,
+    "batch_size": 16,
+    "learning_rate": 0.0003,
+    "weight_decay": 0.0001,
+    "loss": "dice_focal",
+    "auxiliary_loss_added": false,
+    "selection_metric": "validation_macro_iou",
+    "threshold": 0.5,
+    "train_samples": 5716,
+    "validation_samples": 1429,
+    "test_samples": 2113,
+    "test_split_allowed_after_training": true,
+    "automatic_test_evaluation": true,
+    "training_from_scratch": true,
+    "coarse_grid": [
+      14,
+      14
+    ],
+    "fine_grid": [
+      28,
+      28
+    ],
+    "stages": [
+      1,
+      2
+    ],
+    "hidden_channels": 32,
+    "attention_heads": 4,
+    "stable_gain_requires_additional_seeds": true
+  },
+  "python": "3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]",
+  "torch": "2.9.1+cu128",
+  "cuda": "12.8",
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "versions": {
+    "transformers": "4.57.6",
+    "timm": "1.0.28",
+    "numpy": "1.26.4",
+    "peft": "0.20.0"
+  },
+  "started_utc": "2026-09-07T07:00:47.580720+00:00",
+  "pid": 56946,
+  "repository": "/root/autodl-tmp/BetterLViT-dual-grain-p11",
+  "auto_test_after_successful_training": true,
+  "control_validation": "/root/race_pe_runs/c4_p9_20260906/c4_validation.json",
+  "control_test": "/root/race_pe_test_20260907/c4_test.json"
+}
