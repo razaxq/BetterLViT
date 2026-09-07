@@ -2,7 +2,7 @@
 
 This branch deliberately replaces the open-ended V4 experiments with five
 pre-registered runs. The current canonical protocol runs on one RTX 4090D
-server with the same dataset split, seed, optimizer, augmentation, 100-epoch
+server with the same dataset split, seed, optimizer, augmentation, 150-epoch
 budget, physical batch size 16 and early-stopping rule. Training uses
 `drop_last=True`, so every optimizer step keeps the same physical shape and four
 shuffled samples (0.07%) are omitted per epoch. The same rule is locked for B0
@@ -26,7 +26,7 @@ interaction to BetterLViT decoder skips.
 - Dataset: QaTa-COV19-v2, fixed split of 5716 train, 1429 validation and 2113
   test images.
 - Seed: 1219.
-- Epoch budget: 100; physical batch size: 16; training `drop_last=True`; the same configured
+- Epoch budget: 150; physical batch size: 16; training `drop_last=True`; the same configured
   early-stopping rule applies to all.
 - Runtime: one RTX 4090D, CUDA/cuDNN enabled, deterministic algorithms required,
   cuDNN benchmarking and TF32 disabled, and `CUBLAS_WORKSPACE_CONFIG=:4096:8`.
@@ -53,7 +53,7 @@ Run the synthetic forward/backward check before every full experiment:
 Start one local background training run (the launcher refuses a duplicate):
 
 ```bash
-bash scripts/start_paper_experiment_server.sh b0_baseline 1219 100 16
+bash scripts/start_paper_experiment_server.sh b0_baseline 1219 150 16
 ```
 
 After choosing the best checkpoint using validation Dice, evaluate it with the

@@ -108,9 +108,21 @@ class FMISegDecoderAdapter(nn.Module):
 
     def _visual_tokens(self, features, projection):
         projected = projection(features)
-        pooled = F.adaptive_avg_pool2d(
+        height, width = projected.shape[-2:]
+        if height % self.pool_size or width % self.pool_size:
+            raise ValueError(
+                "FMISeg token pooling requires spatial dimensions divisible "
+                "by pool_size; got {}x{} and pool_size={}".format(
+                    height,
+                    width,
+                    self.pool_size,
+                )
+            )
+        kernel_size = (height // self.pool_size, width // self.pool_size)
+        pooled = F.avg_pool2d(
             projected,
-            (self.pool_size, self.pool_size),
+            kernel_size=kernel_size,
+            stride=kernel_size,
         )
         return pooled.flatten(2).transpose(1, 2)
 
