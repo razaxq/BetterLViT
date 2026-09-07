@@ -1,0 +1,152 @@
+{
+  "split": "train_and_validation",
+  "test_split_accessed": false,
+  "training_performed": false,
+  "source_git_commit": "8129c1f039ed77f78e70305aca0bb9708b3b56b1",
+  "checkpoint_best_epoch": 69,
+  "script_sha256": "3c72f8727d21d0ac349161234b2f649d7c1a4b85b41867c1d1e318a7254d0d60",
+  "training_label_audit": {
+    "samples": 5716,
+    "positive": 7894,
+    "negative": 0,
+    "unknown": 26402,
+    "no_known_location": 1686
+  },
+  "validation_slots": {
+    "mean": 0.9987058639526367,
+    "std": 0.0014588369522243738,
+    "minimum": 0.9920520782470703,
+    "fraction_above_099": 1.0,
+    "per_zone_mean": [
+      0.9979289770126343,
+      0.9990995526313782,
+      0.9996089339256287,
+      0.9970766305923462,
+      0.9988682866096497,
+      0.9996529817581177
+    ],
+    "per_zone_std": [
+      0.001249795313924551,
+      0.00041797931771725416,
+      0.00026006027474068105,
+      0.0023442853707820177,
+      0.0005228900699876249,
+      0.00021883238514419645
+    ],
+    "known_mean": 0.9993876814842224,
+    "unknown_mean": 0.9985003471374512
+  },
+  "visual_heads": [
+    {
+      "batch": 1429,
+      "region_count": 8574,
+      "true_present": 5623,
+      "predicted_present": 8538,
+      "presence_fp": 2922,
+      "presence_tn": 2951,
+      "text_positive": 1986,
+      "text_mask_conflicts": 434,
+      "occupancy_mae": 0.10502981071792507,
+      "extent_bg_sum": 6324601.0234375,
+      "bg_mass": 63173805.0,
+      "extent_fg_sum": 1994220.431640625,
+      "fg_mass": 8527699.0,
+      "extent_background_mean": 0.10011429616179522,
+      "extent_foreground_mean": 0.23385211317151613
+    },
+    {
+      "batch": 1429,
+      "region_count": 8574,
+      "true_present": 5595,
+      "predicted_present": 8509,
+      "presence_fp": 2924,
+      "presence_tn": 2979,
+      "text_positive": 1986,
+      "text_mask_conflicts": 453,
+      "occupancy_mae": 0.08710521777971436,
+      "extent_bg_sum": 1313460.345703125,
+      "bg_mass": 15793451.25,
+      "extent_fg_sum": 826447.767578125,
+      "fg_mass": 2131924.75,
+      "extent_background_mean": 0.08316487162380831,
+      "extent_foreground_mean": 0.3876533482610608
+    },
+    {
+      "batch": 1429,
+      "region_count": 8574,
+      "true_present": 5533,
+      "predicted_present": 8121,
+      "presence_fp": 2678,
+      "presence_tn": 3041,
+      "text_positive": 1986,
+      "text_mask_conflicts": 495,
+      "occupancy_mae": 0.06518690197346008,
+      "extent_bg_sum": 280026.4970703125,
+      "bg_mass": 3948362.8125,
+      "extent_fg_sum": 303457.8555908203,
+      "fg_mass": 532981.1875,
+      "extent_background_mean": 0.0709221797408752,
+      "extent_foreground_mean": 0.5693594121290075
+    },
+    {
+      "batch": 1429,
+      "region_count": 8574,
+      "true_present": 5590,
+      "predicted_present": 7786,
+      "presence_fp": 2316,
+      "presence_tn": 2984,
+      "text_positive": 1986,
+      "text_mask_conflicts": 493,
+      "occupancy_mae": 0.05552638861747619,
+      "extent_bg_sum": 67396.74340820312,
+      "bg_mass": 987090.703125,
+      "extent_fg_sum": 92919.63650512695,
+      "fg_mass": 133245.296875,
+      "extent_background_mean": 0.06827816653001983,
+      "extent_foreground_mean": 0.6973577205677786
+    }
+  ],
+  "gradient_probe": [
+    {
+      "names": [
+        "covid_1002.png",
+        "covid_1008.png",
+        "covid_101.png",
+        "covid_1016.png"
+      ],
+      "cosine": -0.2600015103816986,
+      "auxiliary_to_main_norm": 0.17619946599006653
+    },
+    {
+      "names": [
+        "covid_1133.png",
+        "covid_1143.png",
+        "covid_1145.png",
+        "covid_1154.png"
+      ],
+      "cosine": 0.14913198351860046,
+      "auxiliary_to_main_norm": 0.06325425207614899
+    },
+    {
+      "names": [
+        "covid_1217.png",
+        "covid_1238.png",
+        "covid_1239.png",
+        "covid_1255.png"
+      ],
+      "cosine": 0.5405625104904175,
+      "auxiliary_to_main_norm": 0.06945758312940598
+    },
+    {
+      "names": [
+        "covid_1388.png",
+        "covid_1399.png",
+        "covid_1401.png",
+        "covid_1408.png"
+      ],
+      "cosine": -0.13920828700065613,
+      "auxiliary_to_main_norm": 0.06951194256544113
+    }
+  ],
+  "permutation": "cyclic roll within validation batch; only RACE slot head output modified"
+}

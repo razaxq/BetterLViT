@@ -1,0 +1,12 @@
+{
+  "user_request": "use Test set to inspect results",
+  "date": "2026-09-07",
+  "arms": [
+    "c4",
+    "p9"
+  ],
+  "threshold": 0.5,
+  "checkpoint_selection": "prior validation best IoU",
+  "purpose": "requested Test inspection after failed validation gate",
+  "no_retraining": true
+}

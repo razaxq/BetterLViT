@@ -1,0 +1,38 @@
+{
+  "status": "running",
+  "observed_arm": "c8",
+  "observed_epoch": 1,
+  "observed_batch": 60,
+  "batches_per_epoch": 357,
+  "launch_time_sydney": "2026-09-07T04:20:47+10:00",
+  "chain_pid": 29701,
+  "training_pid": 29710,
+  "epochs_per_arm": 80,
+  "seed": 1219,
+  "batch_size": 16,
+  "test_split_accessed": false,
+  "prior_c4_p9_test_accessed": true,
+  "diagnostic_head_loaded": false,
+  "remote_output": "/root/race_pe_v2_runs/c8_p10_20260907",
+  "source_git_commits": {
+    "c8": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "p10": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+    "reused_c4": "add4908a0d6f702b0a10c4581725b535543829b8"
+  },
+  "preflight": {
+    "c8": "passed",
+    "p10": "passed",
+    "loss": 0.5188546180725098,
+    "output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7"
+  },
+  "completion_requires": [
+    "chain.status complete",
+    "c8_validation.json",
+    "p10_validation.json",
+    "c4_vs_c8.json",
+    "c4_vs_p10.json",
+    "c8_vs_p10.json",
+    "matching source provenance"
+  ],
+  "note": "Launch snapshot only; not a completed experiment."
+}

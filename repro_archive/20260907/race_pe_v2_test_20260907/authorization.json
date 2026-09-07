@@ -1,0 +1,13 @@
+{
+  "user_instruction": "结果以测试集为准",
+  "authorized_arms": [
+    "c8",
+    "p10"
+  ],
+  "reused_test_control": "c4",
+  "checkpoint_selection": "previous validation best IoU, epoch80 for both",
+  "threshold": 0.5,
+  "threshold_selected_on_test": false,
+  "test_split_accessed": true,
+  "training_performed": false
+}

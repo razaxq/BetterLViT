@@ -1,0 +1,58 @@
+{
+  "split": "test",
+  "test_split_accessed": true,
+  "user_authorized_test": true,
+  "samples": 2113,
+  "threshold": 0.5,
+  "threshold_selected_on_test": false,
+  "checkpoint_selection": "previous validation best IoU",
+  "control_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+  "candidate_git_commit": "8129c1f039ed77f78e70305aca0bb9708b3b56b1",
+  "overall": {
+    "dice": {
+      "control_mean": 0.8429885535534682,
+      "candidate_mean": 0.8417767430147088,
+      "mean_delta": -0.0012118105387595376,
+      "paired_image_bootstrap_95_ci": [
+        -0.003527290902210196,
+        0.0010898830629796684
+      ]
+    },
+    "iou": {
+      "control_mean": 0.7563962019429644,
+      "candidate_mean": 0.7553509598967646,
+      "mean_delta": -0.0010452420461997372,
+      "paired_image_bootstrap_95_ci": [
+        -0.0037059934126199403,
+        0.001704952311726654
+      ]
+    },
+    "precision": {
+      "control_mean": 0.8393630546179613,
+      "candidate_mean": 0.8201422464742502,
+      "mean_delta": -0.019220808143711073,
+      "paired_image_bootstrap_95_ci": [
+        -0.021927560754838045,
+        -0.016599519149324424
+      ]
+    },
+    "recall": {
+      "control_mean": 0.8743782985894707,
+      "candidate_mean": 0.895347827970385,
+      "mean_delta": 0.02096952938091432,
+      "paired_image_bootstrap_95_ci": [
+        0.01775110052117316,
+        0.02422963015738969
+      ]
+    },
+    "brier": {
+      "control_mean": 0.016937876562319997,
+      "candidate_mean": 0.01754597061991616,
+      "mean_delta": 0.0006080940575961642,
+      "paired_image_bootstrap_95_ci": [
+        0.00041757772480316153,
+        0.0008011232709621167
+      ]
+    }
+  }
+}

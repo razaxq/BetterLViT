@@ -1,0 +1,161 @@
+{
+  "status": "complete",
+  "segmentation_training_performed": false,
+  "text_head_training_performed": true,
+  "test_split_accessed": false,
+  "seed": 1219,
+  "epochs": 40,
+  "lr": 0.001,
+  "unique_raw_reports": 301,
+  "train_visible_groups": 240,
+  "heldout_visible_groups": 48,
+  "fit_images": 5200,
+  "validation_images": 1429,
+  "head_source": "random initialization, frozen CXR-BERT masked mean",
+  "target": "explicit positive region mention in encoder-visible text, not lesion presence",
+  "checkpoint_selection": "fixed epoch40; no validation selection",
+  "validation": {
+    "macro_f1": 0.9991804957389832,
+    "macro_specificity": 0.9963690042495728,
+    "masked_bce": 0.005928467493504286,
+    "mean_probability": 0.5766770839691162,
+    "fraction_above_099": 0.553767204284668,
+    "negative_labels": 3630,
+    "positive_labels": 4944
+  },
+  "heldout_templates": {
+    "macro_f1": 0.9842631816864014,
+    "macro_specificity": 0.9629654288291931,
+    "masked_bce": 0.10150258988142014,
+    "mean_probability": 0.5898001194000244,
+    "fraction_above_099": 0.4523809552192688,
+    "negative_labels": 142,
+    "positive_labels": 194
+  },
+  "shuffled_validation": {
+    "macro_f1": 0.6154889464378357,
+    "macro_specificity": 0.4703610837459564,
+    "masked_bce": 3.3223769664764404,
+    "mean_probability": 0.576677143573761,
+    "fraction_above_099": 0.553767204284668,
+    "negative_labels": 3630,
+    "positive_labels": 4944
+  },
+  "all_positive_validation": {
+    "macro_f1": 0.7163333892822266,
+    "macro_specificity": 0.0,
+    "masked_bce": 4.233775615692139,
+    "mean_probability": 0.9999547004699707,
+    "fraction_above_099": 1.0,
+    "negative_labels": 3630,
+    "positive_labels": 4944
+  },
+  "passes_learnability_gate": true,
+  "history": [
+    {
+      "epoch": 1,
+      "heldout": {
+        "macro_f1": 0.8210523128509521,
+        "macro_specificity": 0.6611921191215515,
+        "masked_bce": 0.45138269662857056,
+        "mean_probability": 0.5734323263168335,
+        "fraction_above_099": 0.0,
+        "negative_labels": 142,
+        "positive_labels": 194
+      },
+      "validation": {
+        "macro_f1": 0.9227453470230103,
+        "macro_specificity": 0.8543701171875,
+        "masked_bce": 0.2695273756980896,
+        "mean_probability": 0.5558915734291077,
+        "fraction_above_099": 0.0,
+        "negative_labels": 3630,
+        "positive_labels": 4944
+      }
+    },
+    {
+      "epoch": 5,
+      "heldout": {
+        "macro_f1": 0.9166671633720398,
+        "macro_specificity": 0.836050271987915,
+        "masked_bce": 0.2588328719139099,
+        "mean_probability": 0.6032494902610779,
+        "fraction_above_099": 0.0833333358168602,
+        "negative_labels": 142,
+        "positive_labels": 194
+      },
+      "validation": {
+        "macro_f1": 0.9867095351219177,
+        "macro_specificity": 0.9603695869445801,
+        "masked_bce": 0.06709997355937958,
+        "mean_probability": 0.5774132013320923,
+        "fraction_above_099": 0.2451597899198532,
+        "negative_labels": 3630,
+        "positive_labels": 4944
+      }
+    },
+    {
+      "epoch": 10,
+      "heldout": {
+        "macro_f1": 0.9567084312438965,
+        "macro_specificity": 0.919694185256958,
+        "masked_bce": 0.19015023112297058,
+        "mean_probability": 0.5953289270401001,
+        "fraction_above_099": 0.2678571343421936,
+        "negative_labels": 142,
+        "positive_labels": 194
+      },
+      "validation": {
+        "macro_f1": 0.9953469038009644,
+        "macro_specificity": 0.9915175437927246,
+        "masked_bce": 0.030773282051086426,
+        "mean_probability": 0.5783602595329285,
+        "fraction_above_099": 0.43142059445381165,
+        "negative_labels": 3630,
+        "positive_labels": 4944
+      }
+    },
+    {
+      "epoch": 20,
+      "heldout": {
+        "macro_f1": 0.9709190130233765,
+        "macro_specificity": 0.9484726786613464,
+        "masked_bce": 0.14038026332855225,
+        "mean_probability": 0.5843510627746582,
+        "fraction_above_099": 0.369047611951828,
+        "negative_labels": 142,
+        "positive_labels": 194
+      },
+      "validation": {
+        "macro_f1": 0.9985833168029785,
+        "macro_specificity": 0.996790885925293,
+        "masked_bce": 0.015377691946923733,
+        "mean_probability": 0.5763788223266602,
+        "fraction_above_099": 0.5054817199707031,
+        "negative_labels": 3630,
+        "positive_labels": 4944
+      }
+    },
+    {
+      "epoch": 40,
+      "heldout": {
+        "macro_f1": 0.9842631816864014,
+        "macro_specificity": 0.9629654288291931,
+        "masked_bce": 0.10150258988142014,
+        "mean_probability": 0.5898001194000244,
+        "fraction_above_099": 0.4523809552192688,
+        "negative_labels": 142,
+        "positive_labels": 194
+      },
+      "validation": {
+        "macro_f1": 0.9991804957389832,
+        "macro_specificity": 0.9963690042495728,
+        "masked_bce": 0.005928467493504286,
+        "mean_probability": 0.5766770839691162,
+        "fraction_above_099": 0.553767204284668,
+        "negative_labels": 3630,
+        "positive_labels": 4944
+      }
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "split": "train",
+  "augmentation": "none; pre-augmentation geometry",
+  "samples": 5716,
+  "positive_regions": 7894,
+  "text_positive_mask_empty": 1522,
+  "conflict_fraction": 0.19280466176843172,
+  "test_split_accessed": false,
+  "examples": [
+    {
+      "image": "covid_1020.png",
+      "report": "Bilateral pulmonary infection, two infected areas, lower left lung and middle lower right lung.",
+      "positive_slots": [
+        2,
+        4,
+        5
+      ],
+      "empty_positive_slots": [
+        2
+      ],
+      "occupancy": [
+        0.0,
+        0.07428571581840515,
+        0.0,
+        0.0,
+        0.24345238506793976,
+        0.06392857432365417
+      ]
+    },
+    {
+      "image": "covid_1049.png",
+      "report": "Bilateral pulmonary infection, two infected areas, lower left lung and lower right lung.",
+      "positive_slots": [
+        2,
+        5
+      ],
+      "empty_positive_slots": [
+        2,
+        5
+      ],
+      "occupancy": [
+        0.014840733259916306,
+        0.3095238208770752,
+        0.0,
+        0.002292471006512642,
+        0.20357142388820648,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1052.png",
+      "report": "Bilateral pulmonary infection, two infected areas, lower left lung and middle lower right lung.",
+      "positive_slots": [
+        2,
+        4,
+        5
+      ],
+      "empty_positive_slots": [
+        2,
+        5
+      ],
+      "occupancy": [
+        0.03704150393605232,
+        0.12392856925725937,
+        0.0,
+        0.12403474748134613,
+        0.07047618925571442,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1055.png",
+      "report": "Bilateral pulmonary infection, three infected areas, upper middle lower left lung and upper middle lower right lung.",
+      "positive_slots": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "empty_positive_slots": [
+        2,
+        5
+      ],
+      "occupancy": [
+        0.27630308270454407,
+        0.25261905789375305,
+        0.0,
+        0.1064189225435257,
+        0.1723809540271759,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1063.png",
+      "report": "Bilateral pulmonary infection, two infected areas, upper middle lower left lung and upper middle lower right lung.",
+      "positive_slots": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "empty_positive_slots": [
+        5
+      ],
+      "occupancy": [
+        0.011583011597394943,
+        0.3319047689437866,
+        0.11952380836009979,
+        0.06358590722084045,
+        0.2648809552192688,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1065.png",
+      "report": "Bilateral pulmonary infection, two infected areas, lower left lung and lower right lung.",
+      "positive_slots": [
+        2,
+        5
+      ],
+      "empty_positive_slots": [
+        5
+      ],
+      "occupancy": [
+        0.0,
+        0.10261904448270798,
+        0.004404761828482151,
+        0.0,
+        0.17964285612106323,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1066.png",
+      "report": "Bilateral pulmonary infection, two infected areas, upper middle lower left lung and middle lower right lung.",
+      "positive_slots": [
+        0,
+        1,
+        2,
+        4,
+        5
+      ],
+      "empty_positive_slots": [
+        2,
+        5
+      ],
+      "occupancy": [
+        0.19606660306453705,
+        0.28999999165534973,
+        0.0,
+        0.03378378227353096,
+        0.19571428000926971,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1081.png",
+      "report": "Bilateral pulmonary infection, two infected areas, middle lower left lung and all right lung.",
+      "positive_slots": [
+        1,
+        2
+      ],
+      "empty_positive_slots": [
+        2
+      ],
+      "occupancy": [
+        0.06732625514268875,
+        0.36940476298332214,
+        0.0,
+        0.21971525251865387,
+        0.2591666579246521,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1101.png",
+      "report": "Bilateral pulmonary infection, two infected areas, middle left lung and lower right lung.",
+      "positive_slots": [
+        1,
+        5
+      ],
+      "empty_positive_slots": [
+        5
+      ],
+      "occupancy": [
+        0.0,
+        0.2165476232767105,
+        0.0,
+        0.0,
+        0.1485714316368103,
+        0.0
+      ]
+    },
+    {
+      "image": "covid_1102.png",
+      "report": "Bilateral pulmonary infection, two infected areas, lower left lung and lower right lung.",
+      "positive_slots": [
+        2,
+        5
+      ],
+      "empty_positive_slots": [
+        2,
+        5
+      ],
+      "occupancy": [
+        0.0,
+        0.08535714447498322,
+        0.0,
+        0.0,
+        0.08142857253551483,
+        0.0
+      ]
+    }
+  ]
+}
