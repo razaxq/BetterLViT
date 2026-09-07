@@ -1,4 +1,4 @@
-"""Export per-image validation metrics without touching the Test split."""
+"""User-authorized fixed-threshold Test evaluation of validation-selected checkpoints."""
 
 import argparse
 import json
@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
@@ -140,13 +140,13 @@ def build_model():
     )
 
 
-def validation_loader(batch_size):
+def test_loader(batch_size):
     text = read_text(os.path.join(
-        config.task_dataset,
-        "Train_Val_text.xlsx",
+        config.test_dataset,
+        "Test_text.xlsx",
     ))
     dataset = ImageToImage2D(
-        config.val_dataset,
+        config.test_dataset,
         config.task_name,
         text,
         ValGenerator(output_size=[config.img_size, config.img_size]),
@@ -171,6 +171,8 @@ def git_commit():
 
 def main():
     args = parse_args()
+    if os.environ.get("TEST_SPLIT_ALLOWED") != "1" or args.threshold != 0.5:
+        raise RuntimeError("Explicit Test authorization and fixed threshold 0.5 required")
     if args.batch_size <= 0 or not 0.0 <= args.threshold <= 1.0:
         raise ValueError("Invalid batch size or threshold.")
     if not torch.cuda.is_available():
@@ -231,13 +233,13 @@ def main():
     model = build_model()
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
-    dataset, loader = validation_loader(args.batch_size)
+    dataset, loader = test_loader(args.batch_size)
 
     records = []
     with torch.inference_mode():
         for batch, names in tqdm(
             loader,
-            desc="Validation-only",
+            desc="User-authorized Test",
             unit="batch",
             ncols=80,
         ):
@@ -320,9 +322,11 @@ def main():
                     ),
                 })
 
+    if len(records) != 2113:
+        raise RuntimeError("Expected exactly 2113 Test images")
     if len(records) != len(dataset):
         raise RuntimeError(
-            "Validation sample mismatch: {} != {}.".format(
+            "Test sample mismatch: {} != {}.".format(
                 len(records),
                 len(dataset),
             )
@@ -345,14 +349,17 @@ def main():
         or not np.isfinite(brier_values).all()
         or not np.isfinite(boundary_values).all()
     ):
-        raise RuntimeError("Validation metrics contain non-finite values.")
+        raise RuntimeError("Test metrics contain non-finite values.")
 
     bcdh = getattr(model, "bcdh", None)
     cdrr = getattr(model, "cdrr", None)
     race = getattr(model, "race", None)
     result = {
-        "split": "validation",
-        "test_split_accessed": False,
+        "split": "test",
+        "test_split_accessed": True,
+        "user_authorized_test": True,
+        "threshold_selected_on_test": False,
+        "evaluation_script_sha256": __import__("hashlib").sha256(Path(__file__).read_bytes()).hexdigest(),
         "experiment": config.experiment_name,
         "paper_id": config.experiment_paper_id,
         "architecture_version": config.experiment_architecture_version,
@@ -361,6 +368,7 @@ def main():
         "analysis_git_commit": analysis_commit,
         "checkpoint_best_epoch": int(checkpoint.get("best_epoch", -1)),
         "selection_metric": config.selection_metric,
+        "dual_grain_enabled": config.dual_grain_enabled,
         "seed": int(checkpoint.get("seed", -1)),
         "epochs": int(checkpoint.get("epochs", -1)),
         "race_pe_enabled": config.race_pe_enabled,

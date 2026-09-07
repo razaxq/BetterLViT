@@ -441,6 +441,18 @@ class LViT(nn.Module):
         else:
             self.race = None
 
+        self.dual_grain_enabled = bool(getattr(config, 'dual_grain_enabled', False))
+        if self.dual_grain_enabled:
+            from .dual_grain import DualGrainGuide
+            # Preserve the baseline RNG stream, including subsequent BERT setup.
+            with torch.random.fork_rng(devices=[]):
+                self.dual_grain = nn.ModuleList([
+                    DualGrainGuide(64, pool_stride=8),
+                    DualGrainGuide(128, pool_stride=4),
+                ])
+        else:
+            self.dual_grain = None
+
     def forward(
         self,
         x,
@@ -472,6 +484,9 @@ class LViT(nn.Module):
         plam2 = self.reconstruct2(y2)
         plam3 = self.reconstruct3(y3)
         plam4 = self.reconstruct4(y4)
+        if self.dual_grain_enabled:
+            plam1 = self.dual_grain[0](x1, y1, plam1)
+            plam2 = self.dual_grain[1](x2, y2, plam2)
         race_aux = None
         if self.race_enabled:
             (x1, x2, x3, x4), race_aux = self.race(

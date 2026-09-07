@@ -182,6 +182,15 @@ for _name, _id, _mode in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+PAPER_EXPERIMENTS['p11_dual_grain'] = dict(
+    PAPER_EXPERIMENTS['c4_race_pe_control'],
+    paper_id='P11',
+    description='EPPA plus dual-grain shallow visual guides; unchanged Dice/Focal',
+    dual_grain_enabled=True,
+    architecture_version='p11_dual_grain_visual_28_v1',
+)
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()
