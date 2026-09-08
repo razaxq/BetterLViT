@@ -1,0 +1,222 @@
+{
+  "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "split": "validation",
+  "test_split_accessed": false,
+  "status": "complete_gate_failed",
+  "epochs": 80,
+  "best_epoch": 70,
+  "training_ended_sydney": "2026-09-08T19:22:16.746827+10:00",
+  "validation_ended_sydney": "2026-09-08T19:24:05.877541+10:00",
+  "final_inspected_sydney": "2026-09-08T19:33:52.654506+10:00",
+  "seconds_after_training": 695.9076788425446,
+  "inspections_completed": 2,
+  "completion_prediction_error_seconds": 81.9641945362091,
+  "control_metrics": {
+    "macro_iou": 0.7227963241858801,
+    "macro_dice": 0.8212136349344947,
+    "macro_precision": 0.8147013661494736,
+    "macro_recall": 0.8646610103975065
+  },
+  "candidate_metrics": {
+    "macro_iou": 0.7168195427505505,
+    "macro_dice": 0.8162820068795906,
+    "macro_precision": 0.8013138427361968,
+    "macro_recall": 0.8686030690160336
+  },
+  "gate_passed": false,
+  "size_quartile_cutoffs": [
+    2075.0,
+    4989.0,
+    8775.0
+  ],
+  "size_quartiles": [
+    {
+      "gt_area_quartile": 1,
+      "samples": 358,
+      "metrics": {
+        "iou": {
+          "control": 0.5304012647647384,
+          "candidate": 0.5214629280860621,
+          "delta": -0.008938336678676238
+        },
+        "dice": {
+          "control": 0.670025991539879,
+          "candidate": 0.6608977362245667,
+          "delta": -0.009128255315312247
+        },
+        "precision": {
+          "control": 0.6406986781482479,
+          "candidate": 0.6200913355801619,
+          "delta": -0.02060734256808591
+        },
+        "recall": {
+          "control": 0.786886021525753,
+          "candidate": 0.7903370919836089,
+          "delta": 0.003451070457855964
+        }
+      }
+    },
+    {
+      "gt_area_quartile": 2,
+      "samples": 357,
+      "metrics": {
+        "iou": {
+          "control": 0.6912422669092444,
+          "candidate": 0.6763056676786895,
+          "delta": -0.014936599230554777
+        },
+        "dice": {
+          "control": 0.8059013202066669,
+          "candidate": 0.7947612140757814,
+          "delta": -0.011140106130885676
+        },
+        "precision": {
+          "control": 0.82094353356649,
+          "candidate": 0.8000921181403364,
+          "delta": -0.020851415426153687
+        },
+        "recall": {
+          "control": 0.8278113680783126,
+          "candidate": 0.8298433546675359,
+          "delta": 0.002031986589223291
+        }
+      }
+    },
+    {
+      "gt_area_quartile": 3,
+      "samples": 357,
+      "metrics": {
+        "iou": {
+          "control": 0.7947516473862545,
+          "candidate": 0.7947331543563692,
+          "delta": -1.849302988524794e-05
+        },
+        "dice": {
+          "control": 0.878678748337213,
+          "candidate": 0.8788163182916531,
+          "delta": 0.00013756995443995674
+        },
+        "precision": {
+          "control": 0.8792162878941873,
+          "candidate": 0.8692198244201412,
+          "delta": -0.009996463474046133
+        },
+        "recall": {
+          "control": 0.8942281659483442,
+          "candidate": 0.9021982994242659,
+          "delta": 0.007970133475921607
+        }
+      }
+    },
+    {
+      "gt_area_quartile": 4,
+      "samples": 357,
+      "metrics": {
+        "iou": {
+          "control": 0.8753290394183569,
+          "candidate": 0.875323638289105,
+          "delta": -5.40112925194462e-06
+        },
+        "dice": {
+          "control": 0.9306719744536447,
+          "candidate": 0.9310880089842183,
+          "delta": 0.00041603453057353245
+        },
+        "precision": {
+          "control": 0.9184343674763674,
+          "candidate": 0.9163597188746123,
+          "delta": -0.0020746486017549606
+        },
+        "recall": {
+          "control": 0.9499363431493015,
+          "candidate": 0.9522527624173863,
+          "delta": 0.0023164192680849324
+        }
+      }
+    }
+  ],
+  "iou_win_tie_loss": {
+    "wins": 640,
+    "ties": 1,
+    "losses": 788
+  },
+  "pooled_pixel_counts_diagnostic_only": {
+    "control": {
+      "tp": 7764690,
+      "fp": 1270005,
+      "fn": 763009,
+      "predicted_pixels": 9034695,
+      "label_pixels": 8527699
+    },
+    "candidate": {
+      "tp": 7798651,
+      "fp": 1328445,
+      "fn": 729048,
+      "predicted_pixels": 9127096,
+      "label_pixels": 8527699
+    },
+    "deltas": {
+      "tp": 33961,
+      "fp": 58440,
+      "fn": -33961,
+      "predicted_pixels": 92401,
+      "label_pixels": 0
+    }
+  },
+  "rounded_history_selected_epochs": [
+    {
+      "epoch": 20,
+      "train_loss": 0.1031,
+      "train_dice": 0.8115,
+      "train_iou": 0.7083,
+      "val_loss": 0.1042,
+      "val_dice": 0.8135,
+      "val_iou": 0.7114,
+      "lr": 0.000105
+    },
+    {
+      "epoch": 40,
+      "train_loss": 0.0949,
+      "train_dice": 0.8249,
+      "train_iou": 0.7249,
+      "val_loss": 0.1039,
+      "val_dice": 0.8153,
+      "val_iou": 0.7145,
+      "lr": 0.000105
+    },
+    {
+      "epoch": 60,
+      "train_loss": 0.0892,
+      "train_dice": 0.8349,
+      "train_iou": 0.7368,
+      "val_loss": 0.1019,
+      "val_dice": 0.8161,
+      "val_iou": 0.7152,
+      "lr": 0.000105
+    },
+    {
+      "epoch": 70,
+      "train_loss": 0.0864,
+      "train_dice": 0.8402,
+      "train_iou": 0.7436,
+      "val_loss": 0.1063,
+      "val_dice": 0.8163,
+      "val_iou": 0.7168,
+      "lr": 0.000105
+    },
+    {
+      "epoch": 80,
+      "train_loss": 0.0849,
+      "train_dice": 0.8426,
+      "train_iou": 0.7466,
+      "val_loss": 0.1109,
+      "val_dice": 0.8139,
+      "val_iou": 0.7147,
+      "lr": 0.000105
+    }
+  ],
+  "interpretation": "Lower precision and higher false-positive pixel count with only a small recall change are consistent with overprediction; this is not proof of the architectural cause.",
+  "decision": "Stop this P12 configuration; do not launch C9, extend to 150, or evaluate Test.",
+  "automation_deleted": true,
+  "collector_console_issue": "SSH capture and UTF-8 file/state saves succeeded. Only final console print failed on cp1252 progress-bar glyphs; no SSH retry occurred. Console output is now ASCII escaped."
+}

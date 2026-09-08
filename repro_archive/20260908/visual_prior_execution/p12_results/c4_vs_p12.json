@@ -1,0 +1,57 @@
+{
+  "split": "validation",
+  "test_split_accessed": false,
+  "role": "c4",
+  "control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+  "candidate_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "seed": 1219,
+  "samples": 1429,
+  "small_group_count": 358,
+  "small_group_area_cutoff": 2075.0,
+  "deltas": {
+    "iou": {
+      "mean": -0.00597678143532969,
+      "small_group_mean": -0.008938336678676238,
+      "paired_image_bootstrap_95ci": [
+        -0.01032521253619132,
+        -0.0017096661083928885
+      ]
+    },
+    "dice": {
+      "mean": -0.004931628054904236,
+      "small_group_mean": -0.009128255315312247,
+      "paired_image_bootstrap_95ci": [
+        -0.008728833029443179,
+        -0.0011711373229946454
+      ]
+    },
+    "precision": {
+      "mean": -0.013387523413276845,
+      "small_group_mean": -0.02060734256808591,
+      "paired_image_bootstrap_95ci": [
+        -0.017663399158843268,
+        -0.009255251258338763
+      ]
+    },
+    "recall": {
+      "mean": 0.0039420586185272815,
+      "small_group_mean": 0.003451070457855964,
+      "paired_image_bootstrap_95ci": [
+        -0.0015090947180619878,
+        0.009492050806924297
+      ]
+    }
+  },
+  "checks": {
+    "iou_at_least_0.003": false,
+    "iou_ci_positive": false,
+    "dice_point_not_lower": false,
+    "small_iou_point_not_lower": false
+  },
+  "passed": false,
+  "interpretation": "Single training seed; image bootstrap is not evidence of cross-seed stability",
+  "source_json_sha256": {
+    "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\visual_prior_execution\\c4_validation.json": "879faa182be9dde5e2a663051846ad1def8124324550e63dc87c02559101f01e",
+    "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\visual_prior_execution\\p12_results\\validation.json": "b5f9c0d81a63c40dd5acf142300b419c6ad9c509b9893cf76099f275e5e45806"
+  }
+}

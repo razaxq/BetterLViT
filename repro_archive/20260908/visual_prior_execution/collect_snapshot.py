@@ -73,7 +73,9 @@ print(json.dumps(result))
     state['last_snapshot'] = str(args.output.resolve())
     state['last_inspected_unix'] = result['inspected_unix']
     args.state.write_text(json.dumps(state,indent=2)+'\n',encoding='utf-8')
-    print(json.dumps({k:v for k,v in result.items() if k!='files'},ensure_ascii=False))
+    # Console code pages can reject progress-bar glyphs after a successful save.
+    # Escape console text; the complete on-disk UTF-8 snapshot remains unchanged.
+    print(json.dumps({k:v for k,v in result.items() if k!='files'},ensure_ascii=True))
 
 
 if __name__=='__main__':

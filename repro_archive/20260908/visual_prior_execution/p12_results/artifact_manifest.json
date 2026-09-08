@@ -1,0 +1,38 @@
+{
+  "analysis.json": {
+    "bytes": 6281,
+    "sha256": "d796e74d1bee26f35ac29989bc5449524f20d4b4c74f94991cf4ca6d65b6e093"
+  },
+  "c4_vs_p12.json": {
+    "bytes": 1923,
+    "sha256": "540ef124cd8b2762d18ca2983eb5a3248757c33a8cb6f3cdded511578c54a7d2"
+  },
+  "epoch_history_rounded.json": {
+    "bytes": 16163,
+    "sha256": "9798ba4c82f5f6f79b0f64907c8b36d159ee2357dc6afcb9bae6cabd01b27828"
+  },
+  "epoch_timing.json": {
+    "bytes": 21123,
+    "sha256": "180794f0de232e27bc9f20e332fd2fbc807da4726fbab6615746e81e7aba8827"
+  },
+  "final_snapshot.json": {
+    "bytes": 796441,
+    "sha256": "15b7b633c2aed6dd8eb6ba65644f24fa3cf62eb8757048e33c956bac43d37e78"
+  },
+  "runtime.json": {
+    "bytes": 2142,
+    "sha256": "d63cfc5c128c8c956ecac25d8f29e894ad34bdd9e6b3cf78a344e746563e5b06"
+  },
+  "training.log": {
+    "bytes": 858803,
+    "sha256": "6a7351477d45f49851cdef54609b86644affff754a873006fdd634c8bee6cf92"
+  },
+  "validation.json": {
+    "bytes": 684706,
+    "sha256": "b5f9c0d81a63c40dd5acf142300b419c6ad9c509b9893cf76099f275e5e45806"
+  },
+  "validation.log": {
+    "bytes": 11817,
+    "sha256": "edc276aa85464df7f2a7f6dc4a819ea53a862342adc4eef3043825052c3fba41"
+  }
+}

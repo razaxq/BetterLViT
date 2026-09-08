@@ -1,0 +1,51 @@
+{
+  "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "repository": "/root/BetterLViT-visual-p12",
+  "run": "/root/visual_prior_runs/p12_80_20260908",
+  "manifest": {
+    "profile": "p12_visual_prior",
+    "epochs": 80,
+    "seed": 1219,
+    "batch_size": 16,
+    "selection_metric": "iou",
+    "threshold": 0.5,
+    "test_split_allowed": false,
+    "auto_test_evaluate": false,
+    "lora": false,
+    "boundary_loss": 0.0,
+    "initialization": "segmentation_from_scratch_frozen_external_weights",
+    "control_source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "purpose": "validation_only_frozen_visual_prior_screen",
+    "encoder_kind": "cxformer",
+    "adapter_trainable_parameters": 41280
+  },
+  "external_weights": {
+    "cxformer": {
+      "model_id": "m42-health/CXformer-small",
+      "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+      "files": {
+        "config.json": "6d274d5cf48f2de69681bb97a91c3f9008a898c96f11bb84dd5e51a686476279",
+        "preprocessor_config.json": "424ff1c1af0a5a54efebd6b7707986f3b30d0e8343ee9454f3e2523aee6cec78",
+        "model.safetensors": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2"
+      }
+    },
+    "dinov2": {
+      "model_id": "facebook/dinov2-with-registers-small",
+      "revision": "0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+      "files": {
+        "config.json": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "preprocessor_config.json": "14e780d86fa1861f8751f868d7f45425b5feb55c38ca26f152ca5097ab30f828",
+        "model.safetensors": "78e7f952c5af83cf6da38f08ff52b062bbe00c1adf39c4c7e0361969f27abae7"
+      }
+    }
+  },
+  "started_unix": 1788841286.868331,
+  "phase": "complete",
+  "test_split_accessed": false,
+  "training_rc": 0,
+  "training_ended_unix": 1788859336.7468271,
+  "best_checkpoint": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/models/best_model-BetterLViT.pth.tar",
+  "validation_rc": 0,
+  "validation_ended_unix": 1788859445.8775413,
+  "completed_unix": 1788859445.8775473
+}

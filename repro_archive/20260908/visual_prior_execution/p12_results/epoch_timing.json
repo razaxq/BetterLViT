@@ -1,0 +1,722 @@
+[
+  {
+    "epoch": 1,
+    "epochs": 80,
+    "started_unix": 1788841305.587003,
+    "ended_unix": 1788841536.9317713,
+    "duration_seconds": 231.34476885106415,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 1
+  },
+  {
+    "epoch": 2,
+    "epochs": 80,
+    "started_unix": 1788841536.93213,
+    "ended_unix": 1788841760.9216878,
+    "duration_seconds": 223.98955790232867,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 1
+  },
+  {
+    "epoch": 3,
+    "epochs": 80,
+    "started_unix": 1788841760.922098,
+    "ended_unix": 1788841985.0910668,
+    "duration_seconds": 224.168969001621,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 1
+  },
+  {
+    "epoch": 4,
+    "epochs": 80,
+    "started_unix": 1788841985.0915806,
+    "ended_unix": 1788842209.7627845,
+    "duration_seconds": 224.6712039457634,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 1
+  },
+  {
+    "epoch": 5,
+    "epochs": 80,
+    "started_unix": 1788842209.7631912,
+    "ended_unix": 1788842435.2942073,
+    "duration_seconds": 225.53101610392332,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 1
+  },
+  {
+    "epoch": 6,
+    "epochs": 80,
+    "started_unix": 1788842435.294684,
+    "ended_unix": 1788842657.1488194,
+    "duration_seconds": 221.8541356548667,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 6
+  },
+  {
+    "epoch": 7,
+    "epochs": 80,
+    "started_unix": 1788842657.1492567,
+    "ended_unix": 1788842883.4688945,
+    "duration_seconds": 226.3196384375915,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 7
+  },
+  {
+    "epoch": 8,
+    "epochs": 80,
+    "started_unix": 1788842883.4693127,
+    "ended_unix": 1788843106.3963656,
+    "duration_seconds": 222.92705321032554,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 7
+  },
+  {
+    "epoch": 9,
+    "epochs": 80,
+    "started_unix": 1788843106.3968723,
+    "ended_unix": 1788843331.5551584,
+    "duration_seconds": 225.1582862995565,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 9
+  },
+  {
+    "epoch": 10,
+    "epochs": 80,
+    "started_unix": 1788843331.5556805,
+    "ended_unix": 1788843556.6546266,
+    "duration_seconds": 225.09894635528326,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 11,
+    "epochs": 80,
+    "started_unix": 1788843556.6550262,
+    "ended_unix": 1788843782.1655316,
+    "duration_seconds": 225.5105060003698,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 12,
+    "epochs": 80,
+    "started_unix": 1788843782.1660373,
+    "ended_unix": 1788844004.4830267,
+    "duration_seconds": 222.31698978040367,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 13,
+    "epochs": 80,
+    "started_unix": 1788844004.4835393,
+    "ended_unix": 1788844228.7646942,
+    "duration_seconds": 224.28115462418646,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 14,
+    "epochs": 80,
+    "started_unix": 1788844228.7651217,
+    "ended_unix": 1788844453.7292721,
+    "duration_seconds": 224.96415060106665,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 15,
+    "epochs": 80,
+    "started_unix": 1788844453.7295992,
+    "ended_unix": 1788844678.2008452,
+    "duration_seconds": 224.471246374771,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 16,
+    "epochs": 80,
+    "started_unix": 1788844678.2013004,
+    "ended_unix": 1788844903.0846815,
+    "duration_seconds": 224.8833812996745,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 10
+  },
+  {
+    "epoch": 17,
+    "epochs": 80,
+    "started_unix": 1788844903.084967,
+    "ended_unix": 1788845128.588459,
+    "duration_seconds": 225.50349241588265,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 17
+  },
+  {
+    "epoch": 18,
+    "epochs": 80,
+    "started_unix": 1788845128.589039,
+    "ended_unix": 1788845353.2674756,
+    "duration_seconds": 224.67843700386584,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 17
+  },
+  {
+    "epoch": 19,
+    "epochs": 80,
+    "started_unix": 1788845353.2679496,
+    "ended_unix": 1788845578.7014086,
+    "duration_seconds": 225.4334590099752,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 19
+  },
+  {
+    "epoch": 20,
+    "epochs": 80,
+    "started_unix": 1788845578.7018611,
+    "ended_unix": 1788845804.0036228,
+    "duration_seconds": 225.30176160670817,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 21,
+    "epochs": 80,
+    "started_unix": 1788845804.0041165,
+    "ended_unix": 1788846028.1152785,
+    "duration_seconds": 224.11116193793714,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 22,
+    "epochs": 80,
+    "started_unix": 1788846028.1156604,
+    "ended_unix": 1788846252.2148511,
+    "duration_seconds": 224.09919091220945,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 23,
+    "epochs": 80,
+    "started_unix": 1788846252.2152941,
+    "ended_unix": 1788846475.669556,
+    "duration_seconds": 223.454261736013,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 24,
+    "epochs": 80,
+    "started_unix": 1788846475.6699953,
+    "ended_unix": 1788846700.4119308,
+    "duration_seconds": 224.74193614535034,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 25,
+    "epochs": 80,
+    "started_unix": 1788846700.4123595,
+    "ended_unix": 1788846927.9517744,
+    "duration_seconds": 227.53941587451845,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 26,
+    "epochs": 80,
+    "started_unix": 1788846927.952424,
+    "ended_unix": 1788847157.031085,
+    "duration_seconds": 229.07866146042943,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 27,
+    "epochs": 80,
+    "started_unix": 1788847157.0316658,
+    "ended_unix": 1788847386.449852,
+    "duration_seconds": 229.4181861691177,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 28,
+    "epochs": 80,
+    "started_unix": 1788847386.4504526,
+    "ended_unix": 1788847616.0821972,
+    "duration_seconds": 229.63174518756568,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 29,
+    "epochs": 80,
+    "started_unix": 1788847616.0826986,
+    "ended_unix": 1788847845.1913633,
+    "duration_seconds": 229.10866543557495,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 30,
+    "epochs": 80,
+    "started_unix": 1788847845.191948,
+    "ended_unix": 1788848075.249804,
+    "duration_seconds": 230.0578561881557,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 31,
+    "epochs": 80,
+    "started_unix": 1788848075.2503982,
+    "ended_unix": 1788848304.4029083,
+    "duration_seconds": 229.15251088235527,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 32,
+    "epochs": 80,
+    "started_unix": 1788848304.4033506,
+    "ended_unix": 1788848533.6859188,
+    "duration_seconds": 229.28256844449788,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 33,
+    "epochs": 80,
+    "started_unix": 1788848533.6863878,
+    "ended_unix": 1788848760.9926603,
+    "duration_seconds": 227.30627283267677,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 34,
+    "epochs": 80,
+    "started_unix": 1788848760.9932034,
+    "ended_unix": 1788848984.5489185,
+    "duration_seconds": 223.55571540817618,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 35,
+    "epochs": 80,
+    "started_unix": 1788848984.5493479,
+    "ended_unix": 1788849208.9217641,
+    "duration_seconds": 224.37241649627686,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 36,
+    "epochs": 80,
+    "started_unix": 1788849208.9223208,
+    "ended_unix": 1788849433.4244814,
+    "duration_seconds": 224.50216058641672,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 37,
+    "epochs": 80,
+    "started_unix": 1788849433.424913,
+    "ended_unix": 1788849657.6676686,
+    "duration_seconds": 224.24275565799326,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 38,
+    "epochs": 80,
+    "started_unix": 1788849657.6681142,
+    "ended_unix": 1788849880.4736614,
+    "duration_seconds": 222.80554737057537,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 39,
+    "epochs": 80,
+    "started_unix": 1788849880.474082,
+    "ended_unix": 1788850106.3944993,
+    "duration_seconds": 225.92041740752757,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 20
+  },
+  {
+    "epoch": 40,
+    "epochs": 80,
+    "started_unix": 1788850106.3950043,
+    "ended_unix": 1788850331.70532,
+    "duration_seconds": 225.3103156015277,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 41,
+    "epochs": 80,
+    "started_unix": 1788850331.7057517,
+    "ended_unix": 1788850556.6912613,
+    "duration_seconds": 224.98551002983004,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 42,
+    "epochs": 80,
+    "started_unix": 1788850556.6917639,
+    "ended_unix": 1788850781.6946886,
+    "duration_seconds": 225.00292479619384,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 43,
+    "epochs": 80,
+    "started_unix": 1788850781.6952043,
+    "ended_unix": 1788851006.371488,
+    "duration_seconds": 224.67628379631788,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 44,
+    "epochs": 80,
+    "started_unix": 1788851006.3719347,
+    "ended_unix": 1788851229.1041076,
+    "duration_seconds": 222.73217278998345,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 45,
+    "epochs": 80,
+    "started_unix": 1788851229.1045487,
+    "ended_unix": 1788851454.223629,
+    "duration_seconds": 225.11908064875752,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 46,
+    "epochs": 80,
+    "started_unix": 1788851454.2240372,
+    "ended_unix": 1788851678.6866667,
+    "duration_seconds": 224.46262982673943,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 47,
+    "epochs": 80,
+    "started_unix": 1788851678.687106,
+    "ended_unix": 1788851901.9338639,
+    "duration_seconds": 223.24675831664354,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 48,
+    "epochs": 80,
+    "started_unix": 1788851901.934303,
+    "ended_unix": 1788852126.1355798,
+    "duration_seconds": 224.20127718802541,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 49,
+    "epochs": 80,
+    "started_unix": 1788852126.1360788,
+    "ended_unix": 1788852349.731146,
+    "duration_seconds": 223.59506770968437,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 50,
+    "epochs": 80,
+    "started_unix": 1788852349.7316182,
+    "ended_unix": 1788852573.4079509,
+    "duration_seconds": 223.6763330772519,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 51,
+    "epochs": 80,
+    "started_unix": 1788852573.4084678,
+    "ended_unix": 1788852797.0658052,
+    "duration_seconds": 223.65733771771193,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 52,
+    "epochs": 80,
+    "started_unix": 1788852797.0662303,
+    "ended_unix": 1788853017.718905,
+    "duration_seconds": 220.6526750382036,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 53,
+    "epochs": 80,
+    "started_unix": 1788853017.719143,
+    "ended_unix": 1788853243.5458713,
+    "duration_seconds": 225.8267288999632,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 54,
+    "epochs": 80,
+    "started_unix": 1788853243.5464292,
+    "ended_unix": 1788853467.7198915,
+    "duration_seconds": 224.17346251290292,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 55,
+    "epochs": 80,
+    "started_unix": 1788853467.7203877,
+    "ended_unix": 1788853687.3780136,
+    "duration_seconds": 219.65762620139867,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 56,
+    "epochs": 80,
+    "started_unix": 1788853687.3784359,
+    "ended_unix": 1788853911.4089742,
+    "duration_seconds": 224.03053857013583,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 57,
+    "epochs": 80,
+    "started_unix": 1788853911.4094331,
+    "ended_unix": 1788854135.540921,
+    "duration_seconds": 224.13148832507432,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 58,
+    "epochs": 80,
+    "started_unix": 1788854135.5414302,
+    "ended_unix": 1788854361.8414547,
+    "duration_seconds": 226.30002461746335,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 59,
+    "epochs": 80,
+    "started_unix": 1788854361.8419857,
+    "ended_unix": 1788854586.5660772,
+    "duration_seconds": 224.72409195825458,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 40
+  },
+  {
+    "epoch": 60,
+    "epochs": 80,
+    "started_unix": 1788854586.5665972,
+    "ended_unix": 1788854808.3504298,
+    "duration_seconds": 221.78383265808225,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 60
+  },
+  {
+    "epoch": 61,
+    "epochs": 80,
+    "started_unix": 1788854808.351053,
+    "ended_unix": 1788855032.7163458,
+    "duration_seconds": 224.365292834118,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 60
+  },
+  {
+    "epoch": 62,
+    "epochs": 80,
+    "started_unix": 1788855032.7167773,
+    "ended_unix": 1788855254.9128544,
+    "duration_seconds": 222.19607741758227,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 60
+  },
+  {
+    "epoch": 63,
+    "epochs": 80,
+    "started_unix": 1788855254.913342,
+    "ended_unix": 1788855480.7962387,
+    "duration_seconds": 225.88289674092084,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 60
+  },
+  {
+    "epoch": 64,
+    "epochs": 80,
+    "started_unix": 1788855480.7967806,
+    "ended_unix": 1788855705.3309612,
+    "duration_seconds": 224.53418086562306,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 60
+  },
+  {
+    "epoch": 65,
+    "epochs": 80,
+    "started_unix": 1788855705.3314078,
+    "ended_unix": 1788855929.2439182,
+    "duration_seconds": 223.91251107584685,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 65
+  },
+  {
+    "epoch": 66,
+    "epochs": 80,
+    "started_unix": 1788855929.244593,
+    "ended_unix": 1788856156.9401343,
+    "duration_seconds": 227.69554195553064,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 65
+  },
+  {
+    "epoch": 67,
+    "epochs": 80,
+    "started_unix": 1788856156.9405954,
+    "ended_unix": 1788856384.4392772,
+    "duration_seconds": 227.4986817818135,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 65
+  },
+  {
+    "epoch": 68,
+    "epochs": 80,
+    "started_unix": 1788856384.4397545,
+    "ended_unix": 1788856611.1927547,
+    "duration_seconds": 226.75300069432706,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 65
+  },
+  {
+    "epoch": 69,
+    "epochs": 80,
+    "started_unix": 1788856611.1933694,
+    "ended_unix": 1788856838.5794501,
+    "duration_seconds": 227.38608185760677,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 69
+  },
+  {
+    "epoch": 70,
+    "epochs": 80,
+    "started_unix": 1788856838.5799394,
+    "ended_unix": 1788857066.813125,
+    "duration_seconds": 228.2331859068945,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 71,
+    "epochs": 80,
+    "started_unix": 1788857066.8136125,
+    "ended_unix": 1788857291.0202315,
+    "duration_seconds": 224.20661932229996,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 72,
+    "epochs": 80,
+    "started_unix": 1788857291.02071,
+    "ended_unix": 1788857517.8629918,
+    "duration_seconds": 226.8422825112939,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 73,
+    "epochs": 80,
+    "started_unix": 1788857517.8634849,
+    "ended_unix": 1788857745.3503845,
+    "duration_seconds": 227.48689981736243,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 74,
+    "epochs": 80,
+    "started_unix": 1788857745.350855,
+    "ended_unix": 1788857972.0260873,
+    "duration_seconds": 226.6752325911075,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 75,
+    "epochs": 80,
+    "started_unix": 1788857972.0265758,
+    "ended_unix": 1788858199.8108873,
+    "duration_seconds": 227.78431229107082,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 76,
+    "epochs": 80,
+    "started_unix": 1788858199.811377,
+    "ended_unix": 1788858427.3303502,
+    "duration_seconds": 227.51897324901074,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 77,
+    "epochs": 80,
+    "started_unix": 1788858427.330886,
+    "ended_unix": 1788858653.9411764,
+    "duration_seconds": 226.6102909585461,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 78,
+    "epochs": 80,
+    "started_unix": 1788858653.9416752,
+    "ended_unix": 1788858880.1837919,
+    "duration_seconds": 226.2421170892194,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 79,
+    "epochs": 80,
+    "started_unix": 1788858880.184279,
+    "ended_unix": 1788859107.1278863,
+    "duration_seconds": 226.94360785838217,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  },
+  {
+    "epoch": 80,
+    "epochs": 80,
+    "started_unix": 1788859107.1283617,
+    "ended_unix": 1788859335.325044,
+    "duration_seconds": 228.19668249692768,
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_epoch": 70
+  }
+]
