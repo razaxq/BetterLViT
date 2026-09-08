@@ -1,0 +1,17 @@
+{
+  "automation_id": "betterlvit-r2",
+  "name": "BetterLViT R2 配对种子复验",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "status": "ACTIVE",
+  "current_label": "c4s2027",
+  "phase": "dispatch_only",
+  "inspections_completed": 0,
+  "max_inspections": 2,
+  "planned_first_check_sydney": "2026-09-09T07:54:00+10:00",
+  "timezone": "Australia/Sydney",
+  "initial_schedule_one_occurrence": true,
+  "continuation_rules": "automation_prompt.md",
+  "previous_screening_automation": "betterlvit-r1-r2",
+  "previous_screening_automation_deleted": true,
+  "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b"
+}
