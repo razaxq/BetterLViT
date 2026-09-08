@@ -12,7 +12,7 @@ import numpy as np
 import torch
 import Config as config
 import Load_Dataset as data
-from training_recipe import SingleCosineSchedule, planned_rates
+from training_recipe import SingleCosineSchedule, planned_rates, rates_equal
 from utils import CosineAnnealingWarmRestarts
 
 
@@ -96,6 +96,17 @@ class RecipeChecks(unittest.TestCase):
         schedule=CosineAnnealingWarmRestarts(opt,T_0=10,T_mult=1,eta_min=1e-4)
         for expected in planned_rates('warm_restarts'):
             self.assertAlmostEqual(opt.param_groups[0]['lr'],expected,places=15);schedule.step()
+
+    def test_manifest_rounding_does_not_allow_a_changed_schedule(self):
+        expected=planned_rates('single_cosine')
+        rounded=list(expected)
+        rounded[23]=np.nextafter(rounded[23],0.0)
+        self.assertTrue(rates_equal(rounded,expected))
+        rounded[23]+=1e-10
+        self.assertFalse(rates_equal(rounded,expected))
+        self.assertFalse(rates_equal(expected[:-1],expected))
+        rounded[23]=float('nan')
+        self.assertFalse(rates_equal(rounded,expected))
 
 
 if __name__=='__main__':
