@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 import os
 import random
+import time
 
 import numpy as np
 import requests
@@ -593,6 +595,8 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     # --------------------------------------------------------------------------
 
     for epoch in range(start_epoch, config.epochs):  # loop over the dataset multiple times
+        epoch_started_unix = time.time()
+        epoch_started_monotonic = time.monotonic()
         logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs))
         logger.info(config.session_name)
         # Capture LR used for this epoch (scheduler steps inside the val call, so
@@ -902,6 +906,20 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     ]],
                 )
             )
+
+        # Local epoch telemetry permits a single early completion forecast. It
+        # observes normal training boundaries without changing RNG or tensors.
+        timing_path = os.environ.get('BETTERLVIT_EPOCH_TIMING_PATH')
+        if timing_path:
+            timing = {
+                'epoch': epoch + 1, 'epochs': config.epochs,
+                'started_unix': epoch_started_unix, 'ended_unix': time.time(),
+                'duration_seconds': time.monotonic() - epoch_started_monotonic,
+                'source_git_commit': config.source_git_commit,
+                'best_epoch': best_epoch,
+            }
+            with open(timing_path, 'a', encoding='utf-8') as timing_file:
+                timing_file.write(json.dumps(timing) + '\n')
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')

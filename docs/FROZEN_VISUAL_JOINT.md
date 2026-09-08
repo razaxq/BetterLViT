@@ -66,3 +66,10 @@ hold SSH connections open or repeatedly poll. Once a run is complete, the same
 authorized task may analyze results and start the next passing stage, with a new
 prediction and its own two-inspection budget. An inaccurate prediction must be
 reported; it does not authorize an extra hidden inspection.
+
+The runner records precise local epoch durations (including validation and
+checkpoint writes) in epoch_timing.jsonl. Dispatch returns a PID without polling;
+schedule the first short inspection after several epochs, use the measured
+durations to forecast completion, and reserve inspection two for that forecast
+plus a stated buffer. This telemetry does not connect to the server or schedule
+checks itself and does not change optimization or randomness.
