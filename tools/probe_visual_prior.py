@@ -111,13 +111,13 @@ def evaluate(readout, loader, names):
     records = []
     with torch.no_grad():
         for feature, label, indices in loader:
-            pred = predict(readout, feature.cuda())[:, 0] >= .5
+            pred = predict(readout, feature.cuda())[:, 0] > .5
             target = label.cuda() > 0
             tp = (pred & target).sum((1, 2), dtype=torch.float64)
             pp = pred.sum((1, 2), dtype=torch.float64)
             gp = target.sum((1, 2), dtype=torch.float64)
-            iou = torch.where(pp + gp - tp > 0, tp / (pp + gp - tp).clamp_min(1), 1.)
-            dice = torch.where(pp + gp > 0, 2 * tp / (pp + gp).clamp_min(1), 1.)
+            iou = torch.where(pp + gp - tp > 0, tp / (pp + gp - tp).clamp_min(1), 0.)
+            dice = torch.where(pp + gp > 0, 2 * tp / (pp + gp).clamp_min(1), 0.)
             for j, index in enumerate(indices.tolist()):
                 records.append({'image': names[index].replace('mask_', ''), 'iou': iou[j].item(),
                     'dice': dice[j].item(), 'tp': tp[j].item(), 'predicted_area': pp[j].item(),
@@ -135,6 +135,7 @@ def run(args):
         'seed': args.seed, 'epochs': args.epochs, 'batch_size': args.batch_size,
         'torch': torch.__version__, 'transformers': __import__('transformers').__version__,
         'protocol': 'fixed224_noHE_FP32_eager_no_augmentation_macro_at_0.5',
+        'metric_contract': 'prediction>0.5; undefined/empty IoU and Dice=0, matching C4 export',
         'head': '384->64->1 GELU, native16 grid then nearest224',
         'optimizer': 'AdamW lr=0.0003 weight_decay=0.0001 constant; no scheduler', 'encoders': {}}
     write_json(args.output / 'status.json', metadata)

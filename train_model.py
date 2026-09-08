@@ -154,6 +154,9 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'race_stats': compute_race_stats(model),
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
+        'visual_prior': (
+            model.visual_prior.provenance if getattr(model, 'visual_prior', None) is not None else None
+        ),
         'batch_size': int(config.batch_size),
         'epochs': int(config.epochs),
         'train_drop_last': bool(config.train_drop_last),

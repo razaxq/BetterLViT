@@ -45,6 +45,7 @@ def parse_args():
             "a3_lora_fmiseg",
             "a4_lora_freq_focal",
             "a9_frozen_freq_focal",
+            "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
         ),
         help="Paper ablation profile used to construct the model.",
     )
@@ -351,6 +352,17 @@ def main():
     torch.use_deterministic_algorithms(config.deterministic_training)
 
     model = build_model()
+    if config.visual_prior_enabled:
+        import subprocess
+        if os.environ.get('TEST_SPLIT_ALLOWED') != '1':
+            raise RuntimeError('Visual-prior Test export requires explicit stage-gate release')
+        if checkpoint.get('visual_prior') != model.visual_prior.provenance:
+            raise RuntimeError('External visual provenance mismatch')
+        current_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+        if checkpoint.get('source_git_commit') != current_commit:
+            raise RuntimeError('Visual-prior Test source commit mismatch')
+        if checkpoint.get('selection_metric') != 'iou':
+            raise RuntimeError('Visual-prior Best must be selected by validation IoU')
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
 

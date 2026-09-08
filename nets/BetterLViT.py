@@ -59,6 +59,20 @@ class BetterLViT(LViT):
                 p.requires_grad = False
             self.text_encoder.eval()
 
+        self.visual_prior = None
+        if getattr(config, 'visual_prior_enabled', False):
+            if self.use_lora:
+                raise ValueError('Visual-prior experiment requires frozen CXR-BERT')
+            from .frozen_visual import FrozenVisualPrior
+            self.visual_prior = FrozenVisualPrior(
+                config.visual_model_root, kind=config.visual_encoder_kind,
+                random_init=config.visual_random_init)
+
+    def _inject_visual_prior(self, feature, image):
+        if self.visual_prior is None:
+            return feature
+        return self.visual_prior(feature, image)
+
     def train(self, mode=True):
         """Keep the frozen B0 text encoder deterministic during training."""
         super().train(mode)

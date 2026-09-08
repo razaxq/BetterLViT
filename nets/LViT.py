@@ -441,6 +441,9 @@ class LViT(nn.Module):
         else:
             self.race = None
 
+    def _inject_visual_prior(self, feature, image):
+        return feature
+
     def forward(
         self,
         x,
@@ -460,6 +463,7 @@ class LViT(nn.Module):
         x2 = self.down1(x1)
         y2 = self.downVit1(x2, y1, text2)
         x3 = self.down2(x2)
+        x3 = self._inject_visual_prior(x3, x)
         y3 = self.downVit2(x3, y2, text3)
         x4 = self.down3(x3)
         y4 = self.downVit3(x4, y3, text4)

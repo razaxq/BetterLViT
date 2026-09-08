@@ -182,6 +182,19 @@ for _name, _id, _mode in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+for _name, _id, _random, _kind in (
+    ('c9_visual_random', 'C9', True, 'cxformer'),
+    ('p12_visual_prior', 'P12', False, 'cxformer'),
+    ('p12_visual_natural', 'P12N', False, 'dinov2'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['c4_race_pe_control'])
+    _profile.update(paper_id=_id, visual_prior_enabled=True,
+        visual_random_init=_random, visual_encoder_kind=_kind,
+        description='C4 + frozen visual patch features with single middle additive projection',
+        architecture_version='visual_prior_v1_' + _name)
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

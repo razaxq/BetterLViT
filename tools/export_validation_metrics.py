@@ -40,6 +40,7 @@ ALLOWED_EXPERIMENTS = (
     "p8_race_fuse_v1",
     "c4_race_pe_control", "c5_race_v1_iou", "p9_race_pe",
     "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
+    "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
 )
 
 
@@ -226,6 +227,9 @@ def main():
     torch.use_deterministic_algorithms(config.deterministic_training)
 
     model = build_model()
+    expected_visual = model.visual_prior.provenance if model.visual_prior is not None else None
+    if checkpoint.get('visual_prior') != expected_visual:
+        raise RuntimeError('Checkpoint external visual provenance does not match evaluator')
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
     dataset, loader = validation_loader(args.batch_size)
