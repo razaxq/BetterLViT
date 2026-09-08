@@ -1,0 +1,74 @@
+{
+  "c4_vs_r1.json": {
+    "bytes": 4692,
+    "sha256": "3c23cf98ab4dd73e56dc77d3dded27ab4d81942ed5d1e4daa0dee6eeda31b1d5"
+  },
+  "epoch_history_rounded.json": {
+    "bytes": 16154,
+    "sha256": "e45c889a0e545c566af8b5c18d00d5a1218be66e5d7682f75fe51a059d733e75"
+  },
+  "epoch_timing.jsonl": {
+    "bytes": 17604,
+    "sha256": "ef7c380192b4a617c0eff7013397c8f9828a34972eceaf772452ff78eb7c90dd"
+  },
+  "error_analysis.json": {
+    "bytes": 4122,
+    "sha256": "d311b3f9727a55bf6c9c53bd381f202a4da8bd1720ae484b535a7e8282bf0c93"
+  },
+  "r1_final_snapshot.json": {
+    "bytes": 799970,
+    "sha256": "80e4b06c8794296f6de62210d80823ecebe4ede09cc62eddf4d9ba7754aec012"
+  },
+  "r1_forecast.json": {
+    "bytes": 1758,
+    "sha256": "4c261543c0c2d06f0fa1440b0d32a1cacb602b8d5795c725cdc7d0b187c9c987"
+  },
+  "r1_hf_manifest.json": {
+    "bytes": 2406,
+    "sha256": "9f810539b2776dbc1930ca9259cdf38f7c6d35543e9dfabccd7832dcaddf2a37"
+  },
+  "r1_hf_status.json": {
+    "bytes": 898,
+    "sha256": "64e0e30c4bfafcc475d69149815c4e970d7f192e53a85ed4a9b8c480abfe58fe"
+  },
+  "r1_hf_upload.log": {
+    "bytes": 3472,
+    "sha256": "c4653809fd285df27c72189b559f9b8e6f94f0bdd29762c9e306da79a61e0c0c"
+  },
+  "r1_hf_upload_certificate_failure.log": {
+    "bytes": 4072,
+    "sha256": "e9021676a58b95b067032c22baab1278528aeb4815a6a7c02c43973b79d2ea37"
+  },
+  "r1_hf_upload_client_path_failure.log": {
+    "bytes": 89,
+    "sha256": "2d00dcb3988e8f8cb71730437c0e030def5c0f1e92d41201d3b481e100c710e3"
+  },
+  "r1_state.json": {
+    "bytes": 28208,
+    "sha256": "868a686f0cdbc10b5a3c7513de4b9b050a87cafedee884b0854cc51a3f6ad9dc"
+  },
+  "r1_summary.json": {
+    "bytes": 1472,
+    "sha256": "03440860ce70cbc87f116a607341f3c9fc77238dc2a2af8768b9bf8c717f735a"
+  },
+  "README.md": {
+    "bytes": 2677,
+    "sha256": "d0c7844fc3701d78021b16feb1c3e837fea83cfe053692abe361746dc9923526"
+  },
+  "runtime.json": {
+    "bytes": 3884,
+    "sha256": "e9ac1cd30b11444a33b47482fdb42b96d0880e80db1f2189da79c1620c0fba6f"
+  },
+  "training.log": {
+    "bytes": 855932,
+    "sha256": "7e0daddb870b2def33174fd429289f77283a449c9ce5c4f8679aa2db76dfc171"
+  },
+  "validation.json": {
+    "bytes": 667937,
+    "sha256": "08c4b059eef45a308dd5d357d3ac54911d42cb5a69df4134e2649794804b78d6"
+  },
+  "validation.log": {
+    "bytes": 13699,
+    "sha256": "fd399e3e4a8b2787cbbc34d3521eab1c489e150d1b78c47ef2249d13c015b8c8"
+  }
+}

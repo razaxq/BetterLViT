@@ -1,0 +1,18 @@
+{
+  "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+  "bucket": "razaxq/BetterLViT",
+  "prefix": "f71e7829",
+  "classification": "completed_validation_only_80e_pilot",
+  "status": "awaiting_hf_reauthentication",
+  "verified_upload_files": 0,
+  "source_checkpoints_loadable": true,
+  "original_best_and_last_preserved": true,
+  "evidence": [
+    "Remote Xet write-token request returned HTTP 401",
+    "Local HfApi.whoami with the same active token returned HTTP 401",
+    "Only one HF app token is stored; it matches the invalid active token"
+  ],
+  "academic_acceleration": "Loaded /etc/network_turbo proxy and certificate environment without disabling TLS verification",
+  "storage": "Hardlink staging on system disk; original model files were not deleted",
+  "required_action": "Reauthenticate Hugging Face with bucket write access, then rerun hf_recipe.py upload --label r1"
+}

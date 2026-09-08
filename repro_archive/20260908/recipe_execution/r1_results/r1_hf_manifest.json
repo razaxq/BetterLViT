@@ -1,0 +1,56 @@
+{
+  "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+  "bucket_prefix": "f71e7829",
+  "classification": "completed_validation_only_80e_pilot",
+  "test_split_accessed": false,
+  "checkpoint_checks": [
+    {
+      "name": "best_model-BetterLViT.pth.tar",
+      "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+      "best_epoch": 78,
+      "history_rows": 78
+    },
+    {
+      "name": "last_model-BetterLViT.pth.tar",
+      "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+      "best_epoch": 78,
+      "history_rows": 80
+    }
+  ],
+  "training_and_validation_returncodes": [
+    0,
+    0
+  ],
+  "files": [
+    {
+      "source": "/root/BetterLViT-recipe-r1/Covid19/BetterLViT/r1_chest_augmentation/R1_Test_session_09.08_19h13/R1_Test_session_09.08_19h13.log",
+      "remote": "f71e7829/R1_Test_session_09.08_19h13.log",
+      "bytes": 855627,
+      "xet_hash": "da6deadb0533ddeaa1f55d307f444f65d91e0eec433a1ff2754df9d3cc6874de"
+    },
+    {
+      "source": "/root/recipe_runs/r1_80_20260908/validation.json",
+      "remote": "f71e7829/r1_validation_evaluation.json",
+      "bytes": 667937,
+      "xet_hash": "85eb24d75806110b62dc2fe6aeae136674d3d897977251fc97321e74b4e57931"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r1/Covid19/BetterLViT/r1_chest_augmentation/R1_Test_session_09.08_19h13/models/best_model-BetterLViT.pth.tar",
+      "remote": "f71e7829/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845331839,
+      "xet_hash": "99af29cd45ca3a613988fe0b3749ca709e17d3da4f5c67ba9073bfd04df8a533"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r1/Covid19/BetterLViT/r1_chest_augmentation/R1_Test_session_09.08_19h13/models/last_model-BetterLViT.pth.tar",
+      "remote": "f71e7829/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845337919,
+      "xet_hash": "d76de48eb48181a7bd0618f705bb3cad62d52592324bb3d94b73c400b73f7507"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r1/Covid19/BetterLViT/r1_chest_augmentation/R1_Test_session_09.08_19h13/tensorboard_logs/events.out.tfevents.1788866032.autodl-container-5994418ddb-a79e3722",
+      "remote": "f71e7829/tensorboard_logs/events.out.tfevents.1788866032.autodl-container-5994418ddb-a79e3722",
+      "bytes": 593178,
+      "xet_hash": "8636e485ec9d4d109addfb6fea5ca306164dfb8f5a77c93f7ac0a4ce38267d66"
+    }
+  ]
+}

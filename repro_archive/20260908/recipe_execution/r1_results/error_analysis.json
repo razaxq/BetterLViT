@@ -1,0 +1,146 @@
+{
+  "label": "r1",
+  "split": "validation",
+  "test_split_accessed": false,
+  "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+  "size_quartile_cutoffs": [
+    2075.0,
+    4989.0,
+    8775.0
+  ],
+  "size_quartiles": [
+    {
+      "gt_area_quartile": 1,
+      "samples": 358,
+      "metrics": {
+        "iou": {
+          "control": 0.5304012647647384,
+          "candidate": 0.5386402462297585,
+          "delta": 0.008238981465020176
+        },
+        "dice": {
+          "control": 0.670025991539879,
+          "candidate": 0.6782394670241401,
+          "delta": 0.008213475484260997
+        },
+        "precision": {
+          "control": 0.6406986781482479,
+          "candidate": 0.6388507929403974,
+          "delta": -0.001847885207850417
+        },
+        "recall": {
+          "control": 0.786886021525753,
+          "candidate": 0.8084285523466812,
+          "delta": 0.021542530820928323
+        }
+      }
+    },
+    {
+      "gt_area_quartile": 2,
+      "samples": 357,
+      "metrics": {
+        "iou": {
+          "control": 0.6912422669092444,
+          "candidate": 0.6826772696680091,
+          "delta": -0.008564997241235151
+        },
+        "dice": {
+          "control": 0.8059013202066669,
+          "candidate": 0.7992697606680526,
+          "delta": -0.006631559538614621
+        },
+        "precision": {
+          "control": 0.82094353356649,
+          "candidate": 0.8035653986198098,
+          "delta": -0.017378134946680245
+        },
+        "recall": {
+          "control": 0.8278113680783126,
+          "candidate": 0.8321591345999858,
+          "delta": 0.004347766521673272
+        }
+      }
+    },
+    {
+      "gt_area_quartile": 3,
+      "samples": 357,
+      "metrics": {
+        "iou": {
+          "control": 0.7947516473862545,
+          "candidate": 0.7982325947781687,
+          "delta": 0.00348094739191414
+        },
+        "dice": {
+          "control": 0.878678748337213,
+          "candidate": 0.8807560242585719,
+          "delta": 0.0020772759213589327
+        },
+        "precision": {
+          "control": 0.8792162878941873,
+          "candidate": 0.870738619376567,
+          "delta": -0.008477668517620265
+        },
+        "recall": {
+          "control": 0.8942281659483442,
+          "candidate": 0.9057949305313129,
+          "delta": 0.011566764582968599
+        }
+      }
+    },
+    {
+      "gt_area_quartile": 4,
+      "samples": 357,
+      "metrics": {
+        "iou": {
+          "control": 0.8753290394183569,
+          "candidate": 0.8764449646549015,
+          "delta": 0.0011159252365445808
+        },
+        "dice": {
+          "control": 0.9306719744536447,
+          "candidate": 0.9317320995532089,
+          "delta": 0.0010601250995641083
+        },
+        "precision": {
+          "control": 0.9184343674763674,
+          "candidate": 0.9138707173494067,
+          "delta": -0.0045636501269607135
+        },
+        "recall": {
+          "control": 0.9499363431493015,
+          "candidate": 0.956054113855801,
+          "delta": 0.006117770706499493
+        }
+      }
+    }
+  ],
+  "pooled_pixel_counts_diagnostic_only": {
+    "control": {
+      "tp": 7764690,
+      "fp": 1270005,
+      "fn": 763009,
+      "predicted_pixels": 9034695,
+      "label_pixels": 8527699
+    },
+    "candidate": {
+      "tp": 7837590,
+      "fp": 1350397,
+      "fn": 690109,
+      "predicted_pixels": 9187987,
+      "label_pixels": 8527699
+    },
+    "deltas": {
+      "tp": 72900,
+      "fp": 80392,
+      "fn": -72900,
+      "predicted_pixels": 153292,
+      "label_pixels": 0
+    }
+  },
+  "training_ended_sydney": "2026-09-09T01:57:30.365378+10:00",
+  "validation_ended_sydney": "2026-09-09T01:59:14.470994+10:00",
+  "final_inspected_sydney": "2026-09-09T02:09:30.114216+10:00",
+  "prediction_error_seconds": 87.60815858840942,
+  "seconds_after_training": 719.7488377094269,
+  "interpretation": "Descriptive error strata; does not replace the registered overall IoU gate or prove causal mechanism."
+}

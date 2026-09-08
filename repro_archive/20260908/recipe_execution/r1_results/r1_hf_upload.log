@@ -1,0 +1,49 @@
+ACADEMIC_ACCELERATION_CONFIGURED
+UPLOAD_BEGIN f71e7829/R1_Test_session_09.08_19h13.log
+
+Traceback (most recent call last):
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_http.py", line 761, in hf_raise_for_status
+    response.raise_for_status()
+  File "/root/autodl-tmp/hf-bucket-client/httpx/_models.py", line 829, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '401 Unauthorized' for url 'https://huggingface.co/api/buckets/razaxq/BetterLViT/xet-write-token'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/hf_api.py", line 13230, in _batch_bucket_files
+    xet_connection_info = fetch_xet_connection_info_from_repo_info(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_xet.py", line 167, in fetch_xet_connection_info_from_repo_info
+    return _fetch_xet_connection_info_with_url(url, headers, params, cache_key_prefix=f"{repo_type}-{repo_id}")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_xet.py", line 208, in _fetch_xet_connection_info_with_url
+    hf_raise_for_status(resp)
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_http.py", line 877, in hf_raise_for_status
+    raise _format(HfHubHTTPError, str(e), response) from e
+huggingface_hub.errors.HfHubHTTPError: Client error '401 Unauthorized' for url 'https://huggingface.co/api/buckets/razaxq/BetterLViT/xet-write-token' (Request ID: Root=1-6aa0352b-5e9fef480a83e6f737f6a93f;b09f49a1-1556-4ffb-9826-e9bfce49c46c)
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/401
+
+Invalid username or password.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/root/recipe_runs/upload_hf_recipe_server.py", line 47, in <module>
+    api.batch_bucket_files(bucket,add=[(str(item['source']),item['remote'])])
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/hf_api.py", line 13147, in batch_bucket_files
+    self._batch_bucket_files(bucket_id, add=add, copy=copy, delete=delete, token=token)  # type: ignore
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/hf-bucket-client/huggingface_hub/hf_api.py", line 13239, in _batch_bucket_files
+    raise XetAuthorizationError(
+huggingface_hub.errors.XetAuthorizationError: You are unauthorized to upload to xet storage for bucket/razaxq/BetterLViT. Please check that you have configured your access token with write access to the repo.

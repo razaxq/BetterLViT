@@ -3,6 +3,10 @@
     "bytes": 196,
     "sha256": "d048e224600e4e1d67b6aaeb62a84c6a5cbf8c60b3bd48ccfdcc28122c104387"
   },
+  "analyze_recipe_errors.py": {
+    "bytes": 3136,
+    "sha256": "d70e20d022e9ce241f4e7b8cb96e6cb2db637aa5d08d6f36470e23cf0330ced1"
+  },
   "archive_completed_recipe.py": {
     "bytes": 3326,
     "sha256": "06f0912788eeed8d2b3d9c43a0a8502b678923450568fdb9d8fe7c801d4de66c"
@@ -55,9 +59,17 @@
     "bytes": 3683,
     "sha256": "bd506a6eae40dd51ff6e92b0035e6dd85b5eb4349e019a4f2cae4bd949606023"
   },
+  "hf_recipe.py": {
+    "bytes": 2354,
+    "sha256": "be1aa7288bdb8cb776e1e7c3de5364706058de5d1afe821cf84b0b5e412952b6"
+  },
   "launch_recipe.py": {
     "bytes": 4602,
     "sha256": "c32fc7646d20fcb972ebb28cc410c2f3c0c3031af3f7771387c0614d9ca8ebdb"
+  },
+  "prepare_hf_recipe_server.py": {
+    "bytes": 3446,
+    "sha256": "d311531678612536f37f87b5a3494ef29aa76324f9f42d5360d4688a79aca4f7"
   },
   "prepare_recipe.py": {
     "bytes": 6009,
@@ -104,8 +116,8 @@
     "sha256": "a1eb8100fb6b48da3697b260bf82915abfbdd549df0580f83caf6d99b3f699af"
   },
   "r1_state.json": {
-    "bytes": 26443,
-    "sha256": "c193d85d61f2e6b3215879536b6657f712b25a649a440f1938613c8d7e3d3003"
+    "bytes": 28208,
+    "sha256": "868a686f0cdbc10b5a3c7513de4b9b050a87cafedee884b0854cc51a3f6ad9dc"
   },
   "r2_deployment.json": {
     "bytes": 565,
@@ -136,8 +148,8 @@
     "sha256": "bf15f2be2d5675af102016da223366e31ce11c75b9e47b97d1f78a2224ada11c"
   },
   "README.md": {
-    "bytes": 7429,
-    "sha256": "68a4a0d58cbb93bfa21b6addfbe548a65b14ddc118907966ecad829b2eff68e3"
+    "bytes": 8278,
+    "sha256": "1e91083b86c66061dfc1eb9fe63fc13ff0f474d3ed0652d8ae018f1fe5b89631"
   },
   "register_sources.py": {
     "bytes": 3103,
@@ -154,5 +166,13 @@
   "source_registration_v1.json": {
     "bytes": 1031,
     "sha256": "3866c8cfa0dc75c75f1da55d6e1932332179495a1a8976f1730b218383773f46"
+  },
+  "upload_hf_recipe_server.py": {
+    "bytes": 2907,
+    "sha256": "04720264512930cb9006952e465ad11f9cd8205d2ce1b603731492d187116a1b"
+  },
+  "r1_results/artifact_manifest.json": {
+    "bytes": 2372,
+    "sha256": "6cda243bbac501977e9fae568a64af2fbf63c08823e55f9c15fd0b0213c10877"
   }
 }
