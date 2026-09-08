@@ -30,6 +30,7 @@ import Config as config
 from Load_Dataset import ImageToImage2D, ValGenerator
 from nets.BetterLViT import BetterLViT
 from utils import read_text
+from training_recipe import recipe_metadata
 
 
 def parse_args():
@@ -46,6 +47,7 @@ def parse_args():
             "a4_lora_freq_focal",
             "a9_frozen_freq_focal",
             "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
+            "r1_chest_augmentation", "r2_single_cosine",
         ),
         help="Paper ablation profile used to construct the model.",
     )
@@ -352,17 +354,22 @@ def main():
     torch.use_deterministic_algorithms(config.deterministic_training)
 
     model = build_model()
-    if config.visual_prior_enabled:
+    if config.visual_prior_enabled or config.training_recipe_enabled:
         import subprocess
         if os.environ.get('TEST_SPLIT_ALLOWED') != '1':
             raise RuntimeError('Visual-prior Test export requires explicit stage-gate release')
-        if checkpoint.get('visual_prior') != model.visual_prior.provenance:
+        if checkpoint.get('visual_prior') != (model.visual_prior.provenance if model.visual_prior is not None else None):
             raise RuntimeError('External visual provenance mismatch')
         current_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
         if checkpoint.get('source_git_commit') != current_commit:
             raise RuntimeError('Visual-prior Test source commit mismatch')
         if checkpoint.get('selection_metric') != 'iou':
             raise RuntimeError('Visual-prior Best must be selected by validation IoU')
+        if config.training_recipe_enabled:
+            if checkpoint.get('training_recipe') != recipe_metadata(config):
+                raise RuntimeError('Training recipe provenance mismatch')
+            if (args.minimum, args.maximum) != (.5, .5):
+                raise RuntimeError('Recipe Test report uses the registered fixed threshold 0.5')
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
 
@@ -492,6 +499,7 @@ def main():
     }
     result = {
         "checkpoint": str(checkpoint_path),
+        "training_recipe": checkpoint.get('training_recipe'),
         "git_commit": checkpoint.get("source_git_commit")
         or getattr(config, "source_git_commit", None),
         "experiment_name": config.experiment_name,

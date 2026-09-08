@@ -195,6 +195,18 @@ for _name, _id, _random, _kind in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+for _name, _id, _augmentation, _schedule in (
+    ('r1_chest_augmentation', 'R1', 'chest_orientation', 'warm_restarts'),
+    ('r2_single_cosine', 'R2', 'legacy', 'single_cosine'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['c4_race_pe_control'])
+    _profile.update(paper_id=_id, training_recipe_enabled=True,
+        augmentation_policy=_augmentation, lr_schedule=_schedule,
+        description='C4 training recipe: ' + _name,
+        architecture_version='c4_recipe_v1_' + _name)
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

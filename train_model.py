@@ -15,6 +15,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 import Config as config
+from training_recipe import SingleCosineSchedule, recipe_metadata
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
@@ -156,6 +157,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'race_stats': compute_race_stats(model),
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
+        'training_recipe': recipe_metadata(config),
         'visual_prior': (
             model.visual_prior.provenance if getattr(model, 'visual_prior', None) is not None else None
         ),
@@ -504,7 +506,12 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         )
     )
     if config.cosineLR is True:
-        lr_scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4)
+        if config.lr_schedule == 'single_cosine':
+            lr_scheduler = SingleCosineSchedule(optimizer, epochs=config.epochs, eta_min=1e-6)
+        elif config.lr_schedule == 'warm_restarts':
+            lr_scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4)
+        else:
+            raise ValueError('Unknown learning rate schedule')
     else:
         lr_scheduler = None
     if tensorboard:

@@ -47,13 +47,18 @@ class RandomGenerator(object):
         x, y = image.shape[1], image.shape[0]
         if random.random() > 0.5:
             k = np.random.randint(0, 4)
-            image = np.rot90(image, k, axes=(0, 1))
-            label = np.rot90(label, k, axes=(0, 1))
-            zone_basis = np.rot90(zone_basis, k, axes=(1, 2))
             axis = np.random.randint(0, 2)
-            image = np.flip(image, axis=axis).copy()
-            label = np.flip(label, axis=axis).copy()
-            zone_basis = np.flip(zone_basis, axis=axis + 1).copy()
+            # Consume the same draws even when this branch is an identity,
+            # preserving worker RNG streams and all later small rotations.
+            if config.augmentation_policy == 'legacy':
+                image = np.rot90(image, k, axes=(0, 1))
+                label = np.rot90(label, k, axes=(0, 1))
+                zone_basis = np.rot90(zone_basis, k, axes=(1, 2))
+                image = np.flip(image, axis=axis).copy()
+                label = np.flip(label, axis=axis).copy()
+                zone_basis = np.flip(zone_basis, axis=axis + 1).copy()
+            elif config.augmentation_policy != 'chest_orientation':
+                raise ValueError('Unknown augmentation policy')
         elif random.random() > 0.5:
             angle = np.random.randint(-20, 20)
             image = ndimage.rotate(image, angle, order=0, reshape=False)

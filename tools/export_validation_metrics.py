@@ -28,6 +28,7 @@ import Config as config
 from Load_Dataset import ImageToImage2D, ValGenerator
 from nets.BetterLViT import BetterLViT
 from utils import read_text
+from training_recipe import recipe_metadata
 
 
 ALLOWED_EXPERIMENTS = (
@@ -41,6 +42,7 @@ ALLOWED_EXPERIMENTS = (
     "c4_race_pe_control", "c5_race_v1_iou", "p9_race_pe",
     "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
     "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
+    "r1_chest_augmentation", "r2_single_cosine",
 )
 
 
@@ -202,6 +204,8 @@ def main():
             )
         )
     analysis_commit = git_commit()
+    if config.training_recipe_enabled and checkpoint.get('training_recipe') != recipe_metadata(config):
+        raise RuntimeError('Training recipe provenance mismatch')
     checkpoint_commit = checkpoint.get("source_git_commit")
     if checkpoint_commit != analysis_commit:
         raise RuntimeError(
@@ -361,6 +365,7 @@ def main():
         "checkpoint_git_commit": checkpoint_commit,
         "analysis_git_commit": analysis_commit,
         "visual_prior": expected_visual,
+        "training_recipe": checkpoint.get('training_recipe'),
         "checkpoint_best_epoch": int(checkpoint.get("best_epoch", -1)),
         "selection_metric": config.selection_metric,
         "seed": int(checkpoint.get("seed", -1)),
