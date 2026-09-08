@@ -1,0 +1,95 @@
+{
+  "inspected_unix": 1788842268.7917407,
+  "run": "/root/visual_prior_runs/p12_80_20260908",
+  "repository": "/root/BetterLViT-visual-p12",
+  "files": {
+    "runtime.json": {
+      "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+      "repository": "/root/BetterLViT-visual-p12",
+      "run": "/root/visual_prior_runs/p12_80_20260908",
+      "manifest": {
+        "profile": "p12_visual_prior",
+        "epochs": 80,
+        "seed": 1219,
+        "batch_size": 16,
+        "selection_metric": "iou",
+        "threshold": 0.5,
+        "test_split_allowed": false,
+        "auto_test_evaluate": false,
+        "lora": false,
+        "boundary_loss": 0.0,
+        "initialization": "segmentation_from_scratch_frozen_external_weights",
+        "control_source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+        "purpose": "validation_only_frozen_visual_prior_screen",
+        "encoder_kind": "cxformer",
+        "adapter_trainable_parameters": 41280
+      },
+      "external_weights": {
+        "cxformer": {
+          "model_id": "m42-health/CXformer-small",
+          "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+          "files": {
+            "config.json": "6d274d5cf48f2de69681bb97a91c3f9008a898c96f11bb84dd5e51a686476279",
+            "preprocessor_config.json": "424ff1c1af0a5a54efebd6b7707986f3b30d0e8343ee9454f3e2523aee6cec78",
+            "model.safetensors": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2"
+          }
+        },
+        "dinov2": {
+          "model_id": "facebook/dinov2-with-registers-small",
+          "revision": "0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+          "files": {
+            "config.json": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+            "preprocessor_config.json": "14e780d86fa1861f8751f868d7f45425b5feb55c38ca26f152ca5097ab30f828",
+            "model.safetensors": "78e7f952c5af83cf6da38f08ff52b062bbe00c1adf39c4c7e0361969f27abae7"
+          }
+        }
+      },
+      "started_unix": 1788841286.868331,
+      "phase": "training",
+      "test_split_accessed": false
+    }
+  },
+  "epoch_timing": [
+    {
+      "epoch": 1,
+      "epochs": 80,
+      "started_unix": 1788841305.587003,
+      "ended_unix": 1788841536.9317713,
+      "duration_seconds": 231.34476885106415,
+      "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 2,
+      "epochs": 80,
+      "started_unix": 1788841536.93213,
+      "ended_unix": 1788841760.9216878,
+      "duration_seconds": 223.98955790232867,
+      "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 3,
+      "epochs": 80,
+      "started_unix": 1788841760.922098,
+      "ended_unix": 1788841985.0910668,
+      "duration_seconds": 224.168969001621,
+      "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 4,
+      "epochs": 80,
+      "started_unix": 1788841985.0915806,
+      "ended_unix": 1788842209.7627845,
+      "duration_seconds": 224.6712039457634,
+      "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+      "best_epoch": 1
+    }
+  ],
+  "launcher_process": "98775 Ss         16:22 /root/autodl-tmp/envs/betterlvit-paper/bin/python -u tools/run_visual_experiment.py --run /root/visual_prior_runs/p12_80_20260908 --models /root/visual_prior_models",
+  "training.log_tail": "l] Epoch: [4][40/90]  Loss:0.123 (Avg 0.1350) IoU:0.635 (Avg 0.6382) Dice:0.7620 (Avg 0.7579) (AvgTime 0.2)   \n   [Val] Epoch: [4][60/90]  Loss:0.147 (Avg 0.1299) IoU:0.613 (Avg 0.6461) Dice:0.7290 (Avg 0.7636) (AvgTime 0.2)   \n   [Val] Epoch: [4][80/90]  Loss:0.129 (Avg 0.1299) IoU:0.631 (Avg 0.6436) Dice:0.7599 (Avg 0.7620) (AvgTime 0.2)   \n   [Val] Epoch: [4][90/90]  Loss:0.145 (Avg 0.1297) IoU:0.595 (Avg 0.6435) Dice:0.7369 (Avg 0.7617) (AvgTime 0.2)   \n   [Val] Loss components: dice=0.212757, focal=0.046667, total=0.129712\n\t No iou improvement; selected epoch 1\n\t early_stopping_count: 3/80\n--- Epoch History (1..4) ---\nEpoch |  TrainLoss |  TrainDice |  TrainIoU |    ValLoss |    ValDice |    ValIoU |         LR | Best\n    1 |     0.2130 |     0.6476 |    0.5211 |     0.1620 |     0.7121 |    0.5861 |   3.00e-04 |    *\n    2 |     0.1537 |     0.7282 |    0.6082 |     0.1410 |     0.7403 |    0.6218 |   2.95e-04 |     \n    3 |     0.1417 |     0.7467 |    0.6295 |     0.1343 |     0.7583 |    0.6409 |   2.81e-04 |     \n    4 |     0.1349 |     0.7585 |    0.6434 |     0.1297 |     0.7617 |    0.6435 |   2.59e-04 |     \n--- C4 + frozen visual patch features with single middle additive projection validation statistics ---\nup4: ca=1.0378+/-0.0733, sa=0.9998+/-0.0065, amp=0.0000, suppress=0.0000, guide_abs=0.3780\nup4 residuals: local_mean=-8.841e-04, global_mean=-0.0010, local_strength=0.0963, global_strength=0.1007, gain=[0.9626,1.0348], saturation=0.0000, text_film=0.0011\nup4 haar: reconstruction_error=4.768e-07, skip_low/high=0.9168/0.0832, plam_low/high=1.0000/0.0000\nup4 strengths: plam=0.9928, region=0.0963, detail=0.1007; residual_std region/detail/refine=0.0047/0.2093/0.0354\nup4 guide_mix: entropy=0.9423, raw_low=0.3223, plam_low=0.2801, decoder_low=0.3030, detail=0.0947; agreement plam/decoder=0.8410/0.4854, support=0.5642+/-0.0295\nup4 adaptive_frequency: ALPF strength=0.2028, weights=0.2747/0.5929/0.1324, sum=1.0000, entropy=0.8485, delta_std=0.1077; AHPF strength=0.0840, weights=0.2793/0.5196/0.2012, sum=1.0000, entropy=0.9270, residual_std=0.0971, scaled_std=0.0082\nup3: ca=1.0743+/-0.1878, sa=0.9998+/-0.0056, amp=0.0000, suppress=0.0000, guide_abs=0.4151\nup3 residuals: local_mean=1.654e-03, global_mean=-0.0040, local_strength=0.0983, global_strength=0.1055, gain=[0.9676,1.0290], saturation=0.0000, text_film=0.0028\nup3 haar: reconstruction_error=9.537e-07, skip_low/high=0.9562/0.0438, plam_low/high=1.0000/0.0000\nup3 strengths: plam=0.9805, region=0.0983, detail=0.1055; residual_std region/detail/refine=0.0051/0.2819/0.2291\nup3 guide_mix: entropy=0.8687, raw_low=0.4770, plam_low=0.2767, decoder_low=0.1722, detail=0.0741; agreement plam/decoder=0.5087/0.3286, support=0.5171+/-0.0013\nup3 adaptive_frequency: ALPF strength=0.2039, weights=0.2429/0.6204/0.1367, sum=1.0000, entropy=0.8264, delta_std=0.0363; AHPF strength=0.0841, weights=0.3990/0.4312/0.1698, sum=1.0000, entropy=0.9031, residual_std=0.0832, scaled_std=0.0070\nup2: ca=0.9062+/-0.1344, sa=1.0013+/-0.0060, amp=0.0000, suppress=0.0000, guide_abs=0.2709\nup2 residuals: local_mean=8.055e-03, global_mean=0.0035, local_strength=0.1113, global_strength=0.1028, gain=[0.9593,1.0445], saturation=0.0033, text_film=0.0390\nup2 haar: reconstruction_error=9.537e-07, skip_low/high=0.8707/0.1293, plam_low/high=1.0000/0.0000\nup2 strengths: plam=0.9821, region=0.1113, detail=0.1028; residual_std region/detail/refine=0.4109/0.2843/0.0408\nup2 guide_mix: entropy=0.9444, raw_low=0.3302, plam_low=0.2957, decoder_low=0.2761, detail=0.0981; agreement plam/decoder=0.7102/-0.3899, support=0.5885+/-0.0772\nup1: ca=0.8934+/-0.1360, sa=0.9994+/-0.0131, amp=0.0000, suppress=0.0000, guide_abs=0.2599\nup1 residuals: local_mean=-1.427e-02, global_mean=0.0097, local_strength=0.1134, global_strength=0.0985, gain=[0.9074,1.0917], saturation=0.0005, text_film=0.0335\nup1 haar: reconstruction_error=1.907e-06, skip_low/high=0.8070/0.1930, plam_low/high=1.0000/0.0000\nup1 strengths: plam=0.9822, region=0.1134, detail=0.0985; residual_std region/detail/refine=0.5037/0.3279/0.0429\nup1 guide_mix: entropy=0.9188, raw_low=0.2802, plam_low=0.3746, decoder_low=0.2688, detail=0.0763; agreement plam/decoder=0.6842/-0.1088, support=0.6133+/-0.1039\n\n========= Epoch [5/80] =========\nP12_Test_session_09.08_12h21\nTraining with batch size : 16\n   [Train] Epoch: [5][20/357]  Loss:0.113 (Avg 0.1363) IoU:0.706 (Avg 0.6354) Dice:0.8169 (Avg 0.7511) LR 2.31e-04   (AvgTime 0.6)   \n   [Train] Epoch: [5][40/357]  Loss:0.118 (Avg 0.1309) IoU:0.653 (Avg 0.6509) Dice:0.7796 (Avg 0.7652) LR 2.31e-04   (AvgTime 0.6)   \n   [Train] Epoch: [5][60/357]  Loss:0.132 (Avg 0.1298) IoU:0.604 (Avg 0.6527) Dice:0.7410 (Avg 0.7665) LR 2.31e-04   (AvgTime 0.6)   \n   [Train] Epoch: [5][80/357]  Loss:0.134 (Avg 0.1305) IoU:0.650 (Avg 0.6502) Dice:0.7775 (Avg 0.7646) LR 2.31e-04   (AvgTime 0.6)   \n   [Train] Epoch: [5][100/357]  Loss:0.133 (Avg 0.1305) IoU:0.679 (Avg 0.6507) Dice:0.7855 (Avg 0.7648) LR 2.31e-04   (AvgTime 0.6)   \n",
+  "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "tracked_changes": "",
+  "launcher_log_tail": ""
+}

@@ -1,0 +1,40 @@
+{
+  "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "snapshot_sha256": "fcdd6e15243f3b6627d2798d57caa4aff08e458aa66f37db7870d4cb8813aefa",
+  "inspected_unix": 1788842268.7917407,
+  "inspected_sydney": "2026-09-08T14:37:48.791741+10:00",
+  "completed_epochs": 4,
+  "active_epoch": 5,
+  "runtime_phase": "training",
+  "inspections_completed": 1,
+  "test_split_accessed": false,
+  "excluded_initial_epoch": 1,
+  "measured_epoch_seconds": [
+    223.98955790232867,
+    224.168969001621,
+    224.6712039457634
+  ],
+  "mean_epoch_seconds": 224.27657694990435,
+  "median_epoch_seconds": 224.168969001621,
+  "remaining_epochs_from_last_completed_boundary": 76,
+  "predicted_training_end_unix": 1788859254.7826326,
+  "predicted_training_end_sydney": "2026-09-08T19:20:54.782633+10:00",
+  "observed_range_extrapolation_sydney": [
+    "2026-09-08T19:20:32.969185+10:00",
+    "2026-09-08T19:21:24.774284+10:00"
+  ],
+  "planned_final_check_unix": 1788859980,
+  "planned_final_check_sydney": "2026-09-08T19:33:00+10:00",
+  "buffer_after_prediction_seconds": 725.2173674106598,
+  "actual_training_end_window_for_30min_requirement_sydney": [
+    "2026-09-08T19:03:00+10:00",
+    "2026-09-08T19:33:00+10:00"
+  ],
+  "assumptions": [
+    "Future full epochs have approximately the mean duration of epochs 2-4.",
+    "Normal epoch duration includes Train, Val and rolling checkpoint saves.",
+    "Additional Best saves after epoch 5 and throughput drift consume the 12-minute buffer.",
+    "Observed-range extrapolation is descriptive, not a predictive confidence interval.",
+    "The final snapshot must verify actual finish-to-inspection delay; prediction is not a guarantee."
+  ]
+}
