@@ -70,7 +70,7 @@ def main():
         durations.append(time.time() - started)
         predictions.append(hashlib.sha256(pred.detach().cpu().numpy().tobytes()).hexdigest())
         losses.append(loss.item())
-    print(json.dumps({'status':'ok','experiment':config.experiment_name,'source_git_commit':config.source_git_commit,'training_recipe':recipe_metadata(config),
+    print(json.dumps({'status':'ok','experiment':config.experiment_name,'seed':config.seed,'source_git_commit':config.source_git_commit,'training_recipe':recipe_metadata(config),
         'input_image_sha256':hashlib.sha256(image.detach().cpu().numpy().tobytes()).hexdigest(),'test_split_accessed':False,
         'temporary_optimizer_steps':5,'formal_training_performed':False,'batch_size':16,
         'initial_base_sha256':initial_base,'first_output_sha256':predictions[0],

@@ -20,8 +20,10 @@ def rates_equal(actual, expected):
 
 def validate_recipe_manifest(manifest):
     policies = {'r1_chest_augmentation':('chest_orientation','warm_restarts'),
-                'r2_single_cosine':('legacy','single_cosine')}
+                'r2_single_cosine':('legacy','single_cosine'),
+                'c4_race_pe_control':('legacy','warm_restarts')}
     expected = policies[manifest['profile']]
+    assert manifest['seed'] in (1219,2027,3407)
     assert (manifest['augmentation_policy'],manifest['lr_schedule']) == expected
     assert manifest['epochs'] == 80 and manifest['batch_size'] == 16
     assert manifest['selection_metric'] == 'iou' and manifest['threshold'] == .5
