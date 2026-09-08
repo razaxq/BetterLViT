@@ -1,0 +1,54 @@
+{
+  "label": "r2",
+  "phase": "complete",
+  "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "test_split_accessed": false,
+  "epochs": 80,
+  "best_epoch": 67,
+  "macro_iou": 0.7266535938268995,
+  "macro_dice": 0.8240342867846576,
+  "gate_passed": true,
+  "gate_checks": {
+    "iou_at_least_0.003": true,
+    "iou_ci_positive": true,
+    "dice_point_not_lower": true,
+    "small_iou_point_not_lower": true
+  },
+  "deltas": {
+    "iou": {
+      "mean": 0.0038572696410194033,
+      "small_group_mean": 0.007661331104915681,
+      "paired_image_bootstrap_95ci": [
+        0.0005122746482129747,
+        0.007144708722035971
+      ]
+    },
+    "dice": {
+      "mean": 0.0028206518501628828,
+      "small_group_mean": 0.006278131989471812,
+      "paired_image_bootstrap_95ci": [
+        -0.00017587192303571898,
+        0.005775330188110396
+      ]
+    },
+    "precision": {
+      "mean": -0.00961534796006271,
+      "small_group_mean": -0.004992042960579546,
+      "paired_image_bootstrap_95ci": [
+        -0.012695751876584007,
+        -0.006515162628830257
+      ]
+    },
+    "recall": {
+      "mean": 0.01584110839093442,
+      "small_group_mean": 0.01974041840532783,
+      "paired_image_bootstrap_95ci": [
+        0.011724931142114939,
+        0.01999928321990431
+      ]
+    }
+  },
+  "inspections_completed": 2,
+  "seconds_after_training": 839.2062194347382,
+  "final_check_within_30min": true
+}

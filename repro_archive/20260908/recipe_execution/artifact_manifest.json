@@ -16,8 +16,8 @@
     "sha256": "1bdbd143aa2274e0bb1f2b3a2f34f8e871da3174d5fc479ddc44253130fe3048"
   },
   "automation_registration.json": {
-    "bytes": 917,
-    "sha256": "6a83d71eaa0d05258b652190c4b323189b57a2a56151c934bc4385a29f2ebcd2"
+    "bytes": 998,
+    "sha256": "f264c9060754c69757137e583aa443b7920d0734c132b93b99829b470a77cba8"
   },
   "capture_environment.py": {
     "bytes": 1025,
@@ -160,12 +160,12 @@
     "sha256": "bf15f2be2d5675af102016da223366e31ce11c75b9e47b97d1f78a2224ada11c"
   },
   "r2_state.json": {
-    "bytes": 26488,
-    "sha256": "32fbf3a269dd033e9f057416f4c285580caaf4724c113a1652d0651191278fa7"
+    "bytes": 28252,
+    "sha256": "f39a74a0c37bc815605042abcb9f1d8c168be9ac6d2bcd949fef1c22683cc069"
   },
   "README.md": {
-    "bytes": 9356,
-    "sha256": "9255f496ec1627765d4bff4b21a5b22875537b82bc3a20cfc6613aeaa59400d2"
+    "bytes": 9797,
+    "sha256": "0d1d67a254a6984415ccae35e42f692d9636543881b3fd683cc76e6af6c9bec1"
   },
   "register_sources.py": {
     "bytes": 3103,
@@ -174,6 +174,10 @@
   "revise_sources.py": {
     "bytes": 1833,
     "sha256": "5ae3a0ab27b25596c0afb36a4456e8a2670ae29ad865dd04f01c62e10519d796"
+  },
+  "SCREENING_SUMMARY.md": {
+    "bytes": 1318,
+    "sha256": "d441142d15f474a04a9438bba338e6eceb4dc1d1de41ab7b3c25586d021b3c10"
   },
   "sources.json": {
     "bytes": 1569,
@@ -190,5 +194,9 @@
   "r1_results/artifact_manifest.json": {
     "bytes": 2372,
     "sha256": "6cda243bbac501977e9fae568a64af2fbf63c08823e55f9c15fd0b0213c10877"
+  },
+  "r2_results/artifact_manifest.json": {
+    "bytes": 1947,
+    "sha256": "4b4cc51afd076e69366ae2564b66067b4d6acb8007aa9e3e82e8cfc14b65362d"
   }
 }

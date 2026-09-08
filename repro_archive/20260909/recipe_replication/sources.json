@@ -1,0 +1,50 @@
+{
+  "c4s2027": {
+    "branch": "paper/c4s2027-replication",
+    "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+    "profile": "c4_race_pe_control",
+    "seed": 2027,
+    "role": "c4",
+    "previous_label": null,
+    "experiment_tag": "experiment-c4-recipe-80e-seed2027-20260909",
+    "repository": "/root/BetterLViT-recipe-c4s2027",
+    "local_repository": "D:\\BetterLViT\\recipe_c4s2027_work",
+    "remote_run": "/root/recipe_runs/c4s2027_80_20260909"
+  },
+  "r2s2027": {
+    "branch": "paper/r2s2027-replication",
+    "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+    "profile": "r2_single_cosine",
+    "seed": 2027,
+    "role": "r2",
+    "previous_label": "c4s2027",
+    "experiment_tag": "experiment-r2-recipe-80e-seed2027-20260909",
+    "repository": "/root/BetterLViT-recipe-r2s2027",
+    "local_repository": "D:\\BetterLViT\\recipe_r2s2027_work",
+    "remote_run": "/root/recipe_runs/r2s2027_80_20260909"
+  },
+  "c4s3407": {
+    "branch": "paper/c4s3407-replication",
+    "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+    "profile": "c4_race_pe_control",
+    "seed": 3407,
+    "role": "c4",
+    "previous_label": "r2s2027",
+    "experiment_tag": "experiment-c4-recipe-80e-seed3407-20260909",
+    "repository": "/root/BetterLViT-recipe-c4s3407",
+    "local_repository": "D:\\BetterLViT\\recipe_c4s3407_work",
+    "remote_run": "/root/recipe_runs/c4s3407_80_20260909"
+  },
+  "r2s3407": {
+    "branch": "paper/r2s3407-replication",
+    "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+    "profile": "r2_single_cosine",
+    "seed": 3407,
+    "role": "r2",
+    "previous_label": "c4s3407",
+    "experiment_tag": "experiment-r2-recipe-80e-seed3407-20260909",
+    "repository": "/root/BetterLViT-recipe-r2s3407",
+    "local_repository": "D:\\BetterLViT\\recipe_r2s3407_work",
+    "remote_run": "/root/recipe_runs/r2s3407_80_20260909"
+  }
+}

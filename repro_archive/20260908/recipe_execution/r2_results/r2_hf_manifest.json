@@ -1,0 +1,56 @@
+{
+  "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "bucket_prefix": "9eca26de",
+  "classification": "completed_validation_only_80e_pilot",
+  "test_split_accessed": false,
+  "checkpoint_checks": [
+    {
+      "name": "best_model-BetterLViT.pth.tar",
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "best_epoch": 67,
+      "history_rows": 67
+    },
+    {
+      "name": "last_model-BetterLViT.pth.tar",
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "best_epoch": 67,
+      "history_rows": 80
+    }
+  ],
+  "training_and_validation_returncodes": [
+    0,
+    0
+  ],
+  "files": [
+    {
+      "source": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/R2_Test_session_09.09_00h21.log",
+      "remote": "9eca26de/R2_Test_session_09.09_00h21.log",
+      "bytes": 856107,
+      "xet_hash": "7070ef88205fbc1138218ff5aac766a506b4c222a184667e6679b0e3c26bf2bd"
+    },
+    {
+      "source": "/root/recipe_runs/r2_80_20260908/validation.json",
+      "remote": "9eca26de/r2_validation_evaluation.json",
+      "bytes": 667576,
+      "xet_hash": "9479271ed16511aeac6d3e816dad844caa2a698595ca5d2d425f6d1ddda1d064"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+      "remote": "9eca26de/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845298175,
+      "xet_hash": "9e4482355bcd5e4590982d32ce482dab8366c507d04976f6961d068b7b4e2010"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/last_model-BetterLViT.pth.tar",
+      "remote": "9eca26de/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845337727,
+      "xet_hash": "3e0dd82f1ff5442bafff943edb2978dd0b0b1650fd78d7a98dac887a0f8f49c7"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/tensorboard_logs/events.out.tfevents.1788884502.autodl-container-5994418ddb-a79e3722",
+      "remote": "9eca26de/tensorboard_logs/events.out.tfevents.1788884502.autodl-container-5994418ddb-a79e3722",
+      "bytes": 593178,
+      "xet_hash": "ecdff4a1a96dc07c3c1abb095434c75cc292ef2a58767e10157b07af6441c644"
+    }
+  ]
+}

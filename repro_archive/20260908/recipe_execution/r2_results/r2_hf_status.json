@@ -1,0 +1,17 @@
+{
+  "status": "awaiting_hf_reauthentication",
+  "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "prefix": "9eca26de",
+  "verified_upload_files": 0,
+  "classification": "completed_validation_only_80e_pilot",
+  "checkpoint_checks_passed": true,
+  "preserved": [
+    "Best checkpoint",
+    "Last checkpoint",
+    "original logs",
+    "validation JSON",
+    "Xet source manifest"
+  ],
+  "authentication_retried": false,
+  "reason": "Previously reported invalid HF app credential; no authentication change was provided"
+}

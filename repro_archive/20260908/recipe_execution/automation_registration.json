@@ -1,23 +1,25 @@
 {
   "automation_id": "betterlvit-r1-r2",
   "kind": "heartbeat",
-  "status": "ACTIVE",
+  "status": "DELETED",
   "first_check_sydney": "2026-09-08T21:29:00+10:00",
   "inspection_budget_per_training": 2,
-  "current_inspections_completed": 1,
+  "current_inspections_completed": 2,
   "plan": "Estimate the final check from the first complete-epoch snapshot, then continue R2 with a new budget.",
-  "phase": "r2_final_check_scheduled",
+  "phase": "initial_screening_complete",
   "predicted_training_end_sydney": "2026-09-09T01:56:02.757220+10:00",
   "final_check_sydney": "2026-09-09T02:09:00+10:00",
   "forecast_verified_from_saved_snapshot": true,
   "inspections_by_training": {
     "r1": 2,
-    "r2": 1
+    "r2": 2
   },
   "r2_first_check_sydney": "2026-09-09T02:37:00+10:00",
   "r1_final_check_within_30min": true,
   "hf_authentication_status": "awaiting_reauthentication",
   "r2_dispatch_only": false,
   "r2_predicted_training_end_sydney": "2026-09-09T07:09:32.794039+10:00",
-  "r2_final_check_sydney": "2026-09-09T07:22:00+10:00"
+  "r2_final_check_sydney": "2026-09-09T07:22:00+10:00",
+  "r2_final_check_within_30min": true,
+  "deleted_after_final_results": true
 }

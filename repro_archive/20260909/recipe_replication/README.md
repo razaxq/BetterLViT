@@ -1,0 +1,37 @@
+# R2的额外配对种子复验
+
+这是用户已授权计划的下一阶段：seed1219的R2通过Val筛选，补齐2027、3407两个匹配种子。完整预注册说明见 `docs/RECIPE_REPLICATION_PLAN_20260909.md`（代码和文档分支均保存副本）。R1不扩展、不组合；当前不访问Test。
+
+| 顺序/label | profile | seed | 比较角色 |
+|---|---|---:|---|
+| c4s2027 | c4_race_pe_control | 2027 | 同种子控制 |
+| r2s2027 | r2_single_cosine | 2027 | 单次余弦候选 |
+| c4s3407 | c4_race_pe_control | 3407 | 同种子控制 |
+| r2s3407 | r2_single_cosine | 3407 | 单次余弦候选 |
+
+每个训练80轮、batch16、224、原增强、原Dice/Focal、Adam，seed只在同种子配对内相同。各组独立完整SHA、tag、manifest及工作树，详见 `sources.json`。中间数值不改变队列，不因2027结果不好就丢弃3407，也不追加选择性种子。
+
+训练源自已验证代码，仅扩展启动manifest允许C4和已注册种子、预检记录seed；模型、数据、主训练循环、loss和学习率数学与原版本逐文件一致。每个来源两次真实Train批次GPU预检，五步临时权重不用于正式训练；`verify_preflights.py`要求同一seed的C4/R2初始模型、增强输入、五步输出和loss全部一致。
+
+部署时系统盘可用10,881,875,968字节，四组准备完成后10,877,665,280字节；共享fs为18,559,782,256字节（<20,000,000,000）。四组预计新增约6.8GB的Best/Last，每次启动仍检查至少4GB可用。保留全部原始模型。HF认证问题在前阶段已告知，未收到认证变化时不要再次重试/通知；已完成模型可先核对来源、生成Xet清单并保留。
+
+## 全部预检已通过
+
+四个冻结来源各两次真实Train批次五步预检均通过；两个种子内的C4/R2初始模型、输入、五步输出和loss全部相同，不同种子的初始权重不同。完整proof见 `preflight_verification.json`，每个来源的原始预检输出单独保存。尚未把任何临时预检权重用于正式训练。
+
+## 实时路径与执行
+
+- 当前脚本：`D:/BetterLViT/experiment_docs_work/repro_archive/20260909/recipe_replication`。
+- 可变状态：`D:/BetterLViT/outputs/recipe_replication_20260909`，`chain_state.json`指明当前label；每个`<label>_state.json`独立计检查次数。
+- 服务器训练：`/root/recipe_runs/<label>_80_20260909`；工作树见sources.json。
+- Git归档的state只是历史副本，不能替代outputs中的预算；不改正在训练的源码，不合并主分支。
+
+1. `launch_replication.py --label <label>`校验前一训练已完成、全部配对预检通过、空间及SHA，然后只发起后台进程并返回PID。写出launch/state和当前chain_state，预算0/2；不得把回执当作训练健康证明。
+2. 约15分钟后的首次预约，用 `collect_snapshot.py --state <outputs>/<label>_state.json --output <outputs>/<label>_first_snapshot.json` 做唯一的一次短连接。健康且至少完成3轮时，运行 `forecast_recipe.py --label <label>`，把同一heartbeat改约 `planned_final_check_sydney`。不继续查服务器，正常运行不通知。
+3. 最后预约以同一collector保存 `<label>_final_snapshot.json`，然后本地运行 `finalize_replication.py --label <label>`。核实80轮、1429样本、种子与来源、真实结束到检查的间隔。收集器连接前扣预算，禁止第三次查询和隐藏重试。若尚未结束或故障，保留事实并处理，不能继续下一组占用GPU。
+4. 已确认完成后运行 `archive_completed_recipe.py --label <label>`，只下载已完成静态文件，核对哈希及80个实际LR。可运行 `hf_recipe.py prepare --label <label>`核对Best/Last及生成Xet源清单，不进行无条件认证重试。其远端准备脚本沿用前阶段已归档的`prepare_hf_recipe_server.py`。已完成文件传输不作为新增训练状态检查。
+5. C4完成时只归档对照；同种子R2完成时会自动生成 `c4_vs_r2_seed<seed>.json`。单个配对的门槛失败不能阻止另一已注册种子的执行。更新文档/台账并推送GitHub后，按sources的previous_label顺序提交下一组，预约新的首次检查，独立预算0/2。
+6. 四组完成后运行 `aggregate_replications.py`，结合已完成seed1219，汇报三个配对IoU/Dice差值、均值和样本标准差。三个IoU差值均>0、平均≥0.003、平均Dice及最小面积组IoU不降才通过复验；逐图bootstrap不是跨种子显著性证据。
+7. 复验通过则在固定方法、checkpoint与阈值规则下完成后续Test评估，正式结果以Test为准；失败则报告并结束这条配方支线，不扩150轮、不追加种子或改变配置。每个阶段源码和原始结果均提交推送。当前定时目的结束后删除对应heartbeat，避免无效提醒。
+
+初始化脚本`register_replication.py`/`prepare_replication.py deploy`只用于一次性复现准备，已有目录时不能盲目重跑。常规接续只用已经冻结、预检完成的四组来源。
