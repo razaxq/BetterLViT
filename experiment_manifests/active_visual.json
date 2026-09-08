@@ -1,0 +1,17 @@
+{
+  "profile": "p12_visual_prior",
+  "epochs": 80,
+  "seed": 1219,
+  "batch_size": 16,
+  "selection_metric": "iou",
+  "threshold": 0.5,
+  "test_split_allowed": false,
+  "auto_test_evaluate": false,
+  "lora": false,
+  "boundary_loss": 0.0,
+  "initialization": "segmentation_from_scratch_frozen_external_weights",
+  "control_source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+  "purpose": "validation_only_frozen_visual_prior_screen",
+  "encoder_kind": "cxformer",
+  "adapter_trainable_parameters": 41280
+}
