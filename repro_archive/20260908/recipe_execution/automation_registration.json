@@ -4,6 +4,10 @@
   "status": "ACTIVE",
   "first_check_sydney": "2026-09-08T21:29:00+10:00",
   "inspection_budget_per_training": 2,
-  "current_inspections_completed": 0,
-  "plan": "Estimate the final check from the first complete-epoch snapshot, then continue R2 with a new budget."
+  "current_inspections_completed": 1,
+  "plan": "Estimate the final check from the first complete-epoch snapshot, then continue R2 with a new budget.",
+  "phase": "r1_final_check_scheduled",
+  "predicted_training_end_sydney": "2026-09-09T01:56:02.757220+10:00",
+  "final_check_sydney": "2026-09-09T02:09:00+10:00",
+  "forecast_verified_from_saved_snapshot": true
 }
