@@ -1,0 +1,115 @@
+{
+  "split": "validation",
+  "new_inference_performed": false,
+  "test_used_for_group_analysis": false,
+  "sources": {
+    "C4": {
+      "path": "D:\\BetterLViT\\outputs\\race_pe_v2_results_20260907\\c4_validation.json",
+      "sha256": "879faa182be9dde5e2a663051846ad1def8124324550e63dc87c02559101f01e",
+      "checkpoint_commit": "add4908a0d6f702b0a10c4581725b535543829b8"
+    },
+    "P11": {
+      "path": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260907\\dual_grain_results\\p11_validation.json",
+      "sha256": "15a51d215cbad7afe87f6aecd389237e9cb097cc6ede3062d56e920bfb92b573",
+      "checkpoint_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac"
+    }
+  },
+  "grouping": "GT total lesion area per image; diagnostic only, never an inference input",
+  "fp_fn_method": "TP=round(recall*GT area); FP=predicted area-TP; FN=GT area-TP",
+  "all": {
+    "C4": {
+      "samples": 1429,
+      "macro_iou": 0.7227963241858801,
+      "macro_precision": 0.8147013661494736,
+      "macro_recall": 0.8646610103975064,
+      "mean_fp_pixels": 888.7368789363192,
+      "mean_fn_pixels": 533.9461161651504
+    },
+    "P11": {
+      "samples": 1429,
+      "macro_iou": 0.7239046275818884,
+      "macro_precision": 0.8233799294439968,
+      "macro_recall": 0.8559436441748873,
+      "mean_fp_pixels": 813.8005598320503,
+      "mean_fn_pixels": 581.1336599020294
+    }
+  },
+  "groups": {
+    "area_quartile_1": {
+      "C4": {
+        "samples": 358,
+        "macro_iou": 0.5304012647647384,
+        "macro_precision": 0.6406986781482479,
+        "macro_recall": 0.7868860215257529,
+        "mean_fp_pixels": 671.6731843575419,
+        "mean_fn_pixels": 243.53351955307264
+      },
+      "P11": {
+        "samples": 358,
+        "macro_iou": 0.5348315824303024,
+        "macro_precision": 0.6479143072688123,
+        "macro_recall": 0.7829887349305167,
+        "mean_fp_pixels": 639.9301675977654,
+        "mean_fn_pixels": 243.0949720670391
+      },
+      "iou_delta_percentage_points": 0.443031766556401
+    },
+    "area_quartile_2": {
+      "C4": {
+        "samples": 357,
+        "macro_iou": 0.6912422669092443,
+        "macro_precision": 0.8209435335664901,
+        "macro_recall": 0.8278113680783126,
+        "mean_fp_pixels": 740.9915966386554,
+        "mean_fn_pixels": 570.9299719887955
+      },
+      "P11": {
+        "samples": 357,
+        "macro_iou": 0.6904190577154917,
+        "macro_precision": 0.8326503609813773,
+        "macro_recall": 0.8131241520763107,
+        "mean_fp_pixels": 664.3921568627451,
+        "mean_fn_pixels": 626.6666666666666
+      },
+      "iou_delta_percentage_points": -0.0823209193752561
+    },
+    "area_quartile_3": {
+      "C4": {
+        "samples": 357,
+        "macro_iou": 0.7947516473862544,
+        "macro_precision": 0.8792162878941874,
+        "macro_recall": 0.8942281659483443,
+        "mean_fp_pixels": 976.8095238095239,
+        "mean_fn_pixels": 683.9719887955182
+      },
+      "P11": {
+        "samples": 357,
+        "macro_iou": 0.7942481758789471,
+        "macro_precision": 0.8882186883331215,
+        "macro_recall": 0.883687576847436,
+        "mean_fp_pixels": 893.1904761904761,
+        "mean_fn_pixels": 752.0224089635855
+      },
+      "iou_delta_percentage_points": -0.050347150730722934
+    },
+    "area_quartile_4": {
+      "C4": {
+        "samples": 357,
+        "macro_iou": 0.8753290394183569,
+        "macro_precision": 0.9184343674763674,
+        "macro_recall": 0.9499363431493014,
+        "mean_fp_pixels": 1166.0812324929973,
+        "mean_fn_pixels": 638.1624649859943
+      },
+      "P11": {
+        "samples": 357,
+        "macro_iou": 0.876649310675786,
+        "macro_precision": 0.9252278615349039,
+        "macro_recall": 0.9441784683333652,
+        "mean_fp_pixels": 1058.1764705882354,
+        "mean_fn_pixels": 703.6974789915967
+      },
+      "iou_delta_percentage_points": 0.1320271257429062
+    }
+  }
+}
