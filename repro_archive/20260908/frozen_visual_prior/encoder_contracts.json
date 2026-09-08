@@ -1,0 +1,404 @@
+{
+  "observed_at_utc": "2026-09-08T03:14:02.084979+00:00",
+  "scope": "Public metadata only; no authentication, weights, training, or dataset access",
+  "models": [
+    {
+      "model_id": "m42-health/CXformer-small",
+      "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+      "api_url": "https://huggingface.co/api/models/m42-health/CXformer-small/revision/21777c302a43197b704c6c92591d9897efaaac3b",
+      "gated": false,
+      "config": {
+        "url": "https://huggingface.co/m42-health/CXformer-small/resolve/21777c302a43197b704c6c92591d9897efaaac3b/config.json",
+        "bytes": 934,
+        "sha256": "6d274d5cf48f2de69681bb97a91c3f9008a898c96f11bb84dd5e51a686476279",
+        "content": {
+          "apply_layernorm": true,
+          "architectures": [
+            "Dinov2WithRegistersModel"
+          ],
+          "attention_probs_dropout_prob": 0.0,
+          "drop_path_rate": 0.0,
+          "hidden_act": "gelu",
+          "hidden_dropout_prob": 0.0,
+          "hidden_size": 384,
+          "image_size": 518,
+          "initializer_range": 0.02,
+          "layer_norm_eps": 1e-06,
+          "layerscale_value": 1.0,
+          "mlp_ratio": 4,
+          "model_type": "dinov2_with_registers",
+          "num_attention_heads": 6,
+          "num_channels": 3,
+          "num_hidden_layers": 12,
+          "num_register_tokens": 4,
+          "out_features": [
+            "stage12"
+          ],
+          "out_indices": [
+            12
+          ],
+          "patch_size": 14,
+          "qkv_bias": true,
+          "reshape_hidden_states": true,
+          "stage_names": [
+            "stem",
+            "stage1",
+            "stage2",
+            "stage3",
+            "stage4",
+            "stage5",
+            "stage6",
+            "stage7",
+            "stage8",
+            "stage9",
+            "stage10",
+            "stage11",
+            "stage12"
+          ],
+          "torch_dtype": "float32",
+          "transformers_version": "4.48.0",
+          "use_swiglu_ffn": false
+        }
+      },
+      "processor": {
+        "url": "https://huggingface.co/m42-health/CXformer-small/resolve/21777c302a43197b704c6c92591d9897efaaac3b/preprocessor_config.json",
+        "bytes": 564,
+        "sha256": "424ff1c1af0a5a54efebd6b7707986f3b30d0e8343ee9454f3e2523aee6cec78",
+        "content": {
+          "auto_map": {
+            "AutoImageProcessor": "custom_processor.CustomBitImageProcessor"
+          },
+          "crop_size": {
+            "height": 518,
+            "width": 518
+          },
+          "do_center_crop": true,
+          "do_convert_rgb": true,
+          "do_hist_equalization": true,
+          "do_normalize": true,
+          "do_rescale": true,
+          "do_resize": true,
+          "image_mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "image_processor_type": "CustomBitImageProcessor",
+          "image_std": [
+            0.229,
+            0.224,
+            0.225
+          ],
+          "resample": 3,
+          "rescale_factor": 0.00392156862745098,
+          "size": {
+            "shortest_edge": 518
+          }
+        }
+      },
+      "custom_processor_source": {
+        "url": "https://huggingface.co/m42-health/CXformer-small/resolve/21777c302a43197b704c6c92591d9897efaaac3b/custom_processor.py",
+        "bytes": 1262,
+        "sha256": "5c5f28d602fc5444af0c22c305bc2df052a904957af31b69f55f9dd44a594a05",
+        "handling": "Read as bytes for SHA256 only; not executed or vendored"
+      },
+      "proposed_adapter_budget": {
+        "input_channels": 384,
+        "patch_grid_at_224": [
+          16,
+          16
+        ],
+        "rank": 64,
+        "output_channels": 256,
+        "target_grid": [
+          56,
+          56
+        ],
+        "trainable_parameters": 41280,
+        "projection_macs_per_image": 128450560,
+        "batch_size": 16,
+        "fp32_raw_patch_feature_bytes": 6291456,
+        "fp32_resized_frozen_feature_bytes": 77070336,
+        "fp32_injected_feature_bytes": 51380224,
+        "scope": "Analytical individual tensors, not total GPU memory or measured speed"
+      }
+    },
+    {
+      "model_id": "facebook/dinov2-with-registers-small",
+      "revision": "0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+      "api_url": "https://huggingface.co/api/models/facebook/dinov2-with-registers-small/revision/0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+      "gated": false,
+      "config": {
+        "url": "https://huggingface.co/facebook/dinov2-with-registers-small/resolve/0d9846e56b43a21fa46d7f3f5070f0506a5795a9/config.json",
+        "bytes": 1001,
+        "sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "content": {
+          "apply_layernorm": true,
+          "architectures": [
+            "Dinov2WithRegistersModel"
+          ],
+          "attention_probs_dropout_prob": 0.0,
+          "drop_path_rate": 0.0,
+          "hidden_act": "gelu",
+          "hidden_dropout_prob": 0.0,
+          "hidden_size": 384,
+          "image_size": 518,
+          "initializer_range": 0.02,
+          "interpolate_antialias": true,
+          "interpolate_offset": 0.0,
+          "layer_norm_eps": 1e-06,
+          "layerscale_value": 1.0,
+          "mlp_ratio": 4,
+          "model_type": "dinov2_with_registers",
+          "num_attention_heads": 6,
+          "num_channels": 3,
+          "num_hidden_layers": 12,
+          "num_register_tokens": 4,
+          "out_features": [
+            "stage12"
+          ],
+          "out_indices": [
+            12
+          ],
+          "patch_size": 14,
+          "qkv_bias": true,
+          "reshape_hidden_states": true,
+          "stage_names": [
+            "stem",
+            "stage1",
+            "stage2",
+            "stage3",
+            "stage4",
+            "stage5",
+            "stage6",
+            "stage7",
+            "stage8",
+            "stage9",
+            "stage10",
+            "stage11",
+            "stage12"
+          ],
+          "torch_dtype": "float32",
+          "transformers_version": "4.48.0.dev0",
+          "use_swiglu_ffn": false
+        }
+      },
+      "processor": {
+        "url": "https://huggingface.co/facebook/dinov2-with-registers-small/resolve/0d9846e56b43a21fa46d7f3f5070f0506a5795a9/preprocessor_config.json",
+        "bytes": 436,
+        "sha256": "14e780d86fa1861f8751f868d7f45425b5feb55c38ca26f152ca5097ab30f828",
+        "content": {
+          "crop_size": {
+            "height": 224,
+            "width": 224
+          },
+          "do_center_crop": true,
+          "do_convert_rgb": true,
+          "do_normalize": true,
+          "do_rescale": true,
+          "do_resize": true,
+          "image_mean": [
+            0.485,
+            0.456,
+            0.406
+          ],
+          "image_processor_type": "BitImageProcessor",
+          "image_std": [
+            0.229,
+            0.224,
+            0.225
+          ],
+          "resample": 3,
+          "rescale_factor": 0.00392156862745098,
+          "size": {
+            "shortest_edge": 256
+          }
+        }
+      },
+      "proposed_adapter_budget": {
+        "input_channels": 384,
+        "patch_grid_at_224": [
+          16,
+          16
+        ],
+        "rank": 64,
+        "output_channels": 256,
+        "target_grid": [
+          56,
+          56
+        ],
+        "trainable_parameters": 41280,
+        "projection_macs_per_image": 128450560,
+        "batch_size": 16,
+        "fp32_raw_patch_feature_bytes": 6291456,
+        "fp32_resized_frozen_feature_bytes": 77070336,
+        "fp32_injected_feature_bytes": 51380224,
+        "scope": "Analytical individual tensors, not total GPU memory or measured speed"
+      }
+    },
+    {
+      "model_id": "microsoft/rad-dino",
+      "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+      "api_url": "https://huggingface.co/api/models/microsoft/rad-dino/revision/110cbc18d5133582e320b43d53bf5c44e410c936",
+      "gated": false,
+      "config": {
+        "url": "https://huggingface.co/microsoft/rad-dino/resolve/110cbc18d5133582e320b43d53bf5c44e410c936/config.json",
+        "bytes": 879,
+        "sha256": "89daf9751d9576d586dedf9543c1083211611fa3a36908db7a799b3ce7c68ede",
+        "content": {
+          "apply_layernorm": true,
+          "architectures": [
+            "Dinov2Model"
+          ],
+          "attention_probs_dropout_prob": 0.0,
+          "drop_path_rate": 0.0,
+          "hidden_act": "gelu",
+          "hidden_dropout_prob": 0.0,
+          "hidden_size": 768,
+          "image_size": 518,
+          "initializer_range": 0.02,
+          "layer_norm_eps": 1e-06,
+          "layerscale_value": 1.0,
+          "mlp_ratio": 4,
+          "model_type": "dinov2",
+          "num_attention_heads": 12,
+          "num_channels": 3,
+          "num_hidden_layers": 12,
+          "out_features": [
+            "stage12"
+          ],
+          "out_indices": [
+            12
+          ],
+          "patch_size": 14,
+          "qkv_bias": true,
+          "reshape_hidden_states": true,
+          "stage_names": [
+            "stem",
+            "stage1",
+            "stage2",
+            "stage3",
+            "stage4",
+            "stage5",
+            "stage6",
+            "stage7",
+            "stage8",
+            "stage9",
+            "stage10",
+            "stage11",
+            "stage12"
+          ],
+          "torch_dtype": "float32",
+          "transformers_version": "4.41.0",
+          "use_swiglu_ffn": false
+        }
+      },
+      "processor": {
+        "url": "https://huggingface.co/microsoft/rad-dino/resolve/110cbc18d5133582e320b43d53bf5c44e410c936/preprocessor_config.json",
+        "bytes": 756,
+        "sha256": "c537fc995c30e2353f07253899618d60e9eae3d5f82473778602c007c6523b56",
+        "content": {
+          "_valid_processor_keys": [
+            "images",
+            "do_resize",
+            "size",
+            "resample",
+            "do_center_crop",
+            "crop_size",
+            "do_rescale",
+            "rescale_factor",
+            "do_normalize",
+            "image_mean",
+            "image_std",
+            "do_convert_rgb",
+            "return_tensors",
+            "data_format",
+            "input_data_format"
+          ],
+          "crop_size": {
+            "height": 518,
+            "width": 518
+          },
+          "do_center_crop": true,
+          "do_convert_rgb": true,
+          "do_normalize": true,
+          "do_rescale": true,
+          "do_resize": true,
+          "image_mean": [
+            0.5307,
+            0.5307,
+            0.5307
+          ],
+          "image_processor_type": "BitImageProcessor",
+          "image_std": [
+            0.2583,
+            0.2583,
+            0.2583
+          ],
+          "resample": 3,
+          "rescale_factor": 0.00392156862745098,
+          "size": {
+            "shortest_edge": 518
+          }
+        }
+      },
+      "proposed_adapter_budget": {
+        "input_channels": 768,
+        "patch_grid_at_224": [
+          16,
+          16
+        ],
+        "rank": 64,
+        "output_channels": 256,
+        "target_grid": [
+          56,
+          56
+        ],
+        "trainable_parameters": 65856,
+        "projection_macs_per_image": 205520896,
+        "batch_size": 16,
+        "fp32_raw_patch_feature_bytes": 12582912,
+        "fp32_resized_frozen_feature_bytes": 154140672,
+        "fp32_injected_feature_bytes": 51380224,
+        "scope": "Analytical individual tensors, not total GPU memory or measured speed"
+      }
+    },
+    {
+      "model_id": "facebook/dinov3-vits16-pretrain-lvd1689m",
+      "revision": "114c1379950215c8b35dfcd4e90a5c251dde0d32",
+      "api_url": "https://huggingface.co/api/models/facebook/dinov3-vits16-pretrain-lvd1689m/revision/114c1379950215c8b35dfcd4e90a5c251dde0d32",
+      "gated": "manual",
+      "config": {
+        "url": "https://huggingface.co/facebook/dinov3-vits16-pretrain-lvd1689m/resolve/114c1379950215c8b35dfcd4e90a5c251dde0d32/config.json",
+        "http_status": 401,
+        "access": "unauthenticated request denied"
+      },
+      "processor": {
+        "url": "https://huggingface.co/facebook/dinov3-vits16-pretrain-lvd1689m/resolve/114c1379950215c8b35dfcd4e90a5c251dde0d32/preprocessor_config.json",
+        "http_status": 401,
+        "access": "unauthenticated request denied"
+      },
+      "proposed_adapter_budget": {
+        "input_channels": 384,
+        "patch_grid_at_224": [
+          14,
+          14
+        ],
+        "rank": 64,
+        "output_channels": 256,
+        "target_grid": [
+          56,
+          56
+        ],
+        "trainable_parameters": 41280,
+        "projection_macs_per_image": 128450560,
+        "batch_size": 16,
+        "fp32_raw_patch_feature_bytes": 4816896,
+        "fp32_resized_frozen_feature_bytes": 77070336,
+        "fp32_injected_feature_bytes": 51380224,
+        "scope": "Analytical individual tensors, not total GPU memory or measured speed"
+      },
+      "budget_dimensions_source": "Official public DINOv3 model card; gated config not verified"
+    }
+  ]
+}

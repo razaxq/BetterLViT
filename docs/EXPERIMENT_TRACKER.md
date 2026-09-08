@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-07（Australia/Sydney）
+更新时间：2026-09-08（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -11,6 +11,14 @@
 - 机制筛选 pilot 只使用 validation：`AUTO_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`。未通过阶段门不得扩展或访问 Test。
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
+
+## 最新研究记录（2026-09-08）
+
+P11 已完成用户指定的150轮，最佳仍为80轮，Test macro IoU/Dice为0.755661/0.842335；结果与原80轮Best一致。完整运行与逐图证据见[最终归档](../repro_archive/20260908/dual_grain_150_results/README.md)。延长训练没有带来增益。
+
+针对“深入研究第二点方向”，已完成[冻结视觉预训练特征研究报告](../repro_archive/20260908/frozen_visual_prior/研究报告.md)。优先候选为CXformer-S，同结构自然图像DINOv2-S作预训练来源对照，DINOv3-S保留后续候选。计划从C4接入单处中层残差投影，约41,280个可训练参数，沿用原Dice/Focal；这是普通融合可行性方案，尚非独立创新或性能结果。报告记录直方图均衡化/分辨率混淆、固定权重版本、解析预算及Train/Val→配对种子→Test流程。
+
+本次仅研究和公开元数据审计，未连接服务器、下载权重、启动训练或新评估Test。当前没有本方向IoU增益证据。
 
 ## 已完成的正式 Test 实验
 
