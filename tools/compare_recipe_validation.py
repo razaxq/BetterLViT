@@ -5,7 +5,7 @@ import json
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from training_recipe import validate_recipe_manifest
+from training_recipe import validate_recipe_manifest, rates_equal
 from compare_visual_validation import compare
 
 
@@ -22,8 +22,9 @@ def main():
     assert candidate['experiment'] == manifest['profile']
     assert candidate['seed'] == manifest['seed']
     recipe = candidate['training_recipe']
-    for key in ('augmentation_policy', 'lr_schedule', 'planned_epoch_lrs', 'epochs'):
+    for key in ('augmentation_policy', 'lr_schedule', 'epochs'):
         assert recipe[key] == manifest[key], key
+    assert rates_equal(recipe['planned_epoch_lrs'], manifest['planned_epoch_lrs'])
     assert recipe['optimizer'] == 'Adam' and recipe['weight_decay'] == 1e-4
     assert control['checkpoint_git_commit'] == manifest['control_source_git_commit']
     result = compare(control, candidate, role='c4')

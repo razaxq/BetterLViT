@@ -11,6 +11,13 @@ def planned_rates(schedule, epochs=80, maximum=3e-4):
     raise ValueError('Unknown schedule')
 
 
+def rates_equal(actual, expected):
+    """Allow libm rounding across Windows/Linux, not a changed LR recipe."""
+    return len(actual) == len(expected) and all(
+        math.isfinite(a) and math.isfinite(b) and math.isclose(a, b, rel_tol=1e-14, abs_tol=0.0)
+        for a, b in zip(actual, expected))
+
+
 def validate_recipe_manifest(manifest):
     policies = {'r1_chest_augmentation':('chest_orientation','warm_restarts'),
                 'r2_single_cosine':('legacy','single_cosine')}
@@ -20,7 +27,7 @@ def validate_recipe_manifest(manifest):
     assert manifest['selection_metric'] == 'iou' and manifest['threshold'] == .5
     assert manifest['loss_name'] == 'dice_focal' and manifest['initialization'] == 'from_scratch'
     assert not any(manifest[k] for k in ('test_split_allowed','auto_test_evaluate','lora','boundary_loss','new_supervision','visual_prior'))
-    assert manifest['planned_epoch_lrs'] == planned_rates(expected[1])
+    assert rates_equal(manifest['planned_epoch_lrs'], planned_rates(expected[1]))
 
 
 def recipe_metadata(config):
