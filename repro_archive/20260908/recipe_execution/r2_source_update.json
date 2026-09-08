@@ -1,0 +1,21 @@
+{
+  "source": {
+    "branch": "paper/r2-training-recipe",
+    "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+    "repository": "/root/BetterLViT-recipe-r2",
+    "local_repository": "D:\\BetterLViT\\recipe_r2_work",
+    "profile": "r2_single_cosine",
+    "experiment_tag": "experiment-r2-recipe-80e-seed1219-20260908-v2",
+    "remote_run": "/root/recipe_runs/r2_80_20260908",
+    "previous_unlaunched_source_git_commit": "22637e8d78f1153eb5abb9184773ce88ff37cf0f",
+    "previous_unlaunched_tag": "experiment-r2-recipe-80e-seed1219-20260908",
+    "preflight_repetitions": [
+      3,
+      4
+    ]
+  },
+  "system_free_bytes": 14310588416,
+  "scratch_free_bytes": 3990962176,
+  "fs_bytes": 18559782256,
+  "gpu": "NVIDIA GeForce RTX 4090 D, 1 MiB, 24564 MiB"
+}

@@ -1,0 +1,41 @@
+{
+  "status": "ok",
+  "experiment": "c4_race_pe_control",
+  "source_git_commit": "896ed3e0e8d2768cf2a4b1a1b877e5631041425d",
+  "training_recipe": null,
+  "input_image_sha256": "d1a7bf48c28c2cfcdc355c8a1c99dcf29049ce0f4d89d90fbaf1fd5b2e0c798b",
+  "test_split_accessed": false,
+  "temporary_optimizer_steps": 5,
+  "formal_training_performed": false,
+  "batch_size": 16,
+  "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+  "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+  "output_sha256_each_step": [
+    "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+    "6ed690b101faaea2282c9e7131c20f5cd11f38da10605aa4a883c4ae8eaba7db",
+    "2eb2ebe7cbc9807af500a2bab28d308f7a16f95e10a6ed8285bc395ff8945b1c",
+    "6b5da3195b8c0c37be4ddc7e69b9c29f14152838ebf521889a027386d0b7dffd",
+    "f5f01968f94dbcd0ece004194c2e9807f894dae653f64123ac5d5f24317418a9"
+  ],
+  "loss_each_step": [
+    0.48949211835861206,
+    0.43549656867980957,
+    0.41258519887924194,
+    0.3889102339744568,
+    0.37480854988098145
+  ],
+  "seconds_each_step": [
+    1.9007697105407715,
+    0.6096010208129883,
+    0.6142430305480957,
+    0.610163688659668,
+    0.6024844646453857
+  ],
+  "steady_seconds_per_batch": 0.6089637279510498,
+  "peak_allocated_gib": 15.354290962219238,
+  "peak_reserved_gib": 16.5,
+  "visual_prior": null,
+  "repository": "/root/BetterLViT-recipe-dev",
+  "repetition": 1,
+  "recorded_unix": 1788865275.6484387
+}

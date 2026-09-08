@@ -1,0 +1,12 @@
+{
+  "source": {
+    "branch": "paper/training-recipe-development",
+    "source_git_commit": "896ed3e0e8d2768cf2a4b1a1b877e5631041425d",
+    "repository": "/root/BetterLViT-recipe-dev",
+    "profile": "c4_race_pe_control"
+  },
+  "system_free_bytes": 14313938944,
+  "scratch_free_bytes": 3990962176,
+  "fs_bytes": 18559782256,
+  "gpu": "NVIDIA GeForce RTX 4090 D, 1 MiB, 24564 MiB"
+}

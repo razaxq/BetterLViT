@@ -1,0 +1,26 @@
+{
+  "dev": {
+    "branch": "paper/training-recipe-development",
+    "source_git_commit": "896ed3e0e8d2768cf2a4b1a1b877e5631041425d",
+    "repository": "/root/BetterLViT-recipe-dev",
+    "profile": "c4_race_pe_control"
+  },
+  "r1": {
+    "branch": "paper/r1-training-recipe",
+    "source_git_commit": "3f24ae1d03fbce252330b540fd6d331fe2d004f4",
+    "repository": "/root/BetterLViT-recipe-r1",
+    "local_repository": "D:\\BetterLViT\\recipe_r1_work",
+    "profile": "r1_chest_augmentation",
+    "experiment_tag": "experiment-r1-recipe-80e-seed1219-20260908",
+    "remote_run": "/root/recipe_runs/r1_80_20260908"
+  },
+  "r2": {
+    "branch": "paper/r2-training-recipe",
+    "source_git_commit": "22637e8d78f1153eb5abb9184773ce88ff37cf0f",
+    "repository": "/root/BetterLViT-recipe-r2",
+    "local_repository": "D:\\BetterLViT\\recipe_r2_work",
+    "profile": "r2_single_cosine",
+    "experiment_tag": "experiment-r2-recipe-80e-seed1219-20260908",
+    "remote_run": "/root/recipe_runs/r2_80_20260908"
+  }
+}

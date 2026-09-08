@@ -1,0 +1,43 @@
+# R1 / R2 训练配方实验执行记录
+
+用户已授权先给出计划，然后直接执行。完整预注册计划位于独立代码工作树的 `docs/TRAINING_RECIPE_PLAN_20260908.md`，本目录的 `sources.json` 记录唯一正式 SHA、tag 和服务器目录。
+
+- R1：删除原 50% 的 90° 倍数旋转/镜像分支，保留其随机数消耗；小角度旋转仍约 25%，其余恒等。原学习率不变。
+- R2：原增强不变；学习率从首轮 3e-4 单次余弦降到第 80 轮 1e-6。
+- 共同：C4 架构、原 Dice/Focal、无 LoRA/新监督/外部视觉编码器，seed 1219、80 轮、batch16、224、Val IoU 选 Best、固定阈值 0.5，从头训练。
+- 先 R1，再 R2；R2 不以 R1 的数值筛选成功为前提。每组完整训练后自动导出 1429 张 Val。筛选通过再做配对种子和最终 Test，不把单种子 Val 增益当成最终成果。
+
+## 启动状态（2026-09-08 21:13，悉尼）
+
+R1 已提交后台，PID 114892，正式来源 `f71e782940dc2a52b08111771f6e3d5f5a8d36c5`。本次只取得启动回执，尚未进行正式训练健康检查；预算 0/2。首次 heartbeat `betterlvit-r1-r2` 已预约 21:29（Australia/Sydney）。R2 来源 `9eca26de5b301099805530edbf5a1a8718bea662`，预检通过并等待 R1 完成后提交；尚未启动。此时没有 R1/R2 Val 或 Test 结果。
+
+## 已验证的代码和 GPU 条件
+
+`dev_checks_2.json` 保存 6 项配方回归检查和 3 项配对筛选检查。旧增强相对冻结 C4 的输出和 Python/NumPy 随机数状态逐项相同；被删除分支、保留的小旋转/恒等分支均有独立检查。原学习率序列不变，新序列的全部 80 值、端点与恢复均通过。
+
+`dev_preflight_1.json` 是同一基础模型在新代码默认 C4 配置上的五步 GPU 对照；其初始模型和首步输出与历史 C4 一致。`r1_preflight_3/4.json`、`r2_preflight_3/4.json` 是正式来源的独立重复。启动器要求两次的输入、五步输出和 loss 精确一致，R2 还须和 C4 的五步相同；R1 输入须按计划变化，基础模型初始化须相同。所有预检仅使用 Train 数据，临时权重不进入正式训练。
+
+初次注册的 R2 在 Windows/Linux 的第 24 轮 LR 出现 1 ULP（2.71e-20）差异，被启动前校验拦截；未启动正式训练。追加验证修复 commit，允许相对 1e-14 的纯舍入差异，但拒绝 1e-10 的实际 LR 改动、缺失轮数和非有限值；训练数学计算没有改变。原 tag 保留，最终运行来源使用 `-v2` tag。旧 `*_preflight_1/2.json` 保留为修复前证据，修复后对最终来源重复预检见 3/4。原 manifest 内的 tag 是协议首次注册参考，实际 runtime tag/SHA 以 sources.json 和 launch.json 为准。
+
+运行环境包清单见 `environment.json`。部署时 RTX 4090 D 空闲，系统盘约 14.31GB 可用，共享 fs 为 18,559,782,256 字节，小于 20,000,000,000。工作树与正式输出使用系统盘 `/root/BetterLViT-recipe-r1|r2` 和 `/root/recipe_runs/`，不会新增共享 fs 检查点。
+
+## 当前任务的定时执行说明
+
+执行脚本目录：`D:/BetterLViT/experiment_docs_work/repro_archive/20260908/recipe_execution`。可变检查预算与运行证据目录：`D:/BetterLViT/outputs/recipe_20260908`。归档到 Git 的副本仅是历史状态，不作为实时检查预算。
+
+1. `python -X utf8 launch_recipe.py --label r1` 只发起后台进程、返回 PID，写入 `r1_launch.json` 和 `r1_state.json`。首次检查预约为启动约 15 分钟后，未确认训练健康前不得报告“已正常训练”。不要为了查看启动状态提前消耗一次检查。
+2. 首次到时运行 `collect_snapshot.py --state D:/BetterLViT/outputs/recipe_20260908/r1_state.json --output D:/BetterLViT/outputs/recipe_20260908/r1_first_snapshot.json`，仅一次 SSH。随后只读本地快照。正常运行且已有至少 3 个完整 epoch 时，执行 `forecast_recipe.py --label r1`；读取生成的 `planned_final_check_sydney` 并将同一定时任务更新到该时间。它按去掉首轮后的整轮均值，设置预计完成后约 12 分钟检查。不要继续轮询。
+3. 末次到时以同一 collector 写入 `r1_final_snapshot.json`，然后本地执行 `finalize_recipe.py --label r1`。它核实 SHA、80 轮、1429 样本、实际结束至检查间隔，再应用预注册筛选。若还没完成或失败，如实处理，不增加第三次训练状态检查。
+4. R1 已确认终止后，归档已完成的原始日志和 JSON、核对哈希，更新台账并推送。模型 Best 的 HF 归档按既有上传流程执行，不删除原始模型；静态已完成文件传输不作为轮询。训练失败需先解释失败原因并确认没有共用配置问题，不能把失败当作有效负结果。
+5. R1 完成且来源有效后运行 `launch_recipe.py --label r2`，不论 R1 数值门槛是否通过。R2 有新的 0/2 检查预算；把同一定时任务更新到其首次检查时间。R2 后续用对应 `r2_*` 文件和 `--label r2` 重复步骤 2–4。
+6. R2 分析完成后，汇报两项各自 IoU/Dice、配对区间和最小病灶组结果。根据注册计划，仅对通过者准备多种子复验；两项均失败则结束支线，不自动加到 150 轮。处理完当前定时任务的目的后删除它，避免留存无效提醒。
+
+每组最多两次短连接状态检查；收集器在连接前扣减预算，禁止隐藏重试。正常且无重要变化时不通知用户，完成、失败、启动下一组等有意义变化才通知。没有持久在线、循环轮询或完成监听器。预测无法保证真实结束时间，最终必须据实际时间核验 30 分钟限制。
+
+## 科学筛选
+
+比较工具是各正式工作树的 `tools/compare_recipe_validation.py`，对照文件为相邻 `visual_prior_execution/c4_validation.json`（C4 来源 `add4908a0d6f702b0a10c4581725b535543829b8`，Val macro IoU/Dice 0.7227963241858801/0.8212136349344947）。
+
+通过需同时满足：IoU ≥+0.003、10,000 次逐图配对 bootstrap 95% 下界 >0、Dice 不降、最小 GT 面积四分位 IoU 不降。Precision/Recall 仅用于解释错误。该区间不能证明跨训练随机种子的稳定性；最终论文成果以固定协议下的 Test 为准。
+
+后续配对 seeds 为 1219/2027/3407，额外种子的 C4 与候选均需独立冻结来源。R2 的结论归于整个 LR 配方（包括后期下限变化），不单独归因于移除重启。配方优化不作为第二项结构创新。

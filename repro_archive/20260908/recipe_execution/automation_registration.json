@@ -1,0 +1,9 @@
+{
+  "automation_id": "betterlvit-r1-r2",
+  "kind": "heartbeat",
+  "status": "ACTIVE",
+  "first_check_sydney": "2026-09-08T21:29:00+10:00",
+  "inspection_budget_per_training": 2,
+  "current_inspections_completed": 0,
+  "plan": "Estimate the final check from the first complete-epoch snapshot, then continue R2 with a new budget."
+}

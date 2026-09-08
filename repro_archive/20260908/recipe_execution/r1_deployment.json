@@ -1,0 +1,15 @@
+{
+  "source": {
+    "branch": "paper/r1-training-recipe",
+    "source_git_commit": "3f24ae1d03fbce252330b540fd6d331fe2d004f4",
+    "repository": "/root/BetterLViT-recipe-r1",
+    "local_repository": "D:\\BetterLViT\\recipe_r1_work",
+    "profile": "r1_chest_augmentation",
+    "experiment_tag": "experiment-r1-recipe-80e-seed1219-20260908",
+    "remote_run": "/root/recipe_runs/r1_80_20260908"
+  },
+  "system_free_bytes": 14312398848,
+  "scratch_free_bytes": 3990962176,
+  "fs_bytes": 18559782256,
+  "gpu": "NVIDIA GeForce RTX 4090 D, 1 MiB, 24564 MiB"
+}
