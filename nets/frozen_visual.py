@@ -45,6 +45,9 @@ class FrozenVisualEncoder(nn.Module):
         weight = root / kind / 'model.safetensors'
         manifest = json.loads((root / 'manifest.json').read_text())
         record = manifest[kind]
+        for config_kind in {kind, 'dinov2'}:
+            if sha256(root / config_kind / 'config.json') != manifest[config_kind]['files']['config.json']:
+                raise ValueError('External encoder configuration checksum mismatch')
         if record['model_id'] != ENCODERS[kind][0] or record['revision'] != ENCODERS[kind][1]:
             raise ValueError('Unregistered encoder revision')
         if sha256(weight) != record['files']['model.safetensors']:

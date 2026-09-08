@@ -360,6 +360,7 @@ def main():
         "checkpoint": str(checkpoint_path),
         "checkpoint_git_commit": checkpoint_commit,
         "analysis_git_commit": analysis_commit,
+        "visual_prior": expected_visual,
         "checkpoint_best_epoch": int(checkpoint.get("best_epoch", -1)),
         "selection_metric": config.selection_metric,
         "seed": int(checkpoint.get("seed", -1)),
