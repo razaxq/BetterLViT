@@ -1,0 +1,76 @@
+{
+  "source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+  "p12_source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "test_split_accessed": false,
+  "new_training": false,
+  "history_sha256": "9798ba4c82f5f6f79b0f64907c8b36d159ee2357dc6afcb9bae6cabd01b27828",
+  "augmentation": {
+    "rot90_then_flip_branch_probability": 0.5,
+    "small_rotation_branch_probability": 0.25,
+    "unchanged_branch_probability": 0.25,
+    "text_tokens_unchanged": true,
+    "race_zone_basis_transformed": true,
+    "interpretation": "Orientation distribution and spatial text compatibility deserve controlled testing; transformed region bases are not being claimed misaligned."
+  },
+  "restart_boundaries": [
+    {
+      "epoch": 11,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7045,
+      "val_iou": 0.6569,
+      "delta_val_iou": -0.0476
+    },
+    {
+      "epoch": 21,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7114,
+      "val_iou": 0.6581,
+      "delta_val_iou": -0.0533
+    },
+    {
+      "epoch": 31,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7105,
+      "val_iou": 0.7063,
+      "delta_val_iou": -0.0042
+    },
+    {
+      "epoch": 41,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7145,
+      "val_iou": 0.7112,
+      "delta_val_iou": -0.0033
+    },
+    {
+      "epoch": 51,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7122,
+      "val_iou": 0.7064,
+      "delta_val_iou": -0.0058
+    },
+    {
+      "epoch": 61,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7152,
+      "val_iou": 0.7077,
+      "delta_val_iou": -0.0075
+    },
+    {
+      "epoch": 71,
+      "previous_lr": 0.000105,
+      "lr": 0.0003,
+      "previous_val_iou": 0.7168,
+      "val_iou": 0.7057,
+      "delta_val_iou": -0.0111
+    }
+  ],
+  "all_seven_boundaries_have_lower_val_iou": true,
+  "causal_limitation": "A transient validation drop after a scheduled restart is not proof that restarts reduce the best achievable result.",
+  "decision": "Two separate C4 recipe comparisons: orientation-preserving augmentation, then a single learning-rate decay; no new module, supervision, or Test selection."
+}
