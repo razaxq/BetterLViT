@@ -16,8 +16,8 @@
     "sha256": "1bdbd143aa2274e0bb1f2b3a2f34f8e871da3174d5fc479ddc44253130fe3048"
   },
   "automation_registration.json": {
-    "bytes": 786,
-    "sha256": "7e32108eb9aa6867d47d9c14ad5a15228a031b470b02833b505e63321f732cef"
+    "bytes": 917,
+    "sha256": "6a83d71eaa0d05258b652190c4b323189b57a2a56151c934bc4385a29f2ebcd2"
   },
   "capture_environment.py": {
     "bytes": 1025,
@@ -123,6 +123,14 @@
     "bytes": 565,
     "sha256": "d0dc196775c421dcc81c1740ab3588d46abcdf654babc3c37763c1f8296cdf4b"
   },
+  "r2_first_snapshot.json": {
+    "bytes": 10890,
+    "sha256": "370b4b2fab0367f190df8754bd30e369475175b9509d7159f4d5cf2b0101c70f"
+  },
+  "r2_forecast.json": {
+    "bytes": 1762,
+    "sha256": "98c3d34dfc9b29bed80d22fd047ce8ed0516d063f382e66264fd068a05b1412e"
+  },
   "r2_launch.json": {
     "bytes": 24340,
     "sha256": "f307e169008b35e25b2af97bf9eba6ce67a248385bdaaa7a79358276fd0df702"
@@ -152,12 +160,12 @@
     "sha256": "bf15f2be2d5675af102016da223366e31ce11c75b9e47b97d1f78a2224ada11c"
   },
   "r2_state.json": {
-    "bytes": 24340,
-    "sha256": "f307e169008b35e25b2af97bf9eba6ce67a248385bdaaa7a79358276fd0df702"
+    "bytes": 26488,
+    "sha256": "32fbf3a269dd033e9f057416f4c285580caaf4724c113a1652d0651191278fa7"
   },
   "README.md": {
-    "bytes": 8474,
-    "sha256": "a5a378c36d93ee66292b51ce3c63696003eaba6e5c387b82feac7c1dae882467"
+    "bytes": 9356,
+    "sha256": "9255f496ec1627765d4bff4b21a5b22875537b82bc3a20cfc6613aeaa59400d2"
   },
   "register_sources.py": {
     "bytes": 3103,
