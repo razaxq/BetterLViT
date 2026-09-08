@@ -1,0 +1,13 @@
+{
+  "p12": {
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "repository": "/root/BetterLViT-visual-p12"
+  },
+  "c9": {
+    "source_git_commit": "3d60890f61e7ef9b1ee4560d38436c6532ba6fd0",
+    "repository": "/root/BetterLViT-visual-c9"
+  },
+  "system_free_bytes": 16207568896,
+  "scratch_free_bytes": 3990974464,
+  "fs_bytes": 18559782256
+}

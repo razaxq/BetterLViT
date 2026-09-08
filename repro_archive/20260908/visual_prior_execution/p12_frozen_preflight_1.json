@@ -1,0 +1,56 @@
+{
+  "status": "ok",
+  "experiment": "p12_visual_prior",
+  "test_split_accessed": false,
+  "temporary_optimizer_steps": 5,
+  "formal_training_performed": false,
+  "batch_size": 16,
+  "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+  "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+  "output_sha256_each_step": [
+    "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+    "164d640daaecda1e89ae50f3d24bb0086cabe48ac24592b7ff3fccd0ed9afba7",
+    "30aac93218a6481e2207299798d53120260126ba87a4ba646220429214e304cd",
+    "b439657bbfd4deb7da4299148999711c2f4d3e66857ed69451f566dcd003a118",
+    "b8d21ff1d98165f5b00f765478b9d227bda81ebffffeb1e9ab05d32dcf36af46"
+  ],
+  "loss_each_step": [
+    0.48949211835861206,
+    0.4354950189590454,
+    0.4125458896160126,
+    0.3888147175312042,
+    0.37465161085128784
+  ],
+  "seconds_each_step": [
+    1.5636165142059326,
+    0.6004369258880615,
+    0.5982379913330078,
+    0.6018216609954834,
+    0.6001462936401367
+  ],
+  "steady_seconds_per_batch": 0.6000686486562093,
+  "peak_allocated_gib": 15.582489013671875,
+  "peak_reserved_gib": 16.720703125,
+  "visual_prior": {
+    "kind": "cxformer",
+    "random_init": false,
+    "random_seed": 7001,
+    "model_id": "m42-health/CXformer-small",
+    "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+    "weight_sha256": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2",
+    "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+    "attention": "eager",
+    "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+    "histogram_equalization": false,
+    "patch_size": 14,
+    "nonpatch_tokens": 5,
+    "adapter_parameters": 41280,
+    "adapter": "bilinear_frozen_features_56_then_1x1_384_64_gelu_1x1_64_256",
+    "insertion": "after_down2_before_downVit2",
+    "zero_initialized_output": true
+  },
+  "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+  "repository": "/root/BetterLViT-visual-p12",
+  "repetition": 1,
+  "recorded_unix": 1788841110.0953743
+}

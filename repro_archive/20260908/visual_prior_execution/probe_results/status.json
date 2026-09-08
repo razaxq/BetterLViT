@@ -1,0 +1,95 @@
+{
+  "started_unix": 1788839731.6636426,
+  "stage": "complete",
+  "training_performed": true,
+  "test_split_accessed": false,
+  "source_git_commit": "5d7f4eeca92462de485d972b4cd7eebb381a07b5",
+  "seed": 1219,
+  "epochs": 20,
+  "batch_size": 16,
+  "torch": "2.9.1+cu128",
+  "transformers": "4.57.6",
+  "protocol": "fixed224_noHE_FP32_eager_no_augmentation_macro_at_0.5",
+  "metric_contract": "prediction>0.5; undefined/empty IoU and Dice=0, matching C4 export",
+  "head": "384->64->1 GELU, native16 grid then nearest224",
+  "optimizer": "AdamW lr=0.0003 weight_decay=0.0001 constant; no scheduler",
+  "encoders": {
+    "cxformer": {
+      "extraction": {
+        "Train_Folder": {
+          "seconds": 56.05884647369385,
+          "non_gray_images": 0,
+          "samples": 5716,
+          "name_sha256": "070b8b6b9688a9d38e01873ef3f4c57fde3739968a2aa5bb005cf2fc57758aa5",
+          "feature_sha256": "c99b487401f75b02d3bb5eff38665ba1f9cf338cd5dd8445b2240b4e658bbe82",
+          "mask_sha256": "470f73862035e8377158d355ce1c73126fc6481ffb6bddb7af9c8260564cf92c"
+        },
+        "Val_Folder": {
+          "seconds": 14.907027959823608,
+          "non_gray_images": 0,
+          "samples": 1429,
+          "name_sha256": "e75d248b6b787990f5fcf58839ae117010f8190043149995fb3805c9711ddd06",
+          "feature_sha256": "a214ef196cba8c81a82dce6e9c7ec7d0c480c9618b8a55c2839fc3fe3c95748f",
+          "mask_sha256": "23fdb5b5f916f659ee89d67d13f85be585312ca9c11174a98bbd6d5bd944bd8d"
+        }
+      },
+      "initial_head_sha256": "713719e27a1454d3f1b9dcc936a2409d4c316303dfd97d9432a6021fe3de3e06",
+      "trainable_parameters": 24705,
+      "training_seconds": 74.67270421981812,
+      "completed_unix": 1788839887.1801095,
+      "encoder": {
+        "kind": "cxformer",
+        "random_init": false,
+        "random_seed": 7001,
+        "model_id": "m42-health/CXformer-small",
+        "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+        "weight_sha256": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2",
+        "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "attention": "eager",
+        "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+        "histogram_equalization": false,
+        "patch_size": 14,
+        "nonpatch_tokens": 5
+      }
+    },
+    "dinov2": {
+      "extraction": {
+        "Train_Folder": {
+          "seconds": 54.36990785598755,
+          "non_gray_images": 0,
+          "samples": 5716,
+          "name_sha256": "070b8b6b9688a9d38e01873ef3f4c57fde3739968a2aa5bb005cf2fc57758aa5",
+          "feature_sha256": "6564ad478238040a791018568d15cde04e29aa65bb6792cda3c94297c5f5bca7",
+          "mask_sha256": "470f73862035e8377158d355ce1c73126fc6481ffb6bddb7af9c8260564cf92c"
+        },
+        "Val_Folder": {
+          "seconds": 14.51143765449524,
+          "non_gray_images": 0,
+          "samples": 1429,
+          "name_sha256": "e75d248b6b787990f5fcf58839ae117010f8190043149995fb3805c9711ddd06",
+          "feature_sha256": "311396eebb147b575dd2a439649ecca05f3d67b3bfb1d477871eb9358b5478c4",
+          "mask_sha256": "23fdb5b5f916f659ee89d67d13f85be585312ca9c11174a98bbd6d5bd944bd8d"
+        }
+      },
+      "initial_head_sha256": "713719e27a1454d3f1b9dcc936a2409d4c316303dfd97d9432a6021fe3de3e06",
+      "trainable_parameters": 24705,
+      "training_seconds": 84.22447490692139,
+      "completed_unix": 1788840049.9850404,
+      "encoder": {
+        "kind": "dinov2",
+        "random_init": false,
+        "random_seed": 7001,
+        "model_id": "facebook/dinov2-with-registers-small",
+        "revision": "0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+        "weight_sha256": "78e7f952c5af83cf6da38f08ff52b062bbe00c1adf39c4c7e0361969f27abae7",
+        "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "attention": "eager",
+        "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+        "histogram_equalization": false,
+        "patch_size": 14,
+        "nonpatch_tokens": 5
+      }
+    }
+  },
+  "completed_unix": 1788840050.5525517
+}

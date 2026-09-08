@@ -1,0 +1,29 @@
+{
+  "diagnostic_only": true,
+  "test_split_accessed": false,
+  "source_git_commit": "5d7f4eeca92462de485d972b4cd7eebb381a07b5",
+  "inspections_completed": 2,
+  "inspected_unix": 1788840547.0503886,
+  "seconds_after_each_probe": {
+    "cxformer": 659.8702790737152,
+    "dinov2": 497.06534814834595
+  },
+  "paired_contract_verified": true,
+  "records": 1429,
+  "cxformer": {
+    "macro_iou": 0.5309805682079377,
+    "macro_dice": 0.6676792414836703,
+    "best_epoch": 19
+  },
+  "dinov2": {
+    "macro_iou": 0.47595896319264724,
+    "macro_dice": 0.6162651147330005,
+    "best_epoch": 17
+  },
+  "cxformer_minus_dinov2": {
+    "macro_iou": 0.055021605015290465,
+    "macro_dice": 0.05141412675066981
+  },
+  "advance_to_p12": true,
+  "limitation": "Feature readout only; no full BetterLViT gain, cross-seed stability, or final Test claim."
+}

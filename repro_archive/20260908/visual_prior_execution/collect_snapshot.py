@@ -26,6 +26,15 @@ repo = Path(REPO_VALUE).resolve()
 assert run.parent == Path('/root/visual_prior_runs')
 assert str(repo).startswith('/root/BetterLViT-visual-')
 result = {'inspected_unix':time.time(), 'run':str(run), 'repository':str(repo), 'files':{}}
+timing = run / 'epoch_timing.jsonl'
+if timing.exists():
+    # Ignore an unfinished trailing line if the snapshot meets an epoch write.
+    raw = timing.read_text()
+    result['epoch_timing'] = [json.loads(line) for line in raw.splitlines()
+        if line.strip() and (raw.endswith('\\n') or line != raw.splitlines()[-1])]
+result['launcher_process'] = subprocess.run(
+    ['ps','-p',str(PID_VALUE),'-o','pid=,stat=,etime=,args='],
+    capture_output=True,text=True).stdout.strip()
 for name in ('status.json','runtime.json','failure.json','validation.json',
              'cxformer_validation.json','dinov2_validation.json','cxformer_history.json','dinov2_history.json'):
     path = run / name
@@ -51,7 +60,7 @@ if 'encoders' in probe:
     result['seconds_after_each_probe'] = {k:result['inspected_unix']-v['completed_unix']
         for k,v in probe['encoders'].items() if 'completed_unix' in v}
 print(json.dumps(result))
-'''.replace('RUN_VALUE',repr(state['remote_run'])).replace('REPO_VALUE',repr(state['remote_repository']))
+'''.replace('RUN_VALUE',repr(state['remote_run'])).replace('REPO_VALUE',repr(state['remote_repository'])).replace('PID_VALUE',repr(state['pid']))
     process = subprocess.run(['ssh','-i',state['ssh_key'],'-p','21465','-o','BatchMode=yes',
         '-o','ConnectTimeout=15','root@connect.westb.seetacloud.com',
         '/root/autodl-tmp/envs/betterlvit-paper/bin/python -'],

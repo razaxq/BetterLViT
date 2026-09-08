@@ -1,0 +1,56 @@
+{
+  "status": "ok",
+  "experiment": "c9_visual_random",
+  "test_split_accessed": false,
+  "temporary_optimizer_steps": 5,
+  "formal_training_performed": false,
+  "batch_size": 16,
+  "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+  "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+  "output_sha256_each_step": [
+    "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+    "19e736f9e89315853fd92b7b504f3518a958f0bae9a15c9295a4cdfbd2ffb1b4",
+    "d792b3a8f50c514bfc66fb8327b55bb7dcce82b93ee0d64b8cabad7d99b7ef88",
+    "f209b80d77a182cdb8e1e47abd00f988c8c4849ba0244f080a7854ad32cf8c48",
+    "237b75210ed069ecb6f6abb52480f4f24c2d8e4829bea17fd0a01bf0e4e571a1"
+  ],
+  "loss_each_step": [
+    0.48949211835861206,
+    0.4354892075061798,
+    0.4126037359237671,
+    0.3888772130012512,
+    0.3745368421077728
+  ],
+  "seconds_each_step": [
+    1.5323028564453125,
+    0.6018660068511963,
+    0.5996170043945312,
+    0.5995242595672607,
+    0.6018762588500977
+  ],
+  "steady_seconds_per_batch": 0.6003391742706299,
+  "peak_allocated_gib": 15.582489013671875,
+  "peak_reserved_gib": 16.720703125,
+  "visual_prior": {
+    "kind": "cxformer",
+    "random_init": true,
+    "random_seed": 7001,
+    "model_id": "m42-health/CXformer-small",
+    "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+    "weight_sha256": null,
+    "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+    "attention": "eager",
+    "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+    "histogram_equalization": false,
+    "patch_size": 14,
+    "nonpatch_tokens": 5,
+    "adapter_parameters": 41280,
+    "adapter": "bilinear_frozen_features_56_then_1x1_384_64_gelu_1x1_64_256",
+    "insertion": "after_down2_before_downVit2",
+    "zero_initialized_output": true
+  },
+  "source_git_commit": "3d60890f61e7ef9b1ee4560d38436c6532ba6fd0",
+  "repository": "/root/BetterLViT-visual-c9",
+  "repetition": 1,
+  "recorded_unix": 1788841222.6248543
+}

@@ -1,0 +1,14 @@
+{
+  "cxformer_readout.pt": {
+    "bytes": 258167,
+    "sha256": "91ce9fe2a5e256a3cdf20b0e5d51fb6b7a2847eb19dcac1fa4fb561172181ecb",
+    "local_path": "D:\\BetterLViT\\outputs\\visual_prior_20260908\\cxformer_readout.pt",
+    "remote_path": "/root/visual_prior_runs/probe_20260908/cxformer_readout.pt"
+  },
+  "dinov2_readout.pt": {
+    "bytes": 258147,
+    "sha256": "507ba0ca6d3acc97a9580036e7835db7f012219e4475b4e522c426d4aa862c78",
+    "local_path": "D:\\BetterLViT\\outputs\\visual_prior_20260908\\dinov2_readout.pt",
+    "remote_path": "/root/visual_prior_runs/probe_20260908/dinov2_readout.pt"
+  }
+}
