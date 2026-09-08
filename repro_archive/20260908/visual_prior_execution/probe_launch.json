@@ -1,0 +1,293 @@
+{
+  "source_git_commit": "5d7f4eeca92462de485d972b4cd7eebb381a07b5",
+  "remote_repository": "/root/BetterLViT-visual-prior-dev",
+  "remote_run": "/root/visual_prior_runs/probe_20260908",
+  "pid": 96873,
+  "started_unix": 1788839725.814767,
+  "launch_inspected_unix": 1788839727.8156009,
+  "inspections_completed": 1,
+  "planned_final_check_unix": 1788840452.814767,
+  "timing": {
+    "cxformer": {
+      "feature_sha256": "6f2716ec249113ac0de4d368f5c106581b3dd61d99d5706dd385943b7237f2a2",
+      "seconds_per_forward_batch16": 0.019753789901733397,
+      "provenance": {
+        "kind": "cxformer",
+        "random_init": false,
+        "random_seed": 7001,
+        "model_id": "m42-health/CXformer-small",
+        "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+        "weight_sha256": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2",
+        "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "attention": "eager",
+        "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+        "histogram_equalization": false,
+        "patch_size": 14,
+        "nonpatch_tokens": 5
+      }
+    },
+    "dinov2": {
+      "feature_sha256": "70ef275ead1b92234252a08f405858a4f0ac9ca6687cff9d3e1290479b074789",
+      "seconds_per_forward_batch16": 0.019719350337982177,
+      "provenance": {
+        "kind": "dinov2",
+        "random_init": false,
+        "random_seed": 7001,
+        "model_id": "facebook/dinov2-with-registers-small",
+        "revision": "0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+        "weight_sha256": "78e7f952c5af83cf6da38f08ff52b062bbe00c1adf39c4c7e0361969f27abae7",
+        "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "attention": "eager",
+        "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+        "histogram_equalization": false,
+        "patch_size": 14,
+        "nonpatch_tokens": 5
+      }
+    },
+    "status": "ok",
+    "test_split_accessed": false,
+    "timestamp_unix": 1788839401.7795506,
+    "seconds_per_probe_step_batch16": 0.013043320178985596,
+    "device_only_estimated_total_seconds": 203.90310584306718,
+    "planned_completion_check_delay_seconds": 727,
+    "adapter_identity_rng_freeze_and_two_step_gradients": "passed",
+    "peak_allocated_gib": 0.7397565841674805
+  },
+  "whole_model_preflights": {
+    "p12_visual_prior": [
+      {
+        "status": "ok",
+        "experiment": "p12_visual_prior",
+        "test_split_accessed": false,
+        "temporary_optimizer_steps": 5,
+        "formal_training_performed": false,
+        "batch_size": 16,
+        "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+        "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+        "output_sha256_each_step": [
+          "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+          "164d640daaecda1e89ae50f3d24bb0086cabe48ac24592b7ff3fccd0ed9afba7",
+          "30aac93218a6481e2207299798d53120260126ba87a4ba646220429214e304cd",
+          "b439657bbfd4deb7da4299148999711c2f4d3e66857ed69451f566dcd003a118",
+          "b8d21ff1d98165f5b00f765478b9d227bda81ebffffeb1e9ab05d32dcf36af46"
+        ],
+        "loss_each_step": [
+          0.48949211835861206,
+          0.4354950189590454,
+          0.4125458896160126,
+          0.3888147175312042,
+          0.37465161085128784
+        ],
+        "seconds_each_step": [
+          1.5564777851104736,
+          0.6019015312194824,
+          0.6030030250549316,
+          0.606687068939209,
+          0.6012084484100342
+        ],
+        "steady_seconds_per_batch": 0.6036328474680582,
+        "peak_allocated_gib": 15.582489013671875,
+        "peak_reserved_gib": 16.720703125,
+        "visual_prior": {
+          "kind": "cxformer",
+          "random_init": false,
+          "random_seed": 7001,
+          "model_id": "m42-health/CXformer-small",
+          "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+          "weight_sha256": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2",
+          "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+          "attention": "eager",
+          "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+          "histogram_equalization": false,
+          "patch_size": 14,
+          "nonpatch_tokens": 5,
+          "adapter_parameters": 41280,
+          "adapter": "bilinear_frozen_features_56_then_1x1_384_64_gelu_1x1_64_256",
+          "insertion": "after_down2_before_downVit2",
+          "zero_initialized_output": true
+        }
+      },
+      {
+        "status": "ok",
+        "experiment": "p12_visual_prior",
+        "test_split_accessed": false,
+        "temporary_optimizer_steps": 5,
+        "formal_training_performed": false,
+        "batch_size": 16,
+        "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+        "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+        "output_sha256_each_step": [
+          "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+          "164d640daaecda1e89ae50f3d24bb0086cabe48ac24592b7ff3fccd0ed9afba7",
+          "30aac93218a6481e2207299798d53120260126ba87a4ba646220429214e304cd",
+          "b439657bbfd4deb7da4299148999711c2f4d3e66857ed69451f566dcd003a118",
+          "b8d21ff1d98165f5b00f765478b9d227bda81ebffffeb1e9ab05d32dcf36af46"
+        ],
+        "loss_each_step": [
+          0.48949211835861206,
+          0.4354950189590454,
+          0.4125458896160126,
+          0.3888147175312042,
+          0.37465161085128784
+        ],
+        "seconds_each_step": [
+          1.5707600116729736,
+          0.6079025268554688,
+          0.6074135303497314,
+          0.603245735168457,
+          0.6065683364868164
+        ],
+        "steady_seconds_per_batch": 0.6057425340016683,
+        "peak_allocated_gib": 15.582489013671875,
+        "peak_reserved_gib": 16.720703125,
+        "visual_prior": {
+          "kind": "cxformer",
+          "random_init": false,
+          "random_seed": 7001,
+          "model_id": "m42-health/CXformer-small",
+          "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+          "weight_sha256": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2",
+          "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+          "attention": "eager",
+          "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+          "histogram_equalization": false,
+          "patch_size": 14,
+          "nonpatch_tokens": 5,
+          "adapter_parameters": 41280,
+          "adapter": "bilinear_frozen_features_56_then_1x1_384_64_gelu_1x1_64_256",
+          "insertion": "after_down2_before_downVit2",
+          "zero_initialized_output": true
+        }
+      }
+    ],
+    "c9_visual_random": [
+      {
+        "status": "ok",
+        "experiment": "c9_visual_random",
+        "test_split_accessed": false,
+        "temporary_optimizer_steps": 5,
+        "formal_training_performed": false,
+        "batch_size": 16,
+        "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+        "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+        "output_sha256_each_step": [
+          "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+          "19e736f9e89315853fd92b7b504f3518a958f0bae9a15c9295a4cdfbd2ffb1b4",
+          "d792b3a8f50c514bfc66fb8327b55bb7dcce82b93ee0d64b8cabad7d99b7ef88",
+          "f209b80d77a182cdb8e1e47abd00f988c8c4849ba0244f080a7854ad32cf8c48",
+          "237b75210ed069ecb6f6abb52480f4f24c2d8e4829bea17fd0a01bf0e4e571a1"
+        ],
+        "loss_each_step": [
+          0.48949211835861206,
+          0.4354892075061798,
+          0.4126037359237671,
+          0.3888772130012512,
+          0.3745368421077728
+        ],
+        "seconds_each_step": [
+          1.579179048538208,
+          0.6040513515472412,
+          0.600698709487915,
+          0.6018288135528564,
+          0.6039233207702637
+        ],
+        "steady_seconds_per_batch": 0.6021502812703451,
+        "peak_allocated_gib": 15.582489013671875,
+        "peak_reserved_gib": 16.720703125,
+        "visual_prior": {
+          "kind": "cxformer",
+          "random_init": true,
+          "random_seed": 7001,
+          "model_id": "m42-health/CXformer-small",
+          "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+          "weight_sha256": null,
+          "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+          "attention": "eager",
+          "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+          "histogram_equalization": false,
+          "patch_size": 14,
+          "nonpatch_tokens": 5,
+          "adapter_parameters": 41280,
+          "adapter": "bilinear_frozen_features_56_then_1x1_384_64_gelu_1x1_64_256",
+          "insertion": "after_down2_before_downVit2",
+          "zero_initialized_output": true
+        }
+      },
+      {
+        "status": "ok",
+        "experiment": "c9_visual_random",
+        "test_split_accessed": false,
+        "temporary_optimizer_steps": 5,
+        "formal_training_performed": false,
+        "batch_size": 16,
+        "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+        "first_output_sha256": "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+        "output_sha256_each_step": [
+          "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+          "19e736f9e89315853fd92b7b504f3518a958f0bae9a15c9295a4cdfbd2ffb1b4",
+          "d792b3a8f50c514bfc66fb8327b55bb7dcce82b93ee0d64b8cabad7d99b7ef88",
+          "f209b80d77a182cdb8e1e47abd00f988c8c4849ba0244f080a7854ad32cf8c48",
+          "237b75210ed069ecb6f6abb52480f4f24c2d8e4829bea17fd0a01bf0e4e571a1"
+        ],
+        "loss_each_step": [
+          0.48949211835861206,
+          0.4354892075061798,
+          0.4126037359237671,
+          0.3888772130012512,
+          0.3745368421077728
+        ],
+        "seconds_each_step": [
+          1.3701388835906982,
+          0.5704450607299805,
+          0.6213252544403076,
+          0.6006147861480713,
+          0.6057281494140625
+        ],
+        "steady_seconds_per_batch": 0.6092227300008138,
+        "peak_allocated_gib": 15.582489013671875,
+        "peak_reserved_gib": 16.720703125,
+        "visual_prior": {
+          "kind": "cxformer",
+          "random_init": true,
+          "random_seed": 7001,
+          "model_id": "m42-health/CXformer-small",
+          "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+          "weight_sha256": null,
+          "reference_config_sha256": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+          "attention": "eager",
+          "input": "224 BGR [0,1] -> RGB -> ImageNet normalize",
+          "histogram_equalization": false,
+          "patch_size": 14,
+          "nonpatch_tokens": 5,
+          "adapter_parameters": 41280,
+          "adapter": "bilinear_frozen_features_56_then_1x1_384_64_gelu_1x1_64_256",
+          "insertion": "after_down2_before_downVit2",
+          "zero_initialized_output": true
+        }
+      }
+    ]
+  },
+  "external_weights": {
+    "cxformer": {
+      "model_id": "m42-health/CXformer-small",
+      "revision": "21777c302a43197b704c6c92591d9897efaaac3b",
+      "files": {
+        "config.json": "6d274d5cf48f2de69681bb97a91c3f9008a898c96f11bb84dd5e51a686476279",
+        "preprocessor_config.json": "424ff1c1af0a5a54efebd6b7707986f3b30d0e8343ee9454f3e2523aee6cec78",
+        "model.safetensors": "a300b6e23ca32b361c2209ac114d77ba13dfeb151cd4a337212d13416df273a2"
+      }
+    },
+    "dinov2": {
+      "model_id": "facebook/dinov2-with-registers-small",
+      "revision": "0d9846e56b43a21fa46d7f3f5070f0506a5795a9",
+      "files": {
+        "config.json": "ae98d74b7fc56b1138ce06940184aa886370b9b1686f9239d30eeb6ef1a2cb37",
+        "preprocessor_config.json": "14e780d86fa1861f8751f868d7f45425b5feb55c38ca26f152ca5097ab30f828",
+        "model.safetensors": "78e7f952c5af83cf6da38f08ff52b062bbe00c1adf39c4c7e0361969f27abae7"
+      }
+    }
+  },
+  "test_split_accessed": false,
+  "ssh_key": "C:/Users/dtftn/.ssh/seetacloud_betterlvit_ed25519",
+  "planned_final_check_sydney": "2026-09-08T14:07:32.814767+10:00"
+}
