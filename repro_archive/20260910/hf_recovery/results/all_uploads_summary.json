@@ -61,5 +61,8 @@
       "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
       "verified_files": 5
     }
-  ]
+  ],
+  "test_exports_verified_files": 15,
+  "test_exports_logical_bytes": 6199360,
+  "evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533"
 }

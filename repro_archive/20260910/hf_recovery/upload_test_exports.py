@@ -5,6 +5,7 @@ from pathlib import Path
 
 import hf_xet
 from huggingface_hub import HfApi
+from huggingface_hub.utils import disable_progress_bars
 
 from upload_pending import BUCKET, DOCS, OUT, ROOT, write_json
 
@@ -14,6 +15,7 @@ from protocol import load_plan, sha256, validate_result
 
 
 def main():
+    disable_progress_bars()
     # The original five-file recipe uploads must finish before adding Test paths.
     assert json.loads((OUT / 'state.json').read_text())['phase'] == 'complete'
     tests = ROOT / 'outputs/recipe_test_20260910'

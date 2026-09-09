@@ -1,0 +1,8 @@
+{
+  "automation_id": "betterlvit-r2",
+  "status": "deleted",
+  "reason": "All six Test evaluations, nine training archives and final Test uploads completed; scheduled inspection handled in the active user turn.",
+  "recorded_unix": 1788980716.0264964,
+  "test_inspections_completed": 1,
+  "seconds_after_test_completion": 962.1099331378937
+}

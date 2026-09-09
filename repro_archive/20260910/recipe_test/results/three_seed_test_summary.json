@@ -1,0 +1,199 @@
+{
+  "split": "test",
+  "test_split_accessed": true,
+  "samples_per_model": 2113,
+  "seeds": [
+    1219,
+    2027,
+    3407
+  ],
+  "evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533",
+  "threshold": 0.5,
+  "selection_metric": "validation_macro_iou",
+  "paired_runs": [
+    {
+      "seed": 1219,
+      "control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "candidate_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "control": {
+        "iou": 0.7563962019429644,
+        "dice": 0.8429885535534682,
+        "precision": 0.8393630546179613,
+        "recall": 0.8743782985894707,
+        "brier": 0.016937876562319997
+      },
+      "candidate": {
+        "iou": 0.7580983080794957,
+        "dice": 0.8442357558557602,
+        "precision": 0.826084159202458,
+        "recall": 0.8916214076819452,
+        "brier": 0.016699489254147614
+      },
+      "deltas": {
+        "iou": 0.0017021061365313228,
+        "dice": 0.0012472023022919165,
+        "precision": -0.013278895415503311,
+        "recall": 0.017243109092474507,
+        "brier": -0.00023838730817238307
+      },
+      "paired_image_bootstrap_95ci": {
+        "iou": [
+          -0.000942028100392867,
+          0.004297009913261056
+        ],
+        "dice": [
+          -0.0009798245551749202,
+          0.0034732364655309786
+        ]
+      }
+    },
+    {
+      "seed": 2027,
+      "control_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "candidate_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "control": {
+        "iou": 0.7512417248786555,
+        "dice": 0.839096096563319,
+        "precision": 0.8134526709114877,
+        "recall": 0.898474885704262,
+        "brier": 0.017818486684935828
+      },
+      "candidate": {
+        "iou": 0.7608585504493884,
+        "dice": 0.8457388894396928,
+        "precision": 0.8330267105039831,
+        "recall": 0.8879383668804148,
+        "brier": 0.01633064901938565
+      },
+      "deltas": {
+        "iou": 0.009616825570732956,
+        "dice": 0.006642792876373815,
+        "precision": 0.019574039592495485,
+        "recall": -0.010536518823847207,
+        "brier": -0.0014878376655501797
+      },
+      "paired_image_bootstrap_95ci": {
+        "iou": [
+          0.006744941706943873,
+          0.012436822343629939
+        ],
+        "dice": [
+          0.004138906130979345,
+          0.009076512423721839
+        ]
+      }
+    },
+    {
+      "seed": 3407,
+      "control_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+      "candidate_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "control": {
+        "iou": 0.7545778507714352,
+        "dice": 0.8416555322359476,
+        "precision": 0.8287021536905459,
+        "recall": 0.8845912505913235,
+        "brier": 0.017405000461882727
+      },
+      "candidate": {
+        "iou": 0.7605435221739733,
+        "dice": 0.8451174629437327,
+        "precision": 0.8321900070512116,
+        "recall": 0.8873729972571202,
+        "brier": 0.016125164417625543
+      },
+      "deltas": {
+        "iou": 0.005965671402538009,
+        "dice": 0.0034619307077851103,
+        "precision": 0.0034878533606657047,
+        "recall": 0.0027817466657966694,
+        "brier": -0.0012798360442571842
+      },
+      "paired_image_bootstrap_95ci": {
+        "iou": [
+          0.0030944979778285957,
+          0.00882952188880264
+        ],
+        "dice": [
+          0.0009136062567683891,
+          0.005989752458971862
+        ]
+      }
+    }
+  ],
+  "delta_summary": {
+    "iou": {
+      "mean": 0.005761534369934096,
+      "sample_std": 0.003961306587048332
+    },
+    "dice": {
+      "mean": 0.003783975295483614,
+      "sample_std": 0.0027121732887353976
+    },
+    "precision": {
+      "mean": 0.0032609991792192927,
+      "sample_std": 0.016427642307241717
+    },
+    "recall": {
+      "mean": 0.003162778978141323,
+      "sample_std": 0.013893733155981088
+    },
+    "brier": {
+      "mean": -0.0010020203393265824,
+      "sample_std": 0.0006694533018198069
+    }
+  },
+  "arm_summary": {
+    "iou": {
+      "control": {
+        "mean": 0.7540719258643517,
+        "sample_std": 0.002614216605472341
+      },
+      "candidate": {
+        "mean": 0.7598334602342858,
+        "sample_std": 0.001510918744930458
+      }
+    },
+    "dice": {
+      "control": {
+        "mean": 0.8412467274509116,
+        "sample_std": 0.0019781674269994803
+      },
+      "candidate": {
+        "mean": 0.8450307027463952,
+        "sample_std": 0.0007553132738593009
+      }
+    },
+    "precision": {
+      "control": {
+        "mean": 0.827172626406665,
+        "sample_std": 0.01302273343957698
+      },
+      "candidate": {
+        "mean": 0.8304336255858843,
+        "sample_std": 0.003789909172049647
+      }
+    },
+    "recall": {
+      "control": {
+        "mean": 0.8858148116283521,
+        "sample_std": 0.012094800695078978
+      },
+      "candidate": {
+        "mean": 0.8889775906064934,
+        "sample_std": 0.002306997453200586
+      }
+    },
+    "brier": {
+      "control": {
+        "mean": 0.01738712123637952,
+        "sample_std": 0.0004405772316425501
+      },
+      "candidate": {
+        "mean": 0.016385100897052935,
+        "sample_std": 0.0002910086076006101
+      }
+    }
+  },
+  "all_three_iou_deltas_positive": true,
+  "interpretation": "All three registered seeds reported. Image-bootstrap intervals are conditional on fixed models, not cross-seed confidence intervals. This Test split has been accessed in historical development; it is not a new independent holdout. LR recipe optimization is not a second structural innovation."
+}

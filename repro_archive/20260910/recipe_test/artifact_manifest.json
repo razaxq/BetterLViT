@@ -3,6 +3,10 @@
     "bytes": 71,
     "sha256": "8a8de5d3fa9c75b551111fb7e7c6fe62530d669bd74507d7ced50d90dde506e1"
   },
+  "automation_completed.json": {
+    "bytes": 342,
+    "sha256": "54ebd7527ab5626395e9f943136994d4b1ebd701b659c272e68cfca1e82f5691"
+  },
   "automation_prompt.md": {
     "bytes": 3507,
     "sha256": "c92b0615f6009187616325dd28dd1958e279e9f2415bc9e19a874b37e7158b31"
@@ -28,8 +32,8 @@
     "sha256": "cda785ed10d32b370c80c2f3d52699f3bc9705a431170c6e462971cf6027987e"
   },
   "finalize_test_archive.py": {
-    "bytes": 5592,
-    "sha256": "21e46f2b6baea3c8d5f4dc813afeadfa037d44a5ecccabd6d528097c2f2cd4da"
+    "bytes": 5652,
+    "sha256": "76502651a37da0ac5411cb03f761ad0a3934932eaf602b7c932a3c9e373a64c7"
   },
   "launch.json": {
     "bytes": 913,
@@ -38,6 +42,10 @@
   "launch_attempt.json": {
     "bytes": 118,
     "sha256": "3435e34172935fc20cb7799737dc5b9e88b8505fe9cc8e293fd79b6e4c5424fc"
+  },
+  "local_summary_recompute_verification.json": {
+    "bytes": 240,
+    "sha256": "81fd0ebb3498c241f2c9f81c5c52cdafc751bb517d690cadc7b0f1e0c3272e6f"
   },
   "prepare_test.py": {
     "bytes": 3518,
@@ -48,16 +56,16 @@
     "sha256": "94c3bcfba8b9b123ca27c22667ab949ae380e9e0d2b034ccf65285ba571071c0"
   },
   "README.md": {
-    "bytes": 3677,
-    "sha256": "6d067d47e06b6ca614795438f38ce3a01a5d90b7c5866cc9ef251a5abfc9fa56"
+    "bytes": 4199,
+    "sha256": "021ab54b5dd8434a51005ebe8422d5f377391399577eb4105bcb10a9309deccf"
   },
   "run_test_chain.py": {
     "bytes": 4551,
     "sha256": "98fc3eb8909ab8ea948fd908fb5a1a80bd7f0a874616eea21e33e2b5d6e357c9"
   },
   "state.json": {
-    "bytes": 443,
-    "sha256": "3b9202a954457ca001371d2069a338919e7bcfe2ad4624d23584a239226c1b30"
+    "bytes": 590,
+    "sha256": "502766a211abc7722b6a3443c49f42110223a0a5c46a67a38bf6ef942d8d6653"
   },
   "test_control.py": {
     "bytes": 7466,
@@ -70,5 +78,9 @@
   "three_seed_summary.json": {
     "bytes": 3077,
     "sha256": "d88902c114327fb1ce85647bbe22090947687cd5052cbe12f101fe3ca82b4c33"
+  },
+  "results/artifact_manifest.json": {
+    "bytes": 2891,
+    "sha256": "29ee485f1356ca376d867c8caa4df315604a7414785e65deb9b8ac3c325666c2"
   }
 }

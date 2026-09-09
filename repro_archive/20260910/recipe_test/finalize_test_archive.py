@@ -52,7 +52,7 @@ def main():
               f'三个种子IoU是否全部正向：{recomputed["all_three_iou_deltas_positive"]}。完整Precision、Recall、Brier与逐图配对区间见JSON。', '',
               f'评估源码：`{state["evaluation_source_git_commit"]}`。完成检查使用{state["inspections_completed"]}/2次，距实际Test完成{state["seconds_after_test_completion"]:.1f}秒，30分钟目标满足：{state["completion_check_within_30min"]}。', '',
               '本次为三个固定训练种子的测试表现。逐图bootstrap不能代替跨种子显著性；该Test集在历史开发中已被访问。R2改变完整学习率配方（重启及较低学习率区间），不能归因于单独一个因素，也不作为第二项结构创新。', '',
-              '模型未删除，HF认证旧问题未重试。']
+              '模型保留。HF认证恢复及云端上传的最新核验记录见 ../../hf_recovery/results/README.md。']
     (results / 'README.md').write_text('\n'.join(lines) + '\n', encoding='utf-8', newline='\n')
     manifest = {p.name: dict(bytes=p.stat().st_size, sha256=sha256(p)) for p in results.iterdir()
                 if p.is_file() and p.name != 'artifact_manifest.json'}

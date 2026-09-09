@@ -1,0 +1,99 @@
+{
+  "evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533",
+  "bucket": "razaxq/BetterLViT",
+  "additive_only": true,
+  "files": [
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\c4s1219_test.json",
+      "remote": "add4908a/test_evaluations/28578542.json",
+      "bytes": 1013180,
+      "xet_hash": "bb3131cbd395fe57a5e93728179f35c7159a30fb3c367fe8340a22181799efcd"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\c4s1219_test.log",
+      "remote": "add4908a/test_evaluations/28578542.log",
+      "bytes": 15127,
+      "xet_hash": "b88f3e4b0ccebc9f95390681c0d376a2a6d09041f1e2d3dfdb9c14963bad7cb5"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s1219_test.json",
+      "remote": "9eca26de/test_evaluations/28578542.json",
+      "bytes": 1016411,
+      "xet_hash": "d6ce9115800f4da580cedc8cdc136d922270b273f6562d76740f3494ba17cd5a"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s1219_test.log",
+      "remote": "9eca26de/test_evaluations/28578542.log",
+      "bytes": 17775,
+      "xet_hash": "ccee0c4fe4423a4a626e7e2ec05a7209ed9cbb332fc6e8055658a555d45635fc"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\c4s2027_test.json",
+      "remote": "965382b2/test_evaluations/28578542.json",
+      "bytes": 1012978,
+      "xet_hash": "8cc8d00d663eed7c19ec675a1fec8e380fbc5025a331b37423f4dc7be8338117"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\c4s2027_test.log",
+      "remote": "965382b2/test_evaluations/28578542.log",
+      "bytes": 15129,
+      "xet_hash": "34a91d27f5874ceceeaa1dd042b9835e3705995686bfdf41f1c66d0c7e8e00ba"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s2027_test.json",
+      "remote": "c972a152/test_evaluations/28578542.json",
+      "bytes": 1015732,
+      "xet_hash": "228f2a667460a057f5f4fb149aa2b23123a6c197e7a75c31ea85c778b8ef3cfd"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s2027_test.log",
+      "remote": "c972a152/test_evaluations/28578542.log",
+      "bytes": 17780,
+      "xet_hash": "629f85f2544df7fe4ee3916e7775bd097df3b224f1e7ab1e0ffcdb44b75fcd33"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\c4s3407_test.json",
+      "remote": "02b28b2d/test_evaluations/28578542.json",
+      "bytes": 1012974,
+      "xet_hash": "6d401971f990aa1050de6ae3c5d48449f1d4718d3542960679b6b10ab0f6d6e6"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\c4s3407_test.log",
+      "remote": "02b28b2d/test_evaluations/28578542.log",
+      "bytes": 15131,
+      "xet_hash": "26e014fdf3a843449a7b37459d5b2ea0331f430af951d13d0a155965641ff85d"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s3407_test.json",
+      "remote": "7b498ba9/test_evaluations/28578542.json",
+      "bytes": 1015488,
+      "xet_hash": "b39968f627cde8f0292d8b2617110d9b62b385c62c7dd5fb766c74145fb392b2"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s3407_test.log",
+      "remote": "7b498ba9/test_evaluations/28578542.log",
+      "bytes": 17781,
+      "xet_hash": "289e41043e1ae09df07828013382c9e7f00fddcd50cea45ca559dbc6125ca8f3"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\three_seed_test_summary.json",
+      "remote": "28578542/three_seed_test_summary.json",
+      "bytes": 5581,
+      "xet_hash": "fd0dd15abb0cbcc1f488584d9e375f8f9883ee3d712d3bfb1d72b536843557a8"
+    },
+    {
+      "source": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\recipe_test\\test_plan.json",
+      "remote": "28578542/test_plan.json",
+      "bytes": 5216,
+      "xet_hash": "24c4b0b2ea15892fedd0fff9fef53c77fad86d7e33f3cd02b26bfbbd980fa072"
+    },
+    {
+      "source": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\recipe_test\\three_seed_summary.json",
+      "remote": "28578542/validation_gate.json",
+      "bytes": 3077,
+      "xet_hash": "138634270b04555771656d5a93fa1b0133b021459eb4d2869cdae669a2255a1f"
+    }
+  ],
+  "verified": true,
+  "verified_files": 15
+}

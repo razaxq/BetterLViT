@@ -12,6 +12,12 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## 最新 Test 结果（2026-09-10）
+
+**最终归档完成：** 九组训练归档47文件，加本轮Test产物15文件，总计62文件、15,421,689,106逻辑字节，全部按Git哈希分目录上传HF并校验大小/Xet哈希。17个不同的服务器模型原文件仍存在，大小一致；系统盘余4,005,224,448字节，共享fs18,559,782,256字节，低于20GB硬上限。Test在04:44:16.998（悉尼）结束，05:00:19.107检查，距结束962.110秒，Test检查1次，无新增训练检查。全部完成后已删除本轮heartbeat。新凭据保存在标准HF缓存，Git中不含token。[HF完整核验](../repro_archive/20260910/hf_recovery/results/README.md)。
+
+R2与C4三个匹配种子的六个Test评估全部完成，各2113张、固定阈值0.5、Val IoU选Best。平均IoU配对差值 **+0.5762个百分点**（样本SD 0.3961），平均Dice差值 **+0.3784个百分点**；三个IoU差值全部正向：True。[全部结果、来源与限制](../repro_archive/20260910/recipe_test/results/README.md)。R2为训练配方成果，不作为第二项结构创新；没有新增训练。
+
 ## 最新执行记录（2026-09-10）
 
 **九组训练HF备份完成：** R1/R2、四组新增配对种子、P11的80/150轮和P12，共47文件、15,415,489,746逻辑字节已全部云端核验。P11续训Best从已验证父提交复制，Last来自续训提交，并保留runtime/selection来源记录。仅添加文件，未删除本地/服务器模型；新凭据不在源码或结果中。[逐文件核验](../repro_archive/20260910/hf_recovery/results/README.md)。本轮新Test输出仍按05:00预约确认后另行追加。
@@ -85,7 +91,7 @@ P11 已完成用户指定的150轮，最佳仍为80轮，Test macro IoU/Dice为0
 | A1 | CXR-BERT LoRA + original PLAM + Dice/Focal | `3e46ab48e4eb7c077e789d6d9afc0158cda18a73` | 80 | 0.835233 / 0.747126 | 0.560 | 0.837367 / 0.751033 | 正式完成；历史 Focal 实验 |
 | A2 | CXR-BERT LoRA + FAM-EPPA V4-B + Dice/BCE | `994094f989069a4d5b7263dc4ad45d333e9d0ede` | 80 | 0.844099 / 0.757901 | 0.550 | 0.844966 / 0.759453 | 非 Focal 已完成结果中的最佳者 |
 | A3 | CXR-BERT LoRA + FMISeg-adapted fusion + Dice/BCE | `1c0b7dae263b27860a3fd672431d6968f7beec0c` | 80 | 0.836136 / 0.749682 | 0.540 | 0.836527 / 0.750792 | 原理适配，不是完整 FMISeg 复现 |
-| A4 | CXR-BERT LoRA + FAM-EPPA V4-B + Dice/Focal | `a1d40d3a305a34abc0e96885fae68532007485b2` | 80 | 0.844932 / 0.759909 | 0.516 | 0.845191 / 0.760446 | 当前历史最佳 macro；历史 Focal 实验 |
+| A4 | CXR-BERT LoRA + FAM-EPPA V4-B + Dice/Focal | `a1d40d3a305a34abc0e96885fae68532007485b2` | 80 | 0.844932 / 0.759909 | 0.516 | 0.845191 / 0.760446 | 历史 LoRA+EPPA 单种子结果；历史 Focal 实验 |
 | A5 | CXR-BERT LoRA + FMISeg-adapted fusion + Dice/Focal | `4ef4bf0616975e4ebbab37ad660d63ee99b61216` | 139 | 0.835314 / 0.746882 | 0.562 | 0.838524 / 0.752085 | 原理适配；历史 Focal 实验 |
 | A6 | Frozen CXR-BERT + TCSR V1 + original PLAM + Dice/BCE | `01cd2f7501804f07e04ad4595de2fc9e2c511ede` | 139 | 0.834810 / 0.747394 | 0.556 | 0.836082 / 0.749756 | LoRA=False；V1 未产生正增益 |
 | A7 | Frozen CXR-BERT + TCSR V1 + FAM-EPPA V4-B + Dice/BCE | `75b6ed284f8e137fa6424040f578b8bc7afd1c5c` | 80 | 0.843212 / 0.757207 | 0.508 | 0.843273 / 0.757351 | LoRA=False；未形成稳健增益 |

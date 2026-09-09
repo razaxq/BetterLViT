@@ -1,0 +1,109 @@
+{
+  "split": "validation",
+  "test_split_accessed": false,
+  "predeclared_seeds": [
+    1219,
+    2027,
+    3407
+  ],
+  "paired_runs": [
+    {
+      "seed": 1219,
+      "control_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "candidate_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "control": {
+        "iou": 0.7227963241858801,
+        "dice": 0.8212136349344947
+      },
+      "candidate": {
+        "iou": 0.7266535938268995,
+        "dice": 0.8240342867846576
+      },
+      "deltas": {
+        "iou": 0.0038572696410194033,
+        "dice": 0.0028206518501628828,
+        "precision": -0.00961534796006271,
+        "recall": 0.01584110839093442
+      },
+      "small_iou_delta": 0.007661331104915681,
+      "image_bootstrap_iou_95ci": [
+        0.0005122746482129747,
+        0.007144708722035971
+      ]
+    },
+    {
+      "seed": 2027,
+      "control_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "candidate_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "control": {
+        "iou": 0.7241900931393273,
+        "dice": 0.822864453695739
+      },
+      "candidate": {
+        "iou": 0.7304811821884171,
+        "dice": 0.8270935579188645
+      },
+      "deltas": {
+        "iou": 0.006291089049089772,
+        "dice": 0.004229104223125541,
+        "precision": 0.01721615286551404,
+        "recall": -0.013680641287590582
+      },
+      "small_iou_delta": 0.008816652873776216,
+      "image_bootstrap_iou_95ci": [
+        0.0030347232892411874,
+        0.009477838868709666
+      ]
+    },
+    {
+      "seed": 3407,
+      "control_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+      "candidate_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "control": {
+        "iou": 0.7203136633310239,
+        "dice": 0.8188524577438588
+      },
+      "candidate": {
+        "iou": 0.7264841055295278,
+        "dice": 0.8234211685822802
+      },
+      "deltas": {
+        "iou": 0.006170442198503834,
+        "dice": 0.004568710838421342,
+        "precision": 0.0035157397154291065,
+        "recall": 0.0036970237668031156
+      },
+      "small_iou_delta": 0.013040441642712813,
+      "image_bootstrap_iou_95ci": [
+        0.0024767224789470793,
+        0.009927457189838828
+      ]
+    }
+  ],
+  "delta_summary": {
+    "iou": {
+      "mean": 0.005439600296204336,
+      "sample_std": 0.0013716656452621976
+    },
+    "dice": {
+      "mean": 0.003872822303903255,
+      "sample_std": 0.0009268927451875613
+    },
+    "precision": {
+      "mean": 0.0037055148736268124,
+      "sample_std": 0.013416757063323207
+    },
+    "recall": {
+      "mean": 0.001952496956715651,
+      "sample_std": 0.014837990307440837
+    }
+  },
+  "checks": {
+    "all_three_iou_deltas_positive": true,
+    "mean_iou_delta_at_least_0_003": true,
+    "mean_dice_not_lower": true,
+    "mean_small_iou_not_lower": true
+  },
+  "passed": true,
+  "interpretation": "Three paired training seeds; image-bootstrap intervals do not establish population-level cross-seed significance. Final performance claims require fixed-protocol Test evaluation."
+}

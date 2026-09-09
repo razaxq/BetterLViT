@@ -1,0 +1,116 @@
+{
+  "observed_unix": 1788980419.1074836,
+  "runtime": {
+    "phase": "complete",
+    "started_unix": 1788978566.6286607,
+    "evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533",
+    "test_plan_sha256": "21c42c51f0dc455228577624b4002df8bf8ad0686036257b77b0db2c18b3ea18",
+    "arms": [
+      {
+        "label": "c4s1219",
+        "started_unix": 1788978566.6841114,
+        "source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+        "returncode": 0,
+        "ended_unix": 1788978713.863274,
+        "result_sha256": "6f70594d0dd3167f1ccddfcc09bd41d5b3ea4d4c07a6285864cd5c286484adb3"
+      },
+      {
+        "label": "r2s1219",
+        "started_unix": 1788978713.9104173,
+        "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+        "returncode": 0,
+        "ended_unix": 1788978860.4864414,
+        "result_sha256": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792"
+      },
+      {
+        "label": "c4s2027",
+        "started_unix": 1788978860.52998,
+        "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+        "returncode": 0,
+        "ended_unix": 1788979006.5625463,
+        "result_sha256": "61b030335a7fdfc4e6a8dedbdea91d0534928541d2fc076204121a369e93afac"
+      },
+      {
+        "label": "r2s2027",
+        "started_unix": 1788979006.612709,
+        "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+        "returncode": 0,
+        "ended_unix": 1788979155.1468933,
+        "result_sha256": "d474f54ba2797eec687c34e731c2eb0808d832fc33e0713a8b356d2621777bd2"
+      },
+      {
+        "label": "c4s3407",
+        "started_unix": 1788979155.1921313,
+        "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+        "returncode": 0,
+        "ended_unix": 1788979302.328604,
+        "result_sha256": "1fce6b30ce837e8a02f7d01fdb014a3c8f304f78a45e9b984b90c56577b57681"
+      },
+      {
+        "label": "r2s3407",
+        "started_unix": 1788979302.3824866,
+        "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+        "returncode": 0,
+        "ended_unix": 1788979453.2753966,
+        "result_sha256": "7e5490c37e60a8997894d121cf9231f9b353591f008ce57e64e30260069faaf6"
+      }
+    ],
+    "test_split_accessed": true,
+    "current_label": null,
+    "completed_unix": 1788979456.9975505,
+    "artifacts": {
+      "c4s1219_test.log": {
+        "bytes": 15127,
+        "sha256": "920f1ec993d1e6ed72299631c325493c203d14d6d3e25e906b81c48024bc64b4"
+      },
+      "c4s1219_test.json": {
+        "bytes": 1013180,
+        "sha256": "6f70594d0dd3167f1ccddfcc09bd41d5b3ea4d4c07a6285864cd5c286484adb3"
+      },
+      "r2s1219_test.log": {
+        "bytes": 17775,
+        "sha256": "b8bb909896e758479b300960a4a30ee9999f505fcbd19d184661901e53245dbf"
+      },
+      "r2s1219_test.json": {
+        "bytes": 1016411,
+        "sha256": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792"
+      },
+      "c4s2027_test.log": {
+        "bytes": 15129,
+        "sha256": "ddd0ab0a66306856afb7178e0c1164a5a11df955073480f1d56d853788d8c4ad"
+      },
+      "c4s2027_test.json": {
+        "bytes": 1012978,
+        "sha256": "61b030335a7fdfc4e6a8dedbdea91d0534928541d2fc076204121a369e93afac"
+      },
+      "r2s2027_test.log": {
+        "bytes": 17780,
+        "sha256": "963cd9729eba3d54a6f86160d4df009adfd87b0cc99597a1b5f5f3ab8d8ffe89"
+      },
+      "r2s2027_test.json": {
+        "bytes": 1015732,
+        "sha256": "d474f54ba2797eec687c34e731c2eb0808d832fc33e0713a8b356d2621777bd2"
+      },
+      "c4s3407_test.log": {
+        "bytes": 15131,
+        "sha256": "42e9995d01acd0cf1636eb12b1971cfcc4b916089746d17c32a842ed389be1bc"
+      },
+      "c4s3407_test.json": {
+        "bytes": 1012974,
+        "sha256": "1fce6b30ce837e8a02f7d01fdb014a3c8f304f78a45e9b984b90c56577b57681"
+      },
+      "r2s3407_test.log": {
+        "bytes": 17781,
+        "sha256": "0f474fac3da3ed67f6160cedb51eb768b25658bfe4a0f91db8bfc98b4e0feb45"
+      },
+      "r2s3407_test.json": {
+        "bytes": 1015488,
+        "sha256": "7e5490c37e60a8997894d121cf9231f9b353591f008ce57e64e30260069faaf6"
+      },
+      "three_seed_test_summary.json": {
+        "bytes": 5581,
+        "sha256": "9104b9c3e1e0a320a9b4c06b96cbf1a2176ff2ef849b264c1c50fe47a73e0079"
+      }
+    }
+  }
+}

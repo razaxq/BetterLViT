@@ -1,0 +1,6 @@
+{
+  "verified": true,
+  "absolute_tolerance": 1e-12,
+  "differences": [],
+  "note": "Only final floating-point rounding across local/server runtime versions is tolerated; all structure, model sources, sample IDs and metadata must match."
+}
