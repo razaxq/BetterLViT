@@ -1,0 +1,15 @@
+{
+  "label": "c4s3407",
+  "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+  "seed": 3407,
+  "role": "c4",
+  "phase": "complete",
+  "epochs": 80,
+  "best_epoch": 79,
+  "macro_iou": 0.7203136633310239,
+  "macro_dice": 0.8188524577438588,
+  "seconds_after_training": 710.1322631835938,
+  "final_check_within_30min": true,
+  "inspections_completed": 2,
+  "test_split_accessed": false
+}

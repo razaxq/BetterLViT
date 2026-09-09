@@ -42,5 +42,12 @@
       }
     }
   ],
-  "note": "Partial progress only. Complete seed3407 pair before aggregate_replications.py and any conditional Test access."
+  "note": "Partial progress only. Complete seed3407 pair before aggregate_replications.py and any conditional Test access.",
+  "pending_pair_control": {
+    "seed": 3407,
+    "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+    "control_iou": 0.7203136633310239,
+    "control_dice": 0.8188524577438588,
+    "candidate_status": "not_yet_dispatched"
+  }
 }
