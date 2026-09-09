@@ -1,16 +1,11 @@
 {
-  "current_label": "r2s2027",
+  "current_label": "c4s3407",
   "order": [
     "c4s2027",
     "r2s2027",
     "c4s3407",
     "r2s3407"
   ],
-  "phase": "complete_awaiting_next_dispatch",
-  "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
-  "inspections_completed": 2,
-  "last_inspected_unix": 1788939633.8070517,
-  "observed_completed_epochs": 80,
-  "planned_final_check_sydney": "2026-09-09T17:40:00+10:00",
-  "next_label": "c4s3407"
+  "phase": "dispatch_only",
+  "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283"
 }
