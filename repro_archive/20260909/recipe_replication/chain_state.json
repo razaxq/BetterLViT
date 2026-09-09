@@ -6,10 +6,11 @@
     "c4s3407",
     "r2s3407"
   ],
-  "phase": "training",
+  "phase": "complete_awaiting_next_dispatch",
   "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
-  "inspections_completed": 1,
-  "last_inspected_unix": 1788904479.2578976,
-  "observed_completed_epochs": 4,
-  "planned_final_check_sydney": "2026-09-09T12:37:00+10:00"
+  "inspections_completed": 2,
+  "last_inspected_unix": 1788921460.243821,
+  "observed_completed_epochs": 80,
+  "planned_final_check_sydney": "2026-09-09T12:37:00+10:00",
+  "next_label": "r2s2027"
 }

@@ -3,10 +3,6 @@
     "bytes": 196,
     "sha256": "d048e224600e4e1d67b6aaeb62a84c6a5cbf8c60b3bd48ccfdcc28122c104387"
   },
-  "README.md": {
-    "bytes": 6312,
-    "sha256": "580dab2e4a83bc085b843d5255540959189e5b1dc7bf2a7bfef91a5096a7ac3f"
-  },
   "aggregate_replications.py": {
     "bytes": 2805,
     "sha256": "4000f320c964d6edc5157a5b48c6f2bb27ba332949c208953b29254404eaf41c"
@@ -51,9 +47,17 @@
     "bytes": 1518,
     "sha256": "f9881705f98db7c5590f278a7e262be5a4938ba05b7373eececfead3fbd96bf5"
   },
+  "c4s2027_results/artifact_manifest.json": {
+    "bytes": 1709,
+    "sha256": "3c6c9cb1eb83a8ced5973641e1640a6803c541106a4264f2ab40c331f0c664a2"
+  },
   "c4s2027_state.json": {
-    "bytes": 7853,
-    "sha256": "197f72d38589ecfd406a6780c9bd7554052d07e298425f859371cef005369cb9"
+    "bytes": 8160,
+    "sha256": "6462612cc611fc876ffa4150fbf662e14cda97d80d52747b78b6e91919f6de0a"
+  },
+  "c4s2027_summary.json": {
+    "bytes": 398,
+    "sha256": "6d9dacad5ffec5c8126fd34510f2d63d68c36ed37a0d5165eb477918088983d9"
   },
   "c4s3407_manifest.json": {
     "bytes": 3125,
@@ -68,8 +72,8 @@
     "sha256": "a8d2f7bb7751610aa0f1f2eba3fe70bfb7c942925ae3a5a5d848217cd558598e"
   },
   "chain_state.json": {
-    "bytes": 370,
-    "sha256": "5603b75f6c3c044bfd32c4762db56967663bc95ef73f8ad1d9dac13c4a2b55bf"
+    "bytes": 420,
+    "sha256": "40b7c4035d20b4cf069d36d63a8260f9921450f2953cb7a10d62acf9ccc72d2f"
   },
   "collect_snapshot.py": {
     "bytes": 4354,
@@ -126,6 +130,10 @@
   "r2s3407_preflight_2.json": {
     "bytes": 4166,
     "sha256": "f914535f5594446139379c3e8d17bbbc693014e23be298165fbe54a1bf4d038f"
+  },
+  "README.md": {
+    "bytes": 6835,
+    "sha256": "38df4bcba816186cb2c55c6e85110a9f3d8505e2a50c163cf118736241454335"
   },
   "register_replication.py": {
     "bytes": 3544,

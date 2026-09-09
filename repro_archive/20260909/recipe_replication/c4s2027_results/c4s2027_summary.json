@@ -1,0 +1,15 @@
+{
+  "label": "c4s2027",
+  "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+  "seed": 2027,
+  "role": "c4",
+  "phase": "complete",
+  "epochs": 80,
+  "best_epoch": 70,
+  "macro_iou": 0.7241900931393273,
+  "macro_dice": 0.822864453695739,
+  "seconds_after_training": 607.0681395530701,
+  "final_check_within_30min": true,
+  "inspections_completed": 2,
+  "test_split_accessed": false
+}

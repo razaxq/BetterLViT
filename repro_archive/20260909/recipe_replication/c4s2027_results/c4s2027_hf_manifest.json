@@ -1,0 +1,56 @@
+{
+  "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+  "bucket_prefix": "965382b2",
+  "classification": "completed_validation_only_80e_pilot",
+  "test_split_accessed": false,
+  "checkpoint_checks": [
+    {
+      "name": "best_model-BetterLViT.pth.tar",
+      "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "best_epoch": 70,
+      "history_rows": 70
+    },
+    {
+      "name": "last_model-BetterLViT.pth.tar",
+      "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "best_epoch": 70,
+      "history_rows": 80
+    }
+  ],
+  "training_and_validation_returncodes": [
+    0,
+    0
+  ],
+  "files": [
+    {
+      "source": "/root/BetterLViT-recipe-c4s2027/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.09_05h38/C4_Test_session_09.09_05h38.log",
+      "remote": "965382b2/C4_Test_session_09.09_05h38.log",
+      "bytes": 855387,
+      "xet_hash": "e27fdeed6674ee75166fb8feaf49eb6132e5a38fe2c64c033b6fcb323f5705cd"
+    },
+    {
+      "source": "/root/recipe_runs/c4s2027_80_20260909/validation.json",
+      "remote": "965382b2/c4_validation_evaluation.json",
+      "bytes": 665198,
+      "xet_hash": "272bec21c3531f39d8a3c3efe9d7a02ad2eb4a58111c67f6a49f974b9a423cc1"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-c4s2027/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.09_05h38/models/best_model-BetterLViT.pth.tar",
+      "remote": "965382b2/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845306495,
+      "xet_hash": "24dccaeb346fb87f89ee61c2938a6d81e19c5aa256f096509555cf84ce5a8f91"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-c4s2027/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.09_05h38/models/last_model-BetterLViT.pth.tar",
+      "remote": "965382b2/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845336959,
+      "xet_hash": "9c7d66ad4fa4ae6c8823279e82bea0a2925f94944df9a43c2b366b6231a51ec6"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-c4s2027/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.09_05h38/tensorboard_logs/events.out.tfevents.1788903503.autodl-container-5994418ddb-a79e3722",
+      "remote": "965382b2/tensorboard_logs/events.out.tfevents.1788903503.autodl-container-5994418ddb-a79e3722",
+      "bytes": 593178,
+      "xet_hash": "f9bd89daea311ad74c7a74baa28e5b087908530f7eb85bbe07c7d6d33776e3d0"
+    }
+  ]
+}
