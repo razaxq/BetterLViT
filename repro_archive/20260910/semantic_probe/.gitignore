@@ -1,0 +1,2 @@
+# Small diagnostic weights live in the verified HF Bucket archive.
+results/diagnostic_heads.pt

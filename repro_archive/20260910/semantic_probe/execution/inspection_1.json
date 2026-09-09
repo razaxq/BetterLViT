@@ -1,0 +1,38 @@
+{
+  "observed_unix": 1788983134.2987962,
+  "runtime": {
+    "phase": "complete",
+    "submitted_unix": 1788982531.8893251,
+    "diagnostic_source_git_commit": "5f10bb1c4d83372553f204492ffcf3bbfaab782e",
+    "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+    "test_split_accessed": false,
+    "completed_unix": 1788982590.3008351,
+    "artifacts": {
+      "probe_training.json": {
+        "bytes": 66740,
+        "sha256": "ac6e529b5e9835bd357eb88c9348e57aca247b9e1501412c0fb8cf2db664be4d"
+      },
+      "audit_records.json": {
+        "bytes": 728371,
+        "sha256": "402e1a919264bec236ef782d84d3c03d26796c6fd5fe28f37f3cfa34b3fc6595"
+      },
+      "records.json": {
+        "bytes": 8137265,
+        "sha256": "ad9603f932459065c833f59f9299938756f4ab66149bb779cae78a4f241715a5"
+      },
+      "patch_scores.npz": {
+        "bytes": 5312626,
+        "sha256": "86a56c6bee23300603926cdba17b8e7ca7b6cf34ab3c35bd4b1c7d4542c1f0f0"
+      },
+      "diagnostic_heads.pt": {
+        "bytes": 156705,
+        "sha256": "0037bbdcc131bb9968f81992c06e7ec34325a15529f0f885eb5fe93c3cb13666"
+      },
+      "summary.json": {
+        "bytes": 3947,
+        "sha256": "bb3eab78bb2bafe2308b2b7b214343dd701ce95b1ff64d15988b81792e5f934e"
+      }
+    }
+  },
+  "log_tail": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n{\"status\": \"complete\", \"proceed_to_architecture\": false, \"baseline_per_image_max_difference\": 0.0, \"elapsed_seconds\": 58.407448053359985}\n"
+}

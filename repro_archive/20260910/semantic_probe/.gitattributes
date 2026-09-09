@@ -3,3 +3,5 @@ r2_validation.json -text
 *.py text eol=lf
 PLAN.md text eol=lf
 manifest.json text eol=lf
+results/* -text
+execution/*.json -text

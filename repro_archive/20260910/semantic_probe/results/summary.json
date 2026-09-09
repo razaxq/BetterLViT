@@ -1,0 +1,134 @@
+{
+  "samples": 1429,
+  "error_capture_eligible": 1429,
+  "small_area_count": 358,
+  "capture_minus_uncertainty": {
+    "mean": -0.7378970153775031,
+    "ci95": [
+      -0.7472744899419951,
+      -0.728201058289301
+    ],
+    "n": 1429
+  },
+  "capture_minus_random": {
+    "mean": -0.03190708643464028,
+    "ci95": [
+      -0.04069307004315686,
+      -0.02342375451835034
+    ],
+    "n": 1429
+  },
+  "actual_iou_minus_r2": {
+    "mean": -5.452034132549792e-05,
+    "ci95": [
+      -0.00020981608769024478,
+      0.00010542588527154205
+    ],
+    "n": 1429
+  },
+  "actual_iou_minus_uncertainty": {
+    "mean": 2.0550405269267345e-05,
+    "ci95": [
+      -0.000410465988909671,
+      0.000441964611165905
+    ],
+    "n": 1429
+  },
+  "dice_delta": -3.958129211481487e-05,
+  "small_area_iou_delta": -0.0004029526387198738,
+  "means": {
+    "baseline": {
+      "iou": 0.7266535938268995,
+      "dice": 0.8240342867846576,
+      "precision": 0.8050860181894107,
+      "recall": 0.8805021187884409,
+      "fp": 968.964310706788,
+      "fn": 452.8453463960812
+    },
+    "fine_probe": {
+      "iou": 0.25378855872908057,
+      "dice": 0.37355608641843063,
+      "precision": 0.26827573646341096,
+      "recall": 0.9024921476453297,
+      "fp": 15203.677396780966,
+      "fn": 586.1175647305809
+    },
+    "coarse_probe": {
+      "iou": 0.2178488229179578,
+      "dice": 0.329395461047747,
+      "precision": 0.22525306619019342,
+      "recall": 0.8841422619053547,
+      "fp": 18816.99090272918,
+      "fn": 557.3876836948915
+    },
+    "full_correction": {
+      "iou": 0.7265776657909402,
+      "dice": 0.8239977384615083,
+      "precision": 0.7994814774120114,
+      "recall": 0.8871789113906235,
+      "fp": 1000.706088173548,
+      "fn": 432.1882435269419
+    },
+    "disagreement": {
+      "error_capture_mean": 0.17291619259159696,
+      "fp_capture_pooled": 0.177026685443975,
+      "fn_capture_pooled": 0.1750613491244228,
+      "oracle_iou": 0.7611809072830382,
+      "iou": 0.7265990734855742,
+      "dice": 0.8239947054925428,
+      "precision": 0.8042089976280715,
+      "recall": 0.8814347133418978,
+      "fp": 973.1623512946117,
+      "fn": 450.0643806857943
+    },
+    "uncertainty": {
+      "error_capture_mean": 0.9108132079690999,
+      "fp_capture_pooled": 0.8391124110786119,
+      "fn_capture_pooled": 0.8476857317698836,
+      "oracle_iou": 0.9722841444683118,
+      "iou": 0.7265785230803048,
+      "dice": 0.8239996333868961,
+      "precision": 0.799536353601291,
+      "recall": 0.8870963066175716,
+      "fp": 1000.1672498250525,
+      "fn": 432.6004198740378
+    },
+    "texture": {
+      "error_capture_mean": 0.08160534350840688,
+      "fp_capture_pooled": 0.0891416603473802,
+      "fn_capture_pooled": 0.08177050173384678,
+      "oracle_iou": 0.7446044492562078,
+      "iou": 0.7266800073526879,
+      "dice": 0.8240403939504548,
+      "precision": 0.8046827450580657,
+      "recall": 0.880993220379979,
+      "fp": 970.2505248425472,
+      "fn": 451.51714485654304
+    },
+    "random": {
+      "error_capture_mean": 0.20482327902623726,
+      "fp_capture_pooled": 0.20684649550427905,
+      "fn_capture_pooled": 0.19925175702656092,
+      "oracle_iou": 0.7700977296397117,
+      "iou": 0.7265112715244658,
+      "dice": 0.8239404970168297,
+      "precision": 0.8037793375671126,
+      "recall": 0.8818198130322494,
+      "fp": 976.0104968509447,
+      "fn": 448.55633310007
+    }
+  },
+  "gates": {
+    "capture_beats_uncertainty_by_002": false,
+    "capture_beats_random_by_005": false,
+    "capture_uncertainty_ci_positive": false,
+    "actual_iou_gain_at_least_001": false,
+    "actual_iou_ci_positive": false,
+    "dice_nondecreasing": false,
+    "small_area_iou_nondecreasing": false,
+    "beats_uncertainty_iou_by_0005": false,
+    "versus_uncertainty_iou_ci_positive": false
+  },
+  "proceed_to_architecture": false,
+  "interpretation": "Frozen-feature diagnostic; not a trained architecture result or Test score."
+}

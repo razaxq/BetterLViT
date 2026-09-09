@@ -1,0 +1,44 @@
+{
+  "verified": true,
+  "validation_samples": 1429,
+  "selector_case_checks": 5716,
+  "exact_block_budget": true,
+  "fp_fn_capture_recomputed": true,
+  "oracle_iou_recomputed": true,
+  "independent_summary_equal": true,
+  "probe_fit_audit_validation_disjoint": true,
+  "fit_samples": 512,
+  "audit_samples": 128,
+  "probe_steps": 256,
+  "audit_means": {
+    "baseline": {
+      "iou": 0.8168975212412946,
+      "dice": 0.8937851135467427,
+      "precision": 0.8662649603707493,
+      "recall": 0.9371384586899318
+    },
+    "fine_probe": {
+      "iou": 0.2665605496942324,
+      "dice": 0.3861217393875089,
+      "precision": 0.281311969681426,
+      "recall": 0.9110999635559318
+    },
+    "coarse_probe": {
+      "iou": 0.2297108407471251,
+      "dice": 0.34243702278460064,
+      "precision": 0.2390842883760683,
+      "recall": 0.8943283569443413
+    },
+    "full_correction": {
+      "iou": 0.8160107924552636,
+      "dice": 0.8931712244483774,
+      "precision": 0.8611770490427184,
+      "recall": 0.9418277870334859
+    }
+  },
+  "diagnostic_source_git_commit": "5f10bb1c4d83372553f204492ffcf3bbfaab782e",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "seconds_after_completion": 543.9979610443115,
+  "completion_check_within_30min": true,
+  "proceed_to_architecture": false
+}

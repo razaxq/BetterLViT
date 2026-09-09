@@ -1,11 +1,14 @@
 {
-  "phase": "submitted",
+  "phase": "complete",
   "diagnostic_source_git_commit": "5f10bb1c4d83372553f204492ffcf3bbfaab782e",
-  "inspections_completed": 0,
+  "inspections_completed": 1,
   "maximum_inspections": 2,
   "expected_completion_unix": 1788982792.112766,
   "planned_check_unix": 1788983100,
   "no_persistent_ssh": true,
   "expected_completion_sydney": "2026-09-10T05:39:52.112766+10:00",
-  "planned_check_sydney": "2026-09-10T05:45:00+10:00"
+  "planned_check_sydney": "2026-09-10T05:45:00+10:00",
+  "seconds_after_completion": 543.9979610443115,
+  "completion_check_within_30min": true,
+  "proceed_to_architecture": false
 }
