@@ -67,6 +67,18 @@
     "bytes": 4697,
     "sha256": "2f226b765dbf2cf2a8e6cb889b5e8387c112d1f05e6939fa684e4eeeadfb4d07"
   },
+  "c4s3407_first_check_schedule.json": {
+    "bytes": 4664,
+    "sha256": "a1eff762e82d86c500872465da5f7a59258cbf5fea171cca3e2d68222b2e17f2"
+  },
+  "c4s3407_first_snapshot.json": {
+    "bytes": 10947,
+    "sha256": "2f65da9e3c92dc04a571a59d67add70be2dfe19b3e8fc4314d71fd50a43a29cf"
+  },
+  "c4s3407_forecast.json": {
+    "bytes": 1762,
+    "sha256": "2cc5aa8a223243431ccced0b9383647c345f5d192240493779fd842b882e7112"
+  },
   "c4s3407_launch.json": {
     "bytes": 5520,
     "sha256": "f7fc23d96da82d9bfc88a915a5461f94be76475ba94d38dfa05d27e338b58cca"
@@ -84,12 +96,12 @@
     "sha256": "a8d2f7bb7751610aa0f1f2eba3fe70bfb7c942925ae3a5a5d848217cd558598e"
   },
   "c4s3407_state.json": {
-    "bytes": 5520,
-    "sha256": "f7fc23d96da82d9bfc88a915a5461f94be76475ba94d38dfa05d27e338b58cca"
+    "bytes": 7854,
+    "sha256": "68e9ade4e56eb2d3a3e1153adc8d966ea1e3f702506119a596330cd7692e2164"
   },
   "chain_state.json": {
-    "bytes": 205,
-    "sha256": "b0ac1e1c3945aec10509d8c4c2564f16cac3679c70582ccf6131dba3b03ec625"
+    "bytes": 370,
+    "sha256": "ca1456932bbe030aa979b424d7483d793a2340ed45d45312acbd2a6cc927786f"
   },
   "collect_snapshot.py": {
     "bytes": 4354,
@@ -180,8 +192,8 @@
     "sha256": "f914535f5594446139379c3e8d17bbbc693014e23be298165fbe54a1bf4d038f"
   },
   "README.md": {
-    "bytes": 9229,
-    "sha256": "3066fada680b249def55a09a5e3ddd4758a7b10397422b645d9ba00b5c2c9e0b"
+    "bytes": 9828,
+    "sha256": "877c88ad9909990bd8d99d25e9d6aedda3852c841e13081601a7976c80c87a9f"
   },
   "register_replication.py": {
     "bytes": 3544,

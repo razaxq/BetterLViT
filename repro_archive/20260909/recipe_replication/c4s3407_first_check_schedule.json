@@ -1,0 +1,15 @@
+{
+  "automation_id": "betterlvit-r2",
+  "name": "BetterLViT R2 配对种子复验",
+  "status": "ACTIVE",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "current_label": "c4s3407",
+  "inspections_completed": 1,
+  "max_inspections": 2,
+  "inspected_sydney": "2026-09-09T18:00:35.267780+10:00",
+  "predicted_training_end_sydney": "2026-09-09T22:30:55.544819+10:00",
+  "planned_final_check_sydney": "2026-09-09T22:43:00+10:00",
+  "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+  "prompt": "当前阶段：c4s3407在2026-09-09 18:00:35.268（Australia/Sydney）的首次短连接已确认训练健康，完成4/80轮、正在第5轮。source_git_commit为02b28b2d455efdec4249cedd3d0ac7a865808283，SHA/manifest一致、跟踪文件干净、未访问Test。独立检查预算已用1/2。排除第1轮后，第2–4轮平均214.745656秒，预计今天22:30:55.545结束训练；最后检查预约2026-09-09 22:43 Sydney。下一次触发是第2次也是最后一次检查，只执行一次collector保存c4s3407_final_snapshot.json，再运行finalize_replication.py --label c4s3407核验和归档。不要再做首次检查或中途连接；30分钟约束须末检按实际结束时间核实。C4-3407完成后按原计划提交已准备的r2s3407；此前1219、2027两个配对IoU方向为正，但仍需3407完整配对后运行aggregate_replications.py，才决定后续固定协议Test。不要再查询已完成2027训练状态。每次更新保留全部后续规则。\n\n继续用户已经授权的BetterLViT R2配对种子复验。先读 D:/BetterLViT/experiment_docs_work/repro_archive/20260909/recipe_replication/README.md、sources.json，以及 D:/BetterLViT/outputs/recipe_replication_20260909/chain_state.json 和当前label的state。实时预算以outputs中的state为准，不以Git归档副本为准。\n\n固定顺序是 c4s2027 → r2s2027 → c4s3407 → r2s3407。四组都已注册独立完整SHA和实验tag，80轮、原Dice/Focal、原增强、固定阈值0.5、Val IoU选Best。R2组只改变预注册的学习率配方；不混入R1增强，不新增模块/监督/loss/LoRA。完整跑完两个预注册配对，不根据2027的数值门槛决定是否运行3407。\n\n每个训练最多两次短连接检查。首次预约执行一次 collect_snapshot.py，保存当前label_first_snapshot.json；随后只读本地数据，用 forecast_recipe.py --label 当前label 根据完整轮时预测，并把同一个heartbeat更新到planned_final_check_sydney。正常且无有意义变化时保持安静，不添加中途查询、循环轮询、持久在线或完成监听器。连接前扣预算，不隐藏重试。\n\n最后预约再且仅再执行一次collector保存当前label_final_snapshot.json，然后运行 finalize_replication.py --label 当前label。核实80轮、1429个Val样本、seed、SHA、manifest和真实结束至末检间隔≤30分钟；若尚未完成，不进行第三次状态查询，不启动下一组，保留事实并通知。已确认完成时运行 archive_completed_recipe.py 归档静态日志/结果并校验哈希与实际LR，必要时hf_recipe.py prepare生成已完成模型的Xet源清单。C4完成只保存控制；同种子R2完成会生成配对比较文件。完成、失败、进入下一组等有意义变化才通知。\n\nHF认证问题已在前阶段告知，当前唯一凭据本地和远端401。没有用户重新登录或其他认证状态变化时，不重试认证/上传、不重复通知旧问题。模型和来源始终保留；共享fs实际字节<20,000,000,000，系统盘训练启动前保留至少4GB，不盲目删除模型或数据。静态已完成文件传输不是训练轮询。\n\n每组完成后更新 D:/BetterLViT/experiment_docs_work 的台账、复现记录和原始结果，提交并推送 https://github.com/razaxq/BetterLViT.git，不合并主分支。然后按固定顺序用 launch_replication.py --label 下一label提交下一组，返回PID后不查询状态，按新state预约首次检查，独立预算0/2。\n\n四组完成后运行 aggregate_replications.py，结合已完成1219种子，汇报3个配对IoU/Dice增益、均值和标准差。三个IoU增益都>0、平均≥0.003且平均Dice与最小GT面积组IoU不下降才通过。通过后按既定固定选模/阈值协议完成Test评估；最终成果以Test为准，不把单种子Val或逐图bootstrap当跨种子稳定Test证据。失败则结束支线，不追加种子、延长150轮或改配方。当前定时目的完成后删除heartbeat。脚本目录为上述recipe_replication，本地Python命令加-X utf8。",
+  "updated_at": 1788940859706
+}
