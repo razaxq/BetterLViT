@@ -108,8 +108,8 @@
     "sha256": "904a20c0cf4f5061e93a332225a3d4c4d9808ccf45434caabb721e72515224f4"
   },
   "chain_state.json": {
-    "bytes": 419,
-    "sha256": "49505833fa82f9c00e786ed4fd2a446ff25537116b85564e77241fb41905eb32"
+    "bytes": 205,
+    "sha256": "4011ef24cfbc073e17183d0ac391d176b740d7c19f3608450a928c097f97f5d9"
   },
   "collect_snapshot.py": {
     "bytes": 4354,
@@ -187,6 +187,14 @@
     "bytes": 5433,
     "sha256": "8aff68aea77812a928226127d918569bbdb9c926107fb3e02e92ac893d86ef5d"
   },
+  "r2s3407_automation_registration.json": {
+    "bytes": 4710,
+    "sha256": "b17fe718b4027da1961c65938ea4fdba75f1de144ca5c87b4c58d19f475438e2"
+  },
+  "r2s3407_launch.json": {
+    "bytes": 5576,
+    "sha256": "11bdb984d704ec30bd3df3a40aa048626653ae93f98829995b26ed607caf0b71"
+  },
   "r2s3407_manifest.json": {
     "bytes": 3181,
     "sha256": "300d9fba93914340258a2001692065943d2aa277702e0df685820c9543c62086"
@@ -199,9 +207,13 @@
     "bytes": 4166,
     "sha256": "f914535f5594446139379c3e8d17bbbc693014e23be298165fbe54a1bf4d038f"
   },
+  "r2s3407_state.json": {
+    "bytes": 5576,
+    "sha256": "11bdb984d704ec30bd3df3a40aa048626653ae93f98829995b26ed607caf0b71"
+  },
   "README.md": {
-    "bytes": 10341,
-    "sha256": "81eeaf8cf929c8f9a02106dab752a6f298c779748b973aa549fc001130e4a15c"
+    "bytes": 10946,
+    "sha256": "53ed25080549581141fc90b11814430ff0826ba931dc39db7fc5224741f82346"
   },
   "register_replication.py": {
     "bytes": 3544,
@@ -212,12 +224,12 @@
     "sha256": "a075852f6a900fa4f5eebfa6b417f0c5e985be0635351d91cbeb1ba60c71fef4"
   },
   "two_seed_progress.json": {
-    "bytes": 2167,
-    "sha256": "1d81fab1a2d60e0515a1c3c3384ae87fddeddd92de112f4c998192c2204e1798"
+    "bytes": 2241,
+    "sha256": "f984b917713d1a22496cd5b814c652dbff44f53b6bc4a6c31e6a55e032d23f76"
   },
   "TWO_SEED_PROGRESS.md": {
-    "bytes": 981,
-    "sha256": "7fbbd2e5238a998fef56788419f6b264b6d8bc6577b5a1c4b7ca31ba099ca852"
+    "bytes": 993,
+    "sha256": "25b0e87ab98b40b0f3c3bdedacf567ddc7e4f5c45803a0071fc9d27f2fdf5624"
   },
   "verify_preflights.py": {
     "bytes": 2113,
