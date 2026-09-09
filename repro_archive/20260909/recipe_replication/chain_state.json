@@ -6,12 +6,14 @@
     "c4s3407",
     "r2s3407"
   ],
-  "phase": "validation_replication_complete_test_pending",
+  "phase": "test_submitted",
   "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
   "inspections_completed": 2,
   "last_inspected_unix": 1788959021.1636407,
   "observed_completed_epochs": 80,
   "planned_final_check_sydney": "2026-09-10T03:46:00+10:00",
   "validation_gate_passed": true,
-  "training_complete": true
+  "training_complete": true,
+  "test_evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533",
+  "test_state_path": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\state.json"
 }

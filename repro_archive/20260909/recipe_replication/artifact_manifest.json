@@ -104,8 +104,8 @@
     "sha256": "904a20c0cf4f5061e93a332225a3d4c4d9808ccf45434caabb721e72515224f4"
   },
   "chain_state.json": {
-    "bytes": 470,
-    "sha256": "dd24c6a19a8e0b7ec75ab783bbc211b852485edc4e68571f24f4700eef73d147"
+    "bytes": 605,
+    "sha256": "bff00b25eb592d8e1e1c60cfa9676bc1218a7448f96b5e5ca868082c5b8f21bb"
   },
   "collect_snapshot.py": {
     "bytes": 4354,

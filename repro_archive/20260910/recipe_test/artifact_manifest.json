@@ -3,6 +3,14 @@
     "bytes": 71,
     "sha256": "8a8de5d3fa9c75b551111fb7e7c6fe62530d669bd74507d7ced50d90dde506e1"
   },
+  "automation_prompt.md": {
+    "bytes": 3507,
+    "sha256": "c92b0615f6009187616325dd28dd1958e279e9f2415bc9e19a874b37e7158b31"
+  },
+  "automation_registration.json": {
+    "bytes": 331,
+    "sha256": "90246371db8454f20f46144bbc8d982587dff8cca8b76bd91fc86e419aac5a9c"
+  },
   "check_test_protocol.py": {
     "bytes": 4058,
     "sha256": "8e395a12465aae40dc0ad2cb85d06143b075f795b202fe65904dd62ae6f2682d"
@@ -23,6 +31,14 @@
     "bytes": 4401,
     "sha256": "b025815580eaf7c4a01cabf0ae0490e7b3e130352b2856e8fc468fc8a5c75ab1"
   },
+  "launch.json": {
+    "bytes": 913,
+    "sha256": "b79fc8d544cfa9c28e19165ac6958c597c918920f78b6c0f9fcce787572c241b"
+  },
+  "launch_attempt.json": {
+    "bytes": 118,
+    "sha256": "3435e34172935fc20cb7799737dc5b9e88b8505fe9cc8e293fd79b6e4c5424fc"
+  },
   "prepare_test.py": {
     "bytes": 3518,
     "sha256": "315f09f3b98c33190fb0a0bded373050a1538154904e79158800851bcfe892ac"
@@ -32,12 +48,16 @@
     "sha256": "94c3bcfba8b9b123ca27c22667ab949ae380e9e0d2b034ccf65285ba571071c0"
   },
   "README.md": {
-    "bytes": 3088,
-    "sha256": "1bfe41d30464df7e421ed95620fd1645f77257825173c67c9f7606519a81c94f"
+    "bytes": 3677,
+    "sha256": "6d067d47e06b6ca614795438f38ce3a01a5d90b7c5866cc9ef251a5abfc9fa56"
   },
   "run_test_chain.py": {
     "bytes": 4551,
     "sha256": "98fc3eb8909ab8ea948fd908fb5a1a80bd7f0a874616eea21e33e2b5d6e357c9"
+  },
+  "state.json": {
+    "bytes": 443,
+    "sha256": "3b9202a954457ca001371d2069a338919e7bcfe2ad4624d23584a239226c1b30"
   },
   "test_control.py": {
     "bytes": 7466,

@@ -1,0 +1,17 @@
+{
+  "pid": 182805,
+  "submitted_unix": 1788978566.5584223,
+  "evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533",
+  "remote_directory": "/root/recipe_test_20260910",
+  "system_free_bytes": 4024750080,
+  "shared_fs_bytes": 18559782256,
+  "gpu_at_submission": "NVIDIA GeForce RTX 4090 D, 1 MiB, 24564 MiB, 0 %",
+  "deployed_sha256": {
+    "evaluate_test.py": "25e822bc70c9201a488fd0c5f7f2433caf859e22fc3bec7a98e311ab5a938da9",
+    "protocol.py": "94c3bcfba8b9b123ca27c22667ab949ae380e9e0d2b034ccf65285ba571071c0",
+    "compare_test.py": "8a74170be5a82cc36f791778635c6c309e9443b6ec3b19089eae75633f99c493",
+    "run_test_chain.py": "98fc3eb8909ab8ea948fd908fb5a1a80bd7f0a874616eea21e33e2b5d6e357c9",
+    "test_plan.json": "21c42c51f0dc455228577624b4002df8bf8ad0686036257b77b0db2c18b3ea18",
+    "three_seed_summary.json": "d88902c114327fb1ce85647bbe22090947687cd5052cbe12f101fe3ca82b4c33"
+  }
+}

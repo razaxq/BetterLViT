@@ -1,0 +1,12 @@
+{
+  "phase": "submitted",
+  "inspections_completed": 0,
+  "maximum_inspections": 2,
+  "evaluation_source_git_commit": "285785429e9584797a4130611c4e206244652533",
+  "expected_completion_unix": 1788979657.7768161,
+  "expected_completion_sydney": "2026-09-10T04:47:37.776816+10:00",
+  "planned_check_unix": 1788980400,
+  "planned_check_sydney": "2026-09-10T05:00:00+10:00",
+  "no_persistent_ssh": true,
+  "training_inspections_unchanged": true
+}
