@@ -118,8 +118,8 @@
     "replication_cohort": "r2_additional_seeds_v1",
     "paired_role": "r2"
   },
-  "inspections_completed": 0,
-  "dispatch_only": true,
+  "inspections_completed": 1,
+  "dispatch_only": false,
   "test_split_accessed": false,
   "system_free_bytes_before": 5737332736,
   "label": "r2s3407",
@@ -165,5 +165,51 @@
   },
   "planned_first_check_unix": 1788958980,
   "started_sydney": "2026-09-09T22:47:10.844279+10:00",
-  "planned_first_check_sydney": "2026-09-09T23:03:00+10:00"
+  "planned_first_check_sydney": "2026-09-09T23:03:00+10:00",
+  "last_snapshot": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s3407_first_snapshot.json",
+  "last_inspected_unix": 1788959021.1636407,
+  "health_confirmed": true,
+  "phase": "training",
+  "forecast": {
+    "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+    "snapshot_sha256": "e2e81524c7ebc8eb969504e63851721145fe2b9a3edf85be0236425086e4cd85",
+    "inspected_unix": 1788959021.1636407,
+    "inspected_sydney": "2026-09-09T23:03:41.163641+10:00",
+    "completed_epochs": 4,
+    "active_epoch": 5,
+    "runtime_phase": "training",
+    "inspections_completed": 1,
+    "test_split_accessed": false,
+    "excluded_initial_epoch": 1,
+    "measured_epoch_seconds": [
+      216.6089645549655,
+      213.29446378163993,
+      213.61821338906884
+    ],
+    "mean_epoch_seconds": 214.5072139085581,
+    "median_epoch_seconds": 213.61821338906884,
+    "remaining_epochs_from_last_completed_boundary": 76,
+    "predicted_training_end_unix": 1788975219.5916045,
+    "predicted_training_end_sydney": "2026-09-10T03:33:39.591604+10:00",
+    "observed_range_extrapolation_sydney": [
+      "2026-09-10T03:32:07.422595+10:00",
+      "2026-09-10T03:36:19.324654+10:00"
+    ],
+    "planned_final_check_unix": 1788975960,
+    "planned_final_check_sydney": "2026-09-10T03:46:00+10:00",
+    "buffer_after_prediction_seconds": 740.4083955287933,
+    "actual_training_end_window_for_30min_requirement_sydney": [
+      "2026-09-10T03:16:00+10:00",
+      "2026-09-10T03:46:00+10:00"
+    ],
+    "assumptions": [
+      "Future full epochs have approximately the mean duration of observed completed epochs excluding epoch 1.",
+      "Normal epoch duration includes Train, Val and rolling checkpoint saves.",
+      "Additional Best saves after epoch 5 and throughput drift consume the 12-minute buffer.",
+      "Observed-range extrapolation is descriptive, not a predictive confidence interval.",
+      "The final snapshot must verify actual finish-to-inspection delay; prediction is not a guarantee."
+    ]
+  },
+  "planned_final_check_unix": 1788975960,
+  "planned_final_check_sydney": "2026-09-10T03:46:00+10:00"
 }

@@ -48,7 +48,8 @@
     "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
     "control_iou": 0.7203136633310239,
     "control_dice": 0.8188524577438588,
-    "candidate_status": "dispatch_only",
-    "candidate_source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2"
+    "candidate_status": "training_confirmed_at_first_inspection",
+    "candidate_source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+    "candidate_last_inspected_sydney": "2026-09-09T23:03:41.163641+10:00"
   }
 }

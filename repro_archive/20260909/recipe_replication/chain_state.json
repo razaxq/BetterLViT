@@ -6,6 +6,10 @@
     "c4s3407",
     "r2s3407"
   ],
-  "phase": "dispatch_only",
-  "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2"
+  "phase": "training",
+  "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+  "inspections_completed": 1,
+  "last_inspected_unix": 1788959021.1636407,
+  "observed_completed_epochs": 4,
+  "planned_final_check_sydney": "2026-09-10T03:46:00+10:00"
 }
