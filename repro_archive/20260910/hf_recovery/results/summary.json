@@ -1,0 +1,61 @@
+{
+  "phase": "complete",
+  "bucket": "razaxq/BetterLViT",
+  "verified_files": 30,
+  "experiments": [
+    {
+      "label": "r1",
+      "prefix": "f71e7829",
+      "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+      "verified_files": 5,
+      "source_bytes": 1692786500,
+      "seconds": 148.1827630996704
+    },
+    {
+      "label": "r2",
+      "prefix": "9eca26de",
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "verified_files": 5,
+      "source_bytes": 1692752763,
+      "seconds": 96.6706063747406
+    },
+    {
+      "label": "c4s2027",
+      "prefix": "965382b2",
+      "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "verified_files": 5,
+      "source_bytes": 1692757217,
+      "seconds": 102.3560962677002
+    },
+    {
+      "label": "r2s2027",
+      "prefix": "c972a152",
+      "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "verified_files": 5,
+      "source_bytes": 1692756395,
+      "seconds": 119.22840094566345
+    },
+    {
+      "label": "c4s3407",
+      "prefix": "02b28b2d",
+      "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+      "verified_files": 5,
+      "source_bytes": 1692784632,
+      "seconds": 132.18669652938843
+    },
+    {
+      "label": "r2s3407",
+      "prefix": "7b498ba9",
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "verified_files": 5,
+      "source_bytes": 1692776775,
+      "seconds": 121.09059119224548
+    }
+  ],
+  "total_source_bytes": 10156614282,
+  "completed_unix": 1788979951.9426198,
+  "verification": "Fresh server source Xet hashes, server Bucket listing and independent local Bucket listing all match.",
+  "remote_deletions": false,
+  "local_models_deleted": false,
+  "scope": "Six completed 80-epoch recipe training archives, with their original validation exports. New Test exports are separate."
+}

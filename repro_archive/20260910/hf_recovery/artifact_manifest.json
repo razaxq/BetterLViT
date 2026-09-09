@@ -1,0 +1,50 @@
+{
+  ".gitattributes": {
+    "bytes": 71,
+    "sha256": "8a8de5d3fa9c75b551111fb7e7c6fe62530d669bd74507d7ced50d90dde506e1"
+  },
+  "additional_archives.py": {
+    "bytes": 4023,
+    "sha256": "c7f8419253a56bd9360acd839ff69706e049d777c96135802cd077a11497d358"
+  },
+  "additional_plan.json": {
+    "bytes": 3422,
+    "sha256": "bf1e4ecb6d2730e75660ead6732e98e6654970cde3d7e469589b1aa17d55a2f6"
+  },
+  "archive_uploads.py": {
+    "bytes": 4133,
+    "sha256": "6946b30e5615f9e52db32fb7058811ad92c4ad9b148b503657091c20139f4539"
+  },
+  "authenticate.py": {
+    "bytes": 1221,
+    "sha256": "3c9d53632233bdb4b2e4c492b99fcb795e2ba3d0fac1afed695d0180bca16476"
+  },
+  "automation_auth_update.md": {
+    "bytes": 4705,
+    "sha256": "595335d9ceff91becfc4b856a9f880548e4c47b98163347109c48e3d94a13346"
+  },
+  "prepare_additional_server.py": {
+    "bytes": 5109,
+    "sha256": "ab437f5e3c2477b3798160cabba90a512f3480fc794f684efe064da4e51d78e3"
+  },
+  "README.md": {
+    "bytes": 3166,
+    "sha256": "c37d947bfed8c1e54356085488dfd38f5c5b53c4104a78bc6d6a7e8c6a47a269"
+  },
+  "upload_pending.py": {
+    "bytes": 7867,
+    "sha256": "88ed0a2af61f312ac763255c2ae4874633f845392ac2b2ea918b0da1c3d387ee"
+  },
+  "upload_test_exports.py": {
+    "bytes": 3031,
+    "sha256": "23c247037bfb114bbd5c07caff963a5d1e66e7da1f5b7d2638bdcfd0c348a2c1"
+  },
+  "upload_verified_manifest.py": {
+    "bytes": 3425,
+    "sha256": "242ea2f54a0d3d6feb9b13a07d90c853515089b825a6f47bfd5e11ea227f58a7"
+  },
+  "results/artifact_manifest.json": {
+    "bytes": 2048,
+    "sha256": "19ac1f1553642f318b58782d4d81e08a038c5f4b32a3aa2335e5f6975f5753fb"
+  }
+}

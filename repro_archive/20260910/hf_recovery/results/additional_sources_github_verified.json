@@ -1,0 +1,23 @@
+[
+  {
+    "label": "p11_80",
+    "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "tags": [
+      "refs/tags/paper-p11-dual-grain-80e-b16-seed1219-20260907^{}"
+    ]
+  },
+  {
+    "label": "p11_150",
+    "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a",
+    "tags": [
+      "refs/tags/paper-p11-150e-resume-b16-seed1219-20260907^{}"
+    ]
+  },
+  {
+    "label": "p12",
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "tags": [
+      "refs/tags/experiment-p12-visual-80e-seed1219-20260908^{}"
+    ]
+  }
+]

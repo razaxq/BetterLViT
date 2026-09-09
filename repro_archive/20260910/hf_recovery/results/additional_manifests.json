@@ -1,0 +1,235 @@
+[
+  {
+    "label": "p11_80",
+    "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "bucket_prefix": "2fc6ab5c",
+    "classification": "completed_exploratory_80e_test",
+    "training_completed_epochs": 80,
+    "evaluation_split": "test",
+    "checkpoint_checks": [
+      {
+        "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+        "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+        "epochs": 80,
+        "best_epoch": 80,
+        "epoch": 79
+      },
+      {
+        "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/last_model-BetterLViT.pth.tar",
+        "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+        "epochs": 80,
+        "best_epoch": 80,
+        "epoch": 79
+      }
+    ],
+    "input_json_checks": {
+      "runtime.json": {
+        "canonical_sha256": "4cf866cf55db5af647f9ebda193141ba7d2443a25a766f219aa336496009b403",
+        "server_file_sha256": "ea7f735c1082653701054196c4d1c591ee481130e0439f035e9b842ef41faed5",
+        "archived_file_sha256": "1aa1c92a92ab238d90099abd52b60b38b5f805587eb2df593cb57a26de2f8590"
+      },
+      "p11_test.json": {
+        "canonical_sha256": "2ad9df19d595f1e566b17aa66474daf9f53384279b75db18aae40686b279d485",
+        "server_file_sha256": "5576d432f55f40042e8db56aa3e74f47ff54d07bf2e633bf033a2e30a69e74e8",
+        "archived_file_sha256": "37ae04eb129031fe10f0618e21d491b109495aa387701c7a005afe4d3b45e843"
+      },
+      "p11_validation.json": {
+        "canonical_sha256": "8964c1bc0d876c64038d79e39b00d8d57480657a2394083c4488bde1708cbb69",
+        "server_file_sha256": "5a125c41ca14c728fe652d0c61a1f49af4fdf37692e2d599c8257e1c8012ff8f",
+        "archived_file_sha256": "15a51d215cbad7afe87f6aecd389237e9cb097cc6ede3062d56e920bfb92b573"
+      }
+    },
+    "files": [
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/P11_Test_session_09.07_15h00.log",
+        "remote": "2fc6ab5c/P11_Test_session_09.07_15h00.log",
+        "bytes": 857841,
+        "xet_hash": "c8b88cf03f27e751777bd4d2b49c57c0d7d356af16b2624219c013dbfd68d48f"
+      },
+      {
+        "source": "/root/dual_grain_runs/p11_20260907/p11_test.json",
+        "remote": "2fc6ab5c/p11_test_evaluation.json",
+        "bytes": 1012515,
+        "xet_hash": "c435a156caf44b51b026b162e46a911e862d5cd73da730528070ecb009c08d8a"
+      },
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+        "remote": "2fc6ab5c/models/best_model-BetterLViT.pth.tar",
+        "bytes": 845733487,
+        "xet_hash": "a9e375d15ea96993c191eadba03106af77e21a5fcd89099dd8a8399dc25643d4"
+      },
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/last_model-BetterLViT.pth.tar",
+        "remote": "2fc6ab5c/models/last_model-BetterLViT.pth.tar",
+        "bytes": 845733487,
+        "xet_hash": "50a234f2796902d021d1c8415bbfbf56e9850ba3e65e0bdcbe04b5e1689424f2"
+      },
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/tensorboard_logs/events.out.tfevents.1788764461.autodl-container-5994418ddb-a79e3722",
+        "remote": "2fc6ab5c/tensorboard_logs/events.out.tfevents.1788764461.autodl-container-5994418ddb-a79e3722",
+        "bytes": 593178,
+        "xet_hash": "70c6c14a2f542ad94a4565b5bb5bd1ac4304d7b664740e109e3c87d611aa6c81"
+      }
+    ]
+  },
+  {
+    "label": "p11_150",
+    "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a",
+    "bucket_prefix": "c724a620",
+    "classification": "completed_post_test_150e_continuation",
+    "training_completed_epochs": 150,
+    "evaluation_split": "test",
+    "checkpoint_checks": [
+      {
+        "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+        "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+        "epochs": 80,
+        "best_epoch": 80,
+        "epoch": 79
+      },
+      {
+        "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_20h26/models/last_model-BetterLViT.pth.tar",
+        "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a",
+        "epochs": 150,
+        "best_epoch": 80,
+        "epoch": 149
+      }
+    ],
+    "input_json_checks": {
+      "runtime.json": {
+        "canonical_sha256": "7acfca67e55180dc8a4dd1fa29d0162138126964e9a0ce774f12a79bf3d35823",
+        "server_file_sha256": "2c6b4f0369a34cb18a4876970d4ea2c14fb25408208690a4d128bcee240305a0",
+        "archived_file_sha256": "8d43ae251312b6efb825660ac199bad24bf1e04e5ef48ec2edeb6c3e00771769"
+      },
+      "selection.json": {
+        "canonical_sha256": "026f4704ff2ea19e1d9727b514c897a4f60d4ce9aeea7edcd2ab42c9d15d8ec6",
+        "server_file_sha256": "19fd5073c87c80530777d22d3500b68a59a68c21c00845dac11305d55d7f9a87",
+        "archived_file_sha256": "97f8e75fcaddcf50f8c84cfe8e4a2739d548a8e184a35566dace0e6b81bd5d2d"
+      },
+      "p11_test.json": {
+        "canonical_sha256": "2ad9df19d595f1e566b17aa66474daf9f53384279b75db18aae40686b279d485",
+        "server_file_sha256": "5576d432f55f40042e8db56aa3e74f47ff54d07bf2e633bf033a2e30a69e74e8",
+        "archived_file_sha256": "37ae04eb129031fe10f0618e21d491b109495aa387701c7a005afe4d3b45e843"
+      },
+      "p11_validation.json": {
+        "canonical_sha256": "8964c1bc0d876c64038d79e39b00d8d57480657a2394083c4488bde1708cbb69",
+        "server_file_sha256": "5a125c41ca14c728fe652d0c61a1f49af4fdf37692e2d599c8257e1c8012ff8f",
+        "archived_file_sha256": "15a51d215cbad7afe87f6aecd389237e9cb097cc6ede3062d56e920bfb92b573"
+      }
+    },
+    "files": [
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_20h26/P11_Test_session_09.07_20h26.log",
+        "remote": "c724a620/P11_Test_session_09.07_20h26.log",
+        "bytes": 1286891,
+        "xet_hash": "b2cf9e1ec370d05107600b03aef752b5349321f5c8a82f78bbe91ae77d53194c"
+      },
+      {
+        "source": "/root/dual_grain_runs/p11_150_20260907/p11_test.json",
+        "remote": "c724a620/p11_test_evaluation.json",
+        "bytes": 1012515,
+        "xet_hash": "c435a156caf44b51b026b162e46a911e862d5cd73da730528070ecb009c08d8a"
+      },
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+        "remote": "c724a620/models/best_model-BetterLViT.pth.tar",
+        "bytes": 845733487,
+        "xet_hash": "a9e375d15ea96993c191eadba03106af77e21a5fcd89099dd8a8399dc25643d4",
+        "copy_from": "2fc6ab5c/models/best_model-BetterLViT.pth.tar"
+      },
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_20h26/models/last_model-BetterLViT.pth.tar",
+        "remote": "c724a620/models/last_model-BetterLViT.pth.tar",
+        "bytes": 845948271,
+        "xet_hash": "e8413954289fbd1c93aa990dbef4888742da0400fd0bf0446386a9e3472c5a7e"
+      },
+      {
+        "source": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_20h26/tensorboard_logs/events.out.tfevents.1788784028.autodl-container-5994418ddb-a79e3722",
+        "remote": "c724a620/tensorboard_logs/events.out.tfevents.1788784028.autodl-container-5994418ddb-a79e3722",
+        "bytes": 523430,
+        "xet_hash": "dd1848ee13a0a1ace92d78b09996d560d7f2be0781ea636aa708db3a280f1f9e"
+      },
+      {
+        "source": "/root/dual_grain_runs/p11_150_20260907/runtime.json",
+        "remote": "c724a620/runtime.json",
+        "bytes": 1538,
+        "xet_hash": "08b72e9575ceecca6a33a5b42a84f49c11d2c992d836f30e422fa429227b6551"
+      },
+      {
+        "source": "/root/dual_grain_runs/p11_150_20260907/selection.json",
+        "remote": "c724a620/selection.json",
+        "bytes": 445,
+        "xet_hash": "5621faf2956fd2f11a99244b2e85ed4706d6c20e1cb80264517ce3188a7698c2"
+      }
+    ],
+    "best_checkpoint_parent_source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac"
+  },
+  {
+    "label": "p12",
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "bucket_prefix": "5d09913d",
+    "classification": "completed_validation_only_80e_pilot",
+    "training_completed_epochs": 80,
+    "evaluation_split": "validation",
+    "checkpoint_checks": [
+      {
+        "path": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/models/best_model-BetterLViT.pth.tar",
+        "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+        "epochs": 80,
+        "best_epoch": 70,
+        "epoch": 69
+      },
+      {
+        "path": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/models/last_model-BetterLViT.pth.tar",
+        "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+        "epochs": 80,
+        "best_epoch": 70,
+        "epoch": 79
+      }
+    ],
+    "input_json_checks": {
+      "runtime.json": {
+        "canonical_sha256": "b021fba41083fbcfa29e456807f8ac2d6c7d538f5705c6c6b12cb0960d38944e",
+        "server_file_sha256": "f889e99623b31fc3afcba00e88dfd4f3aba42e7020fbb5b0dfcc28a9b5541b46",
+        "archived_file_sha256": "d63cfc5c128c8c956ecac25d8f29e894ad34bdd9e6b3cf78a344e746563e5b06"
+      },
+      "validation.json": {
+        "canonical_sha256": "e48d6dcfe9867261d7ca1106e245b4af0e515e245cb3801108dd699e928728e6",
+        "server_file_sha256": "b9e37ad236b35cc84cb7f87dd397647d405bad1609cbee406026e6e7da2358f8",
+        "archived_file_sha256": "b5f9c0d81a63c40dd5acf142300b419c6ad9c509b9893cf76099f275e5e45806"
+      }
+    },
+    "files": [
+      {
+        "source": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/P12_Test_session_09.08_12h21.log",
+        "remote": "5d09913d/P12_Test_session_09.08_12h21.log",
+        "bytes": 858498,
+        "xet_hash": "882607159d27e2d28b3acb9341e305798ee82ec0d871ffe91edf59114085799b"
+      },
+      {
+        "source": "/root/visual_prior_runs/p12_80_20260908/validation.json",
+        "remote": "5d09913d/p12_validation_evaluation.json",
+        "bytes": 666077,
+        "xet_hash": "23fc14298411379c6aad393fe7620965dd7e61796d8bbbae90e92f874912f381"
+      },
+      {
+        "source": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/models/best_model-BetterLViT.pth.tar",
+        "remote": "5d09913d/models/best_model-BetterLViT.pth.tar",
+        "bytes": 934145113,
+        "xet_hash": "ed5da9e25754cca57691d5b97e37d1c3025cbd4cd8f0d632625898aef68ae752"
+      },
+      {
+        "source": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/models/last_model-BetterLViT.pth.tar",
+        "remote": "5d09913d/models/last_model-BetterLViT.pth.tar",
+        "bytes": 934175513,
+        "xet_hash": "235bd4007b894f85e382bbde4b16a1172c37cedd18488c33410e1a936ea145b1"
+      },
+      {
+        "source": "/root/BetterLViT-visual-p12/Covid19/BetterLViT/p12_visual_prior/P12_Test_session_09.08_12h21/tensorboard_logs/events.out.tfevents.1788841305.autodl-container-5994418ddb-a79e3722",
+        "remote": "5d09913d/tensorboard_logs/events.out.tfevents.1788841305.autodl-container-5994418ddb-a79e3722",
+        "bytes": 593178,
+        "xet_hash": "006e0a909a9e151303390a4524edd4db6921dd99144d04aa6b06d0d15a84ebc4"
+      }
+    ]
+  }
+]

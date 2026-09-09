@@ -1,5 +1,6 @@
 """Verify the downloaded completed Test chain, archive it, and update the tracker."""
 import json
+import math
 import shutil
 from pathlib import Path
 from compare_test import summarize
@@ -14,7 +15,26 @@ def main():
         shutil.copyfile(HERE / name, OUT / name)
     recomputed = summarize(OUT, state['evaluation_source_git_commit'])
     downloaded = json.loads((OUT / 'three_seed_test_summary.json').read_text(encoding='utf-8'))
-    assert recomputed == downloaded, 'Downloaded summary differs from independent local recomputation'
+    numeric_differences = []
+    def compare(left, right, location='summary'):
+        if isinstance(left, dict):
+            assert isinstance(right, dict) and left.keys() == right.keys(), location
+            for key in left:
+                compare(left[key], right[key], location + '.' + key)
+        elif isinstance(left, list):
+            assert isinstance(right, list) and len(left) == len(right), location
+            for index, (a, b) in enumerate(zip(left, right)):
+                compare(a, b, location + '[' + str(index) + ']')
+        elif isinstance(left, float):
+            assert math.isclose(left, right, rel_tol=0, abs_tol=1e-12), (location, left, right)
+            if left != right:
+                numeric_differences.append(dict(path=location, local=left, remote=right, absolute_difference=abs(left-right)))
+        else:
+            assert left == right, (location, left, right)
+    compare(recomputed, downloaded)
+    write_json(OUT / 'local_summary_recompute_verification.json',
+               dict(verified=True, absolute_tolerance=1e-12, differences=numeric_differences,
+                    note='Only final floating-point rounding across local/server runtime versions is tolerated; all structure, model sources, sample IDs and metadata must match.'))
     results = HERE / 'results'
     results.mkdir(exist_ok=True)
     for path in OUT.iterdir():

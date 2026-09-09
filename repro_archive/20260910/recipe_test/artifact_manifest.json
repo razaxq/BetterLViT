@@ -28,8 +28,8 @@
     "sha256": "cda785ed10d32b370c80c2f3d52699f3bc9705a431170c6e462971cf6027987e"
   },
   "finalize_test_archive.py": {
-    "bytes": 4401,
-    "sha256": "b025815580eaf7c4a01cabf0ae0490e7b3e130352b2856e8fc468fc8a5c75ab1"
+    "bytes": 5592,
+    "sha256": "21e46f2b6baea3c8d5f4dc813afeadfa037d44a5ecccabd6d528097c2f2cd4da"
   },
   "launch.json": {
     "bytes": 913,

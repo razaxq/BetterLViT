@@ -1,0 +1,29 @@
+{
+  "source_files_xet_verified": [
+    {
+      "prefix": "f71e7829",
+      "files": 5
+    },
+    {
+      "prefix": "9eca26de",
+      "files": 5
+    },
+    {
+      "prefix": "965382b2",
+      "files": 5
+    },
+    {
+      "prefix": "c972a152",
+      "files": 5
+    },
+    {
+      "prefix": "02b28b2d",
+      "files": 5
+    },
+    {
+      "prefix": "7b498ba9",
+      "files": 5
+    }
+  ],
+  "helper_sha256": "04720264512930cb9006952e465ad11f9cd8205d2ce1b603731492d187116a1b"
+}

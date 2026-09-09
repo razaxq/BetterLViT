@@ -1,0 +1,61 @@
+{
+  "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+  "bucket_prefix": "7b498ba9",
+  "classification": "completed_validation_only_80e_pilot",
+  "test_split_accessed": false,
+  "checkpoint_checks": [
+    {
+      "name": "best_model-BetterLViT.pth.tar",
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "best_epoch": 75,
+      "history_rows": 75
+    },
+    {
+      "name": "last_model-BetterLViT.pth.tar",
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "best_epoch": 75,
+      "history_rows": 80
+    }
+  ],
+  "training_and_validation_returncodes": [
+    0,
+    0
+  ],
+  "files": [
+    {
+      "source": "/root/BetterLViT-recipe-r2s3407/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_20h47/R2_Test_session_09.09_20h47.log",
+      "remote": "7b498ba9/R2_Test_session_09.09_20h47.log",
+      "bytes": 855732,
+      "xet_hash": "486c7f79e31e4598da78109f0a09ad29cd3873590044a46fe6fde8aa9c232e66"
+    },
+    {
+      "source": "/root/recipe_runs/r2s3407_80_20260909/validation.json",
+      "remote": "7b498ba9/r2_validation_evaluation.json",
+      "bytes": 667643,
+      "xet_hash": "88c472ccb61c99a8971f923f13c0286953e5efe44b8a8c06de413d3748a58efa"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r2s3407/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_20h47/models/best_model-BetterLViT.pth.tar",
+      "remote": "7b498ba9/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845322495,
+      "xet_hash": "4228b1f935d6a948cf439ecb7b5b7f50cff9661385b6c633b1356b99aa487b5c"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r2s3407/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_20h47/models/last_model-BetterLViT.pth.tar",
+      "remote": "7b498ba9/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845337727,
+      "xet_hash": "1dcc4e0eeb073beca484c9dcec8238956a504a3d33c3a08900aa6964d28de439"
+    },
+    {
+      "source": "/root/BetterLViT-recipe-r2s3407/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_20h47/tensorboard_logs/events.out.tfevents.1788958045.autodl-container-5994418ddb-a79e3722",
+      "remote": "7b498ba9/tensorboard_logs/events.out.tfevents.1788958045.autodl-container-5994418ddb-a79e3722",
+      "bytes": 593178,
+      "xet_hash": "31fe2074e7a845c6305ad8cba22485ff2ca362dddcd8bb83b6eb74613fca21d9"
+    }
+  ],
+  "verified": true,
+  "verified_files": 5,
+  "bucket": "razaxq/BetterLViT",
+  "independent_local_listing_verified": true,
+  "completed_unix": 1788979951.9114327
+}

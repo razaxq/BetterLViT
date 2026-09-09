@@ -1,0 +1,53 @@
+{
+  "bucket": "razaxq/BetterLViT",
+  "completed_training_archives": 7,
+  "all_nine_training_archives_complete": false,
+  "verified_training_files": 35,
+  "training_logical_bytes": 11850544790,
+  "model_files_preserved": true,
+  "credentials_in_artifacts": false,
+  "experiments": [
+    {
+      "label": "r1",
+      "prefix": "f71e7829",
+      "source_git_commit": "f71e782940dc2a52b08111771f6e3d5f5a8d36c5",
+      "verified_files": 5
+    },
+    {
+      "label": "r2",
+      "prefix": "9eca26de",
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "verified_files": 5
+    },
+    {
+      "label": "c4s2027",
+      "prefix": "965382b2",
+      "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "verified_files": 5
+    },
+    {
+      "label": "r2s2027",
+      "prefix": "c972a152",
+      "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "verified_files": 5
+    },
+    {
+      "label": "c4s3407",
+      "prefix": "02b28b2d",
+      "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+      "verified_files": 5
+    },
+    {
+      "label": "r2s3407",
+      "prefix": "7b498ba9",
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "verified_files": 5
+    },
+    {
+      "label": "p11_80",
+      "prefix": "2fc6ab5c",
+      "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+      "verified_files": 5
+    }
+  ]
+}

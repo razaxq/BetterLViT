@@ -1,0 +1,71 @@
+[
+  {
+    "label": "p11_80",
+    "run": "/root/dual_grain_runs/p11_20260907",
+    "repository": "/root/autodl-tmp/BetterLViT-dual-grain-p11",
+    "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "best_source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "epochs": 80,
+    "split": "test",
+    "samples": 2113,
+    "result_file": "p11_test.json",
+    "result_archive_name": "p11_test_evaluation.json",
+    "classification": "completed_exploratory_80e_test",
+    "archived_input_sha256": {
+      "runtime.json": "1aa1c92a92ab238d90099abd52b60b38b5f805587eb2df593cb57a26de2f8590",
+      "p11_test.json": "37ae04eb129031fe10f0618e21d491b109495aa387701c7a005afe4d3b45e843",
+      "p11_validation.json": "15a51d215cbad7afe87f6aecd389237e9cb097cc6ede3062d56e920bfb92b573"
+    },
+    "archived_input_canonical_sha256": {
+      "runtime.json": "4cf866cf55db5af647f9ebda193141ba7d2443a25a766f219aa336496009b403",
+      "p11_test.json": "2ad9df19d595f1e566b17aa66474daf9f53384279b75db18aae40686b279d485",
+      "p11_validation.json": "8964c1bc0d876c64038d79e39b00d8d57480657a2394083c4488bde1708cbb69"
+    }
+  },
+  {
+    "label": "p11_150",
+    "run": "/root/dual_grain_runs/p11_150_20260907",
+    "repository": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150",
+    "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a",
+    "best_source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+    "epochs": 150,
+    "split": "test",
+    "samples": 2113,
+    "result_file": "p11_test.json",
+    "result_archive_name": "p11_test_evaluation.json",
+    "classification": "completed_post_test_150e_continuation",
+    "archived_input_sha256": {
+      "runtime.json": "8d43ae251312b6efb825660ac199bad24bf1e04e5ef48ec2edeb6c3e00771769",
+      "selection.json": "97f8e75fcaddcf50f8c84cfe8e4a2739d548a8e184a35566dace0e6b81bd5d2d",
+      "p11_test.json": "37ae04eb129031fe10f0618e21d491b109495aa387701c7a005afe4d3b45e843",
+      "p11_validation.json": "15a51d215cbad7afe87f6aecd389237e9cb097cc6ede3062d56e920bfb92b573"
+    },
+    "archived_input_canonical_sha256": {
+      "runtime.json": "7acfca67e55180dc8a4dd1fa29d0162138126964e9a0ce774f12a79bf3d35823",
+      "selection.json": "026f4704ff2ea19e1d9727b514c897a4f60d4ce9aeea7edcd2ab42c9d15d8ec6",
+      "p11_test.json": "2ad9df19d595f1e566b17aa66474daf9f53384279b75db18aae40686b279d485",
+      "p11_validation.json": "8964c1bc0d876c64038d79e39b00d8d57480657a2394083c4488bde1708cbb69"
+    }
+  },
+  {
+    "label": "p12",
+    "run": "/root/visual_prior_runs/p12_80_20260908",
+    "repository": "/root/BetterLViT-visual-p12",
+    "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "best_source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
+    "epochs": 80,
+    "split": "validation",
+    "samples": 1429,
+    "result_file": "validation.json",
+    "result_archive_name": "p12_validation_evaluation.json",
+    "classification": "completed_validation_only_80e_pilot",
+    "archived_input_sha256": {
+      "runtime.json": "d63cfc5c128c8c956ecac25d8f29e894ad34bdd9e6b3cf78a344e746563e5b06",
+      "validation.json": "b5f9c0d81a63c40dd5acf142300b419c6ad9c509b9893cf76099f275e5e45806"
+    },
+    "archived_input_canonical_sha256": {
+      "runtime.json": "b021fba41083fbcfa29e456807f8ac2d6c7d538f5705c6c6b12cb0960d38944e",
+      "validation.json": "e48d6dcfe9867261d7ca1106e245b4af0e515e245cb3801108dd699e928728e6"
+    }
+  }
+]
