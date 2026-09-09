@@ -6,10 +6,12 @@
     "c4s3407",
     "r2s3407"
   ],
-  "phase": "training",
+  "phase": "validation_replication_complete_test_pending",
   "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
-  "inspections_completed": 1,
+  "inspections_completed": 2,
   "last_inspected_unix": 1788959021.1636407,
-  "observed_completed_epochs": 4,
-  "planned_final_check_sydney": "2026-09-10T03:46:00+10:00"
+  "observed_completed_epochs": 80,
+  "planned_final_check_sydney": "2026-09-10T03:46:00+10:00",
+  "validation_gate_passed": true,
+  "training_complete": true
 }

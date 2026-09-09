@@ -1,0 +1,117 @@
+{
+  "version": 1,
+  "samples": 2113,
+  "batch_size": 16,
+  "threshold": 0.5,
+  "epochs": 80,
+  "selection_metric": "iou",
+  "gate_sha256": "d88902c114327fb1ce85647bbe22090947687cd5052cbe12f101fe3ca82b4c33",
+  "arms": [
+    {
+      "label": "c4s1219",
+      "role": "c4",
+      "seed": 1219,
+      "repository": "/root/BetterLViT-race-pe-c4",
+      "profile": "c4_race_pe_control",
+      "source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "experiment_tag": "pilot-c4-race-pe-control-80e-seed1219-20260906",
+      "checkpoint": "/root/BetterLViT-race-pe-c4/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.06_12h38/models/best_model-BetterLViT.pth.tar",
+      "best_epoch": 80,
+      "validation_source": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\visual_prior_execution\\c4_validation.json",
+      "validation_sha256": "879faa182be9dde5e2a663051846ad1def8124324550e63dc87c02559101f01e"
+    },
+    {
+      "label": "r2s1219",
+      "role": "r2",
+      "seed": 1219,
+      "repository": "/root/BetterLViT-recipe-r2",
+      "profile": "r2_single_cosine",
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "experiment_tag": "experiment-r2-recipe-80e-seed1219-20260908-v2",
+      "checkpoint": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+      "best_epoch": 67,
+      "validation_source": "D:\\BetterLViT\\outputs\\recipe_20260908\\r2_validation.json",
+      "validation_sha256": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b"
+    },
+    {
+      "label": "c4s2027",
+      "role": "c4",
+      "seed": 2027,
+      "repository": "/root/BetterLViT-recipe-c4s2027",
+      "profile": "c4_race_pe_control",
+      "source_git_commit": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "experiment_tag": "experiment-c4-recipe-80e-seed2027-20260909",
+      "checkpoint": "/root/BetterLViT-recipe-c4s2027/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.09_05h38/models/best_model-BetterLViT.pth.tar",
+      "best_epoch": 70,
+      "validation_source": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\c4s2027_validation.json",
+      "validation_sha256": "a7ae85ad28d132175efb63b3b4f8c0436debcca6d2138f7aed015f99a1df0b24"
+    },
+    {
+      "label": "r2s2027",
+      "role": "r2",
+      "seed": 2027,
+      "repository": "/root/BetterLViT-recipe-r2s2027",
+      "profile": "r2_single_cosine",
+      "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "experiment_tag": "experiment-r2-recipe-80e-seed2027-20260909",
+      "checkpoint": "/root/BetterLViT-recipe-r2s2027/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_10h40/models/best_model-BetterLViT.pth.tar",
+      "best_epoch": 68,
+      "validation_source": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s2027_validation.json",
+      "validation_sha256": "1365d3f39d71edb9385ec9a10bfd1b4968cbd9443ec7ee9aeadf7747b0cdf751"
+    },
+    {
+      "label": "c4s3407",
+      "role": "c4",
+      "seed": 3407,
+      "repository": "/root/BetterLViT-recipe-c4s3407",
+      "profile": "c4_race_pe_control",
+      "source_git_commit": "02b28b2d455efdec4249cedd3d0ac7a865808283",
+      "experiment_tag": "experiment-c4-recipe-80e-seed3407-20260909",
+      "checkpoint": "/root/BetterLViT-recipe-c4s3407/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.09_15h44/models/best_model-BetterLViT.pth.tar",
+      "best_epoch": 79,
+      "validation_source": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\c4s3407_validation.json",
+      "validation_sha256": "165c22e21f31c687067d92ff049250b86da80fa4b23776e4f215d9e25daa28db"
+    },
+    {
+      "label": "r2s3407",
+      "role": "r2",
+      "seed": 3407,
+      "repository": "/root/BetterLViT-recipe-r2s3407",
+      "profile": "r2_single_cosine",
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "experiment_tag": "experiment-r2-recipe-80e-seed3407-20260909",
+      "checkpoint": "/root/BetterLViT-recipe-r2s3407/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_20h47/models/best_model-BetterLViT.pth.tar",
+      "best_epoch": 75,
+      "validation_source": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s3407_validation.json",
+      "validation_sha256": "7b1d2494ddd0bf9e3eaecece160fb851bd93c494727bc0590c898b15e3e507ce"
+    }
+  ],
+  "forecast": {
+    "measured_validation_seconds": [
+      {
+        "label": "c4s2027",
+        "seconds": 117.47980999946594
+      },
+      {
+        "label": "r2s2027",
+        "seconds": 101.9143009185791
+      },
+      {
+        "label": "c4s3407",
+        "seconds": 109.88621258735657
+      },
+      {
+        "label": "r2s3407",
+        "seconds": 108.60296559333801
+      }
+    ],
+    "validation_samples": 1429,
+    "estimated_seconds_per_test_model": 181.86973230679442,
+    "estimated_chain_seconds": 1091.2183938407666,
+    "completion_check_buffer_seconds": 720
+  },
+  "authorization": "User-approved training recipe plan and conditional Test phase after 3 paired seeds pass.",
+  "historical_test_access": true,
+  "threshold_selected_on_test": false,
+  "c4_1219_re_evaluated_for_uniform_export": true
+}

@@ -23,6 +23,10 @@
     "bytes": 4767,
     "sha256": "c00e48f44981d99cbdfa135a7ba9e984c2a5d2cf20d78aa51707ccd7764db052"
   },
+  "c4_vs_r2_seed3407.json": {
+    "bytes": 4769,
+    "sha256": "2453d7c5646c0c036bbe2394934938803775cbe89c993385fe1a8590017036b3"
+  },
   "c4s2027_first_check_schedule.json": {
     "bytes": 4480,
     "sha256": "e60e1371110ffa89535af63914e6fd86eef9c1cd3ceadacb74d17e4a919a5cf2"
@@ -50,10 +54,6 @@
   "c4s2027_preflight_2.json": {
     "bytes": 1518,
     "sha256": "f9881705f98db7c5590f278a7e262be5a4938ba05b7373eececfead3fbd96bf5"
-  },
-  "c4s2027_results/artifact_manifest.json": {
-    "bytes": 1709,
-    "sha256": "3c6c9cb1eb83a8ced5973641e1640a6803c541106a4264f2ab40c331f0c664a2"
   },
   "c4s2027_state.json": {
     "bytes": 8160,
@@ -95,10 +95,6 @@
     "bytes": 1515,
     "sha256": "a8d2f7bb7751610aa0f1f2eba3fe70bfb7c942925ae3a5a5d848217cd558598e"
   },
-  "c4s3407_results/artifact_manifest.json": {
-    "bytes": 1709,
-    "sha256": "71fec1fad8456bf9b7dc8038f75284fc409feb95bb231df42048e8caccad715f"
-  },
   "c4s3407_state.json": {
     "bytes": 8161,
     "sha256": "5ae485f081b5102cfcd8570de35466ea1e1f838c8e95f85fb84fe8b9ecc60a7b"
@@ -108,8 +104,8 @@
     "sha256": "904a20c0cf4f5061e93a332225a3d4c4d9808ccf45434caabb721e72515224f4"
   },
   "chain_state.json": {
-    "bytes": 370,
-    "sha256": "ec925be44c9a830b8c5bc9fca5fb690f62536418b0c1c7649afa341eca36c792"
+    "bytes": 470,
+    "sha256": "dd24c6a19a8e0b7ec75ab783bbc211b852485edc4e68571f24f4700eef73d147"
   },
   "collect_snapshot.py": {
     "bytes": 4354,
@@ -175,10 +171,6 @@
     "bytes": 4166,
     "sha256": "e4581a397d2e267a120e895c176b8d7c66051e327e98c456386e5aabb982b10b"
   },
-  "r2s2027_results/artifact_manifest.json": {
-    "bytes": 1846,
-    "sha256": "6374dca04db2da76df305e6c6215a773603417d7db3989f63e0883e76d58c879"
-  },
   "r2s2027_state.json": {
     "bytes": 13557,
     "sha256": "81e4b4f19cee05faa37a58808e091bd146bb1f1d3689456d82f3bdd60baa84e8"
@@ -220,12 +212,16 @@
     "sha256": "f914535f5594446139379c3e8d17bbbc693014e23be298165fbe54a1bf4d038f"
   },
   "r2s3407_state.json": {
-    "bytes": 7908,
-    "sha256": "7829ddd4c85b704940b4dfec8b4003b4a9762edb986c21966d1a936de6ced845"
+    "bytes": 13556,
+    "sha256": "02fe26cf1d9f9888ef71093fe5662bdf789298d0a79c5685420a2a1197abecc5"
+  },
+  "r2s3407_summary.json": {
+    "bytes": 5435,
+    "sha256": "07313f23820f15d58e9d4da849f345e4b862a0a0ece611def01a7cb90f774688"
   },
   "README.md": {
-    "bytes": 11616,
-    "sha256": "acc328f38a309e0355ca318d6658431d331b4dd4dfb8f72f23e8c1e6374a6094"
+    "bytes": 12013,
+    "sha256": "6307cc681b58ffa2d981707ca20672a84857fc814f05a9d6406cff9e9ee6ef91"
   },
   "register_replication.py": {
     "bytes": 3544,
@@ -235,16 +231,40 @@
     "bytes": 1914,
     "sha256": "a075852f6a900fa4f5eebfa6b417f0c5e985be0635351d91cbeb1ba60c71fef4"
   },
+  "three_seed_summary.json": {
+    "bytes": 3077,
+    "sha256": "d88902c114327fb1ce85647bbe22090947687cd5052cbe12f101fe3ca82b4c33"
+  },
+  "THREE_SEED_SUMMARY.md": {
+    "bytes": 1637,
+    "sha256": "1d3174dd213294ed29559bcc6529f47ed55a349bd840dd450dfb0178fca9ddc0"
+  },
   "two_seed_progress.json": {
     "bytes": 2341,
     "sha256": "8710735ed3d7ef34a7e95737a31397268068eecdc22d9963d17daa381b1169b7"
   },
   "TWO_SEED_PROGRESS.md": {
-    "bytes": 993,
-    "sha256": "25b0e87ab98b40b0f3c3bdedacf567ddc7e4f5c45803a0071fc9d27f2fdf5624"
+    "bytes": 1087,
+    "sha256": "f19f307ae116d9ca680029847d3fd1bc7568615b82146e417c9d9807582c15aa"
   },
   "verify_preflights.py": {
     "bytes": 2113,
     "sha256": "4367bc244005d730d28ce2438ff3c87060585ff9c0645db8b6294ef481bede94"
+  },
+  "c4s2027_results/artifact_manifest.json": {
+    "bytes": 1709,
+    "sha256": "3c6c9cb1eb83a8ced5973641e1640a6803c541106a4264f2ab40c331f0c664a2"
+  },
+  "c4s3407_results/artifact_manifest.json": {
+    "bytes": 1709,
+    "sha256": "71fec1fad8456bf9b7dc8038f75284fc409feb95bb231df42048e8caccad715f"
+  },
+  "r2s2027_results/artifact_manifest.json": {
+    "bytes": 1846,
+    "sha256": "6374dca04db2da76df305e6c6215a773603417d7db3989f63e0883e76d58c879"
+  },
+  "r2s3407_results/artifact_manifest.json": {
+    "bytes": 1720,
+    "sha256": "99494961db040354e79fc9478f36b704e610f755fe0a04ae61286e3532bdf6ed"
   }
 }

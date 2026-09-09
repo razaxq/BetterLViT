@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-09（Australia/Sydney）
+更新时间：2026-09-10（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -11,6 +11,12 @@
 - 机制筛选 pilot 只使用 validation：`AUTO_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`。未通过阶段门不得扩展或访问 Test。
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
+
+## 最新执行记录（2026-09-10）
+
+**三种子Val复验完成：** C4/R2的1219、2027、3407六组80轮训练全部结束。R2相对同种子C4的IoU增益分别+0.3857、+0.6291、+0.6170个百分点，平均 **+0.5440个百分点**（样本SD0.1372）；Dice平均+0.3873个百分点。三种子IoU均正、均值≥0.003、平均Dice与最小组IoU不降，注册复验条件全部通过。最后R2-3407 Best75，Val IoU/Dice为0.726484/0.823421；训练03:34:59结束，03:46:44末检，距结束705.476秒，检查2/2。本轮Test尚待执行，不能宣称稳定Test增益。[完整Val结果](../repro_archive/20260909/recipe_replication/THREE_SEED_SUMMARY.md)。
+
+**Test阶段已准备：** 六个来源SHA及Val选定Best固定，统一2113张、阈值0.5、batch16，历史C4-1219也重新用同一导出器评估。预计后台顺序评估约18.2分钟，以提交回执预测完成后12分钟预约检查，不增加训练检查。[Test执行协议](../repro_archive/20260910/recipe_test/README.md)。R2是训练配方优化，第二项结构创新仍未取得可靠Test增益。
 
 ## 最新执行记录（2026-09-09）
 

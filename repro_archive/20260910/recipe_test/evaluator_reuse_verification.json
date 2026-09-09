@@ -1,0 +1,15 @@
+{
+  "historical_evaluator_sha256": "2a4bdfa291c9b62789ef04f88e52c6610ee99b87626c8c9263f6264b5c1b0ab7",
+  "evaluator_sha256": "25e822bc70c9201a488fd0c5f7f2433caf859e22fc3bec7a98e311ab5a938da9",
+  "unchanged_scientific_functions": [
+    "mask_boundary",
+    "boundary_f1",
+    "image_frequency_scores",
+    "build_model",
+    "test_loader"
+  ],
+  "inference_loop_ast_identical": true,
+  "protocol_rejections_checked": 11,
+  "valid_mock_result_accepted": true,
+  "test_inference_performed": false
+}
