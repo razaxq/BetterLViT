@@ -19,6 +19,10 @@
     "bytes": 638,
     "sha256": "f6141adf96c8e70526f00607a72f848b79b1d24594238bfabe64facb3c58a08d"
   },
+  "c4_vs_r2_seed2027.json": {
+    "bytes": 4767,
+    "sha256": "c00e48f44981d99cbdfa135a7ba9e984c2a5d2cf20d78aa51707ccd7764db052"
+  },
   "c4s2027_first_check_schedule.json": {
     "bytes": 4480,
     "sha256": "e60e1371110ffa89535af63914e6fd86eef9c1cd3ceadacb74d17e4a919a5cf2"
@@ -72,8 +76,8 @@
     "sha256": "a8d2f7bb7751610aa0f1f2eba3fe70bfb7c942925ae3a5a5d848217cd558598e"
   },
   "chain_state.json": {
-    "bytes": 370,
-    "sha256": "1b29541c05f4fe214c544d96bd424f7ce0d7b20197f722eb252e071e4021dbc9"
+    "bytes": 421,
+    "sha256": "963a4353f817b3a41a0120f8fc98abd52ba46a513c2e118695252909f1d66b25"
   },
   "collect_snapshot.py": {
     "bytes": 4354,
@@ -139,9 +143,17 @@
     "bytes": 4166,
     "sha256": "e4581a397d2e267a120e895c176b8d7c66051e327e98c456386e5aabb982b10b"
   },
+  "r2s2027_results/artifact_manifest.json": {
+    "bytes": 1846,
+    "sha256": "6374dca04db2da76df305e6c6215a773603417d7db3989f63e0883e76d58c879"
+  },
   "r2s2027_state.json": {
-    "bytes": 7910,
-    "sha256": "8dfe73bff84527c7053d09b83484991e2be8a6b2b43639b4e3e27ffe4c29a46d"
+    "bytes": 13557,
+    "sha256": "81e4b4f19cee05faa37a58808e091bd146bb1f1d3689456d82f3bdd60baa84e8"
+  },
+  "r2s2027_summary.json": {
+    "bytes": 5433,
+    "sha256": "8aff68aea77812a928226127d918569bbdb9c926107fb3e02e92ac893d86ef5d"
   },
   "r2s3407_manifest.json": {
     "bytes": 3181,
@@ -156,8 +168,8 @@
     "sha256": "f914535f5594446139379c3e8d17bbbc693014e23be298165fbe54a1bf4d038f"
   },
   "README.md": {
-    "bytes": 8072,
-    "sha256": "d099b1b383db4aa3c3b79726f365e6a6d3c65666f4499d197591511b80f38132"
+    "bytes": 8685,
+    "sha256": "a76d9c04ea3eb3dd3cd9ed9804972a36133aa8712f2d0e1ebc077219a94f42fe"
   },
   "register_replication.py": {
     "bytes": 3544,
@@ -166,6 +178,14 @@
   "sources.json": {
     "bytes": 1914,
     "sha256": "a075852f6a900fa4f5eebfa6b417f0c5e985be0635351d91cbeb1ba60c71fef4"
+  },
+  "two_seed_progress.json": {
+    "bytes": 1923,
+    "sha256": "cd31560194502f1bc575b3e7d19a8c9e3262bc4f155b1798f10f1c230f63b2e3"
+  },
+  "TWO_SEED_PROGRESS.md": {
+    "bytes": 840,
+    "sha256": "961ac2cdb45bc47ecbb1f246aaf7f382a9e58a7dee3f13c360531f7ddd52f1da"
   },
   "verify_preflights.py": {
     "bytes": 2113,

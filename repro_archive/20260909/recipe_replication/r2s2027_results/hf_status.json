@@ -1,0 +1,9 @@
+{
+  "status": "prepared_models_preserved",
+  "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+  "upload_verified": false,
+  "authentication_state_changed": false,
+  "authentication_retried": false,
+  "source_manifest": "r2s2027_hf_manifest.json",
+  "note": "HF remains awaiting previously requested reauthentication; no repeat upload attempt."
+}

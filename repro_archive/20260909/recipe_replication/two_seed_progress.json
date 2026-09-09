@@ -1,0 +1,46 @@
+{
+  "stage": "partial_two_of_three_seeds",
+  "split": "validation",
+  "test_split_accessed": false,
+  "completed_seeds": [
+    1219,
+    2027
+  ],
+  "pending_seeds": [
+    3407
+  ],
+  "final_replication_decision": null,
+  "rows": [
+    {
+      "seed": 1219,
+      "control_source": "add4908a0d6f702b0a10c4581725b535543829b8",
+      "candidate_source": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "control_iou": 0.7227963241858801,
+      "candidate_iou": 0.7266535938268995,
+      "delta_iou": 0.0038572696410194007,
+      "control_dice": 0.8212136349344947,
+      "candidate_dice": 0.8240342867846576,
+      "delta_dice": 0.002820651850162892,
+      "source_json_sha256": {
+        "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\visual_prior_execution\\c4_validation.json": "879faa182be9dde5e2a663051846ad1def8124324550e63dc87c02559101f01e",
+        "D:\\BetterLViT\\outputs\\recipe_20260908\\r2_validation.json": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b"
+      }
+    },
+    {
+      "seed": 2027,
+      "control_source": "965382b24ad26de81b89f9ddfe9ab434ae4d105b",
+      "candidate_source": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "control_iou": 0.7241900931393273,
+      "candidate_iou": 0.7304811821884171,
+      "delta_iou": 0.006291089049089815,
+      "control_dice": 0.822864453695739,
+      "candidate_dice": 0.8270935579188645,
+      "delta_dice": 0.004229104223125502,
+      "source_json_sha256": {
+        "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\c4s2027_validation.json": "a7ae85ad28d132175efb63b3b4f8c0436debcca6d2138f7aed015f99a1df0b24",
+        "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s2027_validation.json": "1365d3f39d71edb9385ec9a10bfd1b4968cbd9443ec7ee9aeadf7747b0cdf751"
+      }
+    }
+  ],
+  "note": "Partial progress only. Complete seed3407 pair before aggregate_replications.py and any conditional Test access."
+}
