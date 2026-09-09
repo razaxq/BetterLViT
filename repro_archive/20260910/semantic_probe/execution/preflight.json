@@ -1,0 +1,110 @@
+{
+  "status": "ok",
+  "mode": "preflight",
+  "baseline_state_unchanged": true,
+  "deterministic_two_repeats": true,
+  "probe_state_hash": "5ad5067128275cfaa3752f4bae1a2339b2457a23f37f785ae607c638165a70df",
+  "loss_history": [
+    {
+      "step": 1,
+      "lr": 0.001,
+      "losses": [
+        0.45601391792297363,
+        0.45173442363739014,
+        0.06408882886171341
+      ]
+    },
+    {
+      "step": 2,
+      "lr": 0.0009509795896116975,
+      "losses": [
+        0.442147433757782,
+        0.4328109622001648,
+        0.0546591579914093
+      ]
+    },
+    {
+      "step": 3,
+      "lr": 0.0008136274519200731,
+      "losses": [
+        0.4265291094779968,
+        0.41113710403442383,
+        0.055519431829452515
+      ]
+    },
+    {
+      "step": 4,
+      "lr": 0.0006151478623083757,
+      "losses": [
+        0.47400009632110596,
+        0.4661395847797394,
+        0.07154165953397751
+      ]
+    },
+    {
+      "step": 5,
+      "lr": 0.00039485213769162444,
+      "losses": [
+        0.41788917779922485,
+        0.3968251943588257,
+        0.05985127389431
+      ]
+    },
+    {
+      "step": 6,
+      "lr": 0.00019637254807992693,
+      "losses": [
+        0.43205520510673523,
+        0.4117682874202728,
+        0.05191618949174881
+      ]
+    },
+    {
+      "step": 7,
+      "lr": 5.902041038830258e-05,
+      "losses": [
+        0.4364086389541626,
+        0.4260197579860687,
+        0.06284460425376892
+      ]
+    },
+    {
+      "step": 8,
+      "lr": 1e-05,
+      "losses": [
+        0.4216039776802063,
+        0.3979142904281616,
+        0.059788528829813004
+      ]
+    }
+  ],
+  "feature_seconds_per_image": 0.0396411269903183,
+  "head_seconds_per_step": 0.042221665382385254,
+  "predicted_run_seconds": 267.05029094964266,
+  "tested_train_names": [
+    "covid_594.png",
+    "sub-S10396_ses-E19003_run-1_bp-chest_cr.png",
+    "sub-S12628_ses-E26041_run-1_bp-chest_vp-ap_dx.png",
+    "covid_736.png",
+    "covid_2087.png",
+    "sub-S10596_ses-E21461_run-1_bp-chest_vp-ap_dx.png",
+    "covid_2834.png",
+    "sub-S11374_ses-E25883_run-1_bp-chest_vp-ap_cr.png",
+    "covid_1824.png",
+    "sub-S11516_ses-E21070_run-1_bp-chest_vp-pa_dx.png",
+    "sub-S10540_ses-E18274_run-1_bp-chest_vp-ap_dx.png",
+    "covid_3856.png",
+    "sub-S12632_ses-E26095_run-1_bp-chest_vp-ap_dx.png",
+    "sub-S10890_ses-E18954_run-1_bp-chest_vp-pa_cr.png",
+    "covid_2589.png",
+    "sub-S10663_ses-E18470_run-1_bp-chest_vp-ap_cr.png"
+  ],
+  "test_split_accessed": false,
+  "scripts_sha256": {
+    "run_probe.py": "7b96ca96baeeb21c3db9bbbe68a2830978fbd158f7d6f02bac0def5effabc7de",
+    "analysis.py": "a646cfb7b9b717546630423cdc30b97a738595c0927819788336e81b9056878b",
+    "check_analysis.py": "e6e20532da120258fba737844c3e9a16f3b328dd529fdf0651ce8f5e7999d521"
+  },
+  "diagnostic_source_git_commit": "5f10bb1c4d83372553f204492ffcf3bbfaab782e",
+  "shared_fs_bytes": 18559782256
+}

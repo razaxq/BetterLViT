@@ -1,0 +1,9 @@
+{
+  "id": "r2",
+  "kind": "heartbeat",
+  "status": "ACTIVE",
+  "name": "R2 局部语义诊断末检",
+  "planned_check_sydney": "2026-09-10T05:45:00+10:00",
+  "inspections_completed": 0,
+  "maximum_inspections": 2
+}

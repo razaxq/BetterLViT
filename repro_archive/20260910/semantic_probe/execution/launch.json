@@ -1,0 +1,15 @@
+{
+  "pid": 186887,
+  "submitted_unix": 1788982525.062475,
+  "diagnostic_source_git_commit": "5f10bb1c4d83372553f204492ffcf3bbfaab782e",
+  "deployed_sha256": {
+    "run_probe.py": "7b96ca96baeeb21c3db9bbbe68a2830978fbd158f7d6f02bac0def5effabc7de",
+    "analysis.py": "a646cfb7b9b717546630423cdc30b97a738595c0927819788336e81b9056878b",
+    "check_analysis.py": "e6e20532da120258fba737844c3e9a16f3b328dd529fdf0651ce8f5e7999d521",
+    "manifest.json": "78a1600ae98692a06e0538a7e128932f6be2599bee910502f11196c4af65ee16",
+    "PLAN.md": "d1ab8feab9b4eed56bca1623475be2750da2fdc6b6ffa422b4bf04ea16a3f0dc",
+    "r2_validation.json": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b"
+  },
+  "system_free_bytes": 4004442112,
+  "remote_directory": "/root/semantic_probe_20260910"
+}
