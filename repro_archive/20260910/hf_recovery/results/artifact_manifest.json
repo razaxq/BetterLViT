@@ -8,12 +8,12 @@
     "sha256": "11819776e034c3cedb84bf5d36420b59e44e7b0089eb402878dfe27b22840ef0"
   },
   "additional_verified.json": {
-    "bytes": 3893,
-    "sha256": "66622be806f9cbfaaa22ca1c3277b6e2b786c3ebd020b640f4b4747bc6952148"
+    "bytes": 12295,
+    "sha256": "a57f1d04d766d596ae315ab1094791501a07a62ed1476dec80ab1c0c178c3cda"
   },
   "all_uploads_summary.json": {
-    "bytes": 1424,
-    "sha256": "240ff23751177b2bf16951832efc3d3df5ba8c61806d0530e9b1b16f481727c8"
+    "bytes": 1747,
+    "sha256": "be334efbd17d234bcb5fe16246cc212e7b77c28847b046a9b4bfa3edda470ba4"
   },
   "c4s2027_upload_verified.json": {
     "bytes": 2525,
@@ -23,9 +23,17 @@
     "bytes": 2525,
     "sha256": "31d2a6150e175bf7423800f9b8a8fa77f6476c7535c4eb4ad5c17435d3119ef1"
   },
+  "p11_150_upload_verified.json": {
+    "bytes": 4708,
+    "sha256": "74c7f887a98c12ed0b1f2bfb78567202d0416ed42eba7b3fe700e7532d4a7bd9"
+  },
   "p11_80_upload_verified.json": {
     "bytes": 3735,
     "sha256": "075defb5d18c3548f653b7c65edb4a53947e5a5a49213e1fc67c0e45c08b482a"
+  },
+  "p12_upload_verified.json": {
+    "bytes": 3356,
+    "sha256": "450c6fe448a7e91e0e30871ff00d6be87b7254cedc8fe298e9ccbe0f9e05eca1"
   },
   "r1_upload_verified.json": {
     "bytes": 2512,
@@ -44,8 +52,8 @@
     "sha256": "f2f1289865e32d426727e727d8efc5a6082d3b829a03281fe6507f32c2eb35d0"
   },
   "README.md": {
-    "bytes": 822,
-    "sha256": "92753b06bbe96fa939bc95d5854ade4155c3ce874c3720ac1bb6bbc468462639"
+    "bytes": 872,
+    "sha256": "c42940cff25cddd03f0538dc2940332938c97b17fae69f6a438b801f47ff41e2"
   },
   "source_audit.json": {
     "bytes": 475,

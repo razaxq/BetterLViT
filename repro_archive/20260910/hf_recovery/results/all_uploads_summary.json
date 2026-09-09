@@ -1,9 +1,9 @@
 {
   "bucket": "razaxq/BetterLViT",
-  "completed_training_archives": 7,
-  "all_nine_training_archives_complete": false,
-  "verified_training_files": 35,
-  "training_logical_bytes": 11850544790,
+  "completed_training_archives": 9,
+  "all_nine_training_archives_complete": true,
+  "verified_training_files": 47,
+  "training_logical_bytes": 15415489746,
   "model_files_preserved": true,
   "credentials_in_artifacts": false,
   "experiments": [
@@ -47,6 +47,18 @@
       "label": "p11_80",
       "prefix": "2fc6ab5c",
       "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac",
+      "verified_files": 5
+    },
+    {
+      "label": "p11_150",
+      "prefix": "c724a620",
+      "source_git_commit": "c724a62001f6c3b809cb12eee78f3bee79bdb60a",
+      "verified_files": 7
+    },
+    {
+      "label": "p12",
+      "prefix": "5d09913d",
+      "source_git_commit": "5d09913d46863073cba93159af4ed61f88fdd96e",
       "verified_files": 5
     }
   ]
