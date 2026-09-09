@@ -18,7 +18,7 @@
 
 **诊断完成，未通过推进门：** 相同20.4082%像素预算下，分歧/不确定性/随机的每图错误捕获率均值为17.2916%/91.0813%/20.4823%；分歧规则实际纠错Val IoU为72.6599%，原R2为72.6654%，变化−0.0055个百分点，95%区间[−0.0210,+0.0105]跨零。9个预注册条件全部失败，不启动该规则的80轮结构实验。两条线性读出本身较弱（Val IoU25.3789%/21.7849%），只能否定本次分歧构造的证据，不能据此否定全部局部编码方向；Oracle不是可实现模型成绩。[完整结果与限制](../repro_archive/20260910/semantic_probe/results/README.md)。
 
-诊断来源 `5f10bb1c4d83372553f204492ffcf3bbfaab782e`，tag `diagnostic-r2-semantic-probe-20260910`；原R2训练来源为 `9eca26de5b301099805530edbf5a1a8718bea662`。6项本地检查与两次真实Train批次8步CUDA预检通过；全流程主干状态哈希不变，1429张Val基线逐图差值为0。独立复算summary及5716项逐块选择/错误捕获核验通过。悉尼05:36:30完成、05:45:34唯一末检，相隔544秒，检查1/2，heartbeat `r2` 已删除，无持续SSH。未访问Test；既有模型保留。[启动与检查证据](../repro_archive/20260910/semantic_probe/execution/README.md)。
+诊断来源 `5f10bb1c4d83372553f204492ffcf3bbfaab782e`，tag `diagnostic-r2-semantic-probe-20260910`；原R2训练来源为 `9eca26de5b301099805530edbf5a1a8718bea662`。6项本地检查与两次真实Train批次8步CUDA预检通过；全流程主干状态哈希不变，1429张Val基线逐图差值为0。独立复算summary及5716项逐块选择/错误捕获核验通过。悉尼05:36:30完成、05:45:34唯一末检，相隔544秒，检查1/2，heartbeat `r2` 已删除，无持续SSH。未访问Test；既有模型保留。[启动与检查证据](../repro_archive/20260910/semantic_probe/execution/README.md)。诊断权重、结果、冻结源码与执行材料共24文件、15,142,978逻辑字节已添加至HF Bucket `razaxq/BetterLViT` 的 `5f10bb1c/semantic_probe_v1/`，逐文件大小和Xet哈希验证通过。[云端核验](../repro_archive/20260910/semantic_probe/execution/hf_upload_verified.json)。
 
 ## 最新 Test 结果（2026-09-10）
 

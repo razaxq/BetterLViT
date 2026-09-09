@@ -1,7 +1,7 @@
 # Preserve the historical evidence bytes and its existing SHA-256.
-r2_validation.json -text
+r2_validation.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 *.py text eol=lf
 PLAN.md text eol=lf
 manifest.json text eol=lf
-results/* -text
-execution/*.json -text
+results/* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+execution/*.json -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
