@@ -41,8 +41,10 @@ def main():
         one=torch.zeros_like(y);one[0,0,0,0]=1
         v=region_terms(p,one,mode,4,2)[0].mean()
         assert torch.isfinite(torch.autograd.grad(v,p,retain_graph=True)[0]).all()
-        disabled=RegionalOverlapObjective(mode,0)(p,y)
-        original=WeightedDiceFocal()(p,y)
+        # The unchanged legacy focal term explicitly uses float32 targets.
+        pf=p.float()
+        disabled=RegionalOverlapObjective(mode,0)(pf,y.float())
+        original=WeightedDiceFocal()(pf,y.float())
         assert torch.equal(disabled,original)
         torch.testing.assert_close(torch.autograd.grad(disabled,p,retain_graph=True)[0],
                                    torch.autograd.grad(original,p,retain_graph=True)[0],rtol=0,atol=0)
