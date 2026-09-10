@@ -1,0 +1,246 @@
+{
+  "scope": "5716 native Train masks only; no augmentation, weights, GPU, Val or Test",
+  "source_git_commit": "7defc637e36974fabd0f47763275c90f617e5f53",
+  "script_sha256": "a396ae73268b59ced7979f8c649d04c86de596e4ebef057907ef19f2fc5de77d",
+  "normalized_masks_sha256": "4f256019e38b216e74eda4c933f0a18c1b646d5132464e8a0bddd733e70d6608",
+  "opencv_version": "4.11.0",
+  "numpy_version": "1.26.4",
+  "preprocessing": "original grayscale cv2.resize default linear to 224x224, then >0, matching existing pipeline",
+  "samples": 5716,
+  "empty_images": 0,
+  "foreground_pixels_quantiles": {
+    "min": 200.0,
+    "p10": 968.0,
+    "p25": 2254.5,
+    "median": 5034.5,
+    "p75": 8981.5,
+    "p90": 12598.5,
+    "max": 33674.0
+  },
+  "component_count_quantiles": {
+    "1": {
+      "min": 1.0,
+      "p10": 1.0,
+      "p25": 2.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "p90": 2.0,
+      "max": 6.0
+    },
+    "4": {
+      "min": 1.0,
+      "p10": 1.0,
+      "p25": 2.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "p90": 2.0,
+      "max": 6.0
+    },
+    "16": {
+      "min": 1.0,
+      "p10": 1.0,
+      "p25": 2.0,
+      "median": 2.0,
+      "p75": 2.0,
+      "p90": 2.0,
+      "max": 6.0
+    }
+  },
+  "images_with_multiple_components": {
+    "1": 4553,
+    "4": 4553,
+    "16": 4553
+  },
+  "component_total": 10781,
+  "component_area_quantiles": {
+    "min": 1.0,
+    "p10": 577.0,
+    "p25": 1221.0,
+    "median": 2653.0,
+    "p75": 4693.0,
+    "p90": 6575.0,
+    "max": 25868.0
+  },
+  "components_below_4_pixels": 4,
+  "components_below_16_pixels": 4,
+  "largest_component_foreground_share_quantiles": {
+    "min": 0.2901740020470829,
+    "p10": 0.520887159595979,
+    "p25": 0.5532061292211594,
+    "median": 0.6212145701996089,
+    "p75": 0.8173184567868965,
+    "p90": 1.0,
+    "max": 1.0
+  },
+  "mean_foreground_share_of_components_below_16_pixels": 1.429142755327895e-07,
+  "component_foreground_share_quantiles": {
+    "min": 4.8477797168896646e-05,
+    "p10": 0.2391764479507408,
+    "p25": 0.3942505133470226,
+    "median": 0.5106691526828258,
+    "p75": 0.6331696259916887,
+    "p90": 1.0,
+    "max": 1.0
+  },
+  "patches": {
+    "28": {
+      "total": 365824,
+      "empty": 255204,
+      "full": 7649,
+      "partial": 102971,
+      "positive_below_5_percent": 18480,
+      "positive_fraction_quantiles": {
+        "min": 0.0012755102040816326,
+        "p10": 0.02295918367346939,
+        "p25": 0.09821428571428571,
+        "median": 0.3227040816326531,
+        "p75": 0.6772959183673469,
+        "p90": 0.9681122448979592,
+        "max": 1.0
+      },
+      "empty_fraction": 0.6976141532540238
+    },
+    "56": {
+      "total": 91456,
+      "empty": 44621,
+      "full": 55,
+      "partial": 46780,
+      "positive_below_5_percent": 11040,
+      "positive_fraction_quantiles": {
+        "min": 0.00031887755102040814,
+        "p10": 0.012755102040816327,
+        "p25": 0.055165816326530615,
+        "median": 0.17091836734693877,
+        "p75": 0.36989795918367346,
+        "p90": 0.579719387755102,
+        "max": 1.0
+      },
+      "empty_fraction": 0.4878958187543737
+    },
+    "112": {
+      "total": 22864,
+      "empty": 4126,
+      "full": 0,
+      "partial": 18738,
+      "positive_below_5_percent": 4752,
+      "positive_fraction_quantiles": {
+        "min": 7.971938775510203e-05,
+        "p10": 0.016741071428571428,
+        "p25": 0.049107142857142856,
+        "median": 0.11965880102040816,
+        "p75": 0.22433035714285715,
+        "p90": 0.3248007015306122,
+        "max": 0.7889030612244898
+      },
+      "empty_fraction": 0.18045836249125263
+    }
+  },
+  "examples": [
+    {
+      "name": "mask_covid_1011.png",
+      "component_areas": [
+        2934,
+        2748,
+        359
+      ]
+    },
+    {
+      "name": "mask_covid_1035.png",
+      "component_areas": [
+        9349,
+        2680,
+        1169
+      ]
+    },
+    {
+      "name": "mask_covid_1036.png",
+      "component_areas": [
+        5384,
+        3414,
+        963
+      ]
+    },
+    {
+      "name": "mask_covid_104.png",
+      "component_areas": [
+        3664,
+        3110,
+        2078,
+        1623
+      ]
+    },
+    {
+      "name": "mask_covid_1055.png",
+      "component_areas": [
+        4412,
+        1927,
+        403
+      ]
+    },
+    {
+      "name": "mask_covid_1062.png",
+      "component_areas": [
+        5033,
+        3071,
+        1702,
+        608
+      ]
+    },
+    {
+      "name": "mask_covid_1087.png",
+      "component_areas": [
+        5564,
+        3294,
+        1444,
+        587
+      ]
+    },
+    {
+      "name": "mask_covid_1130.png",
+      "component_areas": [
+        4872,
+        1092,
+        236
+      ]
+    },
+    {
+      "name": "mask_covid_1156.png",
+      "component_areas": [
+        3171,
+        2623,
+        1607,
+        1499
+      ]
+    },
+    {
+      "name": "mask_covid_1157.png",
+      "component_areas": [
+        2732,
+        2685,
+        829
+      ]
+    },
+    {
+      "name": "mask_covid_1163.png",
+      "component_areas": [
+        3986,
+        3454,
+        794
+      ]
+    },
+    {
+      "name": "mask_covid_1175.png",
+      "component_areas": [
+        1683,
+        887,
+        400
+      ]
+    }
+  ],
+  "limitations": "2D connected regions are geometric proxies, not clinical lesion instances; area cutoffs are descriptive only; no label removal",
+  "test_split_accessed": false,
+  "validation_split_accessed": false,
+  "model_inference": false,
+  "training_performed": false,
+  "audit_source_git_commit": "e862fbd655012e3f07f1a8b209f97ec0219a4620"
+}
