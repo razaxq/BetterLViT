@@ -1,0 +1,16 @@
+{
+  "pid": 200703,
+  "submitted_unix": 1789016178.930353,
+  "source_git_commit": "c749b72db327cd777f63a4b6da4583b301456538",
+  "deployed_sha256": {
+    "run.py": "5dc2eec18ab49a61845576d82dd42df0ac9f49868ec3ff540d52e72bc05f2caa",
+    "model.py": "9d8753256c56dcc68e633642245d075ff372b169890318f0ded3ee2ad3ece66c",
+    "analysis.py": "245fbc4461ea237872319e0c523e57d6c3ff9d6c2606f3ec8d09cdf5389590ac",
+    "check_analysis.py": "7799c02fdfa24b5579e99d5b10c936253bcfea2570e5a7798785823e6b48e145",
+    "manifest.json": "095cc3db060323cc3d855e67704c4b15946a066941f6fad317a9654dbb391be9",
+    "PLAN.md": "7bfe448163738dd6ddf512ec32542cda3ba86e5cf2f8e01be4d1ee75ea589da3",
+    "r2_validation.json": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b"
+  },
+  "system_free_bytes": 3989245952,
+  "remote_directory": "/root/local_reencode_20260910"
+}

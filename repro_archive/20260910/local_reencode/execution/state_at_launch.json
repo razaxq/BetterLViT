@@ -1,0 +1,11 @@
+{
+  "phase": "submitted",
+  "source_git_commit": "c749b72db327cd777f63a4b6da4583b301456538",
+  "inspections_completed": 0,
+  "maximum_inspections": 2,
+  "expected_completion_unix": 1789017545.5934927,
+  "planned_check_unix": 1789017780,
+  "no_persistent_ssh": true,
+  "expected_completion_sydney": "2026-09-10T15:19:05.593493+10:00",
+  "planned_check_sydney": "2026-09-10T15:23:00+10:00"
+}

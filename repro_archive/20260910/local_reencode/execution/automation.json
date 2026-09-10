@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "id": "betterlvit",
+  "kind": "heartbeat",
+  "name": "BetterLViT 局部重编码末检",
+  "prompt": "继续本任务已授权的第二创新点研究。悉尼2026-09-10 15:23，按预测检查局部重编码两组实验；不要提前连接或持续SSH。先读 D:/BetterLViT/outputs/local_reencode_20260910/state.json 和 D:/BetterLViT/experiment_docs_work/repro_archive/20260910/local_reencode/PLAN.md。来源 c749b72db327cd777f63a4b6da4583b301456538，远端 /root/local_reencode_20260910。若状态未终结且已到planned_check_unix，在文档工作树运行 python -X utf8 repro_archive/20260910/local_reencode/control.py collect，权限不足时正常升级。严格最多两次检查，末检目标结束后30分钟内；若第一次未完成，仅按新预测更新时间，不额外轮询。完成后核验SHA、逐图R2复现、冻结状态及完整Val门槛，归档两组权重和结果，上传已授权HF Bucket razaxq/BetterLViT，提交推送到GitHub razaxq/BetterLViT的docs/experiment-tracker分支（已核实账户razaxq拥有该公开仓库ADMIN权限且原origin一致）。坚持无LoRA、原Dice/Focal、无boundary loss、Test访问门。通过仅说明冻结重编码可行，随后继续特有机制设计及正式80轮多种子验证；未通过按训练/审计证据诊断，不能降低门槛或虚报第二创新点已解决。最终目标仍是超过R2并对照历史最好EPPA的Test macro IoU。无变化保持安静，只在完成、失败或有可行动结果时通知。归档后删除本末检定时，避免次日重复检查。",
+  "status": "ACTIVE",
+  "rrule": "FREQ=DAILY;BYHOUR=15;BYMINUTE=23;BYSECOND=0",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "created_at": 1789016246470,
+  "updated_at": 1789016246470
+}
