@@ -20,7 +20,9 @@
 
 - S1源码 `1f7edb7858345b6b3ef0736291bb5cf92a2f712f`，tag `experiment-s1-r2-pixel-80e-seed1219-20260910`。
 - S2源码 `7defc637e36974fabd0f47763275c90f617e5f53`，tag `experiment-s2-r2-regional-80e-seed1219-20260910`。
-- 两组来源、标签均已推送GitHub，远端跟踪文件干净；当前阶段为启动前准备完成，实际提交另见下方执行回执。
+- 两组来源、标签均已推送GitHub，远端跟踪文件干净。
+
+**S1已提交：** 悉尼2026-09-10 17:09:02.700后台提交，PID208088，预算0/2；尚未首检确认健康，无新指标。S2待S1完成归档后接续。当前任务heartbeat `betterlvit` 已实际创建为ACTIVE，首检预约17:25，与app保存配置及目标任务核验一致；首检后按实测轮时更新同一预约至预测结束后约12分钟。[提交及预约记录](../repro_archive/20260910/visual_aux_execution/README.md)。
 
 候选对R2须Val IoU≥+0.003且95%配对区间下界>0，同时总体Dice/precision、最小GT总面积组Dice/recall不降、Brier不升。S2的区域增量另须相对S1 IoU≥+0.001及相同非退化条件。通过者才复验2027/3407；普通深监督收益不直接称第二创新。[完整预检证据](../repro_archive/20260910/visual_aux_execution/preflight_verified.json)。
 
