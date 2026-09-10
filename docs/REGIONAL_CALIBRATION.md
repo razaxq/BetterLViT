@@ -11,3 +11,5 @@ Let R be the maximum unweighted regional/main norm ratio across all twelve batch
 Run the unchanged historical preflight for R2 parity; run grouped-optimizer five-step checks with lambda=0 and each candidate. Repeat candidates with scheduled Train-only telemetry inserted to prove deterministic updates and telemetry noninterference. Formal training starts from scratch and never reuses temporary preflight weights.
 
 At epochs20/40/60/80 record the same 32 Train cases and output-gradient diagnostics, preserving parameters, buffers, parameter gradients, module modes and all RNG states. The records are scheduled inside the training job, not remote inspection polling.
+
+Frozen result: lambda=0.128312. Calibration source 4a9a6f6eb0d8e9b6dc73a1bebec744948e02b43a; maximum unweighted ratio 0.7793495125423271, maximum weighted ratio 0.09999989465333108. Full calibration records are archived with the execution evidence.

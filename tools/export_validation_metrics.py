@@ -370,6 +370,7 @@ def main():
         "analysis_git_commit": analysis_commit,
         "visual_prior": expected_visual,
         "training_recipe": checkpoint.get('training_recipe'),
+        "regional_supervision": checkpoint.get('regional_supervision'),
         "checkpoint_best_epoch": int(checkpoint.get("best_epoch", -1)),
         "selection_metric": config.selection_metric,
         "seed": int(checkpoint.get("seed", -1)),
