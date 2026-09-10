@@ -1,0 +1,37 @@
+{
+  "explicit_user_requested_test": true,
+  "user_request": "给我R2,S1,S2的测试集结果",
+  "authorization_date": "2026-09-11",
+  "protocol_amendment": "User explicitly requests Test despite S1/S2 failed Val gates; original failures retained. No new training, checkpoint selection or threshold tuning.",
+  "split": "test",
+  "samples": 2113,
+  "threshold": 0.5,
+  "batch_size": 16,
+  "epochs": 80,
+  "arms": [
+    {
+      "label": "s1",
+      "profile": "s1_r2_pixel_aux",
+      "repository": "/root/autodl-tmp/BetterLViT-visual-aux-s1",
+      "checkpoint": "/root/autodl-tmp/BetterLViT-visual-aux-s1/Covid19/BetterLViT/s1_r2_pixel_aux/S1_Test_session_09.10_15h09/models/best_model-BetterLViT.pth.tar",
+      "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+      "best_epoch": 67,
+      "seed": 1219,
+      "visual_aux_mode": "pixel"
+    },
+    {
+      "label": "s2",
+      "profile": "s2_r2_visual_aux",
+      "repository": "/root/autodl-tmp/BetterLViT-visual-aux-s2",
+      "checkpoint": "/root/autodl-tmp/BetterLViT-visual-aux-s2/Covid19/BetterLViT/s2_r2_visual_aux/S2_Test_session_09.10_20h30/models/best_model-BetterLViT.pth.tar",
+      "source_git_commit": "7defc637e36974fabd0f47763275c90f617e5f53",
+      "best_epoch": 75,
+      "seed": 1219,
+      "visual_aux_mode": "regional"
+    }
+  ],
+  "r2_reused_result": "repro_archive/20260910/recipe_test/results/r2s1219_test.json",
+  "r2_result_sha256": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792",
+  "estimated_seconds": 320,
+  "planned_collection_seconds_after_launch": 390
+}
