@@ -1,0 +1,21 @@
+{
+  "scope": "synthetic supervision counterexample; no patient data, no neural model",
+  "target_presence": 1,
+  "target_occupancy": 0.015625,
+  "correct": {
+    "presence": 1,
+    "occupancy": 0.015625,
+    "occupancy_squared_error": 0.0,
+    "intersection": 16,
+    "union": 16,
+    "iou": 1.0
+  },
+  "displaced": {
+    "presence": 1,
+    "occupancy": 0.015625,
+    "occupancy_squared_error": 0.0,
+    "intersection": 0,
+    "union": 32,
+    "iou": 0.0
+  }
+}
