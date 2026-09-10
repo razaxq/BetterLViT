@@ -1,0 +1,48 @@
+{
+  "s1": {
+    "pixel": {
+      "observations": 64,
+      "negative_cosine": 0,
+      "ratio_min": 0.004038190325581122,
+      "ratio_max": 0.031294098886805045,
+      "mean_cosine": 0.12017010530956412
+    },
+    "visual_aux": {
+      "observations": 64,
+      "negative_cosine": 0,
+      "ratio_min": 0.004038190325581122,
+      "ratio_max": 0.031294098886805045,
+      "mean_cosine": 0.12017010530956412
+    }
+  },
+  "s2": {
+    "pixel": {
+      "observations": 64,
+      "negative_cosine": 0,
+      "ratio_min": 0.0041566139284081255,
+      "ratio_max": 0.03177365722313817,
+      "mean_cosine": 0.11905951874359666
+    },
+    "presence": {
+      "observations": 64,
+      "negative_cosine": 20,
+      "ratio_min": 0.0030986103136211762,
+      "ratio_max": 0.02639730890295955,
+      "mean_cosine": 0.04193813672389058
+    },
+    "occupancy": {
+      "observations": 64,
+      "negative_cosine": 0,
+      "ratio_min": 0.00012145842653637458,
+      "ratio_max": 0.0009525228184772914,
+      "mean_cosine": 0.085979630478913
+    },
+    "visual_aux": {
+      "observations": 64,
+      "negative_cosine": 1,
+      "ratio_min": 0.006541541928827089,
+      "ratio_max": 0.03923090062123959,
+      "mean_cosine": 0.10277739154365775
+    }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "tests": 4,
+  "passed": true,
+  "errors": [],
+  "failures": [],
+  "source_sha256": {
+    "consistent_targets.py": "f73a645928d86afde28118ffeccb5ad2f8d9ce9464b3bee10853b49a457ac6f6",
+    "check_targets.py": "0c40fb8653809272327fffac47388603a51d4ac67686005ada8ff2893dc3a0bc"
+  }
+}

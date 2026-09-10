@@ -1,0 +1,248 @@
+{
+  "source_git_commit": "7defc637e36974fabd0f47763275c90f617e5f53",
+  "script_sha256": "ff112e246cca9d96326971c662211afe110093bef9c0b2d26c425d97fdd74fdf",
+  "scope": "Train labels only; all 5716 masks; native and one reproducible legacy transform per mask; no model or optimizer",
+  "dataset_count": 5716,
+  "dataset_names_sha256": "070b8b6b9688a9d38e01873ef3f4c57fde3739968a2aa5bb005cf2fc57758aa5",
+  "test_split_accessed": false,
+  "validation_split_accessed": false,
+  "training_performed": false,
+  "stats": {
+    "native": {
+      "224": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 0,
+        "false_positive_target": 0,
+        "false_negative_target": 0,
+        "area_abs_error_sum": 0.0,
+        "affected_images": 0,
+        "flip_fraction": 0.0,
+        "area_mae": 0.0
+      },
+      "112": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 165,
+        "false_positive_target": 11,
+        "false_negative_target": 154,
+        "area_abs_error_sum": 39.215681076049805,
+        "affected_images": 163,
+        "flip_fraction": 0.004811056682995102,
+        "area_mae": 0.0011434476637523269
+      },
+      "56": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 633,
+        "false_positive_target": 157,
+        "false_negative_target": 476,
+        "area_abs_error_sum": 162.08014124631882,
+        "affected_images": 601,
+        "flip_fraction": 0.01845696291112666,
+        "area_mae": 0.004725919677114498
+      },
+      "28": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 877,
+        "false_positive_target": 395,
+        "false_negative_target": 482,
+        "area_abs_error_sum": 279.7406567335129,
+        "affected_images": 808,
+        "flip_fraction": 0.025571495218101235,
+        "area_mae": 0.008156655491413369
+      }
+    },
+    "one_legacy_augmentation": {
+      "224": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 0,
+        "false_positive_target": 0,
+        "false_negative_target": 0,
+        "area_abs_error_sum": 0.0,
+        "affected_images": 0,
+        "flip_fraction": 0.0,
+        "area_mae": 0.0
+      },
+      "112": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 153,
+        "false_positive_target": 59,
+        "false_negative_target": 94,
+        "area_abs_error_sum": 39.713148683309555,
+        "affected_images": 153,
+        "flip_fraction": 0.004461161651504549,
+        "area_mae": 0.0011579527840946337
+      },
+      "56": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 467,
+        "false_positive_target": 154,
+        "false_negative_target": 313,
+        "area_abs_error_sum": 134.68104892969131,
+        "affected_images": 445,
+        "flip_fraction": 0.013616748308840682,
+        "area_mae": 0.003927019154702919
+      },
+      "28": {
+        "valid": 34296,
+        "positive_reference": 22910,
+        "flips": 835,
+        "false_positive_target": 443,
+        "false_negative_target": 392,
+        "area_abs_error_sum": 271.8111345767975,
+        "affected_images": 776,
+        "flip_fraction": 0.024346862607884302,
+        "area_mae": 0.00792544712435262
+      }
+    }
+  },
+  "dilution": {
+    "native": {
+      "positive_regions": 22910,
+      "foreground_fraction_quantiles": [
+        0.013690476305782795,
+        0.05574324354529381,
+        0.14678572118282318,
+        0.2772619128227234,
+        0.40392857789993286
+      ],
+      "positive_regions_below_1_percent": 1910,
+      "positive_regions_below_5_percent": 5316
+    },
+    "one_legacy_augmentation": {
+      "positive_regions": 22910,
+      "foreground_fraction_quantiles": [
+        0.014047618955373764,
+        0.056785713881254196,
+        0.14873745292425156,
+        0.2811966761946678,
+        0.4079774618148804
+      ],
+      "positive_regions_below_1_percent": 1884,
+      "positive_regions_below_5_percent": 5249
+    }
+  },
+  "examples": [
+    {
+      "variant": "native",
+      "name": "mask_covid_1020.png",
+      "zone": 3,
+      "reference_area": 0.0,
+      "coarse_area": 0.0015625000232830644
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1051.png",
+      "zone": 5,
+      "reference_area": 0.0024999999441206455,
+      "coarse_area": 0.0
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1053.png",
+      "zone": 2,
+      "reference_area": 0.0005952381179668009,
+      "coarse_area": 0.0
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1014.png",
+      "zone": 0,
+      "reference_area": 0.00024131273676175624,
+      "coarse_area": 0.0
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1020.png",
+      "zone": 3,
+      "reference_area": 0.0,
+      "coarse_area": 0.0006151574780233204
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1051.png",
+      "zone": 5,
+      "reference_area": 0.0024999999441206455,
+      "coarse_area": 0.0
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1070.png",
+      "zone": 0,
+      "reference_area": 0.0,
+      "coarse_area": 0.0005580357392318547
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1070.png",
+      "zone": 3,
+      "reference_area": 0.0,
+      "coarse_area": 0.0011160714784637094
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1101.png",
+      "zone": 0,
+      "reference_area": 0.0,
+      "coarse_area": 0.0007812500116415322
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1101.png",
+      "zone": 3,
+      "reference_area": 0.0,
+      "coarse_area": 0.004352678544819355
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1081.png",
+      "zone": 2,
+      "reference_area": 0.0,
+      "coarse_area": 0.0029017857741564512
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1081.png",
+      "zone": 5,
+      "reference_area": 0.0,
+      "coarse_area": 0.0033482143189758062
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1101.png",
+      "zone": 0,
+      "reference_area": 0.0,
+      "coarse_area": 0.0007812500116415322
+    },
+    {
+      "variant": "one_legacy_augmentation",
+      "name": "mask_covid_1101.png",
+      "zone": 3,
+      "reference_area": 0.0,
+      "coarse_area": 0.004352678544819355
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1110.png",
+      "zone": 5,
+      "reference_area": 0.0002380952355451882,
+      "coarse_area": 0.0
+    },
+    {
+      "variant": "native",
+      "name": "mask_covid_1130.png",
+      "zone": 5,
+      "reference_area": 0.0019047618843615055,
+      "coarse_area": 0.0
+    }
+  ],
+  "torch_version": "2.9.1+cu128",
+  "numpy_version": "1.26.4",
+  "opencv_version": "4.11.0",
+  "diagnostic_git_commit": "00a9c1bddb9a5c7b3ab0c8df6612c5758ac56f7d"
+}
