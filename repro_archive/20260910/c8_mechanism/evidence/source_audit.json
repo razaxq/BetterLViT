@@ -1,0 +1,47 @@
+{
+  "c4": {
+    "commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "tracked_source_clean": true,
+    "files": {
+      "Config.py": "5a411dd1d448eeec26931b52e3cd8d8868f59c7ad197c83eba416ec6514a789b",
+      "paper_experiments.py": "17f124fc9e5eb8958e074b605e7ca27da1863b5f1a842f86ffc68473a4fe6179",
+      "Load_Dataset.py": "0b4d344969524eb933a0cb71d91823dd9ddb739d872be34ffdcbbc7d0b7f7064",
+      "train_model.py": "484dfd4b9f5dfded9e730083390b9e2f8fc0dc3450ef640aaffd72609f753479",
+      "Train_one_epoch.py": "c6bebb8d6314b9bab9b24bf43104fc0cb77e609fe2c69127b4750e8a36520fb6",
+      "nets/LViT.py": "8a67a717c0410fcb25ab32dc6929662cc67a0dea292858dc12cd5c0909b9fb5b",
+      "nets/BetterLViT.py": "a3cff9b7d624e1ef612a94230ab68df2d388193befda6898c0a9e088c3f9052f",
+      "nets/race_pe.py": "f6e9ae220aefc724ec66c5802784e09959214558929606e7cea52d560bf55b2e",
+      "nets/race_fuse.py": "8166f7b0191fda128fd8cbf80b18c92adf5c0a1ad739ccc61fcf27addba6645a",
+      "race_pe_objective.py": "9bed257240595677792429470e75aa6e585a36fcb47f6be60de4fe543000d117",
+      "utils.py": "1083c7f22f342714031d6f3967f1f59122d3506faea74bea6df6a39bbae0964a"
+    }
+  },
+  "c8": {
+    "commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "tracked_source_clean": true,
+    "files": {
+      "Config.py": "6818123c61d84f2a517691f897c8210c96934414168f6901e0b0e1100a0956aa",
+      "paper_experiments.py": "0ab9f14d15fe962c5ab792aac5c1d761fa0bbb8ef611d44ad6f80a9e53358c33",
+      "Load_Dataset.py": "48a541f6f3a052af89571fb13dc29898b648e64a3aa9432f81670e65a9c6f086",
+      "train_model.py": "1f612d0d460ea245997756585ef8fc7b2601aeeaada423708b32650c9796918b",
+      "Train_one_epoch.py": "c6bebb8d6314b9bab9b24bf43104fc0cb77e609fe2c69127b4750e8a36520fb6",
+      "nets/LViT.py": "f47fadbd7d49862ed8e48a9c934fcf7deb3d2a59defe67b1381051327258be0c",
+      "nets/BetterLViT.py": "a3cff9b7d624e1ef612a94230ab68df2d388193befda6898c0a9e088c3f9052f",
+      "nets/race_pe.py": "d5236bb185f5566c7cd1e6ec38b89920301e39697538f3023cda32172d7315af",
+      "nets/race_fuse.py": "8166f7b0191fda128fd8cbf80b18c92adf5c0a1ad739ccc61fcf27addba6645a",
+      "race_pe_objective.py": "cd8bf150f25c4b434bbde29aea9aca49bd0535b8860e868f125269c44de3017c",
+      "utils.py": "1083c7f22f342714031d6f3967f1f59122d3506faea74bea6df6a39bbae0964a"
+    }
+  },
+  "evaluation_scripts": {
+    "c4_sha256": "2a4bdfa291c9b62789ef04f88e52c6610ee99b87626c8c9263f6264b5c1b0ab7",
+    "c8_sha256": "eb7b5912c31ac8f4c8aa5c2c4e0aa90d3e06207701d4efe89d00d93dcba5d316",
+    "diff_file": "evaluation_script.diff"
+  },
+  "filename_subject_overlap": {
+    "validation_subjects": 597,
+    "test_subjects": 474,
+    "overlap": 0,
+    "scope": "Only subject IDs explicitly encoded in sub-S filenames; Train not audited here."
+  }
+}

@@ -1,0 +1,280 @@
+{
+  "scope": "C8 Best, fixed 32 Train images, eval mode, batch 8, no optimizer",
+  "aggregation": "Arithmetic means of four batchwise feature-gradient statistics; not parameter gradients or training-time integrals.",
+  "assertions_passed": true,
+  "layers": [
+    {
+      "term": "pixel",
+      "layer": "inc",
+      "connected": true,
+      "ratio_mean": 0.010216025104892642,
+      "ratio_min": 0.005770016216369943,
+      "ratio_max": 0.014381895515284295,
+      "cosine_mean": 0.2308958271324973,
+      "cosine_min": 0.19386419137977626,
+      "cosine_max": 0.27192038487550246
+    },
+    {
+      "term": "pixel",
+      "layer": "down1",
+      "connected": true,
+      "ratio_mean": 0.010046252805511332,
+      "ratio_min": 0.005497520439698349,
+      "ratio_max": 0.014718163024757721,
+      "cosine_mean": 0.1808500436844723,
+      "cosine_min": 0.1567247625224428,
+      "cosine_max": 0.22402846330630288
+    },
+    {
+      "term": "pixel",
+      "layer": "down2",
+      "connected": true,
+      "ratio_mean": 0.010128779012734663,
+      "ratio_min": 0.005594937233911264,
+      "ratio_max": 0.014553195126063966,
+      "cosine_mean": 0.1032569927615285,
+      "cosine_min": 0.08531097415652371,
+      "cosine_max": 0.13636704300186023
+    },
+    {
+      "term": "pixel",
+      "layer": "down3",
+      "connected": true,
+      "ratio_mean": 0.009119644653504375,
+      "ratio_min": 0.00426223628372046,
+      "ratio_max": 0.01255327606717695,
+      "cosine_mean": 0.021287102504111133,
+      "cosine_min": 0.016385571859140188,
+      "cosine_max": 0.032225848600988816
+    },
+    {
+      "term": "presence",
+      "layer": "inc",
+      "connected": true,
+      "ratio_mean": 0.007909162077548553,
+      "ratio_min": 0.0045081294237593866,
+      "ratio_max": 0.012153942791036845,
+      "cosine_mean": 0.08375902716025065,
+      "cosine_min": 0.05018134004982716,
+      "cosine_max": 0.11520777450287048
+    },
+    {
+      "term": "presence",
+      "layer": "down1",
+      "connected": true,
+      "ratio_mean": 0.007203807273656033,
+      "ratio_min": 0.004043975706130057,
+      "ratio_max": 0.011668626440616005,
+      "cosine_mean": 0.0737698203498839,
+      "cosine_min": 0.049114773933817135,
+      "cosine_max": 0.10026001024106805
+    },
+    {
+      "term": "presence",
+      "layer": "down2",
+      "connected": true,
+      "ratio_mean": 0.00627371373664297,
+      "ratio_min": 0.0032890290843523573,
+      "ratio_max": 0.010381770623938824,
+      "cosine_mean": 0.05680430006143503,
+      "cosine_min": 0.045191135456498804,
+      "cosine_max": 0.07038917283003059
+    },
+    {
+      "term": "presence",
+      "layer": "down3",
+      "connected": true,
+      "ratio_mean": 0.005095642507941087,
+      "ratio_min": 0.0025422360384920297,
+      "ratio_max": 0.00813848213730865,
+      "cosine_mean": 0.008161609422001025,
+      "cosine_min": 0.004691301388172068,
+      "cosine_max": 0.00983376983230942
+    },
+    {
+      "term": "occupancy",
+      "layer": "inc",
+      "connected": true,
+      "ratio_mean": 0.0003155199501772716,
+      "ratio_min": 0.00017066707881809755,
+      "ratio_max": 0.00043496603756866005,
+      "cosine_mean": 0.11299302438906518,
+      "cosine_min": 0.07120872718014531,
+      "cosine_max": 0.18300108542884022
+    },
+    {
+      "term": "occupancy",
+      "layer": "down1",
+      "connected": true,
+      "ratio_mean": 0.000299608669125773,
+      "ratio_min": 0.00015886029064289105,
+      "ratio_max": 0.0004166935379544686,
+      "cosine_mean": 0.08310241314873432,
+      "cosine_min": 0.051233649992067073,
+      "cosine_max": 0.14714154315679312
+    },
+    {
+      "term": "occupancy",
+      "layer": "down2",
+      "connected": true,
+      "ratio_mean": 0.0002822560117433204,
+      "ratio_min": 0.00014640754452765616,
+      "ratio_max": 0.0003831623041814544,
+      "cosine_mean": 0.05379909420975986,
+      "cosine_min": 0.025202456344091562,
+      "cosine_max": 0.1033371154102977
+    },
+    {
+      "term": "occupancy",
+      "layer": "down3",
+      "connected": true,
+      "ratio_mean": 0.00022953979912452844,
+      "ratio_min": 0.00010133562267811028,
+      "ratio_max": 0.0002989218310148737,
+      "cosine_mean": 0.008640865819144392,
+      "cosine_min": 0.0008771380452493207,
+      "cosine_max": 0.022882467314191475
+    },
+    {
+      "term": "visual_aux",
+      "layer": "inc",
+      "connected": true,
+      "ratio_mean": 0.015173012937877062,
+      "ratio_min": 0.008579187967818796,
+      "ratio_max": 0.02278824346020191,
+      "cosine_mean": 0.20298243280391487,
+      "cosine_min": 0.17736382813710422,
+      "cosine_max": 0.2472537762243857
+    },
+    {
+      "term": "visual_aux",
+      "layer": "down1",
+      "connected": true,
+      "ratio_mean": 0.014265593806841295,
+      "ratio_min": 0.00763631563863851,
+      "ratio_max": 0.022440063844840468,
+      "cosine_mean": 0.16830864852948452,
+      "cosine_min": 0.13855380141040713,
+      "cosine_max": 0.21369633983572817
+    },
+    {
+      "term": "visual_aux",
+      "layer": "down2",
+      "connected": true,
+      "ratio_mean": 0.013156630327575592,
+      "ratio_min": 0.006991562869750943,
+      "ratio_max": 0.020420894067164297,
+      "cosine_mean": 0.10865716647042131,
+      "cosine_min": 0.0915233482596465,
+      "cosine_max": 0.14295238892952705
+    },
+    {
+      "term": "visual_aux",
+      "layer": "down3",
+      "connected": true,
+      "ratio_mean": 0.010895467258844962,
+      "ratio_min": 0.005127915435034594,
+      "ratio_max": 0.01559594122750696,
+      "cosine_mean": 0.02187285314454268,
+      "cosine_min": 0.016831041116928604,
+      "cosine_max": 0.032547007500328864
+    },
+    {
+      "term": "text",
+      "layer": "inc",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "text",
+      "layer": "down1",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "text",
+      "layer": "down2",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "text",
+      "layer": "down3",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "count",
+      "layer": "inc",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "count",
+      "layer": "down1",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "count",
+      "layer": "down2",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    },
+    {
+      "term": "count",
+      "layer": "down3",
+      "connected": false,
+      "ratio_mean": 0.0,
+      "ratio_min": 0.0,
+      "ratio_max": 0.0,
+      "cosine_mean": null,
+      "cosine_min": null,
+      "cosine_max": null
+    }
+  ],
+  "weighted_loss_mean": {
+    "main": 0.08255047723650932,
+    "pixel": 0.004116429190617055,
+    "presence": 0.005555148934945464,
+    "occupancy": 6.219894112291513e-05,
+    "text": 3.614063871282269e-05,
+    "count": 5.200055397835968e-06,
+    "visual_aux": 0.009733777027577162
+  }
+}

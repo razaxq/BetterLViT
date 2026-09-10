@@ -1,0 +1,4 @@
+--- evaluate_test.py (C4)
++++ evaluate_test.py (C8)
+@@ -42,0 +43 @@
++    "c8_race_pe_v2_aux", "p10_race_pe_v2",
