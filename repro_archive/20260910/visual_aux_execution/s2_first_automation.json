@@ -1,0 +1,27 @@
+{
+  "automation_id": "betterlvit",
+  "update_args": {
+    "mode": "update",
+    "id": "betterlvit",
+    "kind": "heartbeat",
+    "name": "BetterLViT 视觉辅助监督",
+    "destination": "thread",
+    "status": "ACTIVE",
+    "rrule": "FREQ=DAILY;BYHOUR=22;BYMINUTE=46;BYSECOND=0",
+    "targetThreadId": "01a074f2-5c58-7221-9a58-59850e626880",
+    "prompt": "继续用户已授权的 BetterLViT 视觉辅助监督实验。执行入口为 D:/BetterLViT/experiment_docs_work/repro_archive/20260910/visual_aux_execution/README.md，冻结配置与判定条件见同目录 PLAN.md，来源见 sources.json，实际阶段和检查预算见 s1_state.json / s2_state.json。S1 已完成80轮及归档：Val IoU72.9003%、Dice82.6077%，R2门未通过，19文件HF备份已核验，训练检查2/2，不能再检查S1。S2 已于悉尼2026-09-10 22:30:42提交，PID219448，检查预算0/2；当前预约2026-09-10 22:46（Australia/Sydney）执行S2首次检查。不要使用持续 SSH、循环轮询或预约外额外查询。\n\n每次触发先读取本地状态与本任务定时记录，只执行当前到期阶段。S1 或 S2 检查数为 0 时，运行 inspect_run.py --label s1（或 s2）--phase first，一次短连接确认并根据实际轮时预测结束；随即用 automation_update 将本条 heartbeat 改约到脚本给出的 final_check_sydney，保留同一任务和定时 ID。检查数为 1 且到末检时间时仅运行一次 --phase final。每组训练最多两次状态检查；末检目标为预测结束后约 12 分钟，核对实际训练结束到检查不超过 30 分钟。不能把程序内预注册的四次 Train 梯度遥测称作远程轮询。若预测失准、训练失败或预约延迟，明确记录事实，不能虚称完成或越过预算反复连接。\n\n完整运行结束后按当前label依次执行 archive_completed.py、analyze_completed.py、upload_completed.py、verify_downloads.py；这些文件均在执行入口同目录。核验 80 轮、Best/Last 来源 SHA、四次 Train 诊断、1429 张 Val、固定阈值与模型来源；按 README 将本次 Best/Last、源码、日志、manifest、诊断和 Val 结果上传 HF Bucket razaxq/BetterLViT 对应训练 Git 短 SHA 目录，核验大小与 Xet 哈希，保留现存原模型且共享 fs 实际字节小于 20 GB。源码、原始结果与台账提交推送 GitHub。上传和静态结果归档不增加正在训练时的状态轮询。\n\nS1归档已完成且S2已经提交，不得重复启动S2。S2完成后报告相对R2及S1的两组判定。两组均为 80 轮单次余弦、seed1219；不得临时改系数、阈值、启用 LoRA 或 boundary loss。S1 仅像素监督；S2 加区域存在和占比。当前阶段禁止访问 Test。两组完成后严格按 PLAN 的 R2 门和 S2 对 S1 区域增量门报告；通过者才执行已授权的 2027/3407 匹配种子复验，核验同种子基线可复用并为每次训练单独提交完整 SHA/tag，继续同样每组两次预测预约。匹配复验通过后按计划统一 Test，最终以 Test macro Dice/IoU 为准；普通深监督数值收益不能直接称创新成功。阶段未通过则保留负结果，不自动延长 150 轮或调参。所有已授权阶段结束后删除本 heartbeat。\n\n状态未变化且无可执行事项时保持安静；在完成、失败、阶段决策或需要用户行动时通知。将每次预约回执保存在上述执行目录并更新 docs/EXPERIMENT_TRACKER.md。"
+  },
+  "update_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}

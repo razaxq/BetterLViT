@@ -4,6 +4,12 @@
 
 当前文件用于后续定时继续执行。实际是否已启动、检查次数和预约，以各自`*_launch.json`、`*_state.json`与最近一次`*_automation*.json`回执为准；没有这些文件不能宣称启动。完整SHA/tag/远端路径见[sources.json](sources.json)。
 
+## 当前阶段：S2已提交
+
+S1的完整结果、HF备份及核验已提交推送后，2026-09-10 22:30:42.609（悉尼）提交S2后台运行，PID219448，来源 `7defc637e36974fabd0f47763275c90f617e5f53`，tag `experiment-s2-r2-regional-80e-seed1219-20260910`。检查预算0/2，目前仅提交回执，尚未首次健康检查。[S2回执](s2_launch.json)。
+
+同一当前任务heartbeat `betterlvit` 已改约2026-09-10 22:46首检，app实际配置与目标任务已核验。届时使用S2实测轮时预约唯一末检，不再查询S1、不得重复启动S2。[首检预约](s2_first_automation.json)、[配置核验](s2_first_automation_verified.json)。本组固定80轮，保留0.02/0.01/0.005系数，完成后比较R2→S2和S1→S2两道门，无Test访问。
+
 ## S1首次预约检查
 
 更新：S1已完成，以下首检记录为历史阶段；当前完成状态见下节。

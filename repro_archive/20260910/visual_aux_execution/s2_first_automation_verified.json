@@ -1,0 +1,10 @@
+{
+  "automation_id": "betterlvit",
+  "status": "ACTIVE",
+  "kind": "heartbeat",
+  "rrule": "FREQ=DAILY;BYHOUR=22;BYMINUTE=46;BYSECOND=0",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "planned_first_check_sydney": "2026-09-10T22:46:00+10:00",
+  "updated_at": 1789043466523,
+  "verified_against_saved_app_configuration": true
+}
