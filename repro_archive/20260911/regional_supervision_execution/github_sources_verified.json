@@ -1,0 +1,11 @@
+{
+  "verified": true,
+  "refs": {
+    "refs/heads/paper/regional-rs1-80e-seed1219": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "refs/heads/paper/regional-rs2-80e-seed1219": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+    "refs/heads/paper/regional-rs3-80e-seed1219": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+    "refs/tags/experiment-rs1-regional-80e-seed1219-20260911": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "refs/tags/experiment-rs2-regional-80e-seed1219-20260911": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+    "refs/tags/experiment-rs3-regional-80e-seed1219-20260911": "f79842331e4e5e41526ed66da31ec174ea4a61b2"
+  }
+}

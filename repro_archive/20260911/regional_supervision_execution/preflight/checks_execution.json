@@ -1,0 +1,21 @@
+{
+  "returncode": 0,
+  "result": {
+    "status": "ok",
+    "checks": [
+      "independent_crop_values",
+      "independent_crop_gradients",
+      "per_image_macro",
+      "group_reduction",
+      "flip_geometry",
+      "empty_fp_gradient",
+      "full_fn_gradient",
+      "single_pixel_finite",
+      "disabled_exact",
+      "same_area_displacement",
+      "edge_coverage"
+    ]
+  },
+  "stdout": "{\"status\": \"ok\", \"checks\": [\"independent_crop_values\", \"independent_crop_gradients\", \"per_image_macro\", \"group_reduction\", \"flip_geometry\", \"empty_fp_gradient\", \"full_fn_gradient\", \"single_pixel_finite\", \"disabled_exact\", \"same_area_displacement\", \"edge_coverage\"]}\n",
+  "stderr": ""
+}

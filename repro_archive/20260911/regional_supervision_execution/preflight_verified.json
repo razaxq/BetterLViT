@@ -1,0 +1,36 @@
+{
+  "status": "ok",
+  "legacy_5_steps_exact": true,
+  "shared_initialization_exact": true,
+  "common_weight": 0.128312,
+  "candidates": {
+    "rs1": {
+      "source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+      "base_sources_unchanged": true,
+      "repeat_identical": true,
+      "telemetry_noninterference": true,
+      "disabled_grouped_optimizer_exact": true,
+      "peak_allocated_bytes": 16502079488,
+      "steady_seconds_per_batch": 0.6023578643798828
+    },
+    "rs2": {
+      "source_git_commit": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+      "base_sources_unchanged": true,
+      "repeat_identical": true,
+      "telemetry_noninterference": true,
+      "disabled_grouped_optimizer_exact": true,
+      "peak_allocated_bytes": 16502079488,
+      "steady_seconds_per_batch": 0.6043005784352621
+    },
+    "rs3": {
+      "source_git_commit": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+      "base_sources_unchanged": true,
+      "repeat_identical": true,
+      "telemetry_noninterference": true,
+      "disabled_grouped_optimizer_exact": true,
+      "peak_allocated_bytes": 16502079488,
+      "steady_seconds_per_batch": 0.5926108360290527
+    }
+  },
+  "test_split_accessed": false
+}

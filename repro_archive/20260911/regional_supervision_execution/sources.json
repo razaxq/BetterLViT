@@ -1,0 +1,32 @@
+{
+  "rs1": {
+    "source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "experiment_tag": "experiment-rs1-regional-80e-seed1219-20260911",
+    "profile": "rs1_global_iou",
+    "local_repository": "D:\\BetterLViT\\regional_rs1_work",
+    "branch": "paper/regional-rs1-80e-seed1219",
+    "repository": "/root/autodl-tmp/BetterLViT-regional-rs1",
+    "remote_run": "/root/autodl-tmp/regional_runs/rs1_20260911",
+    "regional_weight": 0.128312
+  },
+  "rs2": {
+    "source_git_commit": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+    "experiment_tag": "experiment-rs2-regional-80e-seed1219-20260911",
+    "profile": "rs2_local_iou",
+    "local_repository": "D:\\BetterLViT\\regional_rs2_work",
+    "branch": "paper/regional-rs2-80e-seed1219",
+    "repository": "/root/autodl-tmp/BetterLViT-regional-rs2",
+    "remote_run": "/root/autodl-tmp/regional_runs/rs2_20260911",
+    "regional_weight": 0.128312
+  },
+  "rs3": {
+    "source_git_commit": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+    "experiment_tag": "experiment-rs3-regional-80e-seed1219-20260911",
+    "profile": "rs3_balanced_iou",
+    "local_repository": "D:\\BetterLViT\\regional_rs3_work",
+    "branch": "paper/regional-rs3-80e-seed1219",
+    "repository": "/root/autodl-tmp/BetterLViT-regional-rs3",
+    "remote_run": "/root/autodl-tmp/regional_runs/rs3_20260911",
+    "regional_weight": 0.128312
+  }
+}

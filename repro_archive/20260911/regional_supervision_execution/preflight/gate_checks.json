@@ -1,0 +1,10 @@
+{
+  "status": "ok",
+  "checks": [
+    "absolute_pass",
+    "absolute_threshold_fail",
+    "incremental_threshold",
+    "test_access_rejected",
+    "matched_ground_truth_required"
+  ]
+}

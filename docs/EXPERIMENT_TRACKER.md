@@ -12,6 +12,12 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## RS1/RS2/RS3首轮训练准备（2026-09-11）
+
+用户明确要求“启动训练”。已从冻结R2派生三项最终输出监督：RS1整图软IoU、RS2局部软IoU（56窗口/28步长）、RS3阳性/空背景分组。三组各80轮、seed1219、原R2单次余弦与Dice/Focal，不新增网络头；按顺序完整执行首轮，再按计划决定后续。[执行入口、校准与证据](../repro_archive/20260911/regional_supervision_execution/README.md)。
+
+固定Train-only校准得到共同λ=0.128312，初始12项批次×模式最大新增/主logit梯度比0.0999999；这是输出梯度尺度，不是共享参数梯度或IoU证据。源码、独立manifest和实验tag已推送GitHub并核验；最终CUDA预检及正式启动状态以下续记为准。
+
 ## 区域监督实验顺序已制定（2026-09-11）
 
 用户同意方向并要求先给出实验顺序。已记录[阶段计划](REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md)：预检及R2兼容性验证 → RS1整图软IoU → RS2局部软IoU → RS3局部阳性/背景分组；首轮固定3次80轮、seed1219，原R2单次余弦及Dice/Focal。将分组对照纳入首轮的依据是已知Train背景窗口比例，三组不依据中间数值临时改变。
