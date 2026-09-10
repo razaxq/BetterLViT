@@ -5,14 +5,170 @@
       "negative_cosine": 0,
       "ratio_min": 0.004038190325581122,
       "ratio_max": 0.031294098886805045,
-      "mean_cosine": 0.12017010530956412
+      "cosine_min": 0.004283867300432133,
+      "cosine_max": 0.3896581565337275,
+      "mean_cosine": 0.12017010530956412,
+      "by_epoch": {
+        "20": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.007555911559189169,
+          "ratio_max": 0.031294098886805045,
+          "cosine_min": 0.013225104905130044,
+          "cosine_max": 0.3483005449084344,
+          "mean_cosine": 0.1398180535589031
+        },
+        "40": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004038190325581122,
+          "ratio_max": 0.025175200128214906,
+          "cosine_min": 0.004283867300432133,
+          "cosine_max": 0.3896581565337275,
+          "mean_cosine": 0.12030524125572464
+        },
+        "60": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00754611430679931,
+          "ratio_max": 0.01790149223495701,
+          "cosine_min": 0.005143130905279523,
+          "cosine_max": 0.384134971230495,
+          "mean_cosine": 0.11189399075955779
+        },
+        "80": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.008631668395254205,
+          "ratio_max": 0.015351137792817517,
+          "cosine_min": 0.005756406107986077,
+          "cosine_max": 0.33956895012192007,
+          "mean_cosine": 0.10866313566407101
+        }
+      },
+      "by_feature_tap": {
+        "inc": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004038190325581122,
+          "ratio_max": 0.015351137792817517,
+          "cosine_min": 0.04820202700326086,
+          "cosine_max": 0.3896581565337275,
+          "mean_cosine": 0.20475276958776076
+        },
+        "down1": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004701756239814263,
+          "ratio_max": 0.01612946710960382,
+          "cosine_min": 0.04444215589323067,
+          "cosine_max": 0.28081204020758865,
+          "mean_cosine": 0.17007717681330276
+        },
+        "down2": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.006362848577227779,
+          "ratio_max": 0.019850401338986686,
+          "cosine_min": 0.01949025118662982,
+          "cosine_max": 0.14512514404965737,
+          "mean_cosine": 0.09245092863623317
+        },
+        "down3": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.007303498158956115,
+          "ratio_max": 0.031294098886805045,
+          "cosine_min": 0.004283867300432133,
+          "cosine_max": 0.03362648009308983,
+          "mean_cosine": 0.013399546200959782
+        }
+      }
     },
     "visual_aux": {
       "observations": 64,
       "negative_cosine": 0,
       "ratio_min": 0.004038190325581122,
       "ratio_max": 0.031294098886805045,
-      "mean_cosine": 0.12017010530956412
+      "cosine_min": 0.004283867300432133,
+      "cosine_max": 0.3896581565337275,
+      "mean_cosine": 0.12017010530956412,
+      "by_epoch": {
+        "20": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.007555911559189169,
+          "ratio_max": 0.031294098886805045,
+          "cosine_min": 0.013225104905130044,
+          "cosine_max": 0.3483005449084344,
+          "mean_cosine": 0.1398180535589031
+        },
+        "40": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004038190325581122,
+          "ratio_max": 0.025175200128214906,
+          "cosine_min": 0.004283867300432133,
+          "cosine_max": 0.3896581565337275,
+          "mean_cosine": 0.12030524125572464
+        },
+        "60": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00754611430679931,
+          "ratio_max": 0.01790149223495701,
+          "cosine_min": 0.005143130905279523,
+          "cosine_max": 0.384134971230495,
+          "mean_cosine": 0.11189399075955779
+        },
+        "80": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.008631668395254205,
+          "ratio_max": 0.015351137792817517,
+          "cosine_min": 0.005756406107986077,
+          "cosine_max": 0.33956895012192007,
+          "mean_cosine": 0.10866313566407101
+        }
+      },
+      "by_feature_tap": {
+        "inc": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004038190325581122,
+          "ratio_max": 0.015351137792817517,
+          "cosine_min": 0.04820202700326086,
+          "cosine_max": 0.3896581565337275,
+          "mean_cosine": 0.20475276958776076
+        },
+        "down1": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004701756239814263,
+          "ratio_max": 0.01612946710960382,
+          "cosine_min": 0.04444215589323067,
+          "cosine_max": 0.28081204020758865,
+          "mean_cosine": 0.17007717681330276
+        },
+        "down2": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.006362848577227779,
+          "ratio_max": 0.019850401338986686,
+          "cosine_min": 0.01949025118662982,
+          "cosine_max": 0.14512514404965737,
+          "mean_cosine": 0.09245092863623317
+        },
+        "down3": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.007303498158956115,
+          "ratio_max": 0.031294098886805045,
+          "cosine_min": 0.004283867300432133,
+          "cosine_max": 0.03362648009308983,
+          "mean_cosine": 0.013399546200959782
+        }
+      }
     }
   },
   "s2": {
@@ -21,28 +177,340 @@
       "negative_cosine": 0,
       "ratio_min": 0.0041566139284081255,
       "ratio_max": 0.03177365722313817,
-      "mean_cosine": 0.11905951874359666
+      "cosine_min": 0.006169995029628784,
+      "cosine_max": 0.42430173221094747,
+      "mean_cosine": 0.11905951874359666,
+      "by_epoch": {
+        "20": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004410658425489041,
+          "ratio_max": 0.03177365722313817,
+          "cosine_min": 0.011152561982111883,
+          "cosine_max": 0.37714530007023617,
+          "mean_cosine": 0.14483729655508187
+        },
+        "40": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0041566139284081255,
+          "ratio_max": 0.024107497025779127,
+          "cosine_min": 0.008179282435457966,
+          "cosine_max": 0.42430173221094747,
+          "mean_cosine": 0.11774815473424943
+        },
+        "60": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0076070667374599004,
+          "ratio_max": 0.014959984252064382,
+          "cosine_min": 0.007361511132790275,
+          "cosine_max": 0.37669600286864485,
+          "mean_cosine": 0.11186558475136307
+        },
+        "80": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.005591677970142441,
+          "ratio_max": 0.021644981958155486,
+          "cosine_min": 0.006169995029628784,
+          "cosine_max": 0.3558682966016643,
+          "mean_cosine": 0.10178703893369226
+        }
+      },
+      "by_feature_tap": {
+        "inc": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0041566139284081255,
+          "ratio_max": 0.021644981958155486,
+          "cosine_min": 0.044013017810779494,
+          "cosine_max": 0.42430173221094747,
+          "mean_cosine": 0.19661664987545707
+        },
+        "down1": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.004673912412299771,
+          "ratio_max": 0.019283069271572483,
+          "cosine_min": 0.054746722483631334,
+          "cosine_max": 0.2948893325342644,
+          "mean_cosine": 0.17109528136290014
+        },
+        "down2": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0053614013099882755,
+          "ratio_max": 0.01829697685835804,
+          "cosine_min": 0.030718684510568247,
+          "cosine_max": 0.1949379386685737,
+          "mean_cosine": 0.0932797915864801
+        },
+        "down3": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.006576600900039361,
+          "ratio_max": 0.03177365722313817,
+          "cosine_min": 0.006169995029628784,
+          "cosine_max": 0.04728145159509482,
+          "mean_cosine": 0.01524635214954935
+        }
+      }
     },
     "presence": {
       "observations": 64,
       "negative_cosine": 20,
       "ratio_min": 0.0030986103136211762,
       "ratio_max": 0.02639730890295955,
-      "mean_cosine": 0.04193813672389058
+      "cosine_min": -0.05410715640632885,
+      "cosine_max": 0.22805503972385907,
+      "mean_cosine": 0.04193813672389058,
+      "by_epoch": {
+        "20": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.003282114178564267,
+          "ratio_max": 0.013666416139768914,
+          "cosine_min": 0.007870877103550876,
+          "cosine_max": 0.22805503972385907,
+          "mean_cosine": 0.10125430943661526
+        },
+        "40": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0030986103136211762,
+          "ratio_max": 0.015303306649016392,
+          "cosine_min": 0.0018656576545995728,
+          "cosine_max": 0.1556943802563769,
+          "mean_cosine": 0.05243832780659489
+        },
+        "60": {
+          "observations": 16,
+          "negative_cosine": 8,
+          "ratio_min": 0.005419653720260845,
+          "ratio_max": 0.013821536135103032,
+          "cosine_min": -0.050441378431603824,
+          "cosine_max": 0.11226950424764483,
+          "mean_cosine": 0.009386478965080393
+        },
+        "80": {
+          "observations": 16,
+          "negative_cosine": 12,
+          "ratio_min": 0.005002461674158904,
+          "ratio_max": 0.02639730890295955,
+          "cosine_min": -0.05410715640632885,
+          "cosine_max": 0.12337317464276527,
+          "mean_cosine": 0.004673430687271761
+        }
+      },
+      "by_feature_tap": {
+        "inc": {
+          "observations": 16,
+          "negative_cosine": 5,
+          "ratio_min": 0.003574873686225644,
+          "ratio_max": 0.02639730890295955,
+          "cosine_min": -0.05410715640632885,
+          "cosine_max": 0.22805503972385907,
+          "mean_cosine": 0.06893166940512435
+        },
+        "down1": {
+          "observations": 16,
+          "negative_cosine": 5,
+          "ratio_min": 0.0037516977638445406,
+          "ratio_max": 0.02128601275411969,
+          "cosine_min": -0.044544670147498536,
+          "cosine_max": 0.17632709806736396,
+          "mean_cosine": 0.056146696621144646
+        },
+        "down2": {
+          "observations": 16,
+          "negative_cosine": 5,
+          "ratio_min": 0.0030986103136211762,
+          "ratio_max": 0.014459718498853101,
+          "cosine_min": -0.03380138383588134,
+          "cosine_max": 0.10150335516461403,
+          "mean_cosine": 0.03620440504294545
+        },
+        "down3": {
+          "observations": 16,
+          "negative_cosine": 5,
+          "ratio_min": 0.003302874316104397,
+          "ratio_max": 0.013666416139768914,
+          "cosine_min": -0.0045920601561583885,
+          "cosine_max": 0.02901555626930444,
+          "mean_cosine": 0.006469775826347879
+        }
+      }
     },
     "occupancy": {
       "observations": 64,
       "negative_cosine": 0,
       "ratio_min": 0.00012145842653637458,
       "ratio_max": 0.0009525228184772914,
-      "mean_cosine": 0.085979630478913
+      "cosine_min": 0.0018173270866628905,
+      "cosine_max": 0.385256944017294,
+      "mean_cosine": 0.085979630478913,
+      "by_epoch": {
+        "20": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00012145842653637458,
+          "ratio_max": 0.0009525228184772914,
+          "cosine_min": 0.007228569473047195,
+          "cosine_max": 0.2736065141934915,
+          "mean_cosine": 0.08978726416821323
+        },
+        "40": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00019206578247649698,
+          "ratio_max": 0.0006206573501719659,
+          "cosine_min": 0.00420555574582568,
+          "cosine_max": 0.385256944017294,
+          "mean_cosine": 0.08559531389138766
+        },
+        "60": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00018203712301089275,
+          "ratio_max": 0.0004601580505261271,
+          "cosine_min": 0.0018173270866628905,
+          "cosine_max": 0.3426740778781629,
+          "mean_cosine": 0.08864865794920063
+        },
+        "80": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00021577574682872598,
+          "ratio_max": 0.0006444893627883936,
+          "cosine_min": 0.002776260301291178,
+          "cosine_max": 0.3171377033982511,
+          "mean_cosine": 0.07988728590685046
+        }
+      },
+      "by_feature_tap": {
+        "inc": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00012145842653637458,
+          "ratio_max": 0.0006444893627883936,
+          "cosine_min": 0.020630909617036654,
+          "cosine_max": 0.385256944017294,
+          "mean_cosine": 0.13754339351260436
+        },
+        "down1": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.00014623107593951946,
+          "ratio_max": 0.0005717682445035708,
+          "cosine_min": 0.028554093687246027,
+          "cosine_max": 0.2742914084771176,
+          "mean_cosine": 0.11917779734901868
+        },
+        "down2": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0001862196716752225,
+          "ratio_max": 0.0005309018564952669,
+          "cosine_min": 0.021384888451676392,
+          "cosine_max": 0.1945919485343935,
+          "mean_cosine": 0.07682588720760751
+        },
+        "down3": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0002528467388188401,
+          "ratio_max": 0.0009525228184772914,
+          "cosine_min": 0.0018173270866628905,
+          "cosine_max": 0.03074094781662425,
+          "mean_cosine": 0.010371443846421457
+        }
+      }
     },
     "visual_aux": {
       "observations": 64,
       "negative_cosine": 1,
       "ratio_min": 0.006541541928827089,
       "ratio_max": 0.03923090062123959,
-      "mean_cosine": 0.10277739154365775
+      "cosine_min": -0.004813448863056555,
+      "cosine_max": 0.35504857647034266,
+      "mean_cosine": 0.10277739154365775,
+      "by_epoch": {
+        "20": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.0066770713799650504,
+          "ratio_max": 0.03611868117661686,
+          "cosine_min": 0.016416491545803012,
+          "cosine_max": 0.33216162771987623,
+          "mean_cosine": 0.15414967221975234
+        },
+        "40": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.006541541928827089,
+          "ratio_max": 0.027954506780077822,
+          "cosine_min": 0.0109928779086951,
+          "cosine_max": 0.35504857647034266,
+          "mean_cosine": 0.10887193891497404
+        },
+        "60": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.010802334331895634,
+          "ratio_max": 0.021322281995949748,
+          "cosine_min": 0.0073740393639944255,
+          "cosine_max": 0.3015591987368348,
+          "mean_cosine": 0.08077038254913009
+        },
+        "80": {
+          "observations": 16,
+          "negative_cosine": 1,
+          "ratio_min": 0.008451282087672853,
+          "ratio_max": 0.03923090062123959,
+          "cosine_min": -0.004813448863056555,
+          "cosine_max": 0.29117289991678724,
+          "mean_cosine": 0.06731757249077452
+        }
+      },
+      "by_feature_tap": {
+        "inc": {
+          "observations": 16,
+          "negative_cosine": 1,
+          "ratio_min": 0.006541541928827089,
+          "ratio_max": 0.03923090062123959,
+          "cosine_min": -0.004813448863056555,
+          "cosine_max": 0.35504857647034266,
+          "mean_cosine": 0.16348531854959872
+        },
+        "down1": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.007000256428712357,
+          "ratio_max": 0.03282403371505401,
+          "cosine_min": 0.010688293514694224,
+          "cosine_max": 0.28372463119580416,
+          "mean_cosine": 0.14414792417366756
+        },
+        "down2": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.006742491760165381,
+          "ratio_max": 0.023455422245755423,
+          "cosine_min": 0.01265539364372927,
+          "cosine_max": 0.18760976486477407,
+          "mean_cosine": 0.08744925125589266
+        },
+        "down3": {
+          "observations": 16,
+          "negative_cosine": 0,
+          "ratio_min": 0.007696661924601022,
+          "ratio_max": 0.03611868117661686,
+          "cosine_min": 0.003974135240751383,
+          "cosine_max": 0.053383031573014134,
+          "mean_cosine": 0.016027072195472045
+        }
+      }
     }
   }
 }
