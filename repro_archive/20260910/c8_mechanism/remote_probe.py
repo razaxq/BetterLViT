@@ -88,7 +88,12 @@ def probe(args, manifest):
     torch.backends.cudnn.deterministic = True
     torch.use_deterministic_algorithms(True)
     assert git(row['repo'], 'rev-parse', 'HEAD') == row['source_git_commit']
-    assert not git(row['repo'], 'status', '--porcelain')
+    runtime_status = git(row['repo'], 'status', '--porcelain')
+    # The existing server dataset mount is an untracked symlink, not source.
+    assert runtime_status in ('', '?? datasets'), runtime_status
+    if runtime_status:
+        assert (Path(row['repo'])/'datasets').is_symlink()
+    dataset_mount = str((Path(row['repo'])/'datasets').resolve())
     assert not config.text_use_lora and not config.race_pe_route_enabled
     assert config.race_pe_v2_enabled and config.race_aux_weight == .05
     ck = torch.load(row['checkpoint'], map_location='cpu', weights_only=True)
@@ -120,6 +125,7 @@ def probe(args, manifest):
         for name in ('inc', 'down1', 'down2', 'down3')]
     result = dict(analysis_git_commit=args.analysis_sha,
         c8_training_sha=row['source_git_commit'], checkpoint=row['checkpoint'],
+        runtime_git_status=runtime_status, dataset_mount=dataset_mount,
         script_sha256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         scope='C8 Best, fixed 32 Train images, eval mode, batch 8, no optimizer',
         samples=names, seed=1219, torch=torch.__version__,
