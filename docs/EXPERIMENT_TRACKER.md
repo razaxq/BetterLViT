@@ -12,6 +12,12 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## 区域监督实验顺序已制定（2026-09-11）
+
+用户同意方向并要求先给出实验顺序。已记录[阶段计划](REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md)：预检及R2兼容性验证 → RS1整图软IoU → RS2局部软IoU → RS3局部阳性/背景分组；首轮固定3次80轮、seed1219，原R2单次余弦及Dice/Focal。将分组对照纳入首轮的依据是已知Train背景窗口比例，三组不依据中间数值临时改变。
+
+按既定R2性能门筛选，局部设计还需相对RS1正向增量，之后才进入ARS/ITSRS受控适配、必要消融及2027/3407匹配种子，最终统一Test。当前只是计划，loss系数与运行manifest待工程预检后冻结；RS1—RS8均未启动、无新增训练或评估结果，未设置训练定时。
+
 ## 区域监督研究与Train形态审计（2026-09-11）
 
 完成区域监督原始文献研究、合成反例和5716张Train mask的CPU只读审计。建议优先检验直接施加于最终分割图的局部重叠监督；S2的存在/占比目标可能忽略区域内等面积错位，不能代表全部区域监督方法。全图Dice已存在于R2，必须用“附加整图软IoU”对照区分目标对齐与局部粒度的作用。[完整研究报告与来源](../repro_archive/20260911/regional_supervision_research/REPORT.md)。
