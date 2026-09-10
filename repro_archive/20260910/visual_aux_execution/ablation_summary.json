@@ -1,0 +1,155 @@
+{
+  "split": "validation",
+  "test_split_accessed": false,
+  "seed": 1219,
+  "samples": 1429,
+  "small_count": 358,
+  "small_area_cutoff": 2075.0,
+  "integer_counts_verified": true,
+  "reconstructed_metric_max_abs_error": 0.0,
+  "paired_mean_count_changes": {
+    "r2_vs_s1": {
+      "all": {
+        "tp": 11.089573128061582,
+        "fp": 4.010496850944716,
+        "fn": -11.089573128061582,
+        "prediction_pixels": 15.100069979006298
+      },
+      "small": {
+        "tp": 3.399441340782123,
+        "fp": -16.533519553072626,
+        "fn": -3.399441340782123,
+        "prediction_pixels": -13.134078212290502
+      }
+    },
+    "r2_vs_s2": {
+      "all": {
+        "tp": -22.030090972708187,
+        "fp": -58.32540237928622,
+        "fn": 22.030090972708187,
+        "prediction_pixels": -80.3554933519944
+      },
+      "small": {
+        "tp": -23.01675977653631,
+        "fp": -56.30167597765363,
+        "fn": 23.01675977653631,
+        "prediction_pixels": -79.31843575418995
+      }
+    },
+    "s1_vs_s2": {
+      "all": {
+        "tp": -33.11966410076977,
+        "fp": -62.33589923023093,
+        "fn": 33.11966410076977,
+        "prediction_pixels": -95.4555633310007
+      },
+      "small": {
+        "tp": -26.416201117318437,
+        "fp": -39.76815642458101,
+        "fn": 26.416201117318437,
+        "prediction_pixels": -66.18435754189944
+      }
+    }
+  },
+  "train_gradient_ranges": {
+    "s1": {
+      "pixel": {
+        "ratio_min": 0.008174096461578675,
+        "ratio_max": 0.02045951478154662,
+        "cosine_min": 0.010534612678511364,
+        "cosine_max": 0.23556280079055283
+      },
+      "visual_aux": {
+        "ratio_min": 0.008174096461578675,
+        "ratio_max": 0.02045951478154662,
+        "cosine_min": 0.010534612678511364,
+        "cosine_max": 0.23556280079055283
+      }
+    },
+    "s2": {
+      "pixel": {
+        "ratio_min": 0.007797986387044727,
+        "ratio_max": 0.0171253796554316,
+        "cosine_min": 0.011108508515540997,
+        "cosine_max": 0.23922468608244196
+      },
+      "presence": {
+        "ratio_min": 0.0055176227871499275,
+        "ratio_max": 0.016336351447176232,
+        "cosine_min": -0.0006156215897107078,
+        "cosine_max": 0.15639842316575794
+      },
+      "occupancy": {
+        "ratio_min": 0.00025932038818956307,
+        "ratio_max": 0.0005533530460906051,
+        "cosine_min": 0.0071131829923288935,
+        "cosine_max": 0.14485073415404556
+      },
+      "visual_aux": {
+        "ratio_min": 0.011907475143103611,
+        "ratio_max": 0.02605950994081114,
+        "cosine_min": 0.009128389836633536,
+        "cosine_max": 0.24325835904940918
+      }
+    }
+  },
+  "gradient_scope": "Ranges over 4 epochs x 4 stages, each value a four-batch mean on 32 fixed Train images in eval mode",
+  "decisions": {
+    "r2_vs_s1": {
+      "passed": false,
+      "failed": [
+        "iou_minimum",
+        "iou_ci_positive"
+      ],
+      "iou": {
+        "mean": 0.0023496280496837552,
+        "small_mean": 0.008286716604487102,
+        "ci95": [
+          -0.00032997580140119154,
+          0.004986024864207721
+        ]
+      }
+    },
+    "r2_vs_s2": {
+      "passed": false,
+      "failed": [
+        "iou_minimum",
+        "iou_ci_positive",
+        "small_dice_not_lower",
+        "small_recall_not_lower"
+      ],
+      "iou": {
+        "mean": 0.0007611474980585444,
+        "small_mean": -0.004340482531637087,
+        "ci95": [
+          -0.002128604954577548,
+          0.0036422305588418784
+        ]
+      }
+    },
+    "s1_vs_s2": {
+      "passed": false,
+      "failed": [
+        "iou_minimum",
+        "iou_ci_positive",
+        "dice_not_lower",
+        "small_dice_not_lower",
+        "small_recall_not_lower"
+      ],
+      "iou": {
+        "mean": -0.0015884805516252112,
+        "small_mean": -0.012627199136124189,
+        "ci95": [
+          -0.004633010625805567,
+          0.0014329411983164484
+        ]
+      }
+    }
+  },
+  "phase": "completed_validation_screen",
+  "continue_matched_seeds": false,
+  "proceed_to_test": false,
+  "extend_to_150": false,
+  "stable_gain_proven": false,
+  "second_innovation_established": false
+}
