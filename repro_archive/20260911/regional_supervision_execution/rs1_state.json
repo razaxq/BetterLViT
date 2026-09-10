@@ -5,12 +5,18 @@
   "pid": 238273,
   "started_unix": 1789071487.392747,
   "dispatch_only": true,
-  "inspections_completed": 0,
+  "inspections_completed": 1,
   "scratch_free_bytes": 6872870912,
   "fs_bytes": 18559782256,
   "test_split_accessed": false,
   "planned_first_check_unix": 1789072440,
   "started_sydney": "2026-09-11T06:18:07.392747+10:00",
   "planned_first_check_sydney": "2026-09-11T06:34:00+10:00",
-  "experiment_tag": "experiment-rs1-regional-80e-seed1219-20260911"
+  "experiment_tag": "experiment-rs1-regional-80e-seed1219-20260911",
+  "mean_epoch_seconds": 220.41169980044165,
+  "predicted_training_end_unix": 1789089265.375532,
+  "final_check_unix": 1789090020,
+  "remaining_audit_allowance_seconds": 120,
+  "last_phase": "training",
+  "last_checked_unix": 1789072528.1023638
 }

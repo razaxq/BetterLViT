@@ -14,6 +14,8 @@
 
 ## RS1/RS2/RS3首轮训练准备（2026-09-11）
 
+**RS1首次预约检查完成：** 悉尼2026-09-11 06:35:28.102，一次短连接确认完成4/80轮、正在第5轮，GPU92%、显存17402MiB，来源SHA/manifest一致且跟踪文件干净，无日志尾部异常。第2—4轮平均220.411700秒，加120秒后续诊断余量，预测今天11:14:25训练结束。同一heartbeat `betterlvit` 已改约**11:27唯一末检**，app实际配置核验通过，检查1/2，之后不再中途连接。无完整实验成绩或Test访问。[首检与预测](../repro_archive/20260911/regional_supervision_execution/rs1_first_snapshot.json)。
+
 **RS1已提交、首检已预约：** 悉尼2026-09-11 06:18:07.393提交80轮后台训练，PID238273，SHA `b4dd566ae472079c55e41cffd7727060bcfd6bf5`，tag `experiment-rs1-regional-80e-seed1219-20260911`。当前仅提交回执，尚未首检确认健康，无完整结果或Test访问，检查预算0/2。当前任务heartbeat `betterlvit` 已实际创建，首检约06:34，app配置与目标thread核验通过；届时据实测轮时改约唯一末检。[启动与预约](../repro_archive/20260911/regional_supervision_execution/rs1_launch.json)。
 
 全部预检通过：11项loss行为、5项阶段门；历史R2五步精确复现，三组初始化/输入一致，各组关闭loss后的正式分组优化器五步与R2逐值一致，插入Train诊断前后亦逐值一致。峰值分配约15.37GiB。RS2 `2a389922cadb31a8bf7660bc33b3cb1ae94f20ab`、RS3 `f79842331e4e5e41526ed66da31ec174ea4a61b2`已冻结部署并推送，尚未提交；按固定顺序归档前组后接续。启动前训练盘余6,872,870,912字节，共享fs18,559,782,256字节，模型保留。
