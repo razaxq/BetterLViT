@@ -1,0 +1,17 @@
+{
+  "c4": {
+    "checkpoint": "/root/BetterLViT-race-pe-c4/Covid19/BetterLViT/c4_race_pe_control/C4_Test_session_09.06_12h38/models/best_model-BetterLViT.pth.tar",
+    "source_git_commit": "add4908a0d6f702b0a10c4581725b535543829b8",
+    "repo": "/root/BetterLViT-race-pe-c4"
+  },
+  "c8": {
+    "checkpoint": "/root/BetterLViT-race-pe-v2-c8/Covid19/BetterLViT/c8_race_pe_v2_aux/C8_Test_session_09.07_02h20/models/best_model-BetterLViT.pth.tar",
+    "source_git_commit": "21606e02c2d64ae950c0f243f55163f58cbedf83",
+    "repo": "/root/BetterLViT-race-pe-v2-c8"
+  },
+  "p10": {
+    "checkpoint": "/root/BetterLViT-race-pe-v2-p10/Covid19/BetterLViT/p10_race_pe_v2/P10_Test_session_09.07_07h31/models/best_model-BetterLViT.pth.tar",
+    "source_git_commit": "2f33a71219ed2beb339db45d702ecc36a931e0c8",
+    "repo": "/root/BetterLViT-race-pe-v2-p10"
+  }
+}
