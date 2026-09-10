@@ -1,0 +1,528 @@
+{
+  "epoch": 40,
+  "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+  "mode": "pixel",
+  "scope": "32 fixed Train images; eval; no optimizer updates",
+  "state_sha256_before": "3446923f009bdee1d4d7b14b6ff037574ca8633401d402b67e82a07ccf462f7c",
+  "state_sha256_after": "3446923f009bdee1d4d7b14b6ff037574ca8633401d402b67e82a07ccf462f7c",
+  "gradient_state_unchanged": true,
+  "rng_restored": true,
+  "batches": [
+    {
+      "cases": [
+        {
+          "name": "covid_398.png",
+          "tp": 5435,
+          "fp": 419,
+          "fn": 102,
+          "label_pixels": 5537,
+          "prediction_pixels": 5854
+        },
+        {
+          "name": "covid_1793.png",
+          "tp": 10878,
+          "fp": 304,
+          "fn": 282,
+          "label_pixels": 11160,
+          "prediction_pixels": 11182
+        },
+        {
+          "name": "covid_543.png",
+          "tp": 8853,
+          "fp": 341,
+          "fn": 170,
+          "label_pixels": 9023,
+          "prediction_pixels": 9194
+        },
+        {
+          "name": "covid_1885.png",
+          "tp": 7061,
+          "fp": 1095,
+          "fn": 109,
+          "label_pixels": 7170,
+          "prediction_pixels": 8156
+        },
+        {
+          "name": "sub-S11646_ses-E22972_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 693,
+          "fp": 63,
+          "fn": 125,
+          "label_pixels": 818,
+          "prediction_pixels": 756
+        },
+        {
+          "name": "sub-S11025_ses-E25664_acq-1_run-1_bp-chest_vp-ll_dx.png",
+          "tp": 4431,
+          "fp": 263,
+          "fn": 357,
+          "label_pixels": 4788,
+          "prediction_pixels": 4694
+        },
+        {
+          "name": "sub-S10675_ses-E18490_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 9516,
+          "fp": 246,
+          "fn": 241,
+          "label_pixels": 9757,
+          "prediction_pixels": 9762
+        },
+        {
+          "name": "covid_3469.png",
+          "tp": 3217,
+          "fp": 12,
+          "fn": 2081,
+          "label_pixels": 5298,
+          "prediction_pixels": 3229
+        }
+      ],
+      "gradients": {
+        "main": [
+          {
+            "ratio": 1.0,
+            "cosine": 1.00000002811808
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999999675369714
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999999894649367
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999998948885869
+          }
+        ],
+        "pixel": [
+          {
+            "ratio": 0.007002898974707948,
+            "cosine": 0.3896581565337275
+          },
+          {
+            "ratio": 0.008996724344427557,
+            "cosine": 0.2690210394962075
+          },
+          {
+            "ratio": 0.011762030059186157,
+            "cosine": 0.1349042469950745
+          },
+          {
+            "ratio": 0.016442075996194728,
+            "cosine": 0.01420920994508991
+          }
+        ],
+        "visual_aux": [
+          {
+            "ratio": 0.007002898974707948,
+            "cosine": 0.3896581565337275
+          },
+          {
+            "ratio": 0.008996724344427557,
+            "cosine": 0.2690210394962075
+          },
+          {
+            "ratio": 0.011762030059186157,
+            "cosine": 0.1349042469950745
+          },
+          {
+            "ratio": 0.016442075996194728,
+            "cosine": 0.01420920994508991
+          }
+        ]
+      },
+      "weighted_losses": {
+        "main": 0.0470803938806057,
+        "pixel": 0.003832749091088772,
+        "visual_aux": 0.003832749091088772
+      }
+    },
+    {
+      "cases": [
+        {
+          "name": "covid_861.png",
+          "tp": 13789,
+          "fp": 4158,
+          "fn": 274,
+          "label_pixels": 14063,
+          "prediction_pixels": 17947
+        },
+        {
+          "name": "sub-S10980_ses-E20964_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 8976,
+          "fp": 2632,
+          "fn": 152,
+          "label_pixels": 9128,
+          "prediction_pixels": 11608
+        },
+        {
+          "name": "covid_4359.png",
+          "tp": 1667,
+          "fp": 1751,
+          "fn": 433,
+          "label_pixels": 2100,
+          "prediction_pixels": 3418
+        },
+        {
+          "name": "sub-S10473_ses-E22035_acq-2_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 3583,
+          "fp": 810,
+          "fn": 268,
+          "label_pixels": 3851,
+          "prediction_pixels": 4393
+        },
+        {
+          "name": "sub-S10109_ses-E23600_run-1_bp-chest_vp-ap_cr.png",
+          "tp": 878,
+          "fp": 14,
+          "fn": 898,
+          "label_pixels": 1776,
+          "prediction_pixels": 892
+        },
+        {
+          "name": "sub-S11422_ses-E20652_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 4943,
+          "fp": 1329,
+          "fn": 109,
+          "label_pixels": 5052,
+          "prediction_pixels": 6272
+        },
+        {
+          "name": "covid_2775.png",
+          "tp": 3939,
+          "fp": 2137,
+          "fn": 295,
+          "label_pixels": 4234,
+          "prediction_pixels": 6076
+        },
+        {
+          "name": "covid_1500.png",
+          "tp": 12451,
+          "fp": 585,
+          "fn": 172,
+          "label_pixels": 12623,
+          "prediction_pixels": 13036
+        }
+      ],
+      "gradients": {
+        "main": [
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999999136968332
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000000513020038
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000000646499672
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999999929153236
+          }
+        ],
+        "pixel": [
+          {
+            "ratio": 0.007569007763569536,
+            "cosine": 0.18644488223064276
+          },
+          {
+            "ratio": 0.007712656389572484,
+            "cosine": 0.15834834365066128
+          },
+          {
+            "ratio": 0.008559514337615625,
+            "cosine": 0.09024297843284496
+          },
+          {
+            "ratio": 0.010551961813005705,
+            "cosine": 0.00972898737730873
+          }
+        ],
+        "visual_aux": [
+          {
+            "ratio": 0.007569007763569536,
+            "cosine": 0.18644488223064276
+          },
+          {
+            "ratio": 0.007712656389572484,
+            "cosine": 0.15834834365066128
+          },
+          {
+            "ratio": 0.008559514337615625,
+            "cosine": 0.09024297843284496
+          },
+          {
+            "ratio": 0.010551961813005705,
+            "cosine": 0.00972898737730873
+          }
+        ]
+      },
+      "weighted_losses": {
+        "main": 0.09017390012741089,
+        "pixel": 0.004392977803945541,
+        "visual_aux": 0.004392977803945541
+      }
+    },
+    {
+      "cases": [
+        {
+          "name": "covid_3718.png",
+          "tp": 21080,
+          "fp": 2618,
+          "fn": 261,
+          "label_pixels": 21341,
+          "prediction_pixels": 23698
+        },
+        {
+          "name": "sub-S10126_ses-E17460_acq-1_run-1_bp-chest_vp-ll_dx.png",
+          "tp": 1211,
+          "fp": 13,
+          "fn": 276,
+          "label_pixels": 1487,
+          "prediction_pixels": 1224
+        },
+        {
+          "name": "sub-S12488_ses-E25171_run-1_bp-chest_vp-pa_dx.png",
+          "tp": 2732,
+          "fp": 266,
+          "fn": 292,
+          "label_pixels": 3024,
+          "prediction_pixels": 2998
+        },
+        {
+          "name": "sub-S11634_ses-E21590_run-1_bp-chest_vp-ap_cr.png",
+          "tp": 3594,
+          "fp": 488,
+          "fn": 328,
+          "label_pixels": 3922,
+          "prediction_pixels": 4082
+        },
+        {
+          "name": "sub-S10379_ses-E19596_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 4648,
+          "fp": 1179,
+          "fn": 215,
+          "label_pixels": 4863,
+          "prediction_pixels": 5827
+        },
+        {
+          "name": "covid_3365.png",
+          "tp": 741,
+          "fp": 61,
+          "fn": 160,
+          "label_pixels": 901,
+          "prediction_pixels": 802
+        },
+        {
+          "name": "covid_2456.png",
+          "tp": 1124,
+          "fp": 1863,
+          "fn": 97,
+          "label_pixels": 1221,
+          "prediction_pixels": 2987
+        },
+        {
+          "name": "sub-S10066_ses-E18339_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 10231,
+          "fp": 333,
+          "fn": 77,
+          "label_pixels": 10308,
+          "prediction_pixels": 10564
+        }
+      ],
+      "gradients": {
+        "main": [
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000000634126844
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999998561282187
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000002099816814
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999999108959401
+          }
+        ],
+        "pixel": [
+          {
+            "ratio": 0.014086288782456094,
+            "cosine": 0.24103116472259015
+          },
+          {
+            "ratio": 0.014501452666603722,
+            "cosine": 0.20663985883911426
+          },
+          {
+            "ratio": 0.017627889183596143,
+            "cosine": 0.09432030439356437
+          },
+          {
+            "ratio": 0.025175200128214906,
+            "cosine": 0.013916386091214681
+          }
+        ],
+        "visual_aux": [
+          {
+            "ratio": 0.014086288782456094,
+            "cosine": 0.24103116472259015
+          },
+          {
+            "ratio": 0.014501452666603722,
+            "cosine": 0.20663985883911426
+          },
+          {
+            "ratio": 0.017627889183596143,
+            "cosine": 0.09432030439356437
+          },
+          {
+            "ratio": 0.025175200128214906,
+            "cosine": 0.013916386091214681
+          }
+        ]
+      },
+      "weighted_losses": {
+        "main": 0.07401902228593826,
+        "pixel": 0.0038993130438029766,
+        "visual_aux": 0.0038993130438029766
+      }
+    },
+    {
+      "cases": [
+        {
+          "name": "sub-S12367_ses-E24742_acq-1_run-1_bp-chest_vp-ll_dx.png",
+          "tp": 2414,
+          "fp": 1147,
+          "fn": 141,
+          "label_pixels": 2555,
+          "prediction_pixels": 3561
+        },
+        {
+          "name": "sub-S11854_ses-E25984_run-1_bp-chest_cr.png",
+          "tp": 392,
+          "fp": 322,
+          "fn": 16,
+          "label_pixels": 408,
+          "prediction_pixels": 714
+        },
+        {
+          "name": "covid_492.png",
+          "tp": 5511,
+          "fp": 728,
+          "fn": 951,
+          "label_pixels": 6462,
+          "prediction_pixels": 6239
+        },
+        {
+          "name": "covid_898.png",
+          "tp": 25142,
+          "fp": 3219,
+          "fn": 20,
+          "label_pixels": 25162,
+          "prediction_pixels": 28361
+        },
+        {
+          "name": "covid_3052.png",
+          "tp": 13530,
+          "fp": 1308,
+          "fn": 233,
+          "label_pixels": 13763,
+          "prediction_pixels": 14838
+        },
+        {
+          "name": "covid_29.png",
+          "tp": 0,
+          "fp": 524,
+          "fn": 204,
+          "label_pixels": 204,
+          "prediction_pixels": 524
+        },
+        {
+          "name": "covid_3560.png",
+          "tp": 1999,
+          "fp": 610,
+          "fn": 223,
+          "label_pixels": 2222,
+          "prediction_pixels": 2609
+        },
+        {
+          "name": "sub-S11113_ses-E21743_run-1_bp-chest_vp-pa_dx.png",
+          "tp": 943,
+          "fp": 353,
+          "fn": 29,
+          "label_pixels": 972,
+          "prediction_pixels": 1296
+        }
+      ],
+      "gradients": {
+        "main": [
+          {
+            "ratio": 1.0,
+            "cosine": 0.9999999406516606
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000000619335645
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000000152912103
+          },
+          {
+            "ratio": 1.0,
+            "cosine": 1.0000000231996244
+          }
+        ],
+        "pixel": [
+          {
+            "ratio": 0.004038190325581122,
+            "cosine": 0.04820202700326086
+          },
+          {
+            "ratio": 0.004701756239814263,
+            "cosine": 0.04444215589323067
+          },
+          {
+            "ratio": 0.006362848577227779,
+            "cosine": 0.01949025118662982
+          },
+          {
+            "ratio": 0.007303498158956115,
+            "cosine": 0.004283867300432133
+          }
+        ],
+        "visual_aux": [
+          {
+            "ratio": 0.004038190325581122,
+            "cosine": 0.04820202700326086
+          },
+          {
+            "ratio": 0.004701756239814263,
+            "cosine": 0.04444215589323067
+          },
+          {
+            "ratio": 0.006362848577227779,
+            "cosine": 0.01949025118662982
+          },
+          {
+            "ratio": 0.007303498158956115,
+            "cosine": 0.004283867300432133
+          }
+        ]
+      },
+      "weighted_losses": {
+        "main": 0.11929603666067123,
+        "pixel": 0.004201700445264578,
+        "visual_aux": 0.004201700445264578
+      }
+    }
+  ]
+}

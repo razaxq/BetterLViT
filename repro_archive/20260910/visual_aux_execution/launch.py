@@ -18,6 +18,11 @@ def main():
         previous=json.loads(previous_path.read_text())
         assert previous['runtime']['phase']=='complete'
         assert (HERE/'s1_results/README.md').exists(),'Archive and record S1 before launching S2'
+        audit=json.loads((HERE/'s1_results/independent_verification.json').read_text())
+        backup=json.loads((HERE/'s1_results/hf_upload_verified.json').read_text())
+        assert audit['verified'] and backup['verified'] and backup['independent_local_listing_verified']
+        assert backup['original_models_preserved']
+        assert audit['source_git_commit']==backup['source_git_commit']==previous['runtime']['source_git_commit']
     result=remote('SOURCE='+repr(source)+'\n'+'''
 import json,os,shutil,subprocess,time
 from pathlib import Path

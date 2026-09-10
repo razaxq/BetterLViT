@@ -6,9 +6,19 @@
 
 ## S1首次预约检查
 
+更新：S1已完成，以下首检记录为历史阶段；当前完成状态见下节。
+
 2026-09-10 17:25:51.738（悉尼），heartbeat按预约触发，执行唯一一次短连接。已完成4/80轮，正在第5轮；GPU93%、显存17,840MiB，运行源码与冻结SHA一致且跟踪文件干净。日志尾部正常推进，当前没有完整结果或Test评估。首次五轮排除Best选择是原R2共同规则，日志仍显示best_epoch=1为初始占位，不能解读为已有正式Best。[原始首检快照](s1_first_snapshot.json)。
 
 第2–4轮平均219.600946秒；按最新完整轮结束时间外推剩余76轮，并加入120秒四次Train诊断余量，预计训练在今天22:04:23.275结束。同一heartbeat `betterlvit` 已改约今天22:17唯一末检，app保存配置核验通过。实际结束时间和30分钟间隔需末检确认，当前检查预算1/2，不再中途连接。S2继续等待S1完成归档。[预测与当前状态](s1_state.json)、[末检预约回执](s1_final_automation.json)、[配置核验](s1_final_automation_verified.json)。
+
+## S1完成与判定
+
+S1在2026-09-10 22:13:02.833（悉尼）完成80轮，22:14:48.068完成完整1429张Val导出；22:19:31.670末检，距训练结束388.837秒，预算2/2。原预约22:17，本次自动触发约晚2分钟；实际结束比首检预测晚519.558秒，仍满足结束后30分钟检查要求。GPU空闲、来源一致且跟踪文件干净，训练/评估返回码均0。
+
+Best为epoch67。Val macro IoU72.9003%、Dice82.6077%；对R2分别+0.2350、+0.2043个百分点。IoU区间[-0.0330,+0.4986]个百分点跨0且低于+0.3门槛，因此筛选未通过，不扩展S1多种子或Test。其他5项非退化条件均通过。S2仍按冻结计划继续。[完整报告](s1_results/REPORT.md)、[独立核验](s1_results/independent_verification.json)。
+
+HF正在添加19文件、1,698,048,537逻辑字节至`1f7edb78/`，包含原Best/Last、完整训练源码、manifest、日志、Val、80轮历史、四次诊断及对照分析。是否完成以`hf_upload_verified.json`为准；本段不代替上传核验。
 
 ## 本次提交
 
@@ -26,6 +36,8 @@ python -X utf8 launch.py --label s1
 python -X utf8 inspect_run.py --label s1 --phase first
 python -X utf8 inspect_run.py --label s1 --phase final
 python -X utf8 archive_completed.py --label s1
+python -X utf8 analyze_completed.py --label s1
+python -X utf8 upload_completed.py --label s1
 python -X utf8 launch.py --label s2
 ```
 

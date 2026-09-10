@@ -1,0 +1,70 @@
+{
+  "control": "r2_single_cosine",
+  "candidate": "s1_r2_pixel_aux",
+  "seed": 1219,
+  "control_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "candidate_sha": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+  "regional_increment": false,
+  "minimum_iou_delta": 0.003,
+  "deltas": {
+    "iou": {
+      "mean": 0.0023496280496837552,
+      "small_mean": 0.008286716604487102,
+      "ci95": [
+        -0.00032997580140119154,
+        0.004986024864207721
+      ]
+    },
+    "dice": {
+      "mean": 0.0020425523601502035,
+      "small_mean": 0.007064102502726312,
+      "ci95": [
+        -0.00046251750514511055,
+        0.0044490369527655
+      ]
+    },
+    "precision": {
+      "mean": 0.0007737872301031224,
+      "small_mean": 0.005657017339817818,
+      "ci95": [
+        -0.0018414978417755669,
+        0.0033593195798437858
+      ]
+    },
+    "recall": {
+      "mean": 0.003435537672340316,
+      "small_mean": 0.008752600108147868,
+      "ci95": [
+        -8.234195489158177e-05,
+        0.006954630602721172
+      ]
+    },
+    "brier": {
+      "mean": -0.0001448669709868926,
+      "small_mean": -0.00027334669331321917,
+      "ci95": [
+        -0.00034120131982155196,
+        5.167502164621994e-05
+      ]
+    }
+  },
+  "checks": {
+    "iou_minimum": false,
+    "iou_ci_positive": false,
+    "dice_not_lower": true,
+    "precision_not_lower": true,
+    "small_dice_not_lower": true,
+    "small_recall_not_lower": true,
+    "brier_not_higher": true
+  },
+  "passed": false,
+  "small_area_cutoff": 2075.0,
+  "small_count": 358,
+  "split": "validation",
+  "test_split_accessed": false,
+  "stable_gain_proven": false,
+  "input_sha256": {
+    "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\recipe_execution\\r2_results\\validation.json": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715",
+    "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\validation.json": "e06864106d2f4de3ae734b733f86be9d13eeb746c12b506fe1729b02c6dd07f2"
+  }
+}
