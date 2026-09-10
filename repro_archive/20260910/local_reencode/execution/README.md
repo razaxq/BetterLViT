@@ -17,4 +17,4 @@
 
 末检通过`control.py collect`核验完整Val、原始R2逐图指标与所有文件哈希；`finalize.py`进一步独立重建8425行计数指标、验证训练/审计/Val文件名互斥及2400步/LR端点。清单的audit_names为mask文件名，按原数据加载器的mask_去除规则映射到image文件名后核对；训练原始清单未修改。
 
-结果完成、归档和提交后运行`upload_completed.py`；上传为现有Bucket的新增路径，不覆盖其他模型，具体状态见`hf_upload_verified.json`。本轮没有访问Test。
+结果完成、归档和提交后已运行`upload_completed.py`。27文件、5,748,879逻辑字节已新增至HF Bucket `razaxq/BetterLViT` 的 `c749b72d/local_reencode_v1/`，覆盖两组分支权重、逐图结果、冻结源码和执行材料；逐文件大小及Xet哈希一致，证明见`hf_upload_verified.json`。既有模型未覆盖或删除。本轮没有访问Test。

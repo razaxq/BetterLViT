@@ -22,6 +22,8 @@
 
 来源 `c749b72db327cd777f63a4b6da4583b301456538`，tag `diagnostic-r2-local-reencode-20260910`。主干状态哈希不变、1429张Val原R2逐图指标差值为0；本地复算summary、8425行计数指标及三组文件名互斥均通过。悉尼15:11:02.919结束、用户15:23:24.172触发唯一末检，间隔741.254秒，检查1/2，符合30分钟要求，无持续SSH。原heartbeat已不存在，删除接口确认为not_found，不把人工触发误记为自动检查。[执行证据](../repro_archive/20260910/local_reencode/execution/README.md)。
 
+两组分支权重、逐图结果、冻结源码及执行材料共27文件、5,748,879逻辑字节已新增至HF Bucket `razaxq/BetterLViT` 的 `c749b72d/local_reencode_v1/`，逐文件大小和Xet哈希核验通过；既有模型未覆盖或删除。[上传核验](../repro_archive/20260910/local_reencode/execution/hf_upload_verified.json)。
+
 ## R2 局部语义分歧诊断（2026-09-10）
 
 用户同意先验证内容自适应局部语义编码的机制假设。已预注册冻结R2 seed1219 Best的Train/Val诊断：512张Train拟合三个小型读出头，128张Train内部审计，完整1429张Val比较分歧/不确定性/纹理/随机选择；每张固定40/196块、共享纠错头。主干、文本、原分割头与原检查点保持冻结，无Test访问。定位、实际纠错和相对不确定性的价值三类门槛须全部通过才进入结构设计；诊断头不是第二创新，也不代表正式模块结果。[预注册计划与复现代码](../repro_archive/20260910/semantic_probe/PLAN.md)。
