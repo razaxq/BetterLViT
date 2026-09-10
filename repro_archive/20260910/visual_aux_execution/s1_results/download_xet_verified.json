@@ -1,0 +1,75 @@
+{
+  "verified": true,
+  "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+  "files": [
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\checkpoint_metadata.json",
+      "remote": "1f7edb78/run/checkpoint_metadata.json",
+      "bytes": 6431,
+      "xet_hash": "169343b872efc399dfef940cbccb81467964ef4eca7833fc826ba98f95fc2249"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\diagnostics\\epoch_020.json",
+      "remote": "1f7edb78/run/diagnostics/epoch_020.json",
+      "bytes": 13253,
+      "xet_hash": "24c7603f751d4adfa0cba7511f5ffe8f0545858d44d543d40acb8d233001d9ce"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\diagnostics\\epoch_040.json",
+      "remote": "1f7edb78/run/diagnostics/epoch_040.json",
+      "bytes": 13260,
+      "xet_hash": "42a8a5a06c6971275547e5a7eb53624a8482c679b685aa48e316192501db2313"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\diagnostics\\epoch_060.json",
+      "remote": "1f7edb78/run/diagnostics/epoch_060.json",
+      "bytes": 13249,
+      "xet_hash": "b1dee7ac9b720dec4163bf22ef24aad05b8c8c81c55f012c59938e7329baf53e"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\diagnostics\\epoch_080.json",
+      "remote": "1f7edb78/run/diagnostics/epoch_080.json",
+      "bytes": 13256,
+      "xet_hash": "db7d299efdde5da7ab8f11f0ff2facb653db66b512bfe699d0c3fb41b90d7f10"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\epoch_history.json",
+      "remote": "1f7edb78/run/epoch_history.json",
+      "bytes": 853954,
+      "xet_hash": "58e5afc7902d73d0ee69a84a0fbd4c1818f2f97d57d38130390eed9fbc962dc8"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\epoch_timing.jsonl",
+      "remote": "1f7edb78/run/epoch_timing.jsonl",
+      "bytes": 17589,
+      "xet_hash": "a98319486c09d33f68dcfddf87160f552d54e703b82d5d725387e7b93b6a0eb1"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\runtime.json",
+      "remote": "1f7edb78/run/runtime.json",
+      "bytes": 3871,
+      "xet_hash": "6579091be3a9e8241c1ef1f63525eebe479072996a9d1ba5b334b7bd9f02a6ed"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\training.log",
+      "remote": "1f7edb78/run/training.log",
+      "bytes": 859072,
+      "xet_hash": "7445fa815dd9c3f28d69f4bdef1290bf82e1993c42091008409af5a43939678d"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\validation.json",
+      "remote": "1f7edb78/run/validation.json",
+      "bytes": 667927,
+      "xet_hash": "3139a72bab6d9d6da502735052c7f97183a80397e11bdffa833989456cbaa994"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260910\\visual_aux_execution\\s1_results\\validation.log",
+      "remote": "1f7edb78/run/validation.log",
+      "bytes": 13791,
+      "xet_hash": "07c239c620a76ba201b2a43383eb1a19d4a484538b2e6efe7ff5837b5ee5420a"
+    }
+  ],
+  "verified_files": 11,
+  "logical_bytes": 2475653,
+  "scope": "Downloaded static run artifacts only; weights stay on server"
+}

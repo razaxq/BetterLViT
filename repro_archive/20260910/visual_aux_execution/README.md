@@ -18,7 +18,7 @@ S1在2026-09-10 22:13:02.833（悉尼）完成80轮，22:14:48.068完成完整14
 
 Best为epoch67。Val macro IoU72.9003%、Dice82.6077%；对R2分别+0.2350、+0.2043个百分点。IoU区间[-0.0330,+0.4986]个百分点跨0且低于+0.3门槛，因此筛选未通过，不扩展S1多种子或Test。其他5项非退化条件均通过。S2仍按冻结计划继续。[完整报告](s1_results/REPORT.md)、[独立核验](s1_results/independent_verification.json)。
 
-HF正在添加19文件、1,698,048,537逻辑字节至`1f7edb78/`，包含原Best/Last、完整训练源码、manifest、日志、Val、80轮历史、四次诊断及对照分析。是否完成以`hf_upload_verified.json`为准；本段不代替上传核验。
+HF备份完成：19文件、1,698,048,537逻辑字节已添加至`1f7edb78/`，包含原Best/Last、完整训练源码、manifest、日志、Val、80轮历史、四次诊断及对照分析。服务器源文件、新鲜云端列表及独立本地列表的大小/Xet哈希均一致；11份下载原始文件也与服务器逐字节哈希一致。原模型保留，训练盘可用8,602,071,040字节，共享fs18,559,782,256字节。[上传核验](s1_results/hf_upload_verified.json)、[下载核验](s1_results/download_xet_verified.json)。
 
 ## 本次提交
 
@@ -38,6 +38,7 @@ python -X utf8 inspect_run.py --label s1 --phase final
 python -X utf8 archive_completed.py --label s1
 python -X utf8 analyze_completed.py --label s1
 python -X utf8 upload_completed.py --label s1
+python -X utf8 verify_downloads.py --label s1
 python -X utf8 launch.py --label s2
 ```
 
