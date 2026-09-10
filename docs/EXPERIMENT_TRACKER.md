@@ -18,7 +18,9 @@
 
 5460张Train拟合、256张内部审计，固定2400步；末步唯一导出，完整1429张Val一次评估，不访问Test。C须对R2 IoU至少+0.003、对B至少+0.001且配对区间均为正，同时满足Dice、precision、小面积组及Brier非退化门槛，才允许继续正式结构研究。历史最好EPPA仍作为绝对Test参考，不能只声称超过C4就解决问题。
 
-**已提交后台，尚无最终结果：** 来源 `c749b72db327cd777f63a4b6da4583b301456538`，tag `diagnostic-r2-local-reencode-20260910`，GitHub已推送。6项CPU检查、两次真实GPU8步预检通过；14:56:18（悉尼）提交PID200703，预计15:19结束、15:23末检，heartbeat `betterlvit`，检查0/2，无持续SSH。共享fs18,559,782,256字节，系统可用约3.99GB；特征仅驻留RAM。[执行证据](../repro_archive/20260910/local_reencode/execution/README.md)。
+**已完成，未通过推进门：** 原R2/B现有特征重解码/C原图重编码的Val macro IoU为72.6654%/72.6077%/72.6248%，Dice为82.4034%/82.3541%/82.3632%。C对R2 IoU−0.0405个百分点，95%区间[−0.1142,+0.0331]；对B仅+0.0171个百分点，区间[−0.0123,+0.0459]，均跨0。9个条件仅小面积组recall不降通过，不能宣称增益或显著退化。固定拟合子集loss下降，但Train内部审计和Val IoU均无改善；Val中更多FP伴随更少FN，最小GT总面积组IoU−0.3732个百分点。停止该冻结纠错配置的80轮扩展，不访问Test，不将其称为第二创新点。[完整结果与诊断](../repro_archive/20260910/local_reencode/results/README.md)。
+
+来源 `c749b72db327cd777f63a4b6da4583b301456538`，tag `diagnostic-r2-local-reencode-20260910`。主干状态哈希不变、1429张Val原R2逐图指标差值为0；本地复算summary、8425行计数指标及三组文件名互斥均通过。悉尼15:11:02.919结束、用户15:23:24.172触发唯一末检，间隔741.254秒，检查1/2，符合30分钟要求，无持续SSH。原heartbeat已不存在，删除接口确认为not_found，不把人工触发误记为自动检查。[执行证据](../repro_archive/20260910/local_reencode/execution/README.md)。
 
 ## R2 局部语义分歧诊断（2026-09-10）
 

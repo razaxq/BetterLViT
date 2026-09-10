@@ -1,0 +1,15 @@
+{
+  "verified": true,
+  "source_git_commit": "c749b72db327cd777f63a4b6da4583b301456538",
+  "checks": [
+    "artifact_sha256",
+    "exact_cpu_summary",
+    "1429_baseline_metrics",
+    "mask_budget",
+    "frozen_state",
+    "no_test"
+  ],
+  "independent_count_metric_rows": 8425,
+  "split_names_disjoint": true,
+  "all_2400_steps_verified": true
+}

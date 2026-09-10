@@ -1,0 +1,37 @@
+{
+  "metric_rows_reconstructed": 8425,
+  "fit_64_relative_loss_reduction": {
+    "features": 0.014838219959239729,
+    "image": 0.016721347413838017
+  },
+  "audit_means": {
+    "baseline": {
+      "iou": 0.8102916513889855,
+      "dice": 0.8895074310683719,
+      "precision": 0.8636162957223656,
+      "recall": 0.9298689487916756,
+      "brier": 0.01816050564009139
+    },
+    "features": {
+      "iou": 0.8092529410724361,
+      "dice": 0.8888413642510014,
+      "precision": 0.8592147881984031,
+      "recall": 0.9337304694776786,
+      "brier": 0.01815102651944349
+    },
+    "image": {
+      "iou": 0.8090889751541581,
+      "dice": 0.8887143148201844,
+      "precision": 0.8590860203803585,
+      "recall": 0.9336444553662206,
+      "brier": 0.01809153629825052
+    }
+  },
+  "full_unmasked_diagnostic_iou": {
+    "features": 0.726010034173223,
+    "image": 0.7261956216519013
+  },
+  "error_capture_macro": 0.9108132079690999,
+  "outside_old_bound_error_fraction_macro": 0.6207205224815395,
+  "outside_old_bound_error_fraction_pooled": 0.6569294889273667
+}

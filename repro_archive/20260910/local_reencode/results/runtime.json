@@ -1,0 +1,37 @@
+{
+  "phase": "complete",
+  "started_unix": 1789016185.6562088,
+  "source_git_commit": "c749b72db327cd777f63a4b6da4583b301456538",
+  "test_split_accessed": false,
+  "completed_unix": 1789017062.9185395,
+  "artifacts": {
+    "progress.json": {
+      "bytes": 210,
+      "sha256": "4d4e66fa43b2b5e894ba8f425201c5bc14370ac43248882b03ca37b066054e92"
+    },
+    "training.json": {
+      "bytes": 586741,
+      "sha256": "de477e42d89e4787ac8a0344ec296dc79c74053687a75ebe46c85ad662bff8a4"
+    },
+    "audit_records.json": {
+      "bytes": 432564,
+      "sha256": "b943e5ea803b59028605282d38b6177e0095a102773da1d159d9e0d3572ffbf3"
+    },
+    "records.json": {
+      "bytes": 2412548,
+      "sha256": "989bb746fb10e519326d501e69447f32356cf26339f4a88ce2031f7c2c6d6a31"
+    },
+    "summary.json": {
+      "bytes": 2049,
+      "sha256": "937b671ec77c0b43dda1e19d13fe43406326d776b6b0b297abbe8fc3a03a7c34"
+    },
+    "features.pt": {
+      "bytes": 786005,
+      "sha256": "335dcd2f7d9efc085bf39126781d8749e7404fef5163f331907372de50cf7701"
+    },
+    "image.pt": {
+      "bytes": 783237,
+      "sha256": "dbea62e5ee7282c9a40cbe82f0624f0e2fd03d94a225c43e31541aaf3c705846"
+    }
+  }
+}

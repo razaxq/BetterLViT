@@ -1,0 +1,8 @@
+{
+  "automation_id": "betterlvit",
+  "action": "delete",
+  "delete_status": "not_found",
+  "observed_unix": 1789018050.1777709,
+  "inspection_trigger": "user",
+  "claim": "No active matching automation; original scheduled execution was not observed"
+}

@@ -1,0 +1,8 @@
+{
+  "source_git_commit": "c749b72db327cd777f63a4b6da4583b301456538",
+  "phase": "training",
+  "step": 2400,
+  "total_steps": 2400,
+  "training_seconds": 559.7773253917694,
+  "remaining_training_seconds": 0.0
+}
