@@ -428,7 +428,13 @@ class LViT(nn.Module):
         self.race_enabled = bool(getattr(config, 'race_enabled', False))
         if self.race_enabled and (self.bcdh_enabled or self.cdrr_enabled):
             raise ValueError('RACE-Fuse cannot be combined with BCDH or CDRR')
-        if self.race_enabled:
+        if self.race_enabled and getattr(config, 'visual_aux_mode', 'none') != 'none':
+            from .visual_aux import VisualAuxiliaryHeads
+            with torch.random.fork_rng(devices=[]):
+                self.race = VisualAuxiliaryHeads(
+                    mode=config.visual_aux_mode, channels=(64,128,256,512),
+                    text_dim=768, hidden_channels=32, max_strength=.15)
+        elif self.race_enabled:
             race_class = RACEPE if getattr(config, "race_pe_enabled", False) else RACEFuse
             self.race = race_class(
                 channels=(64, 128, 256, 512),

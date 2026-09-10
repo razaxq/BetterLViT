@@ -111,6 +111,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'experiment_paper_id': getattr(config, 'experiment_paper_id', None),
         'decoder_fusion_mode': getattr(config, 'decoder_fusion_mode', None),
         'loss_name': getattr(config, 'loss_name', None),
+        'visual_aux_mode': config.visual_aux_mode,
         'boundary_loss_weight': float(
             getattr(config, 'boundary_loss_weight', 0.0)
         ),
@@ -420,7 +421,15 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
     configured_loss = getattr(config, 'loss_name', 'dice_bce')
-    if getattr(config, 'bcdh_enabled', False):
+    if config.visual_aux_mode != 'none':
+        from visual_aux_objective import VisualAuxiliaryObjective
+        criterion = VisualAuxiliaryObjective(
+            mode=config.visual_aux_mode,
+            dice_weight=config.dice_loss_weight, focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight)
+    elif getattr(config, 'bcdh_enabled', False):
         if configured_loss != 'dice_focal':
             raise ValueError('BCDH-R V1 requires dice_focal')
         if config.boundary_loss_weight != 0.0:
@@ -913,6 +922,11 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
                     ]],
                 )
             )
+
+        audit_path = os.environ.get('BETTERLVIT_AUX_AUDIT_PATH')
+        if config.visual_aux_mode != 'none' and audit_path and (epoch + 1) in (20,40,60,80):
+            from tools.visual_aux_audit import run_audit
+            run_audit(model, criterion, epoch + 1, audit_path)
 
         # Local epoch telemetry permits a single early completion forecast. It
         # observes normal training boundaries without changing RNG or tensors.

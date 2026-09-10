@@ -207,6 +207,19 @@ for _name, _id, _augmentation, _schedule in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+for _name, _id, _mode in (
+    ('s1_r2_pixel_aux', 'S1', 'pixel'),
+    ('s2_r2_visual_aux', 'S2', 'regional'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['r2_single_cosine'])
+    _profile.update(paper_id=_id, visual_aux_mode=_mode,
+        race_enabled=True, race_pe_enabled=True, race_pe_route_enabled=False,
+        race_pe_pixel_only=_mode=='pixel', race_aux_weight=.05,
+        description='R2 + C8 visual auxiliary supervision: '+_mode,
+        architecture_version='r2_visual_aux_v1_'+_mode)
+    PAPER_EXPERIMENTS[_name]=_profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

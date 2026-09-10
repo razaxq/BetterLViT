@@ -43,6 +43,7 @@ ALLOWED_EXPERIMENTS = (
     "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
     "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
     "r1_chest_augmentation", "r2_single_cosine",
+    "s1_r2_pixel_aux", "s2_r2_visual_aux",
 )
 
 
@@ -366,6 +367,7 @@ def main():
         "analysis_git_commit": analysis_commit,
         "visual_prior": expected_visual,
         "training_recipe": checkpoint.get('training_recipe'),
+        "visual_aux_mode": checkpoint.get('visual_aux_mode', 'none'),
         "checkpoint_best_epoch": int(checkpoint.get("best_epoch", -1)),
         "selection_metric": config.selection_metric,
         "seed": int(checkpoint.get("seed", -1)),

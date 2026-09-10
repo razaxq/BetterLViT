@@ -77,6 +77,7 @@ visual_prior_enabled = bool(paper_experiment.get('visual_prior_enabled', False))
 training_recipe_enabled = bool(paper_experiment.get('training_recipe_enabled', False))
 augmentation_policy = paper_experiment.get('augmentation_policy', 'legacy')
 lr_schedule = paper_experiment.get('lr_schedule', 'warm_restarts')
+visual_aux_mode = paper_experiment.get('visual_aux_mode', 'none')
 visual_random_init = bool(paper_experiment.get('visual_random_init', False))
 visual_encoder_kind = paper_experiment.get('visual_encoder_kind', 'cxformer')
 visual_model_root = os.environ.get('BETTERLVIT_VISUAL_MODEL_ROOT', '/root/visual_prior_models')
@@ -210,6 +211,7 @@ def get_CTranS_config():
     config.cdrr_delta_max = cdrr_delta_max
     config.cdrr_active_fraction = cdrr_active_fraction
     config.race_enabled = race_enabled
+    config.visual_aux_mode = visual_aux_mode
     config.race_pe_enabled = race_pe_enabled
     config.race_pe_route_enabled = race_pe_route_enabled
     config.race_hidden_channels = race_hidden_channels
