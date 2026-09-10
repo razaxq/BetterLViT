@@ -1,0 +1,47 @@
+{
+  "observed_unix": 1789066413.1881976,
+  "runtime": {
+    "phase": "complete",
+    "evaluation_source_git_commit": "18757a28793206573f87239f537245e22b7e8ac2",
+    "started_unix": 1789066009.5774164,
+    "training_started": false,
+    "arms": [
+      {
+        "label": "s1",
+        "started_unix": 1789066009.588743,
+        "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+        "returncode": 0,
+        "ended_unix": 1789066159.4492304,
+        "result_sha256": "0a8f6c196c3d701eaa59ca245298dd4a993351a18300c2c476553ded02018110"
+      },
+      {
+        "label": "s2",
+        "started_unix": 1789066159.5030222,
+        "source_git_commit": "7defc637e36974fabd0f47763275c90f617e5f53",
+        "returncode": 0,
+        "ended_unix": 1789066310.0888786,
+        "result_sha256": "d3ed00fe5a1be4246afba37e433fd8da98f9a4e470bb9aea0dddfe648cd41871"
+      }
+    ],
+    "current_label": null,
+    "completed_unix": 1789066310.1310346,
+    "artifacts": {
+      "s1_test.log": {
+        "bytes": 17945,
+        "sha256": "56ac83b14a46538463639c502cb794433d8524f9f9dc9a2cc7e1da7f88642c76"
+      },
+      "s1_test.json": {
+        "bytes": 1015923,
+        "sha256": "0a8f6c196c3d701eaa59ca245298dd4a993351a18300c2c476553ded02018110"
+      },
+      "s2_test.log": {
+        "bytes": 17953,
+        "sha256": "585d868e93512cf626050b7c176204284e3ee8a278e205e026c4a58e3541e4a3"
+      },
+      "s2_test.json": {
+        "bytes": 1015762,
+        "sha256": "d3ed00fe5a1be4246afba37e433fd8da98f9a4e470bb9aea0dddfe648cd41871"
+      }
+    }
+  }
+}

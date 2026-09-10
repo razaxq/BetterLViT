@@ -1,0 +1,13 @@
+{
+  "pid": 232440,
+  "submitted_unix": 1789066009.5154667,
+  "evaluation_source_git_commit": "18757a28793206573f87239f537245e22b7e8ac2",
+  "remote_directory": "/root/autodl-tmp/visual_aux_test_20260911",
+  "training_started": false,
+  "deployed_sha256": {
+    "evaluate_test.py": "f0c7bdf72e30e44ae0b3de42a27858c8092ca33a2b7108c1f595ae5658e7280c",
+    "run_chain.py": "347d3692c3b9acc4276331bcd8b78d953dc3555d746065d04dfeed886ab8f9ff",
+    "authorization.json": "9e0e56747b0e50c21b73976e926f018aa08a88b5cd9538778a0b99b3372afb92"
+  },
+  "planned_collection_unix": 1789066399.5154667
+}

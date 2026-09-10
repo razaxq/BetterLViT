@@ -16,5 +16,10 @@
     "s2:Load_Dataset.py:ValGenerator": "identical",
     "s2:Load_Dataset.py:ImageToImage2D": "identical",
     "s2:utils.py:read_text": "identical"
+  },
+  "verified_training_source_commits": {
+    "r2": "9eca26de5b301099805530edbf5a1a8718bea662",
+    "s1": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+    "s2": "7defc637e36974fabd0f47763275c90f617e5f53"
   }
 }

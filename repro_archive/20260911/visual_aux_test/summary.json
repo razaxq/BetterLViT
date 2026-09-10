@@ -1,0 +1,166 @@
+{
+  "models": {
+    "R2": {
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "best_epoch": 67,
+      "result_path": "repro_archive/20260910/recipe_test/results/r2s1219_test.json",
+      "result_sha256": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792",
+      "samples": 2113,
+      "seed": 1219,
+      "threshold": 0.5,
+      "metrics": {
+        "iou": 0.7580983080794957,
+        "dice": 0.8442357558557602,
+        "precision": 0.826084159202458,
+        "recall": 0.8916214076819452,
+        "brier": 0.016699489254147614
+      },
+      "mean_fp": 761.991008045433,
+      "mean_fn": 358.24893516327495,
+      "metric_reconstruction_max_error": {
+        "iou": 0.0,
+        "dice": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    "S1": {
+      "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+      "best_epoch": 67,
+      "result_path": "repro_archive/20260911/visual_aux_test/results/s1_test.json",
+      "result_sha256": "0a8f6c196c3d701eaa59ca245298dd4a993351a18300c2c476553ded02018110",
+      "samples": 2113,
+      "seed": 1219,
+      "threshold": 0.5,
+      "metrics": {
+        "iou": 0.7580092180361585,
+        "dice": 0.8440692247337898,
+        "precision": 0.8257479013716892,
+        "recall": 0.8929709145513515,
+        "brier": 0.01686132172346521
+      },
+      "mean_fp": 772.5475627070516,
+      "mean_fn": 355.40984382394697,
+      "metric_reconstruction_max_error": {
+        "iou": 0.0,
+        "dice": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    "S2": {
+      "source_git_commit": "7defc637e36974fabd0f47763275c90f617e5f53",
+      "best_epoch": 75,
+      "result_path": "repro_archive/20260911/visual_aux_test/results/s2_test.json",
+      "result_sha256": "d3ed00fe5a1be4246afba37e433fd8da98f9a4e470bb9aea0dddfe648cd41871",
+      "samples": 2113,
+      "seed": 1219,
+      "threshold": 0.5,
+      "metrics": {
+        "iou": 0.759991248926552,
+        "dice": 0.8452262337057866,
+        "precision": 0.8331691369759164,
+        "recall": 0.8853543946051925,
+        "brier": 0.016341051945648596
+      },
+      "mean_fp": 714.6573592049219,
+      "mean_fn": 377.98769522006626,
+      "metric_reconstruction_max_error": {
+        "iou": 0.0,
+        "dice": 0.0,
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    }
+  },
+  "comparisons": {
+    "S1-R2": {
+      "iou": {
+        "delta": -8.909004333729953e-05,
+        "paired_image_bootstrap_95ci": [
+          -0.0025529305881455923,
+          0.0024400034276738664
+        ]
+      },
+      "dice": {
+        "delta": -0.0001665311219704484,
+        "paired_image_bootstrap_95ci": [
+          -0.00237609773640295,
+          0.002092037790277082
+        ]
+      },
+      "precision": {
+        "delta": -0.000336257830768726
+      },
+      "recall": {
+        "delta": 0.0013495068694062615
+      },
+      "brier": {
+        "delta": 0.00016183246931759368
+      }
+    },
+    "S2-R2": {
+      "iou": {
+        "delta": 0.0018929408470563268,
+        "paired_image_bootstrap_95ci": [
+          -0.0004917611554224951,
+          0.004281164086778763
+        ]
+      },
+      "dice": {
+        "delta": 0.00099047785002653,
+        "paired_image_bootstrap_95ci": [
+          -0.001242858054048012,
+          0.0031645828166240743
+        ]
+      },
+      "precision": {
+        "delta": 0.007084977773458393
+      },
+      "recall": {
+        "delta": -0.006267013076752826
+      },
+      "brier": {
+        "delta": -0.00035843730849901835
+      }
+    },
+    "S2-S1": {
+      "iou": {
+        "delta": 0.001982030890393626,
+        "paired_image_bootstrap_95ci": [
+          -0.0006301765109839509,
+          0.004536826523457449
+        ]
+      },
+      "dice": {
+        "delta": 0.001157008971996979,
+        "paired_image_bootstrap_95ci": [
+          -0.0011691436626832922,
+          0.0034248222991647608
+        ]
+      },
+      "precision": {
+        "delta": 0.007421235604227118
+      },
+      "recall": {
+        "delta": -0.007616519946159088
+      },
+      "brier": {
+        "delta": -0.0005202697778166119
+      }
+    }
+  },
+  "protocol": {
+    "split": "test",
+    "aggregation": "per-image macro",
+    "matched_seed": 1219,
+    "epochs": 80,
+    "threshold": 0.5,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 1219,
+    "bootstrap_unit": "image; not subject; descriptive single-seed comparison",
+    "original_s1_s2_validation_screen_passed": false,
+    "user_requested_test": true,
+    "no_new_training": true
+  }
+}
