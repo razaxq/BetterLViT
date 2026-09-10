@@ -1,0 +1,15 @@
+{
+  "verified": true,
+  "configuration": {
+    "version": 1,
+    "id": "betterlvit",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "继续当前任务已授权的BetterLViT区域监督首轮训练RS1→RS2→RS3。先读取D:/BetterLViT/experiment_docs_work/repro_archive/20260911/regional_supervision_execution/README.md、sources.json、各run的state及预约回执，按本地记录的阶段行动，避免重复启动或重复检查。RS1于2026年9月11日06:18悉尼时间提交，首检预约06:34。每组最多两次短连接状态检查，不保持SSH、不循环轮询：首次运行inspect_run.py对应label的first阶段，用实测完整轮时预测结束，将同一个heartbeat改约预测结束后约12分钟作为唯一末检，并核验保存后的预约；末检核对距真实训练结束不超过30分钟。成功完成后依README归档、独立复算Val、核验来源SHA及诊断、上传HF并验证文件大小/Xet哈希，提交推送全部源代码和结果文档，再依次提交下一组并更新同一预约。三组均80轮seed1219，共同λ=0.128312，不因前组指标修改后组；此阶段不访问Test、不延长150轮、不自动启动RS4及后续方向。每次提交前检查空间，若不足则按已有存储授权审计后安全整理可重建缓存或迁移已完成且已核验备份的产物，保留模型及可访问路径，不绕过空间门；共享fs实际字节保持20GB以下。若异常或预测失准，保留证据并如实报告，不超出两次预算反复检查。全部首轮工作结束后删除该heartbeat。用户以Test macro IoU为最终成果指标，当前Val和预检不能表述为稳定增益。",
+    "status": "ACTIVE",
+    "rrule": "FREQ=DAILY;BYHOUR=6;BYMINUTE=34;BYSECOND=0",
+    "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+    "created_at": 1789071524571,
+    "updated_at": 1789071524571
+  }
+}

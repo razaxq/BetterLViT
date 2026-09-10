@@ -14,6 +14,10 @@
 
 ## RS1/RS2/RS3首轮训练准备（2026-09-11）
 
+**RS1已提交、首检已预约：** 悉尼2026-09-11 06:18:07.393提交80轮后台训练，PID238273，SHA `b4dd566ae472079c55e41cffd7727060bcfd6bf5`，tag `experiment-rs1-regional-80e-seed1219-20260911`。当前仅提交回执，尚未首检确认健康，无完整结果或Test访问，检查预算0/2。当前任务heartbeat `betterlvit` 已实际创建，首检约06:34，app配置与目标thread核验通过；届时据实测轮时改约唯一末检。[启动与预约](../repro_archive/20260911/regional_supervision_execution/rs1_launch.json)。
+
+全部预检通过：11项loss行为、5项阶段门；历史R2五步精确复现，三组初始化/输入一致，各组关闭loss后的正式分组优化器五步与R2逐值一致，插入Train诊断前后亦逐值一致。峰值分配约15.37GiB。RS2 `2a389922cadb31a8bf7660bc33b3cb1ae94f20ab`、RS3 `f79842331e4e5e41526ed66da31ec174ea4a61b2`已冻结部署并推送，尚未提交；按固定顺序归档前组后接续。启动前训练盘余6,872,870,912字节，共享fs18,559,782,256字节，模型保留。
+
 用户明确要求“启动训练”。已从冻结R2派生三项最终输出监督：RS1整图软IoU、RS2局部软IoU（56窗口/28步长）、RS3阳性/空背景分组。三组各80轮、seed1219、原R2单次余弦与Dice/Focal，不新增网络头；按顺序完整执行首轮，再按计划决定后续。[执行入口、校准与证据](../repro_archive/20260911/regional_supervision_execution/README.md)。
 
 固定Train-only校准得到共同λ=0.128312，初始12项批次×模式最大新增/主logit梯度比0.0999999；这是输出梯度尺度，不是共享参数梯度或IoU证据。源码、独立manifest和实验tag已推送GitHub并核验；最终CUDA预检及正式启动状态以下续记为准。
