@@ -2,7 +2,13 @@
 
 以[冻结计划](PLAN.md)为准。R2作为历史基线，S1仅像素监督，S2像素/区域存在/占比监督；两组80轮单次余弦、从头训练、seed1219。先S1，完成后归档再S2。配置不因中间结果改变。
 
-当前文件用于后续定时继续执行。实际是否已启动、检查次数和预约，以各自`*_launch.json`、`*_state.json`与`automation.json`为准；没有这些文件不能宣称启动。完整SHA/tag/远端路径见[sources.json](sources.json)。
+当前文件用于后续定时继续执行。实际是否已启动、检查次数和预约，以各自`*_launch.json`、`*_state.json`与最近一次`*_automation*.json`回执为准；没有这些文件不能宣称启动。完整SHA/tag/远端路径见[sources.json](sources.json)。
+
+## S1首次预约检查
+
+2026-09-10 17:25:51.738（悉尼），heartbeat按预约触发，执行唯一一次短连接。已完成4/80轮，正在第5轮；GPU93%、显存17,840MiB，运行源码与冻结SHA一致且跟踪文件干净。日志尾部正常推进，当前没有完整结果或Test评估。首次五轮排除Best选择是原R2共同规则，日志仍显示best_epoch=1为初始占位，不能解读为已有正式Best。[原始首检快照](s1_first_snapshot.json)。
+
+第2–4轮平均219.600946秒；按最新完整轮结束时间外推剩余76轮，并加入120秒四次Train诊断余量，预计训练在今天22:04:23.275结束。同一heartbeat `betterlvit` 已改约今天22:17唯一末检，app保存配置核验通过。实际结束时间和30分钟间隔需末检确认，当前检查预算1/2，不再中途连接。S2继续等待S1完成归档。[预测与当前状态](s1_state.json)、[末检预约回执](s1_final_automation.json)、[配置核验](s1_final_automation_verified.json)。
 
 ## 本次提交
 

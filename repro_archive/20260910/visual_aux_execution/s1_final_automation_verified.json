@@ -1,0 +1,10 @@
+{
+  "automation_id": "betterlvit",
+  "status": "ACTIVE",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "rrule": "FREQ=DAILY;BYHOUR=22;BYMINUTE=17;BYSECOND=0",
+  "planned_final_check_sydney": "2026-09-10T22:17:00+10:00",
+  "updated_at": 1789025193466,
+  "inspection_number": 1,
+  "verified_against_saved_app_configuration": true
+}
