@@ -207,6 +207,19 @@ for _name, _id, _augmentation, _schedule in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+# Development coefficient is replaced by frozen Train-only calibration before launch.
+for _name, _id, _mode in (
+    ('rs1_global_iou', 'RS1', 'global'),
+    ('rs2_local_iou', 'RS2', 'local'),
+    ('rs3_balanced_iou', 'RS3', 'balanced'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['r2_single_cosine'])
+    _profile.update(paper_id=_id, regional_mode=_mode, regional_weight=0.1,
+        description='R2 plus final-map regional overlap: ' + _mode,
+        architecture_version='r2_regional_overlap_v1_' + _mode)
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

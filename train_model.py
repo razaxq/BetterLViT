@@ -16,6 +16,7 @@ from torchvision import transforms
 
 import Config as config
 from training_recipe import SingleCosineSchedule, recipe_metadata
+from regional_objective import RegionalOverlapObjective, regional_metadata
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
@@ -158,6 +159,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
         'training_recipe': recipe_metadata(config),
+        'regional_supervision': regional_metadata(config),
         'visual_prior': (
             model.visual_prior.provenance if getattr(model, 'visual_prior', None) is not None else None
         ),
@@ -467,7 +469,10 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             raise ValueError(
                 'dice_focal requires boundary_loss_weight=0.0'
             )
-        criterion = WeightedDiceFocal(
+        objective_class = RegionalOverlapObjective if config.regional_mode != 'none' else WeightedDiceFocal
+        regional_kwargs = dict(mode=config.regional_mode, weight=config.regional_weight) if config.regional_mode != 'none' else {}
+        criterion = objective_class(
+            **regional_kwargs,
             dice_weight=config.dice_loss_weight,
             focal_weight=config.focal_loss_weight,
             focal_gamma=config.focal_gamma,
@@ -624,6 +629,9 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
             model.eval()
             val_loss, val_dice, val_iou = train_one_epoch(val_loader, model, criterion,
                                                           optimizer, writer, epoch, lr_scheduler, model_type, logger)
+        if config.regional_mode != 'none' and (epoch+1) in (20,40,60,80):
+            from tools.regional_audit import run_audit
+            run_audit(model, criterion, epoch+1, os.environ['BETTERLVIT_REGIONAL_AUDIT_PATH'])
         val_loss_components = dict(
             getattr(criterion, 'last_epoch_components', {})
         )

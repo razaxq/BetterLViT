@@ -29,6 +29,7 @@ from Load_Dataset import ImageToImage2D, ValGenerator
 from nets.BetterLViT import BetterLViT
 from utils import read_text
 from training_recipe import recipe_metadata
+from regional_objective import regional_metadata
 
 
 ALLOWED_EXPERIMENTS = (
@@ -43,6 +44,7 @@ ALLOWED_EXPERIMENTS = (
     "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
     "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
     "r1_chest_augmentation", "r2_single_cosine",
+    "rs1_global_iou", "rs2_local_iou", "rs3_balanced_iou",
 )
 
 
@@ -206,6 +208,8 @@ def main():
     analysis_commit = git_commit()
     if config.training_recipe_enabled and checkpoint.get('training_recipe') != recipe_metadata(config):
         raise RuntimeError('Training recipe provenance mismatch')
+    if config.regional_mode != 'none' and checkpoint.get('regional_supervision') != regional_metadata(config):
+        raise RuntimeError('Regional objective provenance mismatch')
     checkpoint_commit = checkpoint.get("source_git_commit")
     if checkpoint_commit != analysis_commit:
         raise RuntimeError(
