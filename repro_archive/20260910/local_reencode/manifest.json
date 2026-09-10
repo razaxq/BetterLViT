@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "baseline_repository": "/root/BetterLViT-recipe-r2",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "baseline_checkpoint": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+  "baseline_best_epoch": 67,
+  "validation_sha256": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b",
+  "seed": 1219,
+  "fit_samples": 5460,
+  "audit_samples": 256,
+  "steps": 2400,
+  "batch_size": 16,
+  "selected_blocks": 40,
+  "test_split_allowed": false,
+  "maximum_inspections": 2,
+  "planned_completion_check_margin_seconds": 180,
+  "arms": [
+    "features",
+    "image"
+  ]
+}
