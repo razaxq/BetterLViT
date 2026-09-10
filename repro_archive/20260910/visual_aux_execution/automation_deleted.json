@@ -1,0 +1,16 @@
+{
+  "automation_id": "betterlvit",
+  "delete_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Deleted automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"delete\",\"deleteStatus\":\"deleted\",\"snapshot\":{\"kind\":\"heartbeat\",\"name\":\"BetterLViT 视觉辅助监督\",\"rrule\":\"FREQ=DAILY;BYHOUR=3;BYMINUTE=46;BYSECOND=0\"}}"
+      }
+    ],
+    "isError": false
+  }
+}

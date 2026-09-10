@@ -1,0 +1,31 @@
+{
+  "phase": "complete",
+  "scope": "Frozen S1/S2 validation screens and archival",
+  "experiments": [
+    {
+      "label": "s1",
+      "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+      "prefix": "1f7edb78",
+      "verified_files": 19,
+      "logical_bytes": 1698048537,
+      "inspection_count": 2
+    },
+    {
+      "label": "s2",
+      "source_git_commit": "7defc637e36974fabd0f47763275c90f617e5f53",
+      "prefix": "7defc637",
+      "verified_files": 20,
+      "logical_bytes": 1698369075,
+      "inspection_count": 2
+    }
+  ],
+  "total_cloud_files": 39,
+  "total_logical_bytes": 3396417612,
+  "report_git_commit": "7a072a3c68c71c6ce89bf8f4a9cf7935adddb348",
+  "new_training_started": false,
+  "new_test_access": false,
+  "all_current_stage_gates_failed": true,
+  "heartbeat_deleted": true,
+  "heartbeat_file_absent": true,
+  "completed_unix": 1789062871.2555985
+}
