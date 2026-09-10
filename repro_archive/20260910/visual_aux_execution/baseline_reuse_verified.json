@@ -1,0 +1,12 @@
+{
+  "original_training_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "preflight_source_sha": "53e1703520e0d7fb7192d7134d6cad985b408493",
+  "shared_initialization_and_legacy_5_steps_identical": true,
+  "matched_fields": [
+    "initial_base_sha256",
+    "input_image_sha256",
+    "output_sha256_each_step",
+    "loss_each_step"
+  ],
+  "baseline_result": "../../20260908/recipe_execution/r2_results/validation.json"
+}

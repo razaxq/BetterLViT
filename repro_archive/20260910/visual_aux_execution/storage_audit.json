@@ -1,0 +1,106 @@
+{
+  "time_unix": 1789022330.4290903,
+  "target": "/root/autodl-tmp/visual_probe_cache_20260908",
+  "files": [
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/cxformer_Train_Folder.npy",
+      "bytes": 2247622784,
+      "shape": [
+        5716,
+        384,
+        16,
+        16
+      ],
+      "dtype": "float32"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/cxformer_Train_Folder_masks.npy",
+      "bytes": 286806144,
+      "shape": [
+        5716,
+        224,
+        224
+      ],
+      "dtype": "uint8"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/cxformer_Val_Folder.npy",
+      "bytes": 561905792,
+      "shape": [
+        1429,
+        384,
+        16,
+        16
+      ],
+      "dtype": "float32"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/cxformer_Val_Folder_masks.npy",
+      "bytes": 71701632,
+      "shape": [
+        1429,
+        224,
+        224
+      ],
+      "dtype": "uint8"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/dinov2_Train_Folder.npy",
+      "bytes": 2247622784,
+      "shape": [
+        5716,
+        384,
+        16,
+        16
+      ],
+      "dtype": "float32"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/dinov2_Train_Folder_masks.npy",
+      "bytes": 286806144,
+      "shape": [
+        5716,
+        224,
+        224
+      ],
+      "dtype": "uint8"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/dinov2_Val_Folder.npy",
+      "bytes": 561905792,
+      "shape": [
+        1429,
+        384,
+        16,
+        16
+      ],
+      "dtype": "float32"
+    },
+    {
+      "path": "/root/autodl-tmp/visual_probe_cache_20260908/dinov2_Val_Folder_masks.npy",
+      "bytes": 71701632,
+      "shape": [
+        1429,
+        224,
+        224
+      ],
+      "dtype": "uint8"
+    }
+  ],
+  "logical_bytes": 6336072704,
+  "active_users": [],
+  "no_training_or_visual_probe_active": true,
+  "removed": false,
+  "free_before": {
+    "/root": 3981201408,
+    "/root/autodl-tmp": 3990876160
+  },
+  "free_after": {
+    "/root": 3981201408,
+    "/root/autodl-tmp": 3990876160
+  },
+  "fs_bytes_before": 18559782256,
+  "fs_bytes_after": 18559782256,
+  "regeneration_source": "/root/BetterLViT-visual-prior-dev/tools/probe_visual_prior.py",
+  "reason": "Derived feature and resized-mask cache only; models, original dataset and result records retained"
+}

@@ -1,0 +1,12 @@
+{
+  "status": "ok",
+  "log": ".......\n----------------------------------------------------------------------\nRan 7 tests in 0.855s\n\nOK\n",
+  "source_git_commit": "53e1703520e0d7fb7192d7134d6cad985b408493",
+  "profile": "r2_single_cosine",
+  "command": [
+    "/root/autodl-tmp/envs/betterlvit-paper/bin/python",
+    "tools/test_visual_aux.py"
+  ],
+  "seconds": 4.827807188034058,
+  "returncode": 0
+}

@@ -1,0 +1,13 @@
+{
+  "source": {
+    "branch": "paper/r2-visual-aux-s1",
+    "source_git_commit": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+    "profile": "s1_r2_pixel_aux",
+    "local_repository": "D:\\BetterLViT\\visual_aux_s1_work",
+    "repository": "/root/autodl-tmp/BetterLViT-visual-aux-s1",
+    "remote_run": "/root/autodl-tmp/visual_aux_runs/s1_80_seed1219_20260910",
+    "experiment_tag": "experiment-s1-r2-pixel-80e-seed1219-20260910"
+  },
+  "status": "ok",
+  "scratch_free_bytes": 10324561920
+}

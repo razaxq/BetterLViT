@@ -1,0 +1,21 @@
+{
+  "status": "ok",
+  "original_r2_training_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "legacy_5_steps_exact": true,
+  "formal_optimizer_aux_disabled_5_steps_exact": true,
+  "identical_s1_s2_aux_initialization": true,
+  "candidates": {
+    "s1": {
+      "sha": "1f7edb7858345b6b3ef0736291bb5cf92a2f712f",
+      "repeat_and_audit_identical": true,
+      "shared_initialization_and_rng_match": true,
+      "peak_allocated_bytes": 16948545536
+    },
+    "s2": {
+      "sha": "7defc637e36974fabd0f47763275c90f617e5f53",
+      "repeat_and_audit_identical": true,
+      "shared_initialization_and_rng_match": true,
+      "peak_allocated_bytes": 16947911680
+    }
+  }
+}

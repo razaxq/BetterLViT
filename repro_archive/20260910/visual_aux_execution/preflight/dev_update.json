@@ -1,0 +1,11 @@
+{
+  "source": {
+    "branch": "paper/r2-visual-aux-development",
+    "source_git_commit": "53e1703520e0d7fb7192d7134d6cad985b408493",
+    "repository": "/root/autodl-tmp/BetterLViT-visual-aux-dev",
+    "local_repository": "D:/BetterLViT/visual_aux_work",
+    "profile": "r2_single_cosine"
+  },
+  "status": "ok",
+  "scratch_free_bytes": 10325962752
+}
