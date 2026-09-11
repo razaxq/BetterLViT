@@ -1,0 +1,14 @@
+{
+  "verified": true,
+  "automation_id": "betterlvit",
+  "kind": "heartbeat",
+  "status": "ACTIVE",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "next_check_sydney": "2026-09-11T23:30:00+10:00",
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "inspections_completed": 0,
+  "automation_toml_sha256": "918f4e0a5aae52a49c41955ffe48b684b818dcc06b6c2d71fee1fa1b7e724649",
+  "prompt_exact_match": true,
+  "verified_unix": 1789132985.7289011,
+  "remote_training_status_queried": false
+}

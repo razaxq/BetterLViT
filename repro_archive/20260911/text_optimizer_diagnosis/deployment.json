@@ -1,0 +1,28 @@
+{
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "remote_directory": "/root/text_optimizer_d_c7080ea8",
+  "files_sha256": {
+    "run_screen.py": "3b743e8269d6bcf98d636d41ae64db450ad936693f0151b513a340cdf34d2538",
+    "heads.py": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+    "check_heads.py": "9e302059cf6921feb1fe4f0cbcb33ad76599129417f495ec1718e098238fc3cc",
+    "analysis.py": "063d2f9bb386d479abb07af1acfa5336e33909f0936489e404f21b681a80f80f",
+    "control.py": "9828bc0a1f7eaf8016e9e83bbdb198f30185271c7c32731b55ac2e8f72049ff1",
+    "manifest.json": "23d189a1a37edd6c22563c77bc585a904d6ed5fb57c30b78a4071568f7fb686b",
+    "PROTOCOL.md": "81017ab1e3e27eb21e9606c8f9adac75b9e504cb285e8dedcac2d079d0fc2a4a"
+  },
+  "tests": {
+    "cpu": {
+      "exit_code": 0,
+      "stdout": "{\"passed\": true, \"device\": \"cpu\", \"parameters\": 75808, \"finite_difference_gradient\": true, \"identity\": true, \"mass_max_error_pixels\": 9.728985605761409e-05, \"deterministic_forward_backward\": true, \"image_text_invariance\": true, \"template_image_invariance\": true, \"equal_reference_zero\": true, \"eligibility_abstention\": true, \"all_parameter_gradients_finite\": true, \"synthetic_only\": true, \"losses\": {\"T1\": 0.1254270076751709, \"T2\": 0.1254323124885559, \"T3\": 0.12542659044265747, \"T4\": 0.12543214857578278, \"image\": 0.12543661892414093, \"template\": 0.12542738020420074}}\n",
+      "stderr": "/root/text_optimizer_d_c7080ea8/check_heads.py:50: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n  error=float((p.double().sum((1,2,3))-logits.sigmoid().double().sum((1,2,3))).abs().max())\n"
+    },
+    "cuda": {
+      "exit_code": 0,
+      "stdout": "{\"passed\": true, \"device\": \"cuda\", \"parameters\": 75808, \"finite_difference_gradient\": true, \"identity\": true, \"mass_max_error_pixels\": 0.00013424098142422736, \"deterministic_forward_backward\": true, \"image_text_invariance\": true, \"template_image_invariance\": true, \"equal_reference_zero\": true, \"eligibility_abstention\": true, \"all_parameter_gradients_finite\": true, \"synthetic_only\": true, \"losses\": {\"T1\": 0.12478157877922058, \"T2\": 0.12479054182767868, \"T3\": 0.12478159368038177, \"T4\": 0.12479005008935928, \"image\": 0.12478552013635635, \"template\": 0.12478248029947281}}\n",
+      "stderr": "/root/text_optimizer_d_c7080ea8/check_heads.py:50: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n  error=float((p.double().sum((1,2,3))-logits.sigmoid().double().sum((1,2,3))).abs().max())\n"
+    }
+  },
+  "preflight_passed": true,
+  "deployed_unix": 1789132862.1734524,
+  "system_free_bytes": 1313505280
+}

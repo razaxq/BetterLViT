@@ -18,7 +18,9 @@
 
 T4/image几乎零修正，梯度及参数塌缩；T4的K范数约3.24→1.42e−20。只读首个fit批次与头权重诊断、初始状态/载入/源哈希核验通过；零初始化前层任务梯度为0而Adam coupled L2仍施加衰减，支持优化配置压制弱分支的解释，尚未完成优化器因果对照。普通T1/T3增加FP而IoU下降。B小头与源/结果已HF `49905dbb/`核验19文件、15,627,795字节及全部Xet哈希，不称正式Test模型。
 
-按已有授权新增[仅Train优化器诊断D](../repro_archive/20260911/text_optimizer_diagnosis/PROTOCOL.md)：Adam+L2、Adam无衰减、AdamW，每种原六头、原序列前512步、原1024余弦前半段；原Adam必须精确复现B的0/256/512步fit遥测。当前待提交预检/派发，不重评原内部holdout，不新增结构或自动开80轮/Test。以下B派发记录为历史。
+按已有授权新增[仅Train优化器诊断D](../repro_archive/20260911/text_optimizer_diagnosis/PROTOCOL.md)：Adam+L2、Adam无衰减、AdamW，每种原六头、原序列前512步、原1024余弦前半段；原Adam必须精确复现B的0/256/512步fit遥测。不重评原内部holdout，不新增结构或自动开80轮/Test。
+
+**D已于23:21:43.011后台提交，PID275262，来源`c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd`、标签`diagnostic-text-optimizer-d1-20260911`。** 7份源文件SHA一致、CPU/CUDA预检通过，启动前系统盘余1,313,497,088字节；只读原B缓存，SSH断开。预计约23:27完成，同一heartbeat已改约**23:30首次检查**并核验，检查0/2。目前只有派发回执，无D结果。[D启动记录](../repro_archive/20260911/text_optimizer_diagnosis/README.md)。以下B派发记录为历史。
 
 **22:59:57.133悉尼时间后台提交六组任务，PID274265。** 来源`49905dbbdc644454a37a4a49098db0d5df5fe75a`、组标签`pilot-r2-text-residual-b-v1-20260911`，远端`/root/text_head_b_49905dbb`，启动前系统盘余3,106,045,952字节，SSH已断开。同一heartbeat已改约**23:08首次检查**并核验，检查0/2；当前只有派发回执，尚无实际更新进度或新IoU成绩。[B回执与协议](../repro_archive/20260911/text_head_screening/README.md)。
 
