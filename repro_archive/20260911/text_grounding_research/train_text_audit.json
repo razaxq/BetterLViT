@@ -1,0 +1,89 @@
+{
+  "kind": "train_text_static_audit_not_segmentation_evaluation",
+  "train_count": 5716,
+  "train_membership_sha256": "b58295942caaa6a455f995dcbccc4fc7e259e6b4a9b940b4d25344925dd9346d",
+  "train_name_text_sha256": "110e6f7cd3820147bda3730c71133cae9954e2dbff8db9905c7e017d219fff57",
+  "workbook_sha256": "fa292d8837d0e55cd4b3fe0cb367614045cb3d30de19b08bf0f62e1148db10a9",
+  "vocab_sha256": "e025f479c3a7ce6e248971bfe1b409708db0439e9488d30e254f81f27f75d678",
+  "tokenizer_snapshot": "5157bdba1437a3aed316dacb1a5b68edf96b9902",
+  "source_commit": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+  "source_files": [
+    {
+      "path": "Config.py",
+      "sha256": "ccc8d50348376635c2f85049f3ddefdd956a2ff226ba4b2318945666d75b5ded"
+    },
+    {
+      "path": "Load_Dataset.py",
+      "sha256": "33fc1917af8c0bcb96d651f1fc7c8876b2f26d887dde49beac4bd12413a9acba"
+    },
+    {
+      "path": "nets/BetterLViT.py",
+      "sha256": "31c3f3d2cd937f2670bc065ccbaf8d261032787c3b25834ab0d864ead3a7daea"
+    },
+    {
+      "path": "nets/LViT.py",
+      "sha256": "5081d3efecba1ccc5e1893153ecccd618ada4da7ee00d9af184aa35c750b5261"
+    },
+    {
+      "path": "nets/Vit.py",
+      "sha256": "d01de1d56c86135f1f77dce69d420f5fc0082b91aed49df9d19feb071be191e8"
+    },
+    {
+      "path": "nets/eppa.py",
+      "sha256": "deebe7868cd226e30e2117f8954339d62785d4c160bcd41607c0fa62c01f351d"
+    }
+  ],
+  "dependencies": {
+    "transformers": "4.44.2",
+    "tokenizers": "0.19.1",
+    "openpyxl": "3.1.5"
+  },
+  "unique_raw_texts": 273,
+  "unique_visible_sequences_32": 240,
+  "raw_template_collision_groups_after_tokenization": 22,
+  "wordpiece_length_including_cls_sep": {
+    "min": 13,
+    "median": 18,
+    "max": 24
+  },
+  "truncated_at_32_samples": 0,
+  "truncated_at_32_templates": 0,
+  "samples_with_unk_tokens": 0,
+  "strict_location_parser_coverage": 5543,
+  "strict_location_parser_abstentions": 173,
+  "strict_asymmetric_bilateral_samples": 1256,
+  "strict_unilateral_samples": 1155,
+  "same_word_multiset_different_binding_groups": 36,
+  "samples_in_same_word_multiset_different_binding_groups": 1236,
+  "two_random_distinct_train_samples_identical_raw_text_probability": 0.13273125673846403,
+  "top5_template_sample_count": 3726,
+  "top5_templates": [
+    {
+      "text": "Bilateral pulmonary infection, two infected areas, all left lung and all right lung.",
+      "count": 1587
+    },
+    {
+      "text": "Bilateral pulmonary infection, two infected areas, lower left lung and lower right lung.",
+      "count": 1182
+    },
+    {
+      "text": "Unilateral pulmonary infection, one infected area, lower right lung.",
+      "count": 437
+    },
+    {
+      "text": "Unilateral pulmonary infection, one infected area, lower left lung.",
+      "count": 294
+    },
+    {
+      "text": "Bilateral pulmonary infection, two infected areas, all left lung and lower right lung.",
+      "count": 226
+    }
+  ],
+  "limitations": [
+    "Local migration copy; hashes recorded, not a live remote dataset verification.",
+    "Workbook is shared Train/Val; only rows in Train membership are analyzed.",
+    "No mask content loaded; parser fields are language annotations, not disease absence labels.",
+    "Same-word-multiset groups are evidence of available binding distinctions, not evidence the trained model confuses them.",
+    "With zero observed truncations, raw-template collisions here arise during tokenization/normalization, not from the 32-token limit."
+  ]
+}

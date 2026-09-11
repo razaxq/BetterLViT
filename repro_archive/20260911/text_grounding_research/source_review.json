@@ -1,0 +1,128 @@
+{
+  "as_of": "2026-09-11",
+  "scope": "Text-guided medical segmentation and adjacent referring segmentation; BetterLViT IoU-first feasibility and novelty review",
+  "candidate_status": "Unvalidated joint-method hypothesis; not a claim of first invention or stable IoU improvement",
+  "sources": [
+    {
+      "id": 1,
+      "name": "C2Seg",
+      "url": "https://proceedings.iclr.cc/paper_files/paper/2026/hash/5a8a65248b58794b53ab0f1b4587860d-Abstract-Conference.html",
+      "status": "ICLR 2026 official proceedings",
+      "access": "Official page and 18-page published PDF retrieved; method sections and training settings inspected",
+      "overlap": "Cluster-aware contrastive learning, template bias removal, bidirectional spatial image-text interaction"
+    },
+    {
+      "id": 2,
+      "name": "SSA",
+      "url": "https://arxiv.org/html/2512.22981v1",
+      "status": "December 2025 preprint; venue not independently established",
+      "access": "HTML methods inspected",
+      "overlap": "Symmetric optimal transport and directional language spatial guidance"
+    },
+    {
+      "id": 3,
+      "name": "RecLMIS",
+      "url": "https://arxiv.org/abs/2404.02845",
+      "status": "2024 preprint and TMI 2025 record",
+      "access": "Author abstract and official repository overview; not a full implementation replication",
+      "overlap": "Cross-modal word and image reconstruction"
+    },
+    {
+      "id": 4,
+      "name": "ARSeg",
+      "url": "https://papers.miccai.org/miccai-2025/paper/3688_paper.pdf",
+      "status": "MICCAI 2025 official open-access",
+      "access": "PDF method inspected",
+      "overlap": "Attribute-specific cross-modal interactions and incomplete prompts"
+    },
+    {
+      "id": 5,
+      "name": "CausalCLIPSeg",
+      "url": "https://papers.miccai.org/miccai-2024/paper/3127_paper.pdf",
+      "status": "MICCAI 2024 official open-access",
+      "access": "PDF method, experimental settings inspected",
+      "overlap": "Text-generated convolution, adversarial causal/confounding feature partition"
+    },
+    {
+      "id": 6,
+      "name": "FairVLM",
+      "url": "https://github.com/Rahman-Motiur/FairVLM",
+      "status": "WACV 2026 official CVF listing and author repository",
+      "access": "Author README and indexed official PDF excerpts; direct PDF access restricted",
+      "overlap": "Semantics-preserving counterfactual prompting and prediction consistency"
+    },
+    {
+      "id": 7,
+      "name": "TGC-Net",
+      "url": "https://arxiv.org/html/2512.21135v1",
+      "status": "December 2025 preprint",
+      "access": "HTML method inspected",
+      "overlap": "LLM medical knowledge expansion and gated vision-language calibration"
+    },
+    {
+      "id": 8,
+      "name": "Fine-grained vision-language alignment for medical image segmentation",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1746809426017593",
+      "status": "2026 publisher record; exact online date not verified",
+      "access": "Indexed publisher abstract and section excerpts only; full algorithm boundary remains uncertain",
+      "overlap": "Sub-text semantics and pixel alignment"
+    },
+    {
+      "id": 9,
+      "name": "InstAlign",
+      "url": "https://arxiv.org/abs/2411.15087",
+      "status": "2024 preprint; v2 March 2026, PVUW CVPR 2026 Workshop",
+      "access": "Author abstract and public HTML overview",
+      "overlap": "Phrase-instance alignment and relevance-based null-target handling"
+    },
+    {
+      "id": 10,
+      "name": "CROSS",
+      "url": "https://arxiv.org/html/2608.03147v2",
+      "status": "August 2026 preprint; authors report ECCV 2026 acceptance",
+      "access": "PSCL and spatial counterfactual construction inspected",
+      "overlap": "Spatial counterfactual linguistic negatives and mask-filtered hard visual negatives"
+    },
+    {
+      "id": 11,
+      "name": "Volume preserving image segmentation with entropy regularized optimal transport",
+      "url": "https://www.sciencedirect.com/science/article/pii/S1047320320300961",
+      "status": "JVCIR 2020, article 102845",
+      "access": "Publisher abstract and introduction; no replication of full VPTV algorithm",
+      "overlap": "Volume preservation in segmentation and neural-network output layers"
+    },
+    {
+      "id": 12,
+      "name": "ProLearn",
+      "url": "https://shuchangye-bib.github.io/websites/ProLearn/prolearn.html",
+      "status": "ICCV 2025",
+      "access": "Author overview and official indexed PDF",
+      "overlap": "Prototype approximation reducing paired-text dependence"
+    }
+  ],
+  "search_axes": [
+    "Latest text-guided medical segmentation and QaTa-COV19",
+    "Template repetition and false negatives in image-text contrastive learning",
+    "Spatial-aware alignment, directional priors, optimal transport",
+    "Incomplete textual prompts and attribute-specific cross-modal segmentation",
+    "Phrase-instance alignment, rejection/null target and generalized referring segmentation",
+    "Counterfactual semantic and spatial text perturbations, including remote sensing",
+    "Differential attention, negative reference text and inference calibration",
+    "Probability mass redistribution, mass conservation and volume-preserving segmentation"
+  ],
+  "excluded_standalone_novelty_claims": [
+    "Add cross attention or bidirectional interaction",
+    "Split report clauses or learn phrase queries",
+    "Repair incomplete prompts / add a null or rejection query",
+    "Generate spatial counterfactual hard negatives",
+    "Use LLM paraphrases and consistency",
+    "Introduce a volume/mass preserving segmentation layer"
+  ],
+  "remaining_hypothesis": "A same-image relation-specific textual evidence difference used at inference under baseline soft-mass projection may help localization without a new region-label auxiliary objective. Its incremental value over text matching, counterfactual training, and image-only constrained correction is untested.",
+  "limitations": [
+    "This is a bounded literature search, not proof of absence or a patent/FTO opinion.",
+    "Paper metrics, datasets, text encoders, training budgets and aggregation were not harmonized.",
+    "The candidate components have strong prior art; only a demonstrated useful joint mechanism could support a limited method contribution.",
+    "Full-text access remained incomplete for one particularly relevant sub-text alignment paper."
+  ]
+}

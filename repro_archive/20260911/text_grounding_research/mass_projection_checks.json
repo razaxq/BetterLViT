@@ -1,0 +1,30 @@
+{
+  "status": "synthetic_numerical_checks_only_not_model_results",
+  "mass_absolute_error": 0.0,
+  "identity_max_error": 1.1102230246251565e-16,
+  "uniform_delta_invariance_max_error": 2.220446049250313e-16,
+  "implicit_delta_jvp_finite_difference_max_error": 2.9772961873675285e-11,
+  "toy_correct_local_evidence": {
+    "before_iou": 0.0,
+    "after_iou": 1.0,
+    "before_soft_mass": 2.0,
+    "after_soft_mass": 1.9999999999999996
+  },
+  "toy_wrong_local_evidence": {
+    "before_iou": 1.0,
+    "after_iou": 0.0,
+    "note": "Mass preservation alone does not prevent incorrect spatial assignment."
+  },
+  "soft_mass_does_not_preserve_hard_area": {
+    "before_mass": 1.96,
+    "after_mass": 1.96,
+    "before_hard_pixels": 0,
+    "after_hard_pixels": 2
+  },
+  "not_tested": [
+    "Learned text-image affinity",
+    "PyTorch/CUDA autograd implementation",
+    "End-to-end training",
+    "Real-data Dice or IoU gain"
+  ]
+}
