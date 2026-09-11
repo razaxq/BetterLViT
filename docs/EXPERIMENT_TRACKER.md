@@ -12,7 +12,9 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：B六组筛选已预注册（2026-09-11）
+## 文字引导方向：B六组筛选已后台提交（2026-09-11）
+
+**22:59:57.133悉尼时间后台提交六组任务，PID274265。** 来源`49905dbbdc644454a37a4a49098db0d5df5fe75a`、组标签`pilot-r2-text-residual-b-v1-20260911`，远端`/root/text_head_b_49905dbb`，启动前系统盘余3,106,045,952字节，SSH已断开。同一heartbeat已改约**23:08首次检查**并核验，检查0/2；当前只有派发回执，尚无实际更新进度或新IoU成绩。[B回执与协议](../repro_archive/20260911/text_head_screening/README.md)。
 
 已实现[固定特征B协议](../repro_archive/20260911/text_head_screening/PROTOCOL.md)：R2冻结，普通文本匹配/关系差分×有无保量，另加同参数形状image/template控制；相同初始化、Train内部划分、原Dice/Focal及1024步单次余弦。fit4585、holdout1131，六组共同关系可交换资格1930/458，其他样本保持R2。精确原始cache1,756,686,848字节，系统盘预留1GB，shared fs不写。
 
