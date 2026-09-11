@@ -18,6 +18,7 @@ KEY='C:/Users/dtftn/.ssh/seetacloud_betterlvit_ed25519'
 FILES=('run_diagnostic.py','analysis.py','text_policy.py','routing.py','check_policy.py',
        'check_corpus.py','control.py','manifest.json','PLAN.md','r2_validation.json')
 MANIFEST=json.loads((HERE/'manifest.json').read_text())
+SYDNEY=ZoneInfo('Australia/Sydney')  # Fail before any launch if local tzdata is unavailable.
 
 
 def remote(code):
@@ -116,7 +117,7 @@ print(json.dumps(result))
 ''')
     check=math.ceil((result['submitted_unix']+MANIFEST['first_check_delay_seconds'])/60)*60
     state=dict(phase='submitted',diagnostic_source_git_commit=sha,inspections_completed=0,maximum_inspections=2,
-        planned_check_unix=check,planned_check_sydney=datetime.fromtimestamp(check,ZoneInfo('Australia/Sydney')).isoformat(),
+        planned_check_unix=check,planned_check_sydney=datetime.fromtimestamp(check,SYDNEY).isoformat(),
         no_persistent_ssh=True,rs3_dependency_proofs=proofs)
     write_json(HERE/'launch.json',result);write_json(HERE/'state.json',state)
     print(json.dumps(dict(launch=result,state=state)))
@@ -163,7 +164,7 @@ print(json.dumps(out))
         # A preflight with no ETA is bounded to ten minutes in the runner.
         check=math.ceil((max(time.time(),eta)+MANIFEST['completion_check_margin_seconds'])/60)*60 if eta else math.ceil((time.time()+900)/60)*60
         state.update(expected_completion_unix=eta,planned_check_unix=check,
-            planned_check_sydney=datetime.fromtimestamp(check,ZoneInfo('Australia/Sydney')).isoformat())
+            planned_check_sydney=datetime.fromtimestamp(check,SYDNEY).isoformat())
     write_json(HERE/'state.json',state)
     print(json.dumps(dict(state=state,runtime=result['runtime'],files_downloaded=len(files))))
 

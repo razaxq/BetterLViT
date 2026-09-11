@@ -49,7 +49,7 @@ B是低成本机制筛选，须注册数值稳定性、分支激活/覆盖、定
 
 ## 5. 运行与预约
 
-本地控制使用现有Python3.12环境：
+本地控制使用现有Python3.12环境，依赖锁定在`requirements-local.txt`（含Windows预约转换需要的tzdata）；这些依赖不安装到或改变服务器模型环境：
 
 ```powershell
 $taskPython = 'D:/BetterLViT/.codex_tmp/text_audit_py312/Scripts/python.exe'
