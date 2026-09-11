@@ -1,0 +1,21 @@
+{
+  "pid": 273120,
+  "submitted_unix": 1789129553.4788463,
+  "diagnostic_source_git_commit": "da17b3fbef0ca4ac6343575cf2af18fab3c76efb",
+  "deployed_sha256": {
+    "run_diagnostic.py": "e37a1a714471f6d08787720e7cb768bcd53f31d6feb4211637b5dfb67c7c0d59",
+    "analysis.py": "3b382cb7f7fba51386463cf1520c346fc502f62151fc8661a39de33dc477b67d",
+    "text_policy.py": "56e521618ecc992bb91f469b52c8d03601696b5bc9506ec9fc2bc0575755dfeb",
+    "routing.py": "cf6d482299ffedf4ba1fb0d8f20d487e704335b2f9143edc267a4e77cdcafca2",
+    "data_identity.py": "266e988c176c6935ff916ae492077eb60571c76145c3f2f706602b3102fb2739",
+    "check_policy.py": "cc597c791282a8ac483424e971221b2ebb34bf4f5e5284a8dc07a76f68077a3e",
+    "check_corpus.py": "3a6df807b99c80034c29f8e9b42b721dc8a166eb03cd7b5dfdcaf7db41ef34e3",
+    "control.py": "2da83aedd90cad59e1fe81f16c0f2fc7a1ff6882187a44167e3f25aff122ecba",
+    "manifest.json": "c9c9d318f8f84e506bb7fb824c64292ecef5da314cd94d618489915364933131",
+    "PLAN.md": "15ee7be13b22d1edb3626f07f0c092d2a4a19e01787f8b906e4a4b7e7022b21b",
+    "r2_validation.json": "7b10abdb7e3152e028658e20155bf124a4ee994cb2922ca381a2a2d729e5346c"
+  },
+  "system_free_bytes": 3125227520,
+  "remote_directory": "/root/text_grounding_a_v3_20260911",
+  "dispatch_only": true
+}

@@ -1,0 +1,34 @@
+{
+  "verified": true,
+  "verified_sydney": "2026-09-11T22:27:59.321794+10:00",
+  "scheduled_sydney": "2026-09-11T22:31:00+10:00",
+  "diagnostic_source_git_commit": "da17b3fbef0ca4ac6343575cf2af18fab3c76efb",
+  "inspection_number_due": 1,
+  "maximum_inspections": 2,
+  "existing_heartbeat": true,
+  "configuration": {
+    "version": 1,
+    "id": "betterlvit",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "继续用户已授权的BetterLViT文字研究A→B，当前执行目录已更换为D:/BetterLViT/experiment_docs_work/repro_archive/20260911/text_grounding_execution_v3。先读取该目录README.md、PLAN.md、manifest.json、deployment.json、launch.json、state.json和最近预约/inspection回执，避免重复派发。修复版v3已于2026年9月11日22:25:53.479悉尼时间后台提交，PID273120，远端/root/text_grounding_a_v3_20260911，执行来源da17b3fbef0ca4ac6343575cf2af18fab3c76efb，标签diagnostic-r2-text-path-a-v3-20260911。本地和服务器11项CPU测试通过，5716个Train图像—文字对应均核验，生成文字完整SHA256与原静态审计一致。现在只有后台派发回执，尚未确认GPU预检完成或得到新IoU结果；检查0/2，本次预约为2026年9月11日22:31悉尼时间首次检查。不要重复deploy或launch，不提前连接或查询GPU。\n\nv2来源c694e57be6b5ce224489ff9bab2acbb4d4846358已于22:10:31.829在第一个Train批次因图像名与mask文字键不一致停止。22:17:42.221首次检查确认，距失败7.17分钟；只用1次检查后封存，不再查询或重启旧目录。未进入Val、未更新模型或访问Test；失败日志和状态在原text_grounding_execution目录。本次修复显式mask_filename→image_filename映射、Train/Val原文字token IDs与attention mask逐值校验，并修复Val参照名称集合。Train子集和文字匹配使用mask文件名身份，与原Train语料生成结果一致；指标名称使用image文件名与原R2 exporter一致。文本变换代码、权重、阈值、15条件和复现界限没有改动，不能把接口失败当方法效果的负结果。\n\n到预约时间仅使用D:/BetterLViT/.codex_tmp/text_audit_py312/Scripts/python.exe -B -X utf8执行v3目录中的control.py collect一次。若首次已完成则直接收尾，不再用第二次；若仍运行，读取实测Train批耗时产生的expected_completion_unix和更新后的state.json，将同一个heartbeat改约planned_check_sydney为唯一末检（预测结束后约5分钟），并读回核验保存时间、目标thread和prompt。全程最多两次远程状态检查，不保持SSH、不循环轮询、不提前查询；缺ETA遵循控制器有界回退预约。末检核对真实结束至检查≤1800秒，预测失准如实报告，不能追加第三次。若失败，保存证据后修复实现，独立SHA和执行目录，不覆盖失败run、不放宽R2复现容差、不得为更有利的Val调整文字规则。\n\nA固定R2来源9eca26de5b301099805530edbf5a1a8718bea662和Best67权重，先32张Train原生/分通路确定性预检，再一次完整1429张Val的5规则×主LViT/EPPA/两路15条件。模型不更新，Test禁止。完成后本地control.py verify复算：5716张Train及1429张Val原文字token身份通过、mask/image身份对应、原文逐图IoU/Dice/Precision/Recall复现差<1e-12、前后权重及模型哈希不变。下载JSON/log全量归档并提交推送。一起解释原文、同义规范化、Train同语义匹配、关系交换、去位置和通用描述；重点看relation_swap减canonical的配对差、实际token变化、FP/FN及soft/hard面积。错误文字对原GT的分数不是新方法成绩，扰动下降不直接证明语言理解，主入口的间接视觉影响仍可传入EPPA。A完成不等于第二创新成立。\n\n区域监督RS1/RS2/RS3已经全部完成80轮及Val、独立/HF/GitHub归档，三组检查均2/2结束，不再查询训练状态或重复归档。RS3 Val IoU72.8557%、Dice82.5468%，相对R2 +0.1903个百分点、区间跨0；相对RS2仅+0.0162个百分点，无分组独立增益证据。RS1保留+0.4111个百分点且图像配对区间为正的单种子Val IoU证据，但Precision下降使综合门未过。详见regional_supervision_execution/FIRST_ROUND_REPORT.md。RS3 HF f7984233/的21文件、1694438969字节和11项下载产物均核验；共享fs18559782256字节，模型保留。不启动RS4，不延长150轮。\n\n依已授权方案继续阶段B研究、编码和低成本筛选：先根据A证据写判断，冻结新的独立源SHA/标签及manifest，再实现同R2特征、相同Train内部划分/初始化/损失/更新预算的T1普通文本匹配、T2关系差分、T3普通匹配+软总量投影、T4关系差分+投影，并包含同容量图像分支和仅模板空间图控制。缓存先计算实际字节预算，必要时确定性在线计算，不占满磁盘；共享fs实际字节低于20GB。冻结R2特征可能包含原文字作用，图像控制仅针对新增分支。完成CPU/CUDA数值、梯度、identity和稳定性预检后再启动受控短程筛选，预先注册比较与停止条件，不能根据Val修改文字规则反复重跑。若普通匹配也不能体现文字作用，暂停复杂差分设计并报告负证据；若只有保量有效，不使用文字创新名称。A/B都是机制诊断或筛选，不产生新正式Test结论；完整80轮、匹配种子及最终Test须满足研究报告后续阶段的冻结条件，不能由A运行成功自动触发。后续训练继续每组最多两次预测式预约检查及结束后允许的自动评估。每阶段提交推送可复现代码、失败证据、完整结果与解释文档，明确已完成、运行中、未执行。",
+    "status": "ACTIVE",
+    "rrule": "FREQ=DAILY;BYHOUR=22;BYMINUTE=31;BYSECOND=0",
+    "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+    "created_at": 1789071524571,
+    "updated_at": 1789129616497
+  },
+  "tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}
