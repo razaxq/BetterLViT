@@ -10,7 +10,7 @@
   "baseline_best_epoch": 67,
   "baseline_checkpoint_epoch_zero_based": 66,
   "baseline_checkpoint_sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a",
-  "reference_validation_sha256": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b",
+  "reference_validation_sha256": "7b10abdb7e3152e028658e20155bf124a4ee994cb2922ca381a2a2d729e5346c",
   "train_membership_sha256": "b58295942caaa6a455f995dcbccc4fc7e259e6b4a9b940b4d25344925dd9346d",
   "train_workbook_sha256": "fa292d8837d0e55cd4b3fe0cb367614045cb3d30de19b08bf0f62e1148db10a9",
   "train_count": 5716,
@@ -38,5 +38,7 @@
   "minimum_launch_unix": 1789128000,
   "rs3_dependency_run": "/root/autodl-tmp/regional_runs/rs3_20260911",
   "policy": "Train-only semantic matching; no mask-derived text; abstain on unknown or symmetric swap; input corruption scores are diagnostics, not performance gains.",
-  "next_phase": "Review original-vs-reference reproducibility and intervention results, then preregister bounded same-feature T1/T2/T3/T4, image-only and template-only probes. No automatic full 80-epoch launch."
+  "next_phase": "Review original-vs-reference reproducibility and intervention results, then preregister bounded same-feature T1/T2/T3/T4, image-only and template-only probes. No automatic full 80-epoch launch.",
+  "reference_original_validation_sha256": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b",
+  "reference_copy_encoding": "Original JSON values preserved exactly; CRLF converted to LF for portable Git hashes."
 }
