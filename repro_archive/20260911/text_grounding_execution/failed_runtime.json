@@ -1,0 +1,8 @@
+{
+  "phase": "failed",
+  "submitted_unix": 1789128622.5351517,
+  "diagnostic_source_git_commit": "c694e57be6b5ce224489ff9bab2acbb4d4846358",
+  "test_split_accessed": false,
+  "completed_unix": 1789128631.8286037,
+  "traceback": "Traceback (most recent call last):\n  File \"/root/text_grounding_a_v2_20260911/run_diagnostic.py\", line 189, in <module>\n    main(args,runtime)\n  File \"/root/text_grounding_a_v2_20260911/run_diagnostic.py\", line 142, in main\n    preflight.extend(batch_diagnostic(model,tokenizer,policy,texts,frequency,batch,names,verify_native=True))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/torch/utils/_contextlib.py\", line 120, in decorate_context\n    return func(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/root/text_grounding_a_v2_20260911/run_diagnostic.py\", line 72, in batch_diagnostic\n    rows=[]; transformed=[policy.variants(n,texts[n]) for n in names]\n                                            ~~~~~^^^\nKeyError: 'sub-S10644_ses-E19682_run-1_bp-chest_vp-ap_cr.png'\n"
+}

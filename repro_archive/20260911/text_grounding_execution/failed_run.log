@@ -1,0 +1,15 @@
+/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Traceback (most recent call last):
+  File "/root/text_grounding_a_v2_20260911/run_diagnostic.py", line 189, in <module>
+    main(args,runtime)
+  File "/root/text_grounding_a_v2_20260911/run_diagnostic.py", line 142, in main
+    preflight.extend(batch_diagnostic(model,tokenizer,policy,texts,frequency,batch,names,verify_native=True))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 120, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/root/text_grounding_a_v2_20260911/run_diagnostic.py", line 72, in batch_diagnostic
+    rows=[]; transformed=[policy.variants(n,texts[n]) for n in names]
+                                            ~~~~~^^^
+KeyError: 'sub-S10644_ses-E19682_run-1_bp-chest_vp-ap_cr.png'

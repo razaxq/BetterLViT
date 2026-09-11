@@ -12,7 +12,11 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：A诊断已后台派发（2026-09-11）
+## 文字引导方向：A诊断接口修复v3（2026-09-11）
+
+**22:17首次检查发现v2已失败：** 22:10:31.829在首个Train批次因图像名与mask文字键不一致触发KeyError，未进入Val/更新模型/Test。失败源`c694e57be6b5ce224489ff9bab2acbb4d4846358`及服务器目录保留，检查1次即结束，观察距失败7.17分钟。不是模型效果的负结果。[失败记录](../repro_archive/20260911/text_grounding_execution/inspection_1.json)。
+
+修复在独立[text_grounding_execution_v3](../repro_archive/20260911/text_grounding_execution_v3/README.md)：显式mask→image映射及原文字token一致性检查，并修复Val参照名称集合对应。11项本地测试、5716个Train样本映射均通过，生成文字SHA与原静态审计完全一致。保留权重、15条件、阈值及复现容差，等待独立提交/部署后重启。以下v2提交记录作为历史。
 
 用户已授权按研究报告推进。新增[冻结执行方案](../repro_archive/20260911/text_grounding_execution/PLAN.md)及可复现控制脚本：R2 Best67固定，5种文字规则×主LViT/EPPA/两路共15个条件，先32张Train实现预检，再一次1429张Val诊断；额外用关系替换减同义规范化控制措辞影响。冻结权重、确定性前向、原文逐图R2复现、Test访问禁令和独立复算均有运行检查。
 

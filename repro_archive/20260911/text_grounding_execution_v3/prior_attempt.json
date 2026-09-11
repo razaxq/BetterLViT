@@ -1,0 +1,11 @@
+{
+  "source_git_commit": "c694e57be6b5ce224489ff9bab2acbb4d4846358",
+  "remote_directory": "/root/text_grounding_a_v2_20260911",
+  "status": "failed_in_first_train_batch",
+  "test_split_accessed": false,
+  "validation_started": false,
+  "model_updated": false,
+  "inspection_count": 1,
+  "failure": "Workbook uses mask filename; DataLoader returns image filename.",
+  "seconds_after_failure": 430.3926508426666
+}
