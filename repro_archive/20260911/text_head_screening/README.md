@@ -1,6 +1,8 @@
 # 文字分支B：六组固定特征筛选
 
-当前：代码与预注册完成，等待提交后服务器CPU/CUDA行为预检。**尚未启动训练，没有新模型IoU结果。** A已完成并独立核验，见[报告](../text_grounding_execution_v3/REPORT.md)。
+当前：**服务器CPU和CUDA行为预检均通过，尚未提交训练，没有新模型IoU结果。** 每组75,808个可训练参数，CUDA预检最大逐图软面积误差0.000134241像素（注册上限0.02）；finite difference、identity、确定性反传、各对照输入隔离均通过。14份部署文件逐字节SHA256与Git一致，系统盘可用3,106,050,048字节。详见deployment.json。A已完成并独立核验，见[报告](../text_grounding_execution_v3/REPORT.md)。
+
+执行源`49905dbbdc644454a37a4a49098db0d5df5fe75a`，组标签`pilot-r2-text-residual-b-v1-20260911`，均已推送GitHub。服务器目录`/root/text_head_b_49905dbb`。部署等待包括源文件传输；回执最终成功，没有重复部署。
 
 协议见[PROTOCOL.md](PROTOCOL.md)，机器可读参数与5716条固定成员见manifest.json、split.json。六组T1/T2/T3/T4/image/template均1024步，只训练小残差头，R2冻结；458张eligible内部holdout，另报告全部1131张。禁止官方Val/Test访问，结果不等于独立泛化或第二创新成立。
 

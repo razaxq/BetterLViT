@@ -14,7 +14,9 @@
 
 ## 文字引导方向：B六组筛选已预注册（2026-09-11）
 
-已实现[固定特征B协议](../repro_archive/20260911/text_head_screening/PROTOCOL.md)：R2冻结，普通文本匹配/关系差分×有无保量，另加同参数形状image/template控制；相同初始化、Train内部划分、原Dice/Focal及1024步单次余弦。fit4585、holdout1131，六组共同关系可交换资格1930/458，其他样本保持R2。精确原始cache1,756,686,848字节，系统盘预留1GB，shared fs不写。当前代码完成、待提交后CPU/CUDA预检及后台派发；尚无训练或新IoU结果。完整80轮与Test未启动。
+已实现[固定特征B协议](../repro_archive/20260911/text_head_screening/PROTOCOL.md)：R2冻结，普通文本匹配/关系差分×有无保量，另加同参数形状image/template控制；相同初始化、Train内部划分、原Dice/Focal及1024步单次余弦。fit4585、holdout1131，六组共同关系可交换资格1930/458，其他样本保持R2。精确原始cache1,756,686,848字节，系统盘预留1GB，shared fs不写。
+
+**CPU/CUDA预检通过，待后台派发：** 来源`49905dbbdc644454a37a4a49098db0d5df5fe75a`，标签`pilot-r2-text-residual-b-v1-20260911`已推送。14份源文件SHA256一致，每组75,808个参数，CUDA最大软面积误差0.000134241像素；identity、隐式梯度finite difference、确定性前反向和图像/模板隔离检查通过。尚无训练或新IoU结果，完整80轮与Test未启动。[预检回执](../repro_archive/20260911/text_head_screening/deployment.json)。
 
 ## 文字引导方向：A诊断完成（2026-09-11）
 
