@@ -1,0 +1,2 @@
+{"event": "e0_complete", "summary": {"n": 1930, "baseline_iou": 0.7606658650802316, "oracles": {"unprojected": {"eligible_mean_gain": 0.07833134627988048, "all_fit_folded_gain": 0.032972627768848274, "fp_correctable_fraction": 0.38887709445445146, "fn_correctable_fraction": 0.46236774111245027}, "projected_loose": {"eligible_mean_gain": 0.13545790866097976, "all_fit_folded_gain": 0.057019359589027464, "fp_correctable_fraction": 0.6405391977693198, "fn_correctable_fraction": 0.7316513106410688}}}}
+{"event": "e1_complete", "n": 160, "gradient_records": 1920}

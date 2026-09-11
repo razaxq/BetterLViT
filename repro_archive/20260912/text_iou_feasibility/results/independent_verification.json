@@ -1,0 +1,14 @@
+{
+  "verified": true,
+  "source_git_commit": "66db167b48e4e0eeb91738af90df6abb6a78ddad",
+  "raw_artifact_sha256_verified": true,
+  "count_metrics_and_transitions_verified": true,
+  "selection_verified": true,
+  "e0_n": 1930,
+  "e1_n": 160,
+  "gradient_records": 1920,
+  "train_updates": 0,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "semantic_control_completed": false
+}

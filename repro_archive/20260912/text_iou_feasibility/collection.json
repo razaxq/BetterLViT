@@ -1,0 +1,37 @@
+{
+  "runtime": {
+    "started_unix": 1789137980.9660494,
+    "source_git_commit": "66db167b48e4e0eeb91738af90df6abb6a78ddad",
+    "phase": "complete",
+    "train_updates": 0,
+    "completed_unix": 1789137996.0079107,
+    "artifacts": {
+      "e0_per_image.json": {
+        "bytes": 885125,
+        "sha256": "33ff8cde7101c5afd5f71af8777bf75b7612ace45c454073bd08d3b2e03d4e6c"
+      },
+      "e0_summary.json": {
+        "bytes": 545,
+        "sha256": "e75434fe194e902d29ded8b4347e77a2db2423317e78cdd7424be6671b7cf310"
+      },
+      "e1_per_image.json": {
+        "bytes": 1273719,
+        "sha256": "f360a01311e0216c04440adae6cd6c766b3aeb3848300429703adfe2bd617db7"
+      },
+      "gradients_per_image.json": {
+        "bytes": 2899939,
+        "sha256": "a5c9798883f0d4e115c689da2aece9d8099f6f3b642fb560456a5bfdae6373ca"
+      },
+      "matched_batch_loss.json": {
+        "bytes": 40156,
+        "sha256": "901dae103bbd1a02f1e11e2735e17dd6ddaefba3bc98d412319dc4740d859616"
+      },
+      "provenance.json": {
+        "bytes": 2083,
+        "sha256": "3bcb5ba371e4cc83df2917183c4e6e9ed2cb2916b4958e87ded84cbda959cc5e"
+      }
+    }
+  },
+  "observed_unix": 1789138115.3138022,
+  "log": "{\"event\": \"e0_complete\", \"summary\": {\"n\": 1930, \"baseline_iou\": 0.7606658650802316, \"oracles\": {\"unprojected\": {\"eligible_mean_gain\": 0.07833134627988048, \"all_fit_folded_gain\": 0.032972627768848274, \"fp_correctable_fraction\": 0.38887709445445146, \"fn_correctable_fraction\": 0.46236774111245027}, \"projected_loose\": {\"eligible_mean_gain\": 0.13545790866097976, \"all_fit_folded_gain\": 0.057019359589027464, \"fp_correctable_fraction\": 0.6405391977693198, \"fn_correctable_fraction\": 0.7316513106410688}}}}\n{\"event\": \"e1_complete\", \"n\": 160, \"gradient_records\": 1920}\n"
+}

@@ -1,0 +1,14 @@
+{
+  "source_git_commit": "66db167b48e4e0eeb91738af90df6abb6a78ddad",
+  "phase": "complete",
+  "train_updates": 0,
+  "completed_sydney": "2026-09-12T00:46:36.007911+10:00",
+  "completion_collection_delay_seconds": 119.30589151382446,
+  "collection_within30min": true,
+  "remote_completion_collections": 1,
+  "all_artifacts_verified": true,
+  "semantic_control_completed": false,
+  "new_training_started": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false
+}

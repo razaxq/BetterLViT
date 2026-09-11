@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-11（Australia/Sydney）
+更新时间：2026-09-12（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -11,6 +11,16 @@
 - 机制筛选 pilot 只使用 validation：`AUTO_EVALUATE=0`、`TEST_SPLIT_ALLOWED=0`。未通过阶段门不得扩展或访问 Test。
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
+
+## 文字引导方向：E0/E1只读Train可行性审计完成（2026-09-12）
+
+**00:46:36.008完成，0次更新；1930 eligible fit上界、原32+哈希固定新增128的梯度/文字纠错诊断。** 来源`66db167b48e4e0eeb91738af90df6abb6a78ddad`，标签`diagnostic-text-iou-e2-20260912`；6份原始结果SHA/计数/转移独立核验，原32六头精确复现D，28网格解析梯度核验通过。一次预定收取距完成1.988分钟，未访问旧B holdout、官方Val/Test，未开始新训练。失败前驱及浮点执行标志受控诊断完整保留。[报告与结果](../repro_archive/20260912/text_iou_feasibility/REPORT.md)。
+
+±0.5残差的逐像素GT oracle可触及38.89% FP与46.24% FN，eligible理论IoU上界增量+7.8331 pp；放松投影联合可行性的宽松上界+13.5458 pp。两者都不能当作预期模型收益。160图实际Dice/Focal逐像素方向在全部FP/FN均无有害方向；28网格+投影产生6.93% FP/3.25% FN方向冲突，近阈值为12.09%/5.24%。支持先验证细尺度接口，不能归因于loss本身必然错误或断言分辨率是唯一原因。
+
+160 fit的T1/T2/T3/T4/image/template Δmacro IoU分别−0.2858/−0.1990/−0.0054/−0.0678/+0.0206/+0.0838 pp；T4每图修好54.21个原错却破坏55.17个原正确像素。T4前5%修正位置的原错误占比17.37%，低于同预算图像不确定性的24.12%。正确报告比关系交换好0.1073 pp，但低于R2与image/template控制，未证明新增文字净收益。全部是拟合集合诊断；同义表达控制因缓存无不同语义等价输入尚未执行。
+
+后续按[接口→文字增量→完整验证顺序](../repro_archive/20260912/text_iou_feasibility/NEXT_PLAN.md)，先验证同预算细尺度局部纠错，再检验绑定短语能否提供额外改善。现有T4不直接扩展80/150轮，不换Test阈值或重调旧holdout；第二创新点仍未成立。HF `66db167b/`已核验18文件、5,434,982字节与全部Xet哈希，分类completed Train-only readonly feasibility audit，无新checkpoint。以下D及其E计划为历史。
 
 ## 文字引导方向：D优化器对照完成（2026-09-11）
 
