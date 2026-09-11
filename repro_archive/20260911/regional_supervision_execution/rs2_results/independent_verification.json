@@ -1,0 +1,91 @@
+{
+  "verified": true,
+  "source_git_commit": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+  "test_split_accessed": false,
+  "epochs": 80,
+  "samples": 1429,
+  "best_epoch": 75,
+  "actual_lr_matches_manifest": true,
+  "macro_summaries_and_deltas_recomputed": true,
+  "audits_state_preserving": true,
+  "passed": false,
+  "checks": {
+    "iou_minimum": false,
+    "iou_ci_positive": false,
+    "dice_not_lower": true,
+    "precision_not_lower": true,
+    "small_dice_not_lower": false,
+    "small_recall_not_lower": false,
+    "brier_not_higher": true
+  },
+  "inspection_number": 2,
+  "seconds_after_training_end": 585.8203866481781,
+  "within_30_minutes": true,
+  "export_minus_selection_iou": 4.006722409410912e-08,
+  "metric_reconciliation_verified": false,
+  "regional_increment": {
+    "control": "rs1_global_iou",
+    "candidate": "rs2_local_iou",
+    "seed": 1219,
+    "control_sha": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "candidate_sha": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+    "regional_increment": true,
+    "minimum_iou_delta": 0.001,
+    "deltas": {
+      "iou": {
+        "mean": -0.002369209930581895,
+        "small_mean": -0.003610914799880341,
+        "ci95": [
+          -0.005454367078826824,
+          0.0005224098066962603
+        ]
+      },
+      "dice": {
+        "mean": -0.0017809946510220084,
+        "small_mean": -0.003267013134380384,
+        "ci95": [
+          -0.004372175443961185,
+          0.000826670627165624
+        ]
+      },
+      "precision": {
+        "mean": 0.006854982334762689,
+        "small_mean": 0.008033190456347386,
+        "ci95": [
+          0.004244019447060522,
+          0.00941660772018049
+        ]
+      },
+      "recall": {
+        "mean": -0.012589217341581012,
+        "small_mean": -0.024828820469797865,
+        "ci95": [
+          -0.016296481048333086,
+          -0.009049952864895208
+        ]
+      },
+      "brier": {
+        "mean": -0.0005169712337857105,
+        "small_mean": -0.001068984649584568,
+        "ci95": [
+          -0.0007837310199555143,
+          -0.00026651224911386647
+        ]
+      }
+    },
+    "checks": {
+      "iou_minimum": false,
+      "iou_ci_positive": false
+    },
+    "passed": false,
+    "small_area_cutoff": 2075.0,
+    "small_count": 358,
+    "split": "validation",
+    "test_split_accessed": false,
+    "stable_gain_proven": false,
+    "input_sha256": {
+      "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs1_results\\validation.json": "8939809543db1d9d90fd94a9b85bc6f20d48e7c4297fd14f4945bf830e73e11c",
+      "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs2_results\\validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32"
+    }
+  }
+}

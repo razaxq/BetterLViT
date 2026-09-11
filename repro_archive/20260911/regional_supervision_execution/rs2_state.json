@@ -5,7 +5,7 @@
   "pid": 249881,
   "started_unix": 1789090895.5753589,
   "dispatch_only": true,
-  "inspections_completed": 1,
+  "inspections_completed": 2,
   "scratch_free_bytes": 5155667968,
   "fs_bytes": 18559782256,
   "test_split_accessed": false,
@@ -17,6 +17,6 @@
   "predicted_training_end_unix": 1789108332.68606,
   "final_check_unix": 1789109100,
   "remaining_audit_allowance_seconds": 120,
-  "last_phase": "training",
-  "last_checked_unix": 1789091982.365299
+  "last_phase": "complete",
+  "last_checked_unix": 1789109173.1880722
 }

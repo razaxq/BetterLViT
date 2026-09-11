@@ -1,0 +1,432 @@
+{
+  "audited_unix": 1789109265.0085945,
+  "usage": {
+    "/root": {
+      "total": 32212254720,
+      "used": 28236062720,
+      "free": 3976192000
+    },
+    "/root/autodl-tmp": {
+      "total": 53687091200,
+      "used": 50247467008,
+      "free": 3439624192
+    },
+    "/autodl-fs/data": {
+      "total": 214748364800,
+      "used": 18670182400,
+      "free": 196078182400
+    }
+  },
+  "depth_one_disk_bytes": {
+    "/root": [
+      "38076416\t/root/.cache",
+      "0\t/root/.ipython",
+      "12288\t/root/.jupyter",
+      "20480\t/root/.local",
+      "0\t/root/.nv",
+      "8192\t/root/.ssh",
+      "20480\t/root/cdrr_formal_preflight",
+      "7943217152\t/root/miniconda3",
+      "0\t/root/tf-logs",
+      "1891209216\t/root/BetterLViT-visual-p12",
+      "1163264\t/root/BetterLViT-visual-c9",
+      "1204224\t/root/BetterLViT-recipe-dev",
+      "1064960\t/root/race-pe-preflight",
+      "1714589696\t/root/BetterLViT-race-pe-c4",
+      "1725992960\t/root/BetterLViT-race-pe-p9",
+      "24576\t/root/race_pe_verification_20260906",
+      "3203072\t/root/race_pe_runs",
+      "2105344\t/root/race_pe_test_20260907",
+      "2162688\t/root/race_pe_diagnosis_20260907",
+      "1110016\t/root/BetterLViT-race-pe-v2",
+      "262144\t/root/race_pe_v2_probe_20260907",
+      "1719386112\t/root/BetterLViT-race-pe-v2-c8",
+      "1725464576\t/root/BetterLViT-race-pe-v2-p10",
+      "12288\t/root/race_pe_v2_launch_checks_20260907",
+      "4046848\t/root/race_pe_v2_runs",
+      "3137536\t/root/race_pe_v2_test_20260907",
+      "16461824\t/root/maintenance_20260907",
+      "36864\t/root/dual_grain_preflight_20260907",
+      "5681152\t/root/dual_grain_runs",
+      "32768\t/root/dual_grain_150_preflight_20260907",
+      "3350528\t/root/BetterLViT-visual-prior-dev",
+      "187035648\t/root/visual_prior_models",
+      "2793472\t/root/visual_prior_runs",
+      "10180501504\t/root/recipe_runs",
+      "20799488\t/root/BetterLViT-recipe-r1",
+      "22605824\t/root/BetterLViT-recipe-r2",
+      "20819968\t/root/BetterLViT-recipe-c4s2027",
+      "20819968\t/root/BetterLViT-recipe-r2s2027",
+      "20078592\t/root/BetterLViT-recipe-c4s3407",
+      "20082688\t/root/BetterLViT-recipe-r2s3407",
+      "6295552\t/root/recipe_test_20260910",
+      "69632\t/root/hf_recovery_20260910",
+      "15192064\t/root/semantic_probe_20260910",
+      "5799936\t/root/local_reencode_20260910",
+      "2981888\t/root/c8_mechanism_20260910",
+      "4096\t/root/.conda",
+      "27509198848\t/root"
+    ],
+    "/root/autodl-tmp": [
+      "3780608\t/root/autodl-tmp/.autodl",
+      "1515520\t/root/autodl-tmp/BetterLViT-analysis-p1",
+      "966656\t/root/autodl-tmp/BetterLViT-bcdh-dev",
+      "1110016\t/root/autodl-tmp/BetterLViT-bcdh-dev2",
+      "1167360\t/root/autodl-tmp/BetterLViT-cdrr-analysis",
+      "1294336\t/root/autodl-tmp/BetterLViT-cdrr-dev",
+      "888389632\t/root/autodl-tmp/BetterLViT-paper-a5",
+      "863105024\t/root/autodl-tmp/BetterLViT-paper-a6-frozen",
+      "890380288\t/root/autodl-tmp/BetterLViT-paper-a6",
+      "875417600\t/root/autodl-tmp/BetterLViT-paper-a7-frozen",
+      "875425792\t/root/autodl-tmp/BetterLViT-paper-a8-tcsrv2",
+      "873193472\t/root/autodl-tmp/BetterLViT-paper-a9-frozen",
+      "9730863104\t/root/autodl-tmp/BetterLViT-paper-ablation",
+      "1712885760\t/root/autodl-tmp/BetterLViT-paper-c0-tversky",
+      "1122304\t/root/autodl-tmp/BetterLViT-paper-c1-bcdh",
+      "1713684480\t/root/autodl-tmp/BetterLViT-paper-c2-cdrr",
+      "1716699136\t/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21",
+      "1716023296\t/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22",
+      "1715425280\t/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23",
+      "1716011008\t/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24",
+      "1714429952\t/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25",
+      "4857856\t/root/autodl-tmp/BetterLViT-paper-p6-bcdh",
+      "1716576256\t/root/autodl-tmp/BetterLViT-paper-p7-cdrr",
+      "835584\t/root/autodl-tmp/BetterLViT-paper-tcsrv2-96ab521",
+      "839680\t/root/autodl-tmp/BetterLViT-paper-tcsrv2-dev",
+      "1714532352\t/root/autodl-tmp/BetterLViT-race-c3",
+      "1728802816\t/root/autodl-tmp/BetterLViT-race-p8",
+      "1204224\t/root/autodl-tmp/BetterLViT-tcsr-preflight.qDW5LF",
+      "390717440\t/root/autodl-tmp/BetterLViT",
+      "8192\t/root/autodl-tmp/auto_eval_runner_test",
+      "8192\t/root/autodl-tmp/auto_eval_staging",
+      "267411456\t/root/autodl-tmp/datasets",
+      "7892897792\t/root/autodl-tmp/envs",
+      "47583232\t/root/autodl-tmp/hf-bucket-client",
+      "6942720\t/root/autodl-tmp/pip_probe",
+      "0\t/root/autodl-tmp/runtime_logs",
+      "36864\t/root/autodl-tmp/tcsr-preflight.LBfISE",
+      "1359872\t/root/autodl-tmp/BetterLViT-visual-aux-dev",
+      "1714839552\t/root/autodl-tmp/BetterLViT-dual-grain-p11",
+      "159744\t/root/autodl-tmp/visual_aux_preflight",
+      "848998400\t/root/autodl-tmp/BetterLViT-dual-grain-p11-150",
+      "5574656\t/root/autodl-tmp/visual_aux_runs",
+      "1719242752\t/root/autodl-tmp/BetterLViT-visual-aux-s1",
+      "1719382016\t/root/autodl-tmp/BetterLViT-visual-aux-s2",
+      "12288\t/root/autodl-tmp/s2_repair_audit_20260911",
+      "2121728\t/root/autodl-tmp/visual_aux_test_20260911",
+      "1552384\t/root/autodl-tmp/BetterLViT-regional-dev",
+      "1715437568\t/root/autodl-tmp/BetterLViT-regional-rs1",
+      "24576\t/root/autodl-tmp/regional_preflight",
+      "1715048448\t/root/autodl-tmp/BetterLViT-regional-rs2",
+      "1519616\t/root/autodl-tmp/BetterLViT-regional-rs3",
+      "5812224\t/root/autodl-tmp/regional_runs",
+      "50247467008\t/root/autodl-tmp"
+    ]
+  },
+  "large_files": [
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/torch/lib/libtorch_cuda.so",
+      "bytes": 1022776209,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a2_lora_freq/A2_Test_session_08.28_15h24/models/best_model-BetterLViT.pth.tar",
+      "bytes": 877461823,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a4_lora_freq_focal/A4_Test_session_08.29_16h27/models/best_model-BetterLViT.pth.tar",
+      "bytes": 877461823,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a6/Covid19/BetterLViT/a6_lora_tcsr/A6_Test_session_08.30_13h01/models/last_model-BetterLViT.pth.tar",
+      "bytes": 868601555,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a0_lora/A0_Test_session_08.28_00h17/models/best_model-BetterLViT.pth.tar",
+      "bytes": 866621783,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a1_lora_focal/A1_Test_session_08.28_08h33/models/best_model-BetterLViT.pth.tar",
+      "bytes": 866615063,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a0_lora/A0_Test_session_08.27_23h47/models/last_model-BetterLViT.pth.tar",
+      "bytes": 866597527,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a5/Covid19/BetterLViT/a5_lora_fmiseg_focal/A5_Test_session_08.30_02h34/models/best_model-BetterLViT.pth.tar",
+      "bytes": 861082979,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a3_lora_fmiseg/A3_Test_session_08.29_04h18/models/best_model-BetterLViT.pth.tar",
+      "bytes": 861040675,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-p8/Covid19/BetterLViT/p8_race_fuse_v1/P8_Test_session_09.03_23h19/models/best_model-BetterLViT.pth.tar",
+      "bytes": 850700823,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-p8/Covid19/BetterLViT/p8_race_fuse_v1/P8_Test_session_09.03_23h19/models/last_model-BetterLViT.pth.tar",
+      "bytes": 850700823,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a8-tcsrv2/Covid19/BetterLViT/a8_tcsrv2_freq_focal/A8_Test_session_09.01_09h44/models/best_model-BetterLViT.pth.tar",
+      "bytes": 848152835,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-visual-aux-s2/Covid19/BetterLViT/s2_r2_visual_aux/S2_Test_session_09.10_20h30/models/last_model-BetterLViT.pth.tar",
+      "bytes": 847408273,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-visual-aux-s2/Covid19/BetterLViT/s2_r2_visual_aux/S2_Test_session_09.10_20h30/models/best_model-BetterLViT.pth.tar",
+      "bytes": 847392785,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-visual-aux-s1/Covid19/BetterLViT/s1_r2_pixel_aux/S1_Test_session_09.10_15h09/models/last_model-BetterLViT.pth.tar",
+      "bytes": 847388761,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a7-frozen/Covid19/BetterLViT/a7_tcsr_freq/A7_Test_session_08.31_04h48/models/best_model-BetterLViT.pth.tar",
+      "bytes": 847357819,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-visual-aux-s1/Covid19/BetterLViT/s1_r2_pixel_aux/S1_Test_session_09.10_15h09/models/best_model-BetterLViT.pth.tar",
+      "bytes": 847349209,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25/Covid19/BetterLViT/p5_tcsrv25_local_tversky/P5_Test_session_09.02_14h58/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846290595,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23/Covid19/BetterLViT/p3_tcsrv23_calibrated_gate/P3_Test_session_09.02_05h34/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846288227,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23/Covid19/BetterLViT/p3_tcsrv23_calibrated_gate/P3_Test_session_09.02_05h34/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846288227,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24/Covid19/BetterLViT/p4_tcsrv24_sparse_boundary/P4_Test_session_09.02_08h39/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846287651,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24/Covid19/BetterLViT/p4_tcsrv24_sparse_boundary/P4_Test_session_09.02_08h39/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846287651,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25/Covid19/BetterLViT/p5_tcsrv25_local_tversky/P5_Test_session_09.02_14h58/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846256803,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_20h26/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845948271,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845733487,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845733487,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a9-frozen/Covid19/BetterLViT/a9_frozen_freq_focal/A9_Test_session_08.31_16h12/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845544191,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p7-cdrr/Covid19/BetterLViT/p7_cdrr_v1/P7_Test_session_09.03_14h54/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845493383,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p7-cdrr/Covid19/BetterLViT/p7_cdrr_v1/P7_Test_session_09.03_14h54/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845490119,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs1/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.11_04h18/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845347135,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs2/Covid19/BetterLViT/rs2_local_iou/RS2_Test_session_09.11_09h41/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845347135,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-c3/Covid19/BetterLViT/c3_race_control/C3_Test_session_09.03_18h30/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845336703,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-c3/Covid19/BetterLViT/c3_race_control/C3_Test_session_09.03_18h30/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845336703,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs2/Covid19/BetterLViT/rs2_local_iou/RS2_Test_session_09.11_09h41/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845331327,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs1/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.11_04h18/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845312447,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c2-cdrr/Covid19/BetterLViT/c2_cdrr_control/C2_Test_session_09.03_12h27/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845214463,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c2-cdrr/Covid19/BetterLViT/c2_cdrr_control/C2_Test_session_09.03_12h27/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845214463,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845214143,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845180927,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a6-frozen/Covid19/BetterLViT/a6_tcsr/A6_Test_session_08.30_18h48/models/best_model-BetterLViT.pth.tar",
+      "bytes": 836539219,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h33/models/last_model-BetterLViT.pth.tar",
+      "bytes": 834502999,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_18h10/models/best_model-BetterLViT.pth.tar",
+      "bytes": 834496023,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h33/models/best_model-BetterLViT.pth.tar",
+      "bytes": 834493719,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h11/models/last_model-BetterLViT.pth.tar",
+      "bytes": 834470871,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h11/models/best_model-BetterLViT.pth.tar",
+      "bytes": 834470615,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cublas/lib/libcublasLt.so.12",
+      "bytes": 751771728,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_engines_precompiled.so.9",
+      "bytes": 547383096,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cusparselt/lib/libcusparseLt.so.0",
+      "bytes": 451980513,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/torch/lib/libtorch_cpu.so",
+      "bytes": 436938961,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/nccl/lib/libnccl.so.2",
+      "bytes": 429628328,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/triton/_C/libtriton.so",
+      "bytes": 401081768,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cusparse/lib/libcusparse.so.12",
+      "bytes": 387990224,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cudnn/lib/libcudnn_adv.so.9",
+      "bytes": 285226600,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cufft/lib/libcufft.so.11",
+      "bytes": 278925016,
+      "device": 2304
+    },
+    {
+      "path": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/nvidia/cusolver/lib/libcusolver.so.11",
+      "bytes": 243303872,
+      "device": 2304
+    }
+  ],
+  "open_files": [
+    {
+      "pid": 902,
+      "command": "autopanel",
+      "fd": "6",
+      "path": "/root/autodl-tmp/.autodl/autopanel.monitor.db"
+    }
+  ],
+  "fs_bytes": 18559782256
+}

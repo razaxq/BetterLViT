@@ -77,7 +77,11 @@ def main():
     delta=gate['deltas']['iou']
     lines=[f'# {label.upper()} Val结果','',f"来源 `{source['source_git_commit']}`，80轮，Best {val['checkpoint_best_epoch']}。",'',
         '| 模型 | IoU | Dice | Precision | Recall | Brier |','|---|---:|---:|---:|---:|---:|']
-    for name,data in (('R2',base),(label.upper(),val)):
+    table_rows=[('R2',base)]
+    if label!='rs1':
+        table_rows.append(('RS1',json.loads((HERE/'rs1_results/validation.json').read_text())))
+    table_rows.append((label.upper(),val))
+    for name,data in table_rows:
         lines.append('| '+name+' | '+' | '.join(f"{100*data['macro_'+m]:.4f}%" for m in ('iou','dice','precision','recall'))+f" | {data['macro_brier']:.6f} |")
     lines+=['',f"IoU差值 {100*delta['mean']:+.4f}个百分点，95%图像配对区间 {[(100*v) for v in delta['ci95']]}；R2筛选通过：{gate['passed']}。",'',
         f"末检距训练结束 {snapshot['seconds_after_training_end']:.3f}秒，检查{snapshot['inspection_number']}/2。来源、80轮学习率、Best、逐图均值和四次固定Train诊断已核验。",'',
@@ -85,7 +89,10 @@ def main():
     lines+=['', '未通过条件：'+('、'.join(k for k,v in gate['checks'].items() if not v) or '无')+'。首轮RS1/RS2/RS3仍按冻结配置全部执行，不根据前组结果调节后组。']
     if reconciliation is not None:
         lines+=['',f"训练历史采用>=0.5及float32批次均值，原逐图导出采用>0.5及float64；同一Best的Val-only复算保留两套原始结果。精确0.5像素{reconciliation['exact_half_pixels']}个（GT阳性{reconciliation['exact_half_positive_pixels']}个），阈值贡献{reconciliation['threshold_effect_export_minus_ge']:.15g}、float32贡献{reconciliation['float32_effect_ge_minus_training']:.15g}，完全解释导出减历史{selection_delta:.15g}。逐图导出及训练IoU复算残差均小于1e-12，检查点SHA256前后相同；见iou_reconciliation.json。"]
-    if label!='rs1':lines+=['',f"相对RS1的区域增量门通过：{increment['passed']}，完整差值见rs1_vs_{label}.json。"]
+    if label!='rs1':
+        inc=increment['deltas']['iou']
+        lines+=['',f"相对RS1的IoU差值{100*inc['mean']:+.4f}个百分点，95%图像配对区间{[100*v for v in inc['ci95']]}；区域增量门通过：{increment['passed']}，完整差值见rs1_vs_{label}.json。",
+            '',f"按R2与当前候选共同GT面积最低四分位（≤{gate['small_area_cutoff']:.0f}像素，{gate['small_count']}张）比较：IoU {100*gate['deltas']['iou']['small_mean']:+.4f}、Dice {100*gate['deltas']['dice']['small_mean']:+.4f}、Recall {100*gate['deltas']['recall']['small_mean']:+.4f}个百分点。这里只是按标注面积分层，不代表临床病灶分型。"]
     (folder/'REPORT.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(result,ensure_ascii=False))
 

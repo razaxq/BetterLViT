@@ -1,0 +1,34 @@
+{
+  "verified": true,
+  "source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+  "source_path": "/root/autodl-tmp/BetterLViT-regional-rs1/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.11_04h18/models/last_model-BetterLViT.pth.tar",
+  "destination_path": "/root/regional_model_archive/b4dd566a/last_model-BetterLViT.pth.tar",
+  "bytes": 845347135,
+  "xet_hash": "9ecd31247b4fe1bf206390d9c61736a91d74243090f428b1269556def9d0174a",
+  "sha256": "1cb82fc045730724a3e1b6e038e968b51f90375944a0dfd4c2319995dc88fce6",
+  "checkpoint": {
+    "source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "epoch": 79,
+    "best_epoch": 69
+  },
+  "source_path_preserved": true,
+  "source_is_symlink": true,
+  "sibling_best_preserved": true,
+  "active_references_before": [],
+  "before": {
+    "scratch_free_bytes": 3439378432,
+    "root_free_bytes": 3974262784,
+    "fs_bytes": 18559782256
+  },
+  "after": {
+    "scratch_free_bytes": 4284727296,
+    "root_free_bytes": 3128893440,
+    "fs_bytes": 18559782256
+  },
+  "completed_unix": 1789109602.167035,
+  "replayed": false,
+  "fresh_cloud_listing_verified": true,
+  "cloud_checked_unix": 1789109578.929313,
+  "bucket": "razaxq/BetterLViT",
+  "bucket_path": "b4dd566a/models/last_model-BetterLViT.pth.tar"
+}
