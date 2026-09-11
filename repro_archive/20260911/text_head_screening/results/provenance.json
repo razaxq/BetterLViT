@@ -1,0 +1,25 @@
+{
+  "source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "manifest_sha256": "ec4a25a49c5b1fd35a20b7df1e0d92de9ee3aa48a469d9b0bfdacc83b9a8222d",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "baseline_checkpoint_sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a",
+  "baseline_state_sha256": "a75eb521099eda68e4a1cacb35f096d09f35d3a95aecb6098d86b03348cccd08",
+  "baseline_state_unchanged": true,
+  "torch": "2.9.1+cu128",
+  "numpy": "1.26.4",
+  "cuda": "12.8",
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "final_step": 1024,
+  "shared_fs_written": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "initial_state_sha256": "73a8aa653d561879b0dff977204bed3bc75f3782f6bf270462dc2893d4c7cf73",
+  "final_state_sha256": {
+    "T1": "1486cc40748cf0922fca67af9eb2747d34303693a11c98afe474ddc422e3fc7a",
+    "T2": "d619c51f69f3f4b7568e5c22150208d7fb0996c7d8b0b3a1aadd5ef7c848b5d7",
+    "T3": "257aeb0850a105a876d7fc6f5260184a1539284c6fba9a1a222f330db41d6547",
+    "T4": "c3f8541078939a45ab564eea4e718dfe482dae9e66797141ef3dbc65d724d2fd",
+    "image": "459ce96ed0fff14fdffaea111ff6d8fb13d53f26f38a941601e2fdd102e7c2f2",
+    "template": "c52a1384ee91bb2b109d2d03faedd742951d0a356ead6e5c10a7296cedd84add"
+  }
+}

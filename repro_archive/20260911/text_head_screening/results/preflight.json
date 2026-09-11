@@ -1,0 +1,23 @@
+{
+  "passed": true,
+  "device": "cuda",
+  "parameters": 75808,
+  "finite_difference_gradient": true,
+  "identity": true,
+  "mass_max_error_pixels": 0.00013424098142422736,
+  "deterministic_forward_backward": true,
+  "image_text_invariance": true,
+  "template_image_invariance": true,
+  "equal_reference_zero": true,
+  "eligibility_abstention": true,
+  "all_parameter_gradients_finite": true,
+  "synthetic_only": true,
+  "losses": {
+    "T1": 0.12478157877922058,
+    "T2": 0.12479054182767868,
+    "T3": 0.12478159368038177,
+    "T4": 0.12479005008935928,
+    "image": 0.12478552013635635,
+    "template": 0.12478248029947281
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "verified": true,
+  "source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "files_sha256_verified": true,
+  "counts_and_summary_recomputed": true,
+  "samples": 1131,
+  "steps_per_head": 1024,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "automatic_full_training": false
+}
