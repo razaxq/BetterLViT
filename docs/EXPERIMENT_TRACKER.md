@@ -12,13 +12,13 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：A诊断准备，接续RS3（2026-09-11）
+## 文字引导方向：A诊断已后台派发（2026-09-11）
 
 用户已授权按研究报告推进。新增[冻结执行方案](../repro_archive/20260911/text_grounding_execution/PLAN.md)及可复现控制脚本：R2 Best67固定，5种文字规则×主LViT/EPPA/两路共15个条件，先32张Train实现预检，再一次1429张Val诊断；额外用关系替换减同义规范化控制措辞影响。冻结权重、确定性前向、原文逐图R2复现、Test访问禁令和独立复算均有运行检查。
 
 本地9项行为测试通过。Train完整语义解析5512/5716，204条回退，2388条支持关系替换；无截断/UNK。这里采用完整句法与侧数一致性检查，比前次只解析位置的统计更严格，两种覆盖不能混用。语义匹配原始文字变化4726条，实际token变化2250条。
 
-**GPU诊断尚未启动，无新IoU或Test成绩。** 先执行既有RS3的22:00悉尼时间唯一末检及归档/HF验证，随后接续A；不提前查询RS3，也不改变其冻结训练。诊断自身最多两次预约检查，按实测批耗时预测末检。A完成后解释结果并注册B的普通文本/关系差分×有无投影及图像/模板控制，再做短程筛选；不因A运行成功自动开始80轮。
+**A于22:10:15.563悉尼时间后台派发，PID272504，检查0/2。** RS3末检、归档/独立/HF验证全部完成后，启动器核验源码哈希及GPU空闲再提交；当前只有派发回执，没有GPU预检通过或新IoU/Test成绩。[启动证据](../repro_archive/20260911/text_grounding_execution/launch.json)。同一heartbeat已改约**今天22:16首次检查**并读回核验，[预约回执](../repro_archive/20260911/text_grounding_execution/first_check_appointment_verified.json)。届时依据实测批耗时预测末检；最多两次检查，不保持连接。A完成后解释结果并注册B的普通文本/关系差分×有无投影及图像/模板控制，再做短程筛选，不因A运行成功自动开始80轮。
 
 执行源`c694e57be6b5ce224489ff9bab2acbb4d4846358`及标签`diagnostic-r2-text-path-a-v2-20260911`已推送GitHub，20:49部署到服务器独立目录，10份源文件哈希一致、9项服务器CPU测试通过；首次部署的目录兼容问题及失败源独立保留，未启动GPU。[部署回执](../repro_archive/20260911/text_grounding_execution/deployment.json)。20:50:59读回确认同一heartbeat仍预约22:00，已加入RS3→A→B接续说明，[预约核验](../repro_archive/20260911/text_grounding_execution/appointment_verified.json)。
 

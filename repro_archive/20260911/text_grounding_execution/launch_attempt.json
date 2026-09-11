@@ -1,0 +1,10 @@
+{
+  "submitted_unix": 1789128609.0076544,
+  "diagnostic_source_git_commit": "c694e57be6b5ce224489ff9bab2acbb4d4846358",
+  "rs3_proofs": {
+    "independent_verification.json": "dc1a0058da8c0d1ca23c088df279a995be28cb6222690bfbfae90bebf217ecf1",
+    "hf_upload_verified.json": "c7532915b913acb514ebb1d3f1bd15a6ab05cc9a2eecbd13f3e748cff50eebe1",
+    "download_xet_verified.json": "ba58587ebb1b099dcb697933d3685a1aecabef7e1c6d7aa22350acfffb9340da",
+    "runtime.json": "6f73322abdbf00b31a650146d24d6e9a07dcb1e15a9e136b66cfc86830133b17"
+  }
+}
