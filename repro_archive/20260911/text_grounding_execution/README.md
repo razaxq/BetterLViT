@@ -15,3 +15,5 @@ GPU实际预检和1429张完整Val需在RS3原定22:00悉尼时间末检、归�
 **成功部署已核验：** 2026-09-11 20:49悉尼时间，`c694e57be6b5ce224489ff9bab2acbb4d4846358`已部署到`/root/text_grounding_a_v2_20260911`；10份文件SHA256与Git源完全一致，服务器9项CPU测试通过。GitHub分支及标签`diagnostic-r2-text-path-a-v2-20260911`均指向该完整SHA。未加载模型、未查询GPU或RS3训练。
 
 20:50:59读回核验同一heartbeat `betterlvit`，保留今天22:00的RS3唯一末检；RS3完成归档核验后启动A，随后依实测批耗时改约诊断自身的末检，再按证据进入B。完整工具回执和保存配置见`appointment_verified.json`。当前没有`launch.json`或诊断成绩，不能写为GPU任务已派发。
+
+用户随后明确发出“启动”指令；已将启动请求登记至同一个ACTIVE预约并读回确认，见`queued_start_request.json`。保留22:00的RS3末检及完成核验依赖，满足后直接派发A，无需再次确认。本次仅核对本地文件与预约，未查询RS3/GPU；排入预约队列不等于GPU任务已启动。

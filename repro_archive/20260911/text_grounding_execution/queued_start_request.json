@@ -1,0 +1,30 @@
+{
+  "classification": "queued_in_existing_codex_heartbeat_not_gpu_submission",
+  "requested_sydney": "2026-09-11T21:07:15.583253+10:00",
+  "verified_sydney": "2026-09-11T21:07:51.903270+10:00",
+  "user_request": "启动",
+  "queued": true,
+  "gpu_submitted": false,
+  "scheduled_sydney": "2026-09-11T22:00:00+10:00",
+  "dependencies": "RS3 final inspection and completed-run verification",
+  "diagnostic_source_git_commit": "c694e57be6b5ce224489ff9bab2acbb4d4846358",
+  "automation_id": "betterlvit",
+  "automation_status": "ACTIVE",
+  "automation_target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "automation_prompt_sha256": "d74b7752671cb514dd4857ddc65e8eedc6c3cc32eac460b094e6e37e8e0fb41a",
+  "existing_schedule_preserved": true,
+  "training_status_queried": false,
+  "tool_receipt": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}
