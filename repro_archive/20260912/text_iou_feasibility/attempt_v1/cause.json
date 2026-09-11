@@ -1,0 +1,9 @@
+{
+  "failed_source_git_commit": "5e98ac651a497fa1b3ee7de3949d3f3b0d0d8ce0",
+  "train_updates": 0,
+  "cause": "requires_grad_(False) changed floating-point inference path; same parameter flag as D reproduces all metrics exactly",
+  "controlled_first16": true,
+  "binary_metrics_unchanged": true,
+  "strict_reproduction_requirement_preserved": true,
+  "retry_changes": "Restore D parameter flags with no_grad inference; same cache, weights, samples, thresholds and no updates"
+}

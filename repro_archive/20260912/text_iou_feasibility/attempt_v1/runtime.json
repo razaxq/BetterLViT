@@ -1,0 +1,8 @@
+{
+  "started_unix": 1789137686.4722457,
+  "source_git_commit": "5e98ac651a497fa1b3ee7de3949d3f3b0d0d8ce0",
+  "phase": "failed",
+  "train_updates": 0,
+  "failed_unix": 1789137692.5849178,
+  "error": "Traceback (most recent call last):\n  File \"/root/text_iou_e_5e98ac65/run_audit.py\", line 181, in <module>\n    main(args);runtime.update(phase='complete',completed_unix=time.time())\n    ^^^^^^^^^^\n  File \"/root/text_iou_e_5e98ac65/run_audit.py\", line 154, in main\n    assert record['metrics']==expected['output'],(v,i,'D exact reproduction failed')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('T1', 2292, 'D exact reproduction failed')\n"
+}

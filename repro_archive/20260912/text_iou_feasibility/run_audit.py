@@ -102,7 +102,10 @@ def main(args):
     heads={}
     for v in VARIANTS:
         head=ResidualHead().cuda();head.load_state_dict(ckpt['heads']['adamw/'+v],strict=True); head.eval()
-        head.requires_grad_(False);heads[v]=head
+        # Match D's parameter flags exactly; all head forwards below use no_grad,
+        # and this audit has no optimizer or parameter updates. Flipping this
+        # flag selects a numerically different inference path on this runtime.
+        heads[v]=head
     original_d = json.loads((D/'results/train_diagnostics.json').read_text())[-1]['cases']
     criterion=WeightedDiceFocal(); W=interpolation_matrix().cuda();e1=[]; gradients=[]; matched=[]
     for start in range(0,len(audit),16):
@@ -123,6 +126,12 @@ def main(args):
             smooth_mean=(smooth*w).double().sum((1,2,3),keepdim=True)/w.double().sum((1,2,3),keepdim=True).clamp_min(1e-30)
             effective=smooth-smooth_mean.to(smooth.dtype)
             unrestricted_smooth=W@(W.T@g@W)@W.T
+            if start==0 and lossname=='total':
+                for variant,expected in (('T1',g),('T4',proj)):
+                    coarse=torch.zeros((len(ix),1,28,28),device='cuda',requires_grad=True)
+                    check_loss=criterion(prediction(z,W@coarse@W.T,variant),y)
+                    automatic=torch.autograd.grad(check_loss,coarse)[0]*len(ix)
+                    assert torch.allclose(automatic,W.T@expected@W,rtol=1e-5,atol=1e-9), '28grid analytic chain mismatch'
             for direction,value in (('unrestricted',g),('mass_projected',proj),
                 ('unrestricted_28grid',unrestricted_smooth),('mass_projected_28grid',effective)):
                 for j,i in enumerate(ix):
@@ -168,7 +177,8 @@ def main(args):
     write_json(args.output/'matched_batch_loss.json',matched)
     write_json(args.output/'provenance.json',dict(source_git_commit=args.source_sha,manifest=M,
         cache_sha256_verified=True,checkpoint_sha256_verified=True,original32_all6_heads_exact_reproduction=True,
-        train_updates=0,torch=torch.__version__,numpy=np.__version__,gpu=torch.cuda.get_device_name(),
+        train_updates=0,analytic_28grid_gradient_autograd_verified=True,
+        torch=torch.__version__,numpy=np.__version__,gpu=torch.cuda.get_device_name(),
         internal_holdout_accessed=False,official_validation_accessed=False,test_split_accessed=False,
         semantic_control_changed_n=len(M['semantic_changed_cached_indices'])))
     print(json.dumps(dict(event='e1_complete',n=len(e1),gradient_records=len(gradients))),flush=True)

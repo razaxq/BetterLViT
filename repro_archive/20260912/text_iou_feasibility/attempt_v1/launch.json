@@ -1,0 +1,17 @@
+{
+  "source_git_commit": "5e98ac651a497fa1b3ee7de3949d3f3b0d0d8ce0",
+  "remote_directory": "/root/text_iou_e_5e98ac65",
+  "pid": 277422,
+  "submitted_unix": 1789137682.9024487,
+  "files_sha256": {
+    "run_audit.py": "e4f3915a20c87747f75836978c46c6f5eaac0b62a2bbc4a89198980be1016c09",
+    "heads.py": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+    "analysis.py": "063d2f9bb386d479abb07af1acfa5336e33909f0936489e404f21b681a80f80f",
+    "manifest.json": "5a8a921d874bf9c5e5b79dc84d2a9f211f0d0ff20b9c25b4cf977790932b7ad4",
+    "selection.json": "11aaaddb2607b33c5836f68fdba37286478b40aedc7cc9ef09caaf4c4755d3b8",
+    "PROTOCOL.md": "a4777b59cd826f0e5490875b7c465a095cd0d252d6856c5608e967d8e5ad990d"
+  },
+  "train_updates": 0,
+  "system_free_bytes": 1300422656,
+  "predicted_collect_unix": 1789137802.9024487
+}

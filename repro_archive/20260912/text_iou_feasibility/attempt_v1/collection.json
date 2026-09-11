@@ -1,0 +1,12 @@
+{
+  "runtime": {
+    "started_unix": 1789137686.4722457,
+    "source_git_commit": "5e98ac651a497fa1b3ee7de3949d3f3b0d0d8ce0",
+    "phase": "failed",
+    "train_updates": 0,
+    "failed_unix": 1789137692.5849178,
+    "error": "Traceback (most recent call last):\n  File \"/root/text_iou_e_5e98ac65/run_audit.py\", line 181, in <module>\n    main(args);runtime.update(phase='complete',completed_unix=time.time())\n    ^^^^^^^^^^\n  File \"/root/text_iou_e_5e98ac65/run_audit.py\", line 154, in main\n    assert record['metrics']==expected['output'],(v,i,'D exact reproduction failed')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('T1', 2292, 'D exact reproduction failed')\n"
+  },
+  "observed_unix": 1789137813.6380422,
+  "log": "{\"event\": \"e0_complete\", \"summary\": {\"n\": 1930, \"baseline_iou\": 0.7606658650802316, \"oracles\": {\"unprojected\": {\"eligible_mean_gain\": 0.07833134627988048, \"all_fit_folded_gain\": 0.032972627768848274, \"fp_correctable_fraction\": 0.38887709445445146, \"fn_correctable_fraction\": 0.46236774111245027}, \"projected_loose\": {\"eligible_mean_gain\": 0.13545790866097976, \"all_fit_folded_gain\": 0.057019359589027464, \"fp_correctable_fraction\": 0.6405391977693198, \"fn_correctable_fraction\": 0.7316513106410688}}}}\nTraceback (most recent call last):\n  File \"/root/text_iou_e_5e98ac65/run_audit.py\", line 181, in <module>\n    main(args);runtime.update(phase='complete',completed_unix=time.time())\n    ^^^^^^^^^^\n  File \"/root/text_iou_e_5e98ac65/run_audit.py\", line 154, in main\n    assert record['metrics']==expected['output'],(v,i,'D exact reproduction failed')\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError: ('T1', 2292, 'D exact reproduction failed')\n"
+}
