@@ -1,5 +1,7 @@
 # 文字诊断A：文件名接口修复v3
 
+**已完成并独立核验（22:32首次检查）：** 22:31:38.326完成，观察延迟33.862秒，检查1/2即关闭。原文1429张Val逐图结果与R2最大差0、权重不变，32张Train CUDA预检通过。原文Val IoU72.665359%、Dice82.403429%；611张可交换关系样本中swap−canonical的IoU差在主/EPPA/两路为−2.5690/−15.2083/−17.8221 pp。详见[完成报告](REPORT.md)，全部原始结果及独立复算在results。以下派发状态仅作为历史，不再查询本次运行。下一步为预先注册的B短程分支筛选，不是正式80轮或新Test成绩。
+
 **当前已后台派发：** 悉尼2026-09-11 **22:25:53.479**，PID **273120**，执行源`da17b3fbef0ca4ac6343575cf2af18fab3c76efb`，标签`diagnostic-r2-text-path-a-v3-20260911`。服务器11项CPU测试通过，11份执行文件与Git源SHA256完全一致；启动前GPU空闲，系统盘余3,125,227,520字节。后台派发后SSH已断开。见`deployment.json`、`launch.json`及`state.json`。
 
 同一heartbeat `betterlvit` 已改约**今天22:31悉尼时间首次检查**并读回核验，见`first_check_appointment_verified.json`。当前检查0/2，只有派发回执，尚未确认32张Train GPU预检通过或得到新IoU结果。不得重复deploy/launch或提前查询，首次观测后按实测批耗时预约唯一末检。

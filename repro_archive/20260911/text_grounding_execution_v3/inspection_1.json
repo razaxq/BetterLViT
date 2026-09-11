@@ -1,0 +1,35 @@
+{
+  "observed_unix": 1789129932.187894,
+  "runtime": {
+    "phase": "complete",
+    "submitted_unix": 1789129560.18555,
+    "diagnostic_source_git_commit": "da17b3fbef0ca4ac6343575cf2af18fab3c76efb",
+    "test_split_accessed": false,
+    "expected_completion_unix": 1789130196.6642346,
+    "preflight_finished_unix": 1789129580.0058095,
+    "completed_unix": 1789129898.3258872,
+    "artifacts": {
+      "preflight.json": {
+        "bytes": 2078,
+        "sha256": "0a9148699d291ffd9454ffb9c009f8129c1b3df7566baab51649f943aab7ae9b"
+      },
+      "train_records.json": {
+        "bytes": 328399,
+        "sha256": "4489ade6b2ffd7e75ba01d7cba2da40ecb2c6a264f14cb5a9d74ac5e7030ccba"
+      },
+      "records.json": {
+        "bytes": 14654136,
+        "sha256": "ea943222a180ac1cb3843c709b43a6939ea60f1c6fc4a4960f8daf6e3290c3bf"
+      },
+      "summary.json": {
+        "bytes": 109607,
+        "sha256": "c4be7b32341c4801d54eb7725a73bd16b78573cf5e6e23c530de31890f9636f7"
+      },
+      "provenance.json": {
+        "bytes": 1915,
+        "sha256": "18a573d0d53ee9651662e0aaf28ee1300a9ed0d322d23d1320f74b44be3d4394"
+      }
+    }
+  },
+  "log_tail": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n{\"validation_done\": 16, \"validation_total\": 1429}\n{\"validation_done\": 32, \"validation_total\": 1429}\n{\"validation_done\": 48, \"validation_total\": 1429}\n{\"validation_done\": 64, \"validation_total\": 1429}\n{\"validation_done\": 80, \"validation_total\": 1429}\n{\"validation_done\": 96, \"validation_total\": 1429}\n{\"validation_done\": 112, \"validation_total\": 1429}\n{\"validation_done\": 128, \"validation_total\": 1429}\n{\"validation_done\": 144, \"validation_total\": 1429}\n{\"validation_done\": 160, \"validation_total\": 1429}\n{\"validation_done\": 176, \"validation_total\": 1429}\n{\"validation_done\": 192, \"validation_total\": 1429}\n{\"validation_done\": 208, \"validation_total\": 1429}\n{\"validation_done\": 224, \"validation_total\": 1429}\n{\"validation_done\": 240, \"validation_total\": 1429}\n{\"validation_done\": 256, \"validation_total\": 1429}\n{\"validation_done\": 272, \"validation_total\": 1429}\n{\"validation_done\": 288, \"validation_total\": 1429}\n{\"validation_done\": 304, \"validation_total\": 1429}\n{\"validation_done\": 320, \"validation_total\": 1429}\n{\"validation_done\": 336, \"validation_total\": 1429}\n{\"validation_done\": 352, \"validation_total\": 1429}\n{\"validation_done\": 368, \"validation_total\": 1429}\n{\"validation_done\": 384, \"validation_total\": 1429}\n{\"validation_done\": 400, \"validation_total\": 1429}\n{\"validation_done\": 416, \"validation_total\": 1429}\n{\"validation_done\": 432, \"validation_total\": 1429}\n{\"validation_done\": 448, \"validation_total\": 1429}\n{\"validation_done\": 464, \"validation_total\": 1429}\n{\"validation_done\": 480, \"validation_total\": 1429}\n{\"validation_done\": 496, \"validation_total\": 1429}\n{\"validation_done\": 512, \"validation_total\": 1429}\n{\"validation_done\": 528, \"validation_total\": 1429}\n{\"validation_done\": 544, \"validation_total\": 1429}\n{\"validation_done\": 560, \"validation_total\": 1429}\n{\"validation_done\": 576, \"validation_total\": 1429}\n{\"validation_done\": 592, \"validation_total\": 1429}\n{\"validation_done\": 608, \"validation_total\": 1429}\n{\"validation_done\": 624, \"validation_total\": 1429}\n{\"validation_done\": 640, \"validation_total\": 1429}\n{\"validation_done\": 656, \"validation_total\": 1429}\n{\"validation_done\": 672, \"validation_total\": 1429}\n{\"validation_done\": 688, \"validation_total\": 1429}\n{\"validation_done\": 704, \"validation_total\": 1429}\n{\"validation_done\": 720, \"validation_total\": 1429}\n{\"validation_done\": 736, \"validation_total\": 1429}\n{\"validation_done\": 752, \"validation_total\": 1429}\n{\"validation_done\": 768, \"validation_total\": 1429}\n{\"validation_done\": 784, \"validation_total\": 1429}\n{\"validation_done\": 800, \"validation_total\": 1429}\n{\"validation_done\": 816, \"validation_total\": 1429}\n{\"validation_done\": 832, \"validation_total\": 1429}\n{\"validation_done\": 848, \"validation_total\": 1429}\n{\"validation_done\": 864, \"validation_total\": 1429}\n{\"validation_done\": 880, \"validation_total\": 1429}\n{\"validation_done\": 896, \"validation_total\": 1429}\n{\"validation_done\": 912, \"validation_total\": 1429}\n{\"validation_done\": 928, \"validation_total\": 1429}\n{\"validation_done\": 944, \"validation_total\": 1429}\n{\"validation_done\": 960, \"validation_total\": 1429}\n{\"validation_done\": 976, \"validation_total\": 1429}\n{\"validation_done\": 992, \"validation_total\": 1429}\n{\"validation_done\": 1008, \"validation_total\": 1429}\n{\"validation_done\": 1024, \"validation_total\": 1429}\n{\"validation_done\": 1040, \"validation_total\": 1429}\n{\"validation_done\": 1056, \"validation_total\": 1429}\n{\"validation_done\": 1072, \"validation_total\": 1429}\n{\"validation_done\": 1088, \"validation_total\": 1429}\n{\"validation_done\": 1104, \"validation_total\": 1429}\n{\"validation_done\": 1120, \"validation_total\": 1429}\n{\"validation_done\": 1136, \"validation_total\": 1429}\n{\"validation_done\": 1152, \"validation_total\": 1429}\n{\"validation_done\": 1168, \"validation_total\": 1429}\n{\"validation_done\": 1184, \"validation_total\": 1429}\n{\"validation_done\": 1200, \"validation_total\": 1429}\n{\"validation_done\": 1216, \"validation_total\": 1429}\n{\"validation_done\": 1232, \"validation_total\": 1429}\n{\"validation_done\": 1248, \"validation_total\": 1429}\n{\"validation_done\": 1264, \"validation_total\": 1429}\n{\"validation_done\": 1280, \"validation_total\": 1429}\n{\"validation_done\": 1296, \"validation_total\": 1429}\n{\"validation_done\": 1312, \"validation_total\": 1429}\n{\"validation_done\": 1328, \"validation_total\": 1429}\n{\"validation_done\": 1344, \"validation_total\": 1429}\n{\"validation_done\": 1360, \"validation_total\": 1429}\n{\"validation_done\": 1376, \"validation_total\": 1429}\n{\"validation_done\": 1392, \"validation_total\": 1429}\n{\"validation_done\": 1408, \"validation_total\": 1429}\n{\"validation_done\": 1424, \"validation_total\": 1429}\n{\"validation_done\": 1429, \"validation_total\": 1429}\n"
+}

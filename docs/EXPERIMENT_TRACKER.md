@@ -12,7 +12,11 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：A诊断接口修复v3（2026-09-11）
+## 文字引导方向：A诊断完成（2026-09-11）
+
+**A v3于22:31:38.326完成，首次检查距完成33.862秒，检查1/2关闭。** 原文1429张Val逐图IoU/Dice/Precision/Recall与R2最大差0；32张Train CUDA预检、全量文字身份及前后权重/状态一致性通过，未训练或访问Test。执行源`da17b3fbef0ca4ac6343575cf2af18fab3c76efb`及五份完整结果已逐文件和独立复算核验。[完成报告](../repro_archive/20260911/text_grounding_execution_v3/REPORT.md)。
+
+原文Val IoU72.665359%、Dice82.403429%。611张可交换关系样本中，swap−canonical的IoU差在主/EPPA/两路为−2.5690/−15.2083/−17.8221 pp；EPPA直接入口已经有很强的关系敏感性。canonical/both仍有−0.2537 pp措辞影响。错误文字诊断不是新模型成绩，也不直接证明语言理解；接续B检验文字能否帮助残差空间修正，并用普通匹配、保量、图像/模板对照辨别收益来源。B仅Train内部筛选，80轮C与Test尚未执行。以下为接口修复历史。
 
 **22:17首次检查发现v2已失败：** 22:10:31.829在首个Train批次因图像名与mask文字键不一致触发KeyError，未进入Val/更新模型/Test。失败源`c694e57be6b5ce224489ff9bab2acbb4d4846358`及服务器目录保留，检查1次即结束，观察距失败7.17分钟。不是模型效果的负结果。[失败记录](../repro_archive/20260911/text_grounding_execution/inspection_1.json)。
 

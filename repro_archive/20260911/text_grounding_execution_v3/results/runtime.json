@@ -1,0 +1,31 @@
+{
+  "phase": "complete",
+  "submitted_unix": 1789129560.18555,
+  "diagnostic_source_git_commit": "da17b3fbef0ca4ac6343575cf2af18fab3c76efb",
+  "test_split_accessed": false,
+  "expected_completion_unix": 1789130196.6642346,
+  "preflight_finished_unix": 1789129580.0058095,
+  "completed_unix": 1789129898.3258872,
+  "artifacts": {
+    "preflight.json": {
+      "bytes": 2078,
+      "sha256": "0a9148699d291ffd9454ffb9c009f8129c1b3df7566baab51649f943aab7ae9b"
+    },
+    "train_records.json": {
+      "bytes": 328399,
+      "sha256": "4489ade6b2ffd7e75ba01d7cba2da40ecb2c6a264f14cb5a9d74ac5e7030ccba"
+    },
+    "records.json": {
+      "bytes": 14654136,
+      "sha256": "ea943222a180ac1cb3843c709b43a6939ea60f1c6fc4a4960f8daf6e3290c3bf"
+    },
+    "summary.json": {
+      "bytes": 109607,
+      "sha256": "c4be7b32341c4801d54eb7725a73bd16b78573cf5e6e23c530de31890f9636f7"
+    },
+    "provenance.json": {
+      "bytes": 1915,
+      "sha256": "18a573d0d53ee9651662e0aaf28ee1300a9ed0d322d23d1320f74b44be3d4394"
+    }
+  }
+}

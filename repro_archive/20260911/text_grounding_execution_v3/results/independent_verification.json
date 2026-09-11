@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "diagnostic_source_git_commit": "da17b3fbef0ca4ac6343575cf2af18fab3c76efb",
+  "samples": 1429,
+  "test_split_accessed": false,
+  "model_updated": false,
+  "counts_and_summaries_recomputed": true,
+  "artifact_hashes_verified": true,
+  "automatic_architecture_pass": false
+}
