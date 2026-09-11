@@ -2,7 +2,9 @@
 
 本轮用户于2026-09-11明确要求“启动训练”。固定执行三个首轮候选，各80轮、seed1219、batch16、R2单次余弦、原Dice/Focal。RS1整图软IoU，RS2最终输出的56窗口/28步长局部软IoU，RS3仅改变为阳性/背景分组。按[阶段计划](../../../docs/REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md)推进，不按前一组数值修改后一组。
 
-## 当前状态：RS2完成并备份，RS3空间准备完成
+## 当前状态：RS1/RS2完成并备份，RS3已提交、首检已预约
+
+RS3于悉尼**2026-09-11 16:55:06.973**提交后台训练，PID261154，来源`f79842331e4e5e41526ed66da31ec174ea4a61b2`，tag `experiment-rs3-regional-80e-seed1219-20260911`。80轮、seed1219、λ=0.128312，局部窗口阳性/空背景分组归一化；启动前训练盘可用4,284,715,008字节，fs18,559,782,256字节。当前只有提交回执，尚未首检确认健康，无完整结果，检查0/2。同一heartbeat已改约**今天17:11悉尼时间首次检查**，保存配置和目标thread核验通过；到时用实测轮时预测并安排唯一末检。见`rs3_launch.json`、`rs3_automation_verified.json`。不得提前连接。
 
 RS2于悉尼**2026-09-11 16:36:27.368**完成80轮，**16:38:13.553**完成1429张Val导出；Best75，训练/Val退出码均0。唯一末检**16:46:13.188**距训练结束585.820秒（9.76分钟），符合≤30分钟，检查预算2/2已用完。源码、manifest、80轮实际学习率、逐图均值和四次Train诊断状态恢复均核验通过，未访问Test。
 
@@ -10,7 +12,7 @@ RS2 Val IoU **72.8395%**、Dice **82.5258%**；比R2 IoU **+0.1741个百分点**
 
 RS2已备份至HF Bucket `razaxq/BetterLViT/2a389922/`，20文件、1,694,460,839字节，远端及独立本地清单路径/大小/Xet全部一致，11项下载run产物也匹配。见`rs2_results/hf_upload_verified.json`、`download_xet_verified.json`。
 
-RS1已备份的Last（845,347,135字节）已复制并核验后迁至`/root/regional_model_archive/b4dd566a/last_model-BetterLViT.pth.tar`，原路径保留符号链接，Best保留原位。迁移前审计无活跃文件/内存映射引用，复制后Xet/SHA256、检查点完整SHA/80轮/历史均核验。迁移前后训练盘可用**3,439,378,432 → 4,284,727,296字节**，系统盘可用**3,974,262,784 → 3,128,893,440字节**，共享fs保持**18,559,782,256字节**。没有丢弃模型、改动数据集或环境。见`storage_migration_rs1_last.json`；GitHub提交后接续RS3。
+RS1已备份的Last（845,347,135字节）已复制并核验后迁至`/root/regional_model_archive/b4dd566a/last_model-BetterLViT.pth.tar`，原路径保留符号链接，Best保留原位。迁移前审计无活跃文件/内存映射引用，复制后Xet/SHA256、检查点完整SHA/80轮/历史均核验。迁移前后训练盘可用**3,439,378,432 → 4,284,727,296字节**，系统盘可用**3,974,262,784 → 3,128,893,440字节**，共享fs保持**18,559,782,256字节**。没有丢弃模型、改动数据集或环境。见`storage_migration_rs1_last.json`；归档提交`4d2457182234e5fcad3afaa3533fd68c582bde43`已推送GitHub并独立核验，随后接续RS3。
 
 ### RS2原始提交与首检
 
@@ -28,7 +30,7 @@ RS1 Val IoU **73.0764%**、Dice **82.7039%**；相对R2 IoU **+0.4111个百分�
 
 RS1原始首检06:35、预测11:14:25结束、预约11:27末检的证据保留于`rs1_first_snapshot.json`、`rs1_final_automation_verified.json`，真实末检见`rs1_final_snapshot.json`。HF Bucket `razaxq/BetterLViT/b4dd566a/`已添加21文件、1,694,955,060字节，远端及独立本地清单的路径/大小/Xet哈希全部匹配；11项下载run产物字节/Xet亦匹配。Best/Last保留，fs仍18,559,782,256字节，训练盘备份后余5,155,680,256字节。见`rs1_results/hf_upload_verified.json`、`download_xet_verified.json`；归档提交`5ade2057a6d2b27e183834c43f0d4827cd8a4425`已推送GitHub并独立读取分支核验，随后接续RS2。
 
-RS2、RS3已冻结部署、完成全部CUDA预检并推送GitHub；RS2已提交，RS3尚未提交。三组新损失关闭时与正式R2分组优化器五步逐值一致，各组插入Train诊断前后五步也逐值一致；11项loss行为和5项筛选门检查通过。完整核验见`preflight_verified.json`。原始校准和预检临时权重不会用于正式训练。
+RS2、RS3已冻结部署、完成全部CUDA预检并推送GitHub；RS2已完成，RS3已提交。三组新损失关闭时与正式R2分组优化器五步逐值一致，各组插入Train诊断前后五步也逐值一致；11项loss行为和5项筛选门检查通过。完整核验见`preflight_verified.json`。原始校准和预检临时权重不会用于正式训练。
 
 ## 准备和冻结
 
@@ -64,6 +66,8 @@ RS2、RS3重复相同步骤。每次提交后将同一heartbeat改约新run的�
 训练程序在20/40/60/80轮内置32张Train的诊断，并恢复模型状态、参数梯度、模式和RNG；这不是远程状态查询。诊断梯度是最终logit空间，不是共享特征/参数梯度，不能与旧S2的20/64特征梯度观察混为一谈。每组成功训练后自动完整Val导出，此阶段不访问Test。
 
 上一组完成、归档、独立复算和HF文件大小/Xet哈希验证后才提交下一组，不要求数值过门；RS1/RS2/RS3固定全部完成后才作阶段决策。三个run结束后删除当前heartbeat，不自动启动RS4、RS5或150轮。
+
+RS3完成后的`archive_completed.py`还会调用`compare_grouping.py`，沿用冻结比较器的10000次图像配对bootstrap，输出`rs2_vs_rs3.json`；独立复算、报告及HF备份均包含该对照。按原计划只以IoU区间下界>0作为分组归因必要条件，不额外套用RS1区域增量的+0.001门，也不替代R2/RS1两项正式筛选。
 
 ## 存储与证据
 

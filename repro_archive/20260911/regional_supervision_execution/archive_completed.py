@@ -53,6 +53,8 @@ print(json.dumps(dict(source=SOURCE,models=models,validation={k:v for k,v in val
     if label in ('rs2','rs3'):
         subprocess.run(['python','-X','utf8',str(script),'--control',str(HERE/'rs1_results/validation.json'),
             '--candidate',str(destination/'validation.json'),'--output',str(destination/('rs1_vs_'+label+'.json')),'--regional-increment'],check=True)
+    if label=='rs3':
+        subprocess.run(['python','-X','utf8',str(HERE/'compare_grouping.py')],check=True)
     d=value['validation'];gate=json.loads((destination/('r2_vs_'+label+'.json')).read_text())
     body=f"# {label.upper()}完成记录\n\n来源 `{source['source_git_commit']}`；80轮，Best {d['checkpoint_best_epoch']}。\n\n"
     body+=f"Val macro IoU {100*d['macro_iou']:.4f}%，Dice {100*d['macro_dice']:.4f}%；R2筛选门通过：{gate['passed']}。\n\n"

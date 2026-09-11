@@ -73,6 +73,16 @@ def main():
         metric_reconciliation_verified=reconciliation is not None)
     if label!='rs1':
         increment=read('rs1_vs_'+label+'.json');result['regional_increment']=increment
+    if label=='rs3':
+        grouping=read('rs2_vs_rs3.json')
+        rs2=json.loads((HERE/'rs2_results/validation.json').read_text())
+        parent={r['name']:r for r in rs2['records']}
+        assert parent.keys()==bb.keys() and grouping['candidate_sha']==source['source_git_commit']
+        assert grouping['control_sha']==rs2['checkpoint_git_commit'] and not grouping['test_split_accessed']
+        for metric,item in grouping['deltas'].items():
+            assert abs(np.mean([bb[n][metric]-parent[n][metric] for n in parent])-item['mean'])<1e-12
+        assert grouping['grouping_iou_ci_positive']==(grouping['deltas']['iou']['ci95'][0]>0)
+        result['grouping_attribution']=grouping
     save(label+'_results/independent_verification.json',result)
     delta=gate['deltas']['iou']
     lines=[f'# {label.upper()} Val结果','',f"来源 `{source['source_git_commit']}`，80轮，Best {val['checkpoint_best_epoch']}。",'',
@@ -80,6 +90,7 @@ def main():
     table_rows=[('R2',base)]
     if label!='rs1':
         table_rows.append(('RS1',json.loads((HERE/'rs1_results/validation.json').read_text())))
+    if label=='rs3':table_rows.append(('RS2',rs2))
     table_rows.append((label.upper(),val))
     for name,data in table_rows:
         lines.append('| '+name+' | '+' | '.join(f"{100*data['macro_'+m]:.4f}%" for m in ('iou','dice','precision','recall'))+f" | {data['macro_brier']:.6f} |")
@@ -93,6 +104,9 @@ def main():
         inc=increment['deltas']['iou']
         lines+=['',f"相对RS1的IoU差值{100*inc['mean']:+.4f}个百分点，95%图像配对区间{[100*v for v in inc['ci95']]}；区域增量门通过：{increment['passed']}，完整差值见rs1_vs_{label}.json。",
             '',f"按R2与当前候选共同GT面积最低四分位（≤{gate['small_area_cutoff']:.0f}像素，{gate['small_count']}张）比较：IoU {100*gate['deltas']['iou']['small_mean']:+.4f}、Dice {100*gate['deltas']['dice']['small_mean']:+.4f}、Recall {100*gate['deltas']['recall']['small_mean']:+.4f}个百分点。这里只是按标注面积分层，不代表临床病灶分型。"]
+    if label=='rs3':
+        g=grouping['deltas']['iou']
+        lines+=['',f"RS3−RS2分组归因比较：IoU {100*g['mean']:+.4f}个百分点，95%配对区间{[100*v for v in g['ci95']]}；区间下界>0：{grouping['grouping_iou_ci_positive']}。此比较只用于判断分组的独立收益，不替代R2性能门或RS1区域增量门。"]
     (folder/'REPORT.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(result,ensure_ascii=False))
 

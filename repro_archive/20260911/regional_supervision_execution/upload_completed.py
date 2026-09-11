@@ -28,6 +28,8 @@ def main():
         supplements['analysis/iou_reconciliation.json']=base64.b64encode((folder/'iou_reconciliation.json').read_bytes()).decode()
         supplements['analysis/reconcile_iou.py']=base64.b64encode((HERE/'reconcile_iou.py').read_bytes()).decode()
     if label in ('rs2','rs3'):supplements['analysis/rs1_vs_'+label+'.json']=base64.b64encode((folder/('rs1_vs_'+label+'.json')).read_bytes()).decode()
+    if label=='rs3':
+        supplements['analysis/rs2_vs_rs3.json']=base64.b64encode((folder/'rs2_vs_rs3.json').read_bytes()).decode()
     helper_b64=base64.b64encode(HELPER.read_bytes()).decode()
     manifest=remote('SOURCE='+repr(source)+'\nSUPPLEMENTS='+repr(supplements)+'\nHELPER_B64='+repr(helper_b64)+'\n'+'''
 import base64,hashlib,json,shutil,subprocess
