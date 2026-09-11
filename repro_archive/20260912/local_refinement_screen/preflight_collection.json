@@ -1,0 +1,25 @@
+{
+  "runtime": {
+    "phase": "complete",
+    "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+    "started_unix": 1789139884.0660353,
+    "completed_unix": 1789139999.1516104,
+    "artifacts": {
+      "synthetic_checks.json": {
+        "bytes": 744,
+        "sha256": "bbefb4153a2e3e4fcdb9ae79cb3462e06dd20431ebad9c53483e1a7eb759b93a"
+      },
+      "cache_manifest.json": {
+        "bytes": 674,
+        "sha256": "18d64c6530e1884654787af2223b799f36b01b2e0c6cfa300f71e812393329f9"
+      },
+      "benchmark.json": {
+        "bytes": 975,
+        "sha256": "e2949826a00c99d1051697d3cf5debd06286ef43b3e2154e612c88725dacd0ed"
+      }
+    }
+  },
+  "observed_unix": 1789140071.6717727,
+  "encoding": "zlib",
+  "log": "/root/local_refinement_f_a76e1005/check_refiner.py:34: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n  errors[v]=float((p.double().sum((1,2,3))-z.sigmoid().double().sum((1,2,3))).abs().max())\n/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n"
+}

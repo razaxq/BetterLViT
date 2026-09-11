@@ -1,0 +1,20 @@
+{
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "baseline_unchanged": true,
+  "baseline_state_sha256": "a75eb521099eda68e4a1cacb35f096d09f35d3a95aecb6098d86b03348cccd08",
+  "exact_identity_verified_samples": 4585,
+  "old_b_holdout_images_loaded": 0,
+  "original_batch_shape_preserved": true,
+  "exact_cache_bytes": 610355200,
+  "cache_seconds": 92.42153549194336,
+  "files": {
+    "fine.bin": {
+      "bytes": 600965120,
+      "sha256": "6a9b95cae3aa367483fd8e4c2b659c68246925877d4e02d2f7b0de91c19ae24f"
+    },
+    "indices.bin": {
+      "bytes": 9390080,
+      "sha256": "fc5a3a2f88287c1eb48c66df1ec9eb7a25f624731971333ad726711fe660bb84"
+    }
+  }
+}

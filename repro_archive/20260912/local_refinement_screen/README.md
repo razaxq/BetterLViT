@@ -1,6 +1,8 @@
 # F：局部纠错接口筛选
 
-来源与完整执行状态见manifest.json、deployment.json、preflight/runtime.json（预检完成后）、state.json（正式训练启动后）。当前代码属于Train内机制筛选，不能作为正式Test成绩。
+**2026-09-12 01:22:42.763悉尼时间已后台提交训练，PID279193；当前无F完成结果。** 来源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`，远端`/root/local_refinement_f_a76e1005`。预计01:41:46完成，首次预测检查01:45，检查0/2。当前代码属于Train内机制筛选，不能作为正式Test成绩。
+
+CPU/CUDA与4585张原R2缓存精确身份、四组真实fit可训练性预检全部通过。源/运行信息见manifest.json、deployment.json、preflight/runtime.json、preflight/benchmark.json和state.json。每四头一步实测0.07419秒，预计总训练/OOF含余量19.06分钟；这是速度预测，不是已完成进度。前驱标签维度失败与仅清理自身空缓存的证明在attempt_v1，原B缓存未动。
 
 协议见[PROTOCOL.md](PROTOCOL.md)。共4585张原B fit，五折分别849/875/904/937/1020张；四组coarse_free/coarse_mass/fine_free/fine_mass，每组每折2048步，原R2冻结。新增点缓存610355200字节。
 

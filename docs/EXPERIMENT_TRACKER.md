@@ -12,6 +12,16 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## 文字引导方向：F局部纠错接口筛选已提交（2026-09-12）
+
+**01:22:42.763悉尼时间后台提交，PID279193，检查0/2；当前只有启动回执，没有F结果。** 执行源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`，远端`/root/local_refinement_f_a76e1005`。四组coarse_free/coarse_mass/fine_free/fine_mass×五折，每头每折2048步；原B的4585 fit按组重新固定五折（849/875/904/937/1020），每张图1024个共同不确定候选点。MLP各17025参数、同初始state，AdamW、原Dice/Focal，冻结R2，不新增文字/LoRA/boundary；旧B holdout、官方Val/Test不访问。[协议与入口](../repro_archive/20260912/local_refinement_screen/README.md)。
+
+CPU/CUDA identity、候选外不变、投影gradcheck、确定性前反向和有限梯度全部通过；全部4585图的原logits、28池化fp16特征、mask与文字身份精确复现B，R2前后state哈希不变。真实fit预检四头均有非零fc1任务梯度，预检24步头已丢弃，正式重新初始化。新增细特征/点索引缓存精确610355200字节，只写系统盘；启动时系统可用679751680字节，shared fs不写、原B缓存保留。
+
+实测四头每步0.07419秒，含余量预计训练和OOF约19.06分钟，即**01:41:46**完成；同一个原生heartbeat已恢复预约**01:45首次检查**，最多两次，首次完成即封存。各折训练结束自动评其留出折一次，不选择中途checkpoint。完成后独立复算全部门、载入20头及resume、备份HF并推送结果；通过细接口门后才继续文字增量预注册，不自动开80/150轮/Test。
+
+前驱`7c9ec09f664d4faac068da3d2cb2ad46a46c352f`在标签维度核验处停止，未开始正式拟合；修复只增加原label的通道维，不改数据或复现容差。失败/CPU-CUDA通过记录已保留；审计进程与打开文件后，仅删除该失败尝试未写入样本的两个空稀疏缓存（逻辑610355200字节、实际占用8192字节），未删除原模型或B缓存。以下E及其计划为历史。
+
 ## 文字引导方向：E0/E1只读Train可行性审计完成（2026-09-12）
 
 **00:46:36.008完成，0次更新；1930 eligible fit上界、原32+哈希固定新增128的梯度/文字纠错诊断。** 来源`66db167b48e4e0eeb91738af90df6abb6a78ddad`，标签`diagnostic-text-iou-e2-20260912`；6份原始结果SHA/计数/转移独立核验，原32六头精确复现D，28网格解析梯度核验通过。一次预定收取距完成1.988分钟，未访问旧B holdout、官方Val/Test，未开始新训练。失败前驱及浮点执行标志受控诊断完整保留。[报告与结果](../repro_archive/20260912/text_iou_feasibility/REPORT.md)。

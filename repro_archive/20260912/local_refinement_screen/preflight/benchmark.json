@@ -1,0 +1,40 @@
+{
+  "passed": true,
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "initial_state_sha256": "985b1fed773be2bfcf5e11f9172bfffbb6ab7f47bc1dc2118c132e8c4c11db29",
+  "parameters_per_head": 17025,
+  "real_fit_batch": [
+    0,
+    3,
+    4,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    15,
+    17,
+    18,
+    19,
+    21
+  ],
+  "discarded_preflight_updates": 24,
+  "mean_four_head_step_seconds": 0.0741865485906601,
+  "four_head_evaluation_batch_seconds": 0.09603095054626465,
+  "predicted_train_and_oof_seconds": 1143.3458648845553,
+  "last_fc1_gradient_norm": {
+    "coarse_free": 0.00028327337349765003,
+    "coarse_mass": 4.5496610255213454e-05,
+    "fine_free": 0.00028396406560204923,
+    "fine_mass": 5.613108442048542e-05
+  },
+  "all_preflight_heads_discarded": true,
+  "torch": "2.9.1+cu128",
+  "numpy": "1.26.4",
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "maximum_allocated_gpu_bytes": 5725999104,
+  "system_free_bytes": 679751680
+}

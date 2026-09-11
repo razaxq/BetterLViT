@@ -1,0 +1,30 @@
+{
+  "cpu": {
+    "passed": true,
+    "device": "cpu",
+    "parameters": 17025,
+    "local_identity": true,
+    "outside_candidates_exact": true,
+    "projection_gradcheck": true,
+    "deterministic_forward_backward": true,
+    "finite_gradients": true,
+    "mass_errors": {
+      "coarse_mass": 6.906484486535192e-07,
+      "fine_mass": 1.2118180165998638e-06
+    }
+  },
+  "cuda": {
+    "passed": true,
+    "device": "cuda",
+    "parameters": 17025,
+    "local_identity": true,
+    "outside_candidates_exact": true,
+    "projection_gradcheck": true,
+    "deterministic_forward_backward": true,
+    "finite_gradients": true,
+    "mass_errors": {
+      "coarse_mass": 4.4863991206511855e-06,
+      "fine_mass": 1.4780598576180637e-06
+    }
+  }
+}
