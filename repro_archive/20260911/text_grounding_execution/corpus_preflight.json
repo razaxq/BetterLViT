@@ -1,0 +1,40 @@
+{
+  "kind": "train_only_intervention_policy_check",
+  "passed": true,
+  "samples": 5716,
+  "train_membership_sha256": "b58295942caaa6a455f995dcbccc4fc7e259e6b4a9b940b4d25344925dd9346d",
+  "workbook_sha256": "fa292d8837d0e55cd4b3fe0cb367614045cb3d30de19b08bf0f62e1148db10a9",
+  "vocab_sha256": "e025f479c3a7ce6e248971bfe1b409708db0439e9488d30e254f81f27f75d678",
+  "policy_sha256": "56e521618ecc992bb91f469b52c8d03601696b5bc9506ec9fc2bc0575755dfeb",
+  "semantic_train_groups": 124,
+  "counts": {
+    "group/asymmetric_bilateral": 1248,
+    "tokens_changed/canonical": 2292,
+    "raw_changed/canonical": 2303,
+    "tokens_changed/semantic_match": 2250,
+    "raw_changed/semantic_match": 4726,
+    "tokens_changed/relation_swap": 2388,
+    "raw_changed/relation_swap": 2388,
+    "tokens_changed/drop_location": 5512,
+    "raw_changed/drop_location": 5512,
+    "tokens_changed/generic": 5716,
+    "raw_changed/generic": 5716,
+    "group/symmetric_bilateral": 3124,
+    "group/unilateral": 1140,
+    "group/unparsed": 204
+  },
+  "maximum_wordpiece_lengths": {
+    "canonical": 24,
+    "semantic_match": 24,
+    "relation_swap": 24,
+    "drop_location": 24,
+    "generic": 5
+  },
+  "no_truncation": true,
+  "no_unknown_tokens": true,
+  "generated_variants_sha256": "324cb826d4675e6863dbdb1556a5ce9c326b39d93a450ff62b6e934ead1cce06",
+  "mask_pixels_read": false,
+  "validation_images_read": false,
+  "test_split_accessed": false,
+  "note": "Strict complete-sentence parser; abstentions may exceed the earlier location-only corpus audit."
+}
