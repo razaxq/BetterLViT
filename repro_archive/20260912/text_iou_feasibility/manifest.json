@@ -1,0 +1,33 @@
+{
+  "phase": "E0_E1_readonly_Train_feasibility",
+  "updates": 0,
+  "threshold": 0.5,
+  "threshold_operator": ">",
+  "b_directory": "/root/text_head_b_49905dbb",
+  "d_directory": "/root/text_optimizer_d_c7080ea8",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "b_source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "d_source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "b_hashes": {
+    "split.json": "c09c52e47f36a4b170fe1317b306a56a715e6fb975b61243ff20ce8303542f7a",
+    "results/cache_manifest.json": "d9ef4f9f34fdba8a9361fb158ec1b1d76c43eb21d194dd156b88026d964e5eac",
+    "results/train_diagnostics.json": "bde5525b575f27d523ff421c1602296bfa7f4f2ca4f2879ca0147ea8463647cf"
+  },
+  "d_hashes": {
+    "results/heads.pt": "a5ece3d1ed144e50f568eaf88fb5c38a52dc5de57199157d5b52a7c6c5c4fb25",
+    "results/train_diagnostics.json": "054de9b33eecc917dc1b339155900668e1c665825f0a66b7ce8209719c0bf3b5"
+  },
+  "selection_sha256": "11aaaddb2607b33c5836f68fdba37286478b40aedc7cc9ef09caaf4c4755d3b8",
+  "heads_sha256": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+  "fit_count": 4585,
+  "eligible_fit_count": 1930,
+  "e1_count": 160,
+  "semantic_changed_cached_indices": [],
+  "candidate_top_fraction": 0.05,
+  "batch_size": 16,
+  "old_internal_holdout_accessed": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "oracle_is_deployable": false,
+  "no_automatic_training_or_architecture_pass": true
+}
