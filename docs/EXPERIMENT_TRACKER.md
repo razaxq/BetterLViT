@@ -12,6 +12,10 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## 文字引导方向：B六组筛选已预注册（2026-09-11）
+
+已实现[固定特征B协议](../repro_archive/20260911/text_head_screening/PROTOCOL.md)：R2冻结，普通文本匹配/关系差分×有无保量，另加同参数形状image/template控制；相同初始化、Train内部划分、原Dice/Focal及1024步单次余弦。fit4585、holdout1131，六组共同关系可交换资格1930/458，其他样本保持R2。精确原始cache1,756,686,848字节，系统盘预留1GB，shared fs不写。当前代码完成、待提交后CPU/CUDA预检及后台派发；尚无训练或新IoU结果。完整80轮与Test未启动。
+
 ## 文字引导方向：A诊断完成（2026-09-11）
 
 **A v3于22:31:38.326完成，首次检查距完成33.862秒，检查1/2关闭。** 原文1429张Val逐图IoU/Dice/Precision/Recall与R2最大差0；32张Train CUDA预检、全量文字身份及前后权重/状态一致性通过，未训练或访问Test。执行源`da17b3fbef0ca4ac6343575cf2af18fab3c76efb`及五份完整结果已逐文件和独立复算核验。[完成报告](../repro_archive/20260911/text_grounding_execution_v3/REPORT.md)。

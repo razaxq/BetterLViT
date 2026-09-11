@@ -1,0 +1,114 @@
+{
+  "baseline_repository": "/root/BetterLViT-recipe-r2",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "baseline_checkpoint": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+  "baseline_best_epoch": 67,
+  "baseline_checkpoint_epoch_zero_based": 66,
+  "baseline_checkpoint_sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a",
+  "train_membership_sha256": "b58295942caaa6a455f995dcbccc4fc7e259e6b4a9b940b4d25344925dd9346d",
+  "train_workbook_sha256": "fa292d8837d0e55cd4b3fe0cb367614045cb3d30de19b08bf0f62e1148db10a9",
+  "train_count": 5716,
+  "registered_text_policy_sha256": "56e521618ecc992bb91f469b52c8d03601696b5bc9506ec9fc2bc0575755dfeb",
+  "phase": "B_frozen_R2_matched_residual_head_screening",
+  "version": 1,
+  "seed": 1219,
+  "batch_size": 16,
+  "steps": 1024,
+  "cache_batch_size": 16,
+  "lr_start": 0.001,
+  "lr_end": 1e-05,
+  "weight_decay": 0.0001,
+  "optimizer": "Adam",
+  "loss": "R2 WeightedDiceFocal with exact default .5/.5 weights and gamma2",
+  "variants": [
+    "T1",
+    "T2",
+    "T3",
+    "T4",
+    "image",
+    "template"
+  ],
+  "projected": [
+    "T3",
+    "T4",
+    "image",
+    "template"
+  ],
+  "fit_only_eligible": true,
+  "eligibility": "unilateral_or_asymmetric_bilateral_for_all_six_heads",
+  "official_validation_accessed": false,
+  "test_split_allowed": false,
+  "baseline_updates": false,
+  "split_sha256": "c09c52e47f36a4b170fe1317b306a56a715e6fb975b61243ff20ce8303542f7a",
+  "split_counts": {
+    "samples": 5716,
+    "partitions": {
+      "fit": 4585,
+      "holdout": 1131
+    },
+    "eligible_partitions": {
+      "fit": 1930,
+      "holdout": 458
+    },
+    "explicit_patient_id_samples": 3362,
+    "groups": 3847,
+    "semantic_groups": {
+      "asymmetric_bilateral": 1248,
+      "symmetric_bilateral": 3124,
+      "unilateral": 1140,
+      "unparsed": 204
+    }
+  },
+  "feature_shape": [
+    5716,
+    64,
+    28,
+    28
+  ],
+  "feature_dtype": "float16",
+  "logits_shape": [
+    5716,
+    1,
+    224,
+    224
+  ],
+  "logits_dtype": "float32",
+  "mask_shape": [
+    5716,
+    6272
+  ],
+  "mask_dtype": "uint8_packed_little",
+  "raw_cache_bytes": 1756686848,
+  "cache_budget_bytes": 1900000000,
+  "minimum_free_after_cache_bytes": 1000000000,
+  "maximum_mass_error_pixels": 0.02,
+  "residual_logit_bound": 0.5,
+  "maximum_inspections": 2,
+  "first_check_delay_seconds": 480,
+  "completion_check_margin_seconds": 300,
+  "final_holdout_once": true,
+  "training_telemetry_steps": [
+    0,
+    256,
+    512,
+    1024
+  ],
+  "mechanism_screen_gate": {
+    "minimum_eligible_delta_iou": 0.001,
+    "paired_group_ci_lower_gt": 0.0,
+    "minimum_incremental_delta_iou": 0.0,
+    "dice_no_drop": true,
+    "precision_no_drop": true,
+    "small_dice_no_drop": true,
+    "small_recall_no_drop": true,
+    "brier_no_increase": true
+  },
+  "no_automatic_full_training": true,
+  "limitations": [
+    "R2 already trained on all original Train samples",
+    "Image control removes text only from the new branch; frozen R2 features contain text",
+    "Hash groups without explicit sub-S patient ID fall back to image names",
+    "Same parameter shapes are a capacity control, not identical statistical capacity",
+    "Single frozen feature layer, no augmentation, no final Test claim"
+  ]
+}
