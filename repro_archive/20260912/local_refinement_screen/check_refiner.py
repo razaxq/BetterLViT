@@ -24,7 +24,7 @@ def run(device):
         grads=[]
         for _ in range(2):
             head.zero_grad(set_to_none=True);delta=head(*inputs,v);p=predict(z,delta,ix,v)
-            assert float(delta.abs().max())<=.5 and torch.isfinite(p).all()
+            assert float(delta.detach().abs().max())<=.5 and torch.isfinite(p).all()
             assert torch.equal(p[~selected],z.sigmoid()[~selected])
             p.square().mean().backward()
             assert all(param.grad is not None and torch.isfinite(param.grad).all() for param in head.parameters())

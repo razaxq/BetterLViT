@@ -24,11 +24,12 @@ def remote(code,timeout=180):
     return json.loads(result.stdout)
 
 def frozen_files(sha):
+    import zlib
     payload={}
     for name in FILES:
         raw=subprocess.check_output(['git','show',sha+':'+(HERE/name).relative_to(DOCS).as_posix()],cwd=DOCS)
         assert raw==(HERE/name).read_bytes(),'Deployment source differs: '+name
-        payload[name]=base64.b64encode(raw).decode()
+        payload[name]=base64.b64encode(zlib.compress(raw)).decode()
     return payload
 
 def preflight_launch():
@@ -38,13 +39,13 @@ def preflight_launch():
     root='/root/local_refinement_f_'+sha[:8]
     write_json(HERE/'deployment_attempt.json',dict(source_git_commit=sha,remote_directory=root,submitted_unix=time.time()))
     result=remote('ROOT='+repr(root)+'\nSHA='+repr(sha)+'\nPAYLOAD='+repr(payload)+'\n'+'''
-import base64,hashlib,json,os,shutil,subprocess,time
+import base64,hashlib,json,os,shutil,subprocess,time,zlib
 from pathlib import Path
 root=Path(ROOT);root.mkdir(exist_ok=False)
 hashes={}
 for name,value in PAYLOAD.items():
     assert Path(name).name==name
-    raw=base64.b64decode(value);(root/name).write_bytes(raw);hashes[name]=hashlib.sha256(raw).hexdigest()
+    raw=zlib.decompress(base64.b64decode(value));(root/name).write_bytes(raw);hashes[name]=hashlib.sha256(raw).hexdigest()
 manifest=json.loads((root/'manifest.json').read_text())
 free=shutil.disk_usage(root).free
 assert free>=manifest['exact_cache_bytes']+manifest['minimum_free_bytes'],free
@@ -64,25 +65,32 @@ receipt=dict(source_git_commit=SHA,remote_directory=ROOT,pid=p.pid,submitted_uni
 
 def fetch(root,folder):
     return remote('ROOT='+repr(root)+'\nFOLDER='+repr(folder)+'\n'+'''
-import base64,hashlib,json,time
+import base64,hashlib,json,time,zlib
 from pathlib import Path
 root=Path(ROOT);directory=root/FOLDER
 runtime=json.loads((directory/'runtime.json').read_text())
-out=dict(runtime=runtime,observed_unix=time.time(),files={})
+out=dict(runtime=runtime,observed_unix=time.time(),files={},encoding='zlib')
 if runtime['phase']=='complete':
     for name,meta in runtime['artifacts'].items():
         assert Path(name).name==name
         raw=(directory/name).read_bytes();assert hashlib.sha256(raw).hexdigest()==meta['sha256'] and len(raw)==meta['bytes']
-        out['files'][name]=base64.b64encode(raw).decode()
+        out['files'][name]=base64.b64encode(zlib.compress(raw)).decode()
 out['log']=(root/('preflight.log' if FOLDER=='preflight' else 'train.log')).read_text(errors='replace')
 print(json.dumps(out))
 ''',timeout=240)
 
 def save_result(result,folder):
-    raw=result.pop('files');write_json(HERE/(folder+'_collection.json'),result)
+    import zlib
+    raw=result.pop('files');encoding=result.get('encoding');write_json(HERE/(folder+'_collection.json'),result)
     if result['runtime']['phase']=='complete':
         target=HERE/folder;target.mkdir(exist_ok=False)
-        for name,value in raw.items():(target/name).write_bytes(base64.b64decode(value))
+        for name,value in raw.items():
+            data=base64.b64decode(value)
+            if encoding=='zlib':data=zlib.decompress(data)
+            expected=result['runtime']['artifacts'][name]
+            import hashlib
+            assert hashlib.sha256(data).hexdigest()==expected['sha256'] and len(data)==expected['bytes']
+            (target/name).write_bytes(data)
         write_json(target/'runtime.json',result['runtime'])
         (target/'run.log').write_text(result['log'],encoding='utf-8',newline='\n')
     print(json.dumps(dict(phase=result['runtime']['phase'],runtime=result['runtime'],log_tail=result['log'][-3500:])))

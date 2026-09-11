@@ -58,7 +58,9 @@ def main(args,runtime):
             _,old_z,y=data.old_batch(ix)
             assert torch.equal(z[:valid],old_z),'Old logits identity failed; no tolerance relaxation'
             assert torch.equal(coarse[:valid].cpu(),torch.from_numpy(np.array(data.arrays['features'][ix])))
-            assert torch.equal((batch['label'][:valid].cuda()>0),y.bool())
+            native_label=batch['label'][:valid].cuda()
+            assert native_label.shape==(valid,224,224) and y.shape==(valid,1,224,224)
+            assert torch.equal(native_label.unsqueeze(1)>0,y.bool())
             uncertainty=old_z.sigmoid()*(1-old_z.sigmoid())
             point=torch.argsort(uncertainty.flatten(1),dim=1,descending=True,stable=True)[:,:1024]
             assert all(len(torch.unique(row))==1024 for row in point)

@@ -1,0 +1,12 @@
+{
+  "runtime": {
+    "phase": "failed",
+    "source_git_commit": "7c9ec09f664d4faac068da3d2cb2ad46a46c352f",
+    "started_unix": 1789139564.5605268,
+    "failed_unix": 1789139583.7770424,
+    "error": "Traceback (most recent call last):\n  File \"/root/local_refinement_f_7c9ec09f/preflight.py\", line 117, in <module>\n    main(args,runtime);finish_benchmark(args,runtime);runtime.update(phase='complete',completed_unix=time.time())\n    ^^^^^^^^^^^^^^^^^^\n  File \"/root/local_refinement_f_7c9ec09f/preflight.py\", line 61, in main\n    assert torch.equal((batch['label'][:valid].cuda()>0),y.bool())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+  },
+  "observed_unix": 1789139763.0681684,
+  "encoding": "zlib",
+  "log": "/root/local_refinement_f_7c9ec09f/check_refiner.py:27: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n  assert float(delta.abs().max())<=.5 and torch.isfinite(p).all()\n/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\nTraceback (most recent call last):\n  File \"/root/local_refinement_f_7c9ec09f/preflight.py\", line 117, in <module>\n    main(args,runtime);finish_benchmark(args,runtime);runtime.update(phase='complete',completed_unix=time.time())\n    ^^^^^^^^^^^^^^^^^^\n  File \"/root/local_refinement_f_7c9ec09f/preflight.py\", line 61, in main\n    assert torch.equal((batch['label'][:valid].cuda()>0),y.bool())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

@@ -1,0 +1,7 @@
+{
+  "phase": "failed",
+  "source_git_commit": "7c9ec09f664d4faac068da3d2cb2ad46a46c352f",
+  "started_unix": 1789139564.5605268,
+  "failed_unix": 1789139583.7770424,
+  "error": "Traceback (most recent call last):\n  File \"/root/local_refinement_f_7c9ec09f/preflight.py\", line 117, in <module>\n    main(args,runtime);finish_benchmark(args,runtime);runtime.update(phase='complete',completed_unix=time.time())\n    ^^^^^^^^^^^^^^^^^^\n  File \"/root/local_refinement_f_7c9ec09f/preflight.py\", line 61, in main\n    assert torch.equal((batch['label'][:valid].cuda()>0),y.bool())\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n"
+}

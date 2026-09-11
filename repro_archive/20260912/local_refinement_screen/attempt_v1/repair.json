@@ -1,0 +1,25 @@
+{
+  "cleanup": {
+    "removed": [
+      {
+        "path": "/root/local_refinement_f_7c9ec09f/cache/fine.bin",
+        "logical_bytes": 600965120,
+        "allocated_bytes": 4096
+      },
+      {
+        "path": "/root/local_refinement_f_7c9ec09f/cache/indices.bin",
+        "logical_bytes": 9390080,
+        "allocated_bytes": 4096
+      }
+    ],
+    "free_before_bytes": 1292201984,
+    "free_after_bytes": 1292210176,
+    "active_process_and_open_file_audit": true,
+    "only_failed_attempt_generated_cache": true,
+    "old_B_cache_untouched": true
+  },
+  "cause": "Native labels are [B,H,W], packed cache expands to [B,1,H,W]; explicit unsqueeze preserves labels",
+  "source_git_commit": "7c9ec09f664d4faac068da3d2cb2ad46a46c352f",
+  "formal_training_started": false,
+  "metric_tolerance_unchanged": true
+}

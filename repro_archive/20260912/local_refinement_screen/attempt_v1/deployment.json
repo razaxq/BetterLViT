@@ -1,0 +1,20 @@
+{
+  "source_git_commit": "7c9ec09f664d4faac068da3d2cb2ad46a46c352f",
+  "remote_directory": "/root/local_refinement_f_7c9ec09f",
+  "pid": 278605,
+  "submitted_unix": 1789139560.8531005,
+  "files_sha256": {
+    "common.py": "13fa16902823671e00b7f05ad134b68b5dcbc73cf57d534d365d64a86685c01a",
+    "refiner.py": "22e48f0969ae9afdcfb00e08fa1b1aacf467e4ac3ed03ee023221556772cc9b8",
+    "mass_projection.py": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+    "analysis.py": "063d2f9bb386d479abb07af1acfa5336e33909f0936489e404f21b681a80f80f",
+    "check_refiner.py": "f1970f71307e8a70b0d3708c16aaa4d7087d45e8bd25f81034a1ff517c79fb65",
+    "preflight.py": "bca534d8ce0e79dda149c3296474d653793cb87c893d80232151b18a70125848",
+    "run_train.py": "45dbca448cb4608f876abfbf0b0eaa044bb4db9861de9d4dc0f84c06659c1e39",
+    "manifest.json": "b444281acc2741fb5440711a0506394a1ff4bb24df3262a8b349e2a6e8ff3231",
+    "split.json": "7236fa2e2e7252ad28420f378aa0c0e8f33865760350ac427e389cee1d4ef1da",
+    "PROTOCOL.md": "6776d6797f851bf417dd15547688b35993fbef2e67e443651b6dd9c8eddadc34"
+  },
+  "system_free_before_bytes": 1292226560,
+  "predicted_collect_unix": 1789139740.8531005
+}
