@@ -1,6 +1,6 @@
 # 区域监督实验顺序（2026-09-11）
 
-状态更新：用户随后要求“启动训练”，三组实现、校准、CUDA预检、源码SHA/tag和manifest均已冻结。RS1于2026-09-11 06:18悉尼时间提交，RS2/RS3等待前组归档后接续；启动、预约和后续实际结果以[执行入口](../repro_archive/20260911/regional_supervision_execution/README.md)为准。下述实验顺序与判断规则保持不变。
+状态更新：用户随后要求“启动训练”，三组实现、校准、CUDA预检、源码SHA/tag和manifest均已冻结。RS1于2026-09-11 11:11悉尼时间完成80轮、11:13完成Val导出，IoU73.0764%、Dice82.7039%，Precision下降，整体未过门；RS2/RS3仍按冻结顺序在前组归档后接续。启动、预约和后续实际结果以[执行入口](../repro_archive/20260911/regional_supervision_execution/README.md)为准。下述实验顺序与判断规则保持不变。
 
 目标：在R2配方上提高逐图macro IoU，最终以统一Test评估和匹配训练种子的结果判断。先验证区域监督是否有效，再判断是否具备独立研究贡献。[研究依据与训练集审计](../repro_archive/20260911/regional_supervision_research/REPORT.md)。
 

@@ -1,0 +1,26 @@
+{
+  "verified": true,
+  "source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+  "test_split_accessed": false,
+  "epochs": 80,
+  "samples": 1429,
+  "best_epoch": 69,
+  "actual_lr_matches_manifest": true,
+  "macro_summaries_and_deltas_recomputed": true,
+  "audits_state_preserving": true,
+  "passed": false,
+  "checks": {
+    "iou_minimum": true,
+    "iou_ci_positive": true,
+    "dice_not_lower": true,
+    "precision_not_lower": false,
+    "small_dice_not_lower": true,
+    "small_recall_not_lower": true,
+    "brier_not_higher": true
+  },
+  "inspection_number": 2,
+  "seconds_after_training_end": 1012.4587924480438,
+  "within_30_minutes": true,
+  "export_minus_selection_iou": 1.1356623674796396e-07,
+  "metric_reconciliation_verified": true
+}

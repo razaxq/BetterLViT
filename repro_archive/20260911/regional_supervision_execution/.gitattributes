@@ -1,0 +1,9 @@
+# Keep the exact downloaded/uploaded bytes for Xet and SHA256 verification.
+rs1_results/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+rs2_results/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+rs3_results/** -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+reconcile_iou.py -text
+# Machine-generated logs are retained but excluded from textual review diffs.
+rs1_results/*.log -diff
+rs2_results/*.log -diff
+rs3_results/*.log -diff

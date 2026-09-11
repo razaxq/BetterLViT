@@ -2,11 +2,15 @@
 
 本轮用户于2026-09-11明确要求“启动训练”。固定执行三个首轮候选，各80轮、seed1219、batch16、R2单次余弦、原Dice/Focal。RS1整图软IoU，RS2最终输出的56窗口/28步长局部软IoU，RS3仅改变为阳性/背景分组。按[阶段计划](../../../docs/REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md)推进，不按前一组数值修改后一组。
 
-## 当前状态：RS1首检正常，唯一末检已预约
+## 当前状态：RS1完成并备份，RS2待接续提交
 
-悉尼2026-09-11 06:18:07.393提交RS1后台训练，PID238273，来源`b4dd566ae472079c55e41cffd7727060bcfd6bf5`。06:35:28.102执行首检：已完成4/80轮，第5轮至少220/357批次，GPU92%、显存17402MiB，源码与manifest一致且跟踪文件干净；日志尾部无训练异常。没有完整实验结果，未访问Test，预算已用1/2。
+RS1于悉尼2026-09-11 11:11:41.771完成80轮训练，11:13:25.457完成1429张Val导出；Best69，来源`b4dd566ae472079c55e41cffd7727060bcfd6bf5`。两项退出码0，完整SHA、实际80轮学习率、逐图指标、四次Train诊断和Best/Last已核验，未访问Test。11:28:34.230执行唯一末检，距训练结束1012.459秒（16.87分钟），符合≤30分钟，检查预算2/2已用完。
 
-第2—4轮平均220.411700秒，加120秒后续Train诊断余量，预测**2026-09-11 11:14:25悉尼时间**训练结束；同一heartbeat `betterlvit` 已改约**11:27唯一末检**，app保存配置、目标thread和预算均核验。之后不再中途查询。末检时才核对真实结束至检查是否≤30分钟，不能把预测当成实际完成。见`rs1_first_snapshot.json`、`rs1_final_automation_verified.json`。
+RS1 Val IoU **73.0764%**、Dice **82.7039%**；相对R2 IoU **+0.4111个百分点**，10000次图像配对95%区间[+0.1181,+0.7023]。Precision下降0.3710个百分点，7项门通过6项，整体未过门。只作单种子Val证据，不称稳定增益。详见[结果报告](rs1_results/REPORT.md)与`independent_verification.json`。
+
+训练历史的>=0.5/float32与原逐图导出的>0.5/float64有继承差异。另一次有界的已完成Best Val诊断确认恰好1个背景像素等于0.5，完整解释IoU差1.135662367e-7，两套结果复算残差均为0，检查点SHA256前后相同；没有更改原结果、阈值、Best或冻结源码。见`rs1_results/iou_reconciliation.json`。该诊断不是额外训练状态检查。
+
+RS1原始首检06:35、预测11:14:25结束、预约11:27末检的证据保留于`rs1_first_snapshot.json`、`rs1_final_automation_verified.json`，真实末检见`rs1_final_snapshot.json`。HF Bucket `razaxq/BetterLViT/b4dd566a/`已添加21文件、1,694,955,060字节，远端及独立本地清单的路径/大小/Xet哈希全部匹配；11项下载run产物字节/Xet亦匹配。Best/Last保留，fs仍18,559,782,256字节，训练盘余5,155,680,256字节。见`rs1_results/hf_upload_verified.json`、`download_xet_verified.json`；GitHub提交完成后接续RS2。
 
 RS2、RS3已冻结部署、完成全部CUDA预检并推送GitHub，尚未提交训练。三组新损失关闭时与正式R2分组优化器五步逐值一致，各组插入Train诊断前后五步也逐值一致；11项loss行为和5项筛选门检查通过。完整核验见`preflight_verified.json`，启动及预约见`rs1_launch.json`、`rs1_automation_verified.json`。原始校准和预检临时权重不会用于正式训练。
 
@@ -30,6 +34,8 @@ python -X utf8 inspect_run.py --label rs1 --phase first
 # 用首次检查 forecast.final_check_sydney 更新同一个当前任务heartbeat；到时：
 python -X utf8 inspect_run.py --label rs1 --phase final
 python -X utf8 archive_completed.py --label rs1
+# 若历史与导出IoU差超过原核验界限，先执行一次完成模型的Val指标诊断：
+# python -X utf8 reconcile_iou.py --label rs1
 python -X utf8 analyze_completed.py --label rs1
 python -X utf8 upload_completed.py --label rs1
 python -X utf8 verify_downloads.py --label rs1

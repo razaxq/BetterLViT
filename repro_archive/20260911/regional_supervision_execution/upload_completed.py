@@ -24,6 +24,9 @@ def main():
     supplements={}
     for name in ('REPORT.md','independent_verification.json','r2_vs_'+label+'.json'):
         supplements['analysis/'+name]=base64.b64encode((folder/name).read_bytes()).decode()
+    if (folder/'iou_reconciliation.json').exists():
+        supplements['analysis/iou_reconciliation.json']=base64.b64encode((folder/'iou_reconciliation.json').read_bytes()).decode()
+        supplements['analysis/reconcile_iou.py']=base64.b64encode((HERE/'reconcile_iou.py').read_bytes()).decode()
     if label in ('rs2','rs3'):supplements['analysis/rs1_vs_'+label+'.json']=base64.b64encode((folder/('rs1_vs_'+label+'.json')).read_bytes()).decode()
     helper_b64=base64.b64encode(HELPER.read_bytes()).decode()
     manifest=remote('SOURCE='+repr(source)+'\nSUPPLEMENTS='+repr(supplements)+'\nHELPER_B64='+repr(helper_b64)+'\n'+'''

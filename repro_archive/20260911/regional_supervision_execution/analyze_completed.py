@@ -1,5 +1,5 @@
 """Recompute completion, schedule, selection, macro metrics and audit provenance."""
-import argparse,json
+import argparse,hashlib,json
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import numpy as np
@@ -22,7 +22,28 @@ def main():
     assert [r['epoch'] for r in history]==list(range(1,81))
     assert np.allclose([r['lr'] for r in history],manifest['planned_epoch_lrs'],rtol=0,atol=1e-15)
     selected=max(history[5:],key=lambda r:r['val_iou'])
-    assert selected['epoch']==val['checkpoint_best_epoch'] and abs(selected['val_iou']-val['macro_iou'])<1e-7
+    assert selected['epoch']==val['checkpoint_best_epoch']
+    selection_delta=val['macro_iou']-selected['val_iou']
+    reconciliation_path=folder/'iou_reconciliation.json'
+    reconciliation=None
+    if reconciliation_path.exists():
+        reconciliation=read('iou_reconciliation.json')
+        assert reconciliation['verified'] and not reconciliation['test_split_accessed']
+        assert reconciliation['source_git_commit']==source['source_git_commit']
+        assert reconciliation['checkpoint_best_epoch']==selected['epoch']
+        assert reconciliation['samples']==1429
+        assert reconciliation['original_export_sha256']==hashlib.sha256((folder/'validation.json').read_bytes()).hexdigest()
+        assert reconciliation['training_history_iou']==selected['val_iou']
+        assert reconciliation['original_export_iou']==val['macro_iou']
+        assert abs(reconciliation['history_residual'])<1e-12 and abs(reconciliation['export_residual'])<1e-12
+        assert reconciliation['max_export_record_error']==0
+        assert reconciliation['checkpoint_sha256_before']==reconciliation['checkpoint_sha256_after']
+        explained=reconciliation['threshold_effect_export_minus_ge']+reconciliation['float32_effect_ge_minus_training']
+        assert abs(selection_delta-explained)<1e-12
+    else:
+        # Preserve the original bound. Larger differences need direct evidence;
+        # never widen the tolerance to make a candidate pass.
+        assert abs(selection_delta)<1e-7, 'Run reconcile_iou.py on the completed Best; preserve original export'
     aa={r['name']:r for r in base['records']};bb={r['name']:r for r in val['records']}
     assert len(aa)==len(bb)==1429 and aa.keys()==bb.keys()
     for data in (base,val):
@@ -47,7 +68,9 @@ def main():
         epochs=80,samples=1429,best_epoch=val['checkpoint_best_epoch'],actual_lr_matches_manifest=True,
         macro_summaries_and_deltas_recomputed=True,audits_state_preserving=True,passed=gate['passed'],checks=gate['checks'],
         inspection_number=snapshot['inspection_number'],seconds_after_training_end=snapshot['seconds_after_training_end'],
-        within_30_minutes=snapshot['within_30_minutes'])
+        within_30_minutes=snapshot['within_30_minutes'],
+        export_minus_selection_iou=selection_delta,
+        metric_reconciliation_verified=reconciliation is not None)
     if label!='rs1':
         increment=read('rs1_vs_'+label+'.json');result['regional_increment']=increment
     save(label+'_results/independent_verification.json',result)
@@ -59,6 +82,9 @@ def main():
     lines+=['',f"IoU差值 {100*delta['mean']:+.4f}个百分点，95%图像配对区间 {[(100*v) for v in delta['ci95']]}；R2筛选通过：{gate['passed']}。",'',
         f"末检距训练结束 {snapshot['seconds_after_training_end']:.3f}秒，检查{snapshot['inspection_number']}/2。来源、80轮学习率、Best、逐图均值和四次固定Train诊断已核验。",'',
         '本次结果为Val，无本候选Test成绩。Train诊断为输出logit梯度，不能解释成共享参数梯度冲突或IoU因果贡献。HF备份以独立上传回执为准。']
+    lines+=['', '未通过条件：'+('、'.join(k for k,v in gate['checks'].items() if not v) or '无')+'。首轮RS1/RS2/RS3仍按冻结配置全部执行，不根据前组结果调节后组。']
+    if reconciliation is not None:
+        lines+=['',f"训练历史采用>=0.5及float32批次均值，原逐图导出采用>0.5及float64；同一Best的Val-only复算保留两套原始结果。精确0.5像素{reconciliation['exact_half_pixels']}个（GT阳性{reconciliation['exact_half_positive_pixels']}个），阈值贡献{reconciliation['threshold_effect_export_minus_ge']:.15g}、float32贡献{reconciliation['float32_effect_ge_minus_training']:.15g}，完全解释导出减历史{selection_delta:.15g}。逐图导出及训练IoU复算残差均小于1e-12，检查点SHA256前后相同；见iou_reconciliation.json。"]
     if label!='rs1':lines+=['',f"相对RS1的区域增量门通过：{increment['passed']}，完整差值见rs1_vs_{label}.json。"]
     (folder/'REPORT.md').write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(result,ensure_ascii=False))
