@@ -1,0 +1,24 @@
+{
+  "verified": true,
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "phase": "complete",
+  "inspections": 1,
+  "maximum_inspections": 2,
+  "all_fold_training_completions_observed_within30min": true,
+  "fold_training_inspection_delay_seconds": {
+    "0": 1295.011325120926,
+    "1": 1151.5732474327087,
+    "2": 1014.9607229232788,
+    "3": 872.0006060600281,
+    "4": 727.2720177173615
+  },
+  "final_evaluation_inspection_delay_seconds": 720.4540855884552,
+  "completed_sydney": "2026-09-12T01:34:44.262134+10:00",
+  "automation_id": "betterlvit",
+  "automation_status": "PAUSED",
+  "hf_files": 30,
+  "hf_logical_bytes": 48324837,
+  "next_text_training_started": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false
+}

@@ -13,7 +13,7 @@ proof=json.loads((HERE/'results/independent_verification.json').read_text());ass
 checkpoint=json.loads((HERE/'checkpoint_verified.json').read_text());assert checkpoint['verified'] and checkpoint['heads']==20
 backup=json.loads((HERE/'hf_upload_verified.json').read_text());assert backup['verified'] and backup['all_sizes_and_xet_hashes_match']
 sha=runtime['source_git_commit'];assert sha==proof['source_git_commit']==checkpoint['source_git_commit']==backup['source_git_commit']
-automation=tomllib.loads(Path('C:/Users/dtftn/.codex/automations/betterlvit/automation.toml').read_text())
+automation=tomllib.loads(Path('C:/Users/dtftn/.codex/automations/betterlvit/automation.toml').read_text(encoding='utf-8'))
 assert automation['id']=='betterlvit' and automation['status']=='PAUSED' and sha in automation['prompt']
 observed=json.loads((HERE/'results_collection.json').read_text())['observed_unix']
 delays={str(f):observed-json.loads((HERE/f'results/fold_{f}_records.json').read_text())['training_completed_unix'] for f in range(5)}
