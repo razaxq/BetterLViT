@@ -1,8 +1,10 @@
 # F：局部纠错接口筛选
 
-**2026-09-12 01:22:42.763悉尼时间已后台提交训练，PID279193；当前无F完成结果。** 来源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`，远端`/root/local_refinement_f_a76e1005`。预计01:41:46完成，首次预测检查01:45，检查0/2。当前代码属于Train内机制筛选，不能作为正式Test成绩。
+**2026-09-12 01:34:44.262悉尼时间全部完成，四组均未通过预注册门，暂不进入文字增量训练。** 来源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`，远端`/root/local_refinement_f_a76e1005`。首次检查距全部完成12.008分钟，检查1/2关闭，同一heartbeat已暂停。当前结果属于Train内机制筛选，不能作为正式Test成绩。[完整报告](REPORT.md)。
 
-CPU/CUDA与4585张原R2缓存精确身份、四组真实fit可训练性预检全部通过。源/运行信息见manifest.json、deployment.json、preflight/runtime.json、preflight/benchmark.json和state.json。每四头一步实测0.07419秒，预计总训练/OOF含余量19.06分钟；这是速度预测，不是已完成进度。前驱标签维度失败与仅清理自身空缓存的证明在attempt_v1，原B缓存未动。
+独立核验15份原始产物、4585图指标与转移、全部训练预算/分组，以及20个头与恢复优化器严格载入通过。HF `a76e1005/` 已核验30文件、48324837字节与全部Xet哈希。保量两组五折均小幅正向，但fine_mass相对R2仅+0.05435 pp且Precision略降；相对coarse_mass仅+0.00099 pp、区间跨零。无保量两组五折均下降，保留全部负结果，不择折或延长。
+
+CPU/CUDA与4585张原R2缓存精确身份、四组真实fit可训练性预检全部通过。源/运行信息见manifest.json、deployment.json、preflight/runtime.json、preflight/benchmark.json和state.json。历史启动时间01:22:42.763，预检每四头一步0.07419秒、曾预测01:41:46完成并预约01:45检查；实际以results/runtime.json为准。前驱标签维度失败与仅清理自身空缓存的证明在attempt_v1，原B缓存未动。
 
 协议见[PROTOCOL.md](PROTOCOL.md)。共4585张原B fit，五折分别849/875/904/937/1020张；四组coarse_free/coarse_mass/fine_free/fine_mass，每组每折2048步，原R2冻结。新增点缓存610355200字节。
 

@@ -1,10 +1,14 @@
 {
   "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
-  "phase": "submitted",
-  "inspections_completed": 0,
+  "phase": "complete",
+  "inspections_completed": 1,
   "maximum_inspections": 2,
   "expected_completion_unix": 1789141306.1083834,
   "expected_completion_sydney": "2026-09-12T01:41:46.108383+10:00",
   "planned_check_unix": 1789141500,
-  "planned_check_sydney": "2026-09-12T01:45:00+10:00"
+  "planned_check_sydney": "2026-09-12T01:45:00+10:00",
+  "training_completed_unix_inspection_delay_seconds": 727.2720177173615,
+  "training_completed_unix_within30min": true,
+  "completed_unix_inspection_delay_seconds": 720.4540855884552,
+  "completed_unix_within30min": true
 }

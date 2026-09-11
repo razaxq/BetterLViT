@@ -1,0 +1,224 @@
+{
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "classification": "completed_frozen_R2_Train_head_crossfit_pilot",
+  "formal_test_result": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "files": [
+    {
+      "local": "D:\\BetterLViT\\.codex_tmp\\hf_local_refinement_a76e1005\\source.tar.gz",
+      "remote": "a76e1005/source.tar.gz",
+      "bytes": 125484,
+      "xet_hash": "be38aac5b12c811c277a4f257fc9448c48508ddab58fe498da3ade49a8071f9a",
+      "sha256": "dca99c64d15a6c8664b52e23091b2f9ab14fb07fb529a9aa5318916a80a1a44e"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_0_heads.pt",
+      "remote": "a76e1005/run/fold_0_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "510d56621c589f97a5979fbf33d1d519dbe995a33f0e20ecfe1c6b9fba4f2c16",
+      "sha256": "c10262924aee47f3cd88d0a6ad4d820bf54a751ca30470231e3e6f80dd75f51d"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_0_records.json",
+      "remote": "a76e1005/run/fold_0_records.json",
+      "bytes": 3261900,
+      "xet_hash": "b7ee534380cefb37f2be1a0f610c240fe115ebe3eab397b33934fe24c6df52a7",
+      "sha256": "c72cf6173e0aaa8cb183b349fe2bfa1919294e647f77ea52e60c095f48e2a802"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_1_heads.pt",
+      "remote": "a76e1005/run/fold_1_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "5076cfe98543bf5433e2996f1b90aba5fdef69a922af9930ed1c584b9ee21fd6",
+      "sha256": "036628b71a17357f22605087e40eb73b7e3ba8ab4a116f0a208a77edc816b7d9"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_1_records.json",
+      "remote": "a76e1005/run/fold_1_records.json",
+      "bytes": 3361613,
+      "xet_hash": "0360548c34c95e7f3c89ae565dab43d775e1ba8d276512b2697374445e22e44d",
+      "sha256": "5e3ecd896f44cc38e1667c7b2ae5c958b2e72dbd3cc2249a47aed236a9ea3c35"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_2_heads.pt",
+      "remote": "a76e1005/run/fold_2_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "afc2a46e1177520d16feec9974365183aad7ca392c4b54975dbf712b0703c411",
+      "sha256": "d1393a0e5689b2e7dfc7cb6aa10bc4b663e9ca1287df9351f1ace35848bf3649"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_2_records.json",
+      "remote": "a76e1005/run/fold_2_records.json",
+      "bytes": 3473212,
+      "xet_hash": "53f04058b14fa34c00b7ac4c01cad4ef398b50f5ec4dce9aaa14f0fe44a42403",
+      "sha256": "316d5cf33e0cfcb7974587fe428a7d776d99982522167832ed90119f6581f58b"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_3_heads.pt",
+      "remote": "a76e1005/run/fold_3_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "ffc4febc804791dc2047913699036dbcf92b5380c527ec4322dfd73c2ff32478",
+      "sha256": "a73669293c9e5f6b3ba1fcc520816055068e598aa9ab3f18d075b19e0b242c88"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_3_records.json",
+      "remote": "a76e1005/run/fold_3_records.json",
+      "bytes": 3600052,
+      "xet_hash": "dc996347ce07dc77c50d50469bb3387528a45fb0b8480d47b2eacaad2bcbdfe6",
+      "sha256": "ba5d66ddcd131ef3b006b9ce976c7897a583b537c818e4810841a2db642357d1"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_4_heads.pt",
+      "remote": "a76e1005/run/fold_4_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "0e74374120e60aa326cf6d2d64fc51e158fc763270e338bcbd5be41ed68c5fb4",
+      "sha256": "387e7ef3a136d0df0aba1b5ef4225016e76c3c9dff399406cab6db9dc432f8b5"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_4_records.json",
+      "remote": "a76e1005/run/fold_4_records.json",
+      "bytes": 3921823,
+      "xet_hash": "639a0f4f4db1e26db292148e6c5e1fc730c77f23209d16764c2b83a076ec55da",
+      "sha256": "cc9d43f8333cc52597c946bc80ce7ebecf4c54992bd07afb2ff95fb79e838095"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\history.json",
+      "remote": "a76e1005/run/history.json",
+      "bytes": 5607736,
+      "xet_hash": "0f6de2eae18487fffe79c0db5f408ff300872362ef2b21171db24b6aeb4ee078",
+      "sha256": "e22488a1b0e9368c608e384e484ac498e702b6f4e6e7b45dbcd4766129a5ffc4"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\provenance.json",
+      "remote": "a76e1005/run/provenance.json",
+      "bytes": 2740,
+      "xet_hash": "6d9bce93367788030a69890620be4151581474f1ea6cf9fbda4f8a76f905116c",
+      "sha256": "0e7f79d68dabf3021f78918b348e1c9bacb73828629d7745fa78f5ce9bdbe74c"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\records.json",
+      "remote": "a76e1005/run/records.json",
+      "bytes": 17617686,
+      "xet_hash": "fe67a2c5c5d29ff8546a6a1cc24f96b9af673201b5415ce6ee3e981bf4466959",
+      "sha256": "45292c44899ba54569e6a6525db65123e302ed09109420612cdd8ea886f1fc78"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\resume.pt",
+      "remote": "a76e1005/run/resume.pt",
+      "bytes": 978619,
+      "xet_hash": "62ba0af133a261c6ca84134034f993267f3277ad8edce6dae86f1533565054af",
+      "sha256": "81d664d7604f4d77d04b0e0d39992f89c5323afa2120be3fb82425241ee6c079"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\training_orders.json",
+      "remote": "a76e1005/run/training_orders.json",
+      "bytes": 2203773,
+      "xet_hash": "950292c7b1e57addabe52cb27690153f2b562fc7a36e6622f3d0b8f7a37206e2",
+      "sha256": "9da6d4171fef90e3817d8deddbd88b2a410c82e65d7dffee328656a6c19d12d2"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\runtime.json",
+      "remote": "a76e1005/run/runtime.json",
+      "bytes": 2578,
+      "xet_hash": "cf2c3587cad2b67e554065b5a1e247710f9c44686c53e158dd06e335ddbf769d",
+      "sha256": "ab8abd897b8b6b3208ceee18a0b6bd8c4c164ae9dabd9b44a91d42a134560f96"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\run.log",
+      "remote": "a76e1005/run/run.log",
+      "bytes": 7526,
+      "xet_hash": "f7269712a780d748083fda1722bc1eb941b381345006dfc4966391eb5530e654",
+      "sha256": "757f7489ad1039f61c73ae4229b8a5d88c0d70edb7ea5dec5298faa0588a33c2"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\summary_verified.json",
+      "remote": "a76e1005/run/summary_verified.json",
+      "bytes": 10617,
+      "xet_hash": "774964bb0ae672c60a2236e0aeba0a609697e3cf2d66e0f8922e0cfb022ae4aa",
+      "sha256": "0f4defa2112ef1b4ce74706c39ec0c5fb07d26d442e990775fe9ed70ba59c574"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\independent_verification.json",
+      "remote": "a76e1005/run/independent_verification.json",
+      "bytes": 497,
+      "xet_hash": "4d7dd9c662682f75b0317d02fc60f7e30bbf58ba4a102398d2294752dcf4f56f",
+      "sha256": "da73323b7215f5dc0e6084a7f20c25a013244a58b7e633fda966ff0a228d989f"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\preflight\\runtime.json",
+      "remote": "a76e1005/preflight/runtime.json",
+      "bytes": 606,
+      "xet_hash": "ab26e39bdd596563e0e6453975e3a46b8db79581e63b4f88d205697a937d14cd",
+      "sha256": "42fca15d7e2d4772373f9f151364d79f4a70f6121c4cde7bf1aa29af4d711e60"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\preflight\\cache_manifest.json",
+      "remote": "a76e1005/preflight/cache_manifest.json",
+      "bytes": 674,
+      "xet_hash": "febcc407b2eea21c84f58e1f69de8aeb79bbf1428303da3eb94fbf6d7520aa24",
+      "sha256": "18d64c6530e1884654787af2223b799f36b01b2e0c6cfa300f71e812393329f9"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\preflight\\synthetic_checks.json",
+      "remote": "a76e1005/preflight/synthetic_checks.json",
+      "bytes": 744,
+      "xet_hash": "3c3a9d8af340aa985ecb91d260159d25fb492903755772db1e1d4ecc54db0600",
+      "sha256": "bbefb4153a2e3e4fcdb9ae79cb3462e06dd20431ebad9c53483e1a7eb759b93a"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\preflight\\benchmark.json",
+      "remote": "a76e1005/preflight/benchmark.json",
+      "bytes": 975,
+      "xet_hash": "2ce32cc5897469482e8d33cf82f1e40600f982c597ca900063c3c850d538a989",
+      "sha256": "e2949826a00c99d1051697d3cf5debd06286ef43b3e2154e612c88725dacd0ed"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\manifest.json",
+      "remote": "a76e1005/manifest.json",
+      "bytes": 3062,
+      "xet_hash": "64fa05f0dfcd5a9ff52e123f7b8daa4831d84a068882b1feed01161b606abf2d",
+      "sha256": "b444281acc2741fb5440711a0506394a1ff4bb24df3262a8b349e2a6e8ff3231"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\split.json",
+      "remote": "a76e1005/split.json",
+      "bytes": 2006180,
+      "xet_hash": "5666440d8712d2070089b31558ef2a8c3305394e1c5dfd837aea0e572d371b65",
+      "sha256": "7236fa2e2e7252ad28420f378aa0c0e8f33865760350ac427e389cee1d4ef1da"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\PROTOCOL.md",
+      "remote": "a76e1005/PROTOCOL.md",
+      "bytes": 5037,
+      "xet_hash": "f64d2dc01a09247bde27ba08d9c93958a9e1a163b9c02f454471b5553bed36b8",
+      "sha256": "6776d6797f851bf417dd15547688b35993fbef2e67e443651b6dd9c8eddadc34"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\REPORT.md",
+      "remote": "a76e1005/REPORT.md",
+      "bytes": 5232,
+      "xet_hash": "19961e2ac1fcb62ce2f74d4f9983d2424313a769cee4278f22ab775a3d6bd05a",
+      "sha256": "65eee0bcf8eff8fd541e3022a7fc8985b2005a99113937197ea9ad682534433f"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\checkpoint_verified.json",
+      "remote": "a76e1005/checkpoint_verified.json",
+      "bytes": 2044,
+      "xet_hash": "cc052204f57444cee4164bd153c6206d1d8b74826ca7d866568409112b426e6a",
+      "sha256": "c9989654a411c3a929e3cbd5cd89b16b0aae278fb96f23634c7f08860d8ec03a"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\state.json",
+      "remote": "a76e1005/state.json",
+      "bytes": 582,
+      "xet_hash": "85119644e9975507ea2532ee99d85a027d9f03e3b467db338f9f08ed9249b76a",
+      "sha256": "4145e31f44af09ff9a196d4c99c73faa651f2bea162b9a70a7f76b6700c29904"
+    }
+  ],
+  "folds": 5,
+  "heads": 20,
+  "steps_per_head": 2048,
+  "checkpoint_load_verified": true,
+  "additive_only": true
+}

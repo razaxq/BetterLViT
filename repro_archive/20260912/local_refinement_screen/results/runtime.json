@@ -1,0 +1,76 @@
+{
+  "phase": "complete",
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "started_unix": 1789140166.2677958,
+  "total_steps": 10240,
+  "fold": 4,
+  "steps_in_fold": 2048,
+  "completed_steps": 10240,
+  "mean_four_head_step_seconds": 0.06851161736994982,
+  "expected_completion_unix": 1789141005.096132,
+  "fold_training_completed_unix": 1789140877.4442015,
+  "training_completed_unix": 1789140877.4442015,
+  "completed_unix": 1789140884.2621336,
+  "artifacts": {
+    "resume.pt": {
+      "bytes": 978619,
+      "sha256": "81d664d7604f4d77d04b0e0d39992f89c5323afa2120be3fb82425241ee6c079"
+    },
+    "fold_0_heads.pt": {
+      "bytes": 424769,
+      "sha256": "c10262924aee47f3cd88d0a6ad4d820bf54a751ca30470231e3e6f80dd75f51d"
+    },
+    "fold_0_records.json": {
+      "bytes": 3261900,
+      "sha256": "c72cf6173e0aaa8cb183b349fe2bfa1919294e647f77ea52e60c095f48e2a802"
+    },
+    "fold_1_heads.pt": {
+      "bytes": 424769,
+      "sha256": "036628b71a17357f22605087e40eb73b7e3ba8ab4a116f0a208a77edc816b7d9"
+    },
+    "fold_1_records.json": {
+      "bytes": 3361613,
+      "sha256": "5e3ecd896f44cc38e1667c7b2ae5c958b2e72dbd3cc2249a47aed236a9ea3c35"
+    },
+    "fold_2_heads.pt": {
+      "bytes": 424769,
+      "sha256": "d1393a0e5689b2e7dfc7cb6aa10bc4b663e9ca1287df9351f1ace35848bf3649"
+    },
+    "fold_2_records.json": {
+      "bytes": 3473212,
+      "sha256": "316d5cf33e0cfcb7974587fe428a7d776d99982522167832ed90119f6581f58b"
+    },
+    "fold_3_heads.pt": {
+      "bytes": 424769,
+      "sha256": "a73669293c9e5f6b3ba1fcc520816055068e598aa9ab3f18d075b19e0b242c88"
+    },
+    "fold_3_records.json": {
+      "bytes": 3600052,
+      "sha256": "ba5d66ddcd131ef3b006b9ce976c7897a583b537c818e4810841a2db642357d1"
+    },
+    "fold_4_heads.pt": {
+      "bytes": 424769,
+      "sha256": "387e7ef3a136d0df0aba1b5ef4225016e76c3c9dff399406cab6db9dc432f8b5"
+    },
+    "fold_4_records.json": {
+      "bytes": 3921823,
+      "sha256": "cc9d43f8333cc52597c946bc80ce7ebecf4c54992bd07afb2ff95fb79e838095"
+    },
+    "records.json": {
+      "bytes": 17617686,
+      "sha256": "45292c44899ba54569e6a6525db65123e302ed09109420612cdd8ea886f1fc78"
+    },
+    "history.json": {
+      "bytes": 5607736,
+      "sha256": "e22488a1b0e9368c608e384e484ac498e702b6f4e6e7b45dbcd4766129a5ffc4"
+    },
+    "training_orders.json": {
+      "bytes": 2203773,
+      "sha256": "9da6d4171fef90e3817d8deddbd88b2a410c82e65d7dffee328656a6c19d12d2"
+    },
+    "provenance.json": {
+      "bytes": 2740,
+      "sha256": "0e7f79d68dabf3021f78918b348e1c9bacb73828629d7745fa78f5ce9bdbe74c"
+    }
+  }
+}

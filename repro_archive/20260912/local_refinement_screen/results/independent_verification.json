@@ -1,0 +1,16 @@
+{
+  "verified": true,
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "raw_sha256_verified": true,
+  "sample_count": 4585,
+  "folds": 5,
+  "heads_per_fold": 4,
+  "steps_per_head_per_fold": 2048,
+  "count_metrics_and_transitions_verified": true,
+  "own_fold_exclusion_verified": true,
+  "small_cutoffs_fit_only_verified": true,
+  "final_held_evaluations_per_fold": 1,
+  "old_b_holdout_accessed": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false
+}

@@ -12,7 +12,23 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：F局部纠错接口筛选已提交（2026-09-12）
+## 文字引导方向：F完成，四组未通过推进门（2026-09-12）
+
+**01:34:44.262悉尼时间完成全部5折×4头×2048步和4585图OOF评估，首次检查距训练/评估结束12.121/12.008分钟，检查1/2关闭。** 执行源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`；15份原始产物SHA、分组/预算/计数/转移/小病灶阈值独立复算、20头及恢复优化器严格载入/哈希/有限性均通过。没有旧B holdout、官方Val/Test新访问。以下为原B fit内新增头的交叉拟合结果，原R2曾训练过这些图像，不是独立泛化或Test成绩。[完整五折与失败项](../repro_archive/20260912/local_refinement_screen/REPORT.md)。
+
+| 配置 | macro IoU % | macro Dice % | ΔIoU pp | 正向折数 |
+|---|---:|---:|---:|---:|
+| 固定R2 | 79.731232 | 88.005667 | — | — |
+| coarse_free | 79.617207 | 87.935708 | -0.1140 | 0/5 |
+| coarse_mass | 79.784585 | 88.040094 | +0.0534 | 5/5 |
+| fine_free | 79.633537 | 87.942413 | -0.0977 | 0/5 |
+| fine_mass | 79.785578 | 88.041148 | +0.0543 | 5/5 |
+
+保量两组有小幅开发信号，但均低于+0.1 pp门且Precision略降。fine_mass group CI[+0.0374,+0.0716] pp、Precision−0.0316 pp；相对coarse_mass仅+0.0010 pp，CI[-0.0062,+0.0083] pp。fine_free相对coarse_free有小幅正向增量，但仍低于R2。四个基础门和两个细接口门全部失败。
+
+分支无塌缩，平均修正非零；无保量仍增加大量FP，保量限制扩张但纠错与破坏几乎抵消。细尺度读取未证明保量配置的额外收益，暂停此输出接口扩展，第二步文字训练尚未启动，不倒选折/轮数、改阈值或追加80/150轮/Test。HF `a76e1005/`已核验30文件、48,324,837字节及全部Xet，分类completed frozen-R2 Train head-crossfit pilot；同一heartbeat已暂停，原B/F缓存保留。以下F提交记录为历史。
+
+## 文字引导方向：F局部纠错接口筛选提交历史（2026-09-12）
 
 **01:22:42.763悉尼时间后台提交，PID279193，检查0/2；当前只有启动回执，没有F结果。** 执行源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`，远端`/root/local_refinement_f_a76e1005`。四组coarse_free/coarse_mass/fine_free/fine_mass×五折，每头每折2048步；原B的4585 fit按组重新固定五折（849/875/904/937/1020），每张图1024个共同不确定候选点。MLP各17025参数、同初始state，AdamW、原Dice/Focal，冻结R2，不新增文字/LoRA/boundary；旧B holdout、官方Val/Test不访问。[协议与入口](../repro_archive/20260912/local_refinement_screen/README.md)。
 

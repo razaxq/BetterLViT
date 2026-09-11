@@ -1,0 +1,33 @@
+{
+  "verified": true,
+  "source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "folds": 5,
+  "heads": 20,
+  "steps_per_head": 2048,
+  "strict_load_cpu": true,
+  "weights_only": true,
+  "all_finite": true,
+  "state_sha256": {
+    "0/coarse_free": "54ebbae2ab2d581ee249a7b79b800e02f2b4f2f81d31b52c883ab2cab73059f5",
+    "0/coarse_mass": "74949e53b8039fb0df919220fb0f100a2c5c4f9cf6f5ca4bb00f2599b019b974",
+    "0/fine_free": "f55f8637b8de418cd91762109955f91c8582ddad68e83b7213fb344a31dd2dc5",
+    "0/fine_mass": "b0211abb6aaec4aa3b48d6a6f355f11c6efcb4d7fabb39ad94ccf9340f57ffb5",
+    "1/coarse_free": "7125992e4078cb3c8bdcd2331163dde89c12a6e906ad851a909b8313d306c7c3",
+    "1/coarse_mass": "c7024516010cf13fd779ede6297025cdf3f585fe1f0a85da9a379aab72d2f0da",
+    "1/fine_free": "07a9d08eb2e009327407c2058ea74e7947bf9a06075941d815522ff4964afae4",
+    "1/fine_mass": "3584e665921cb08927bb6a56bc71116d44fd6f754cbfd07334528a5bb7c0271b",
+    "2/coarse_free": "303a7d18b7e63943e1bdf05d34c073278770c3385545820db6a26d7243895325",
+    "2/coarse_mass": "d875aeb8fa4a9c6d625f5b6e38f5a92d5ea29c317d6df949cb0748f03ed602e9",
+    "2/fine_free": "948e7d87fa8eb2f96c4003c0fc60b13aea3123ee5bbfde02a1347d5c7e01e642",
+    "2/fine_mass": "df4e5d6ed03dfbd6ee671da5cbcae11342ecbcaa651ef454f5190d02dd3a01a7",
+    "3/coarse_free": "c0815252fab313251b33f49f75ff3769acd5d66193d9f97e299949096951aeaa",
+    "3/coarse_mass": "b2dec9822ea382a44629386792e4da3ba96049475c4eb56a750420390711915b",
+    "3/fine_free": "23b318052bccbe3815b850432dcbef6a6ce168bbeb80aaa92f8aecd9064d9c3b",
+    "3/fine_mass": "be7bcd14663c9c957b24df94d04c5a11b329bbf803f649ee61ea8fce0a209158",
+    "4/coarse_free": "49ef216a2abddccc4e41d4cf99832cb448de621b9f3f5e33c010d143ccb37b7e",
+    "4/coarse_mass": "310fab1d308f915189b7b1244e92dde9c5c5746aed8176d48299b18fb07f74d1",
+    "4/fine_free": "8ad2551b738c1c3181eec859e1467206a91bb4c0a50c667c207d0a9f48b71964",
+    "4/fine_mass": "4e46fc56da0945c67e143b49f4075be754d42fe7877ec8f2937d4c6f67d2375a"
+  },
+  "resume_optimizer_load_verified": true
+}
