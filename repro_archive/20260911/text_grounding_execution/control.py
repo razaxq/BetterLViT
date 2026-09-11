@@ -11,8 +11,8 @@ from zoneinfo import ZoneInfo
 from analysis import digest,summarize,write_json
 
 HERE=Path(__file__).resolve().parent
-DOCS=HERE.parents[2]
-REMOTE='/root/text_grounding_a_20260911'
+DOCS=next((p for p in HERE.parents if (p/'.git').exists()),None)
+REMOTE='/root/text_grounding_a_v2_20260911'
 PYTHON='/root/autodl-tmp/envs/betterlvit-paper/bin/python'
 KEY='C:/Users/dtftn/.ssh/seetacloud_betterlvit_ed25519'
 FILES=('run_diagnostic.py','analysis.py','text_policy.py','routing.py','check_policy.py',
@@ -30,6 +30,7 @@ def remote(code):
 
 
 def committed_files(sha):
+    assert DOCS is not None,'Deployment controller must run inside its local Git checkout'
     assert len(sha)==40 and all(c in '0123456789abcdef' for c in sha)
     payload={}
     for name in FILES:
@@ -40,6 +41,7 @@ def committed_files(sha):
 
 
 def deploy():
+    assert DOCS is not None,'Deployment controller must run inside its local Git checkout'
     assert not (HERE/'deployment.json').exists(),'Deployment already recorded; do not replace its frozen source'
     assert not subprocess.check_output(['git','status','--porcelain'],cwd=DOCS,text=True).strip(),'Commit sources first'
     sha=subprocess.check_output(['git','rev-parse','HEAD'],cwd=DOCS,text=True).strip()

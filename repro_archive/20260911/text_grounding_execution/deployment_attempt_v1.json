@@ -1,0 +1,14 @@
+{
+  "diagnostic_source_git_commit": "f031ad7922042ff3c1b12e6e5b7dcdde3cdb764c",
+  "tag": "diagnostic-r2-text-path-a-20260911",
+  "remote_directory": "/root/text_grounding_a_20260911",
+  "phase": "deployment_cpu_test_failed",
+  "tests_passed": 8,
+  "tests_errored": 1,
+  "cause": "Control module assumed the deployed directory had three parents; the server uses a shallower path. The early-launch guard test failed during import.",
+  "gpu_queried": false,
+  "training_status_queried": false,
+  "model_loaded": false,
+  "diagnostic_launched": false,
+  "action": "Keep the failed immutable source/tag and payload; fix repository discovery and deploy v2 to a separate directory."
+}
