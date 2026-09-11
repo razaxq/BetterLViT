@@ -1,0 +1,14 @@
+{
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "completed_b_source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "manifest_sha256": "23d189a1a37edd6c22563c77bc585a904d6ed5fb57c30b78a4071568f7fb686b",
+  "torch": "2.9.1+cu128",
+  "numpy": "1.26.4",
+  "gpu": "NVIDIA GeForce RTX 4090 D",
+  "shared_cache_read_only": true,
+  "source_indices_sha256": "a00124b41c7f6c722e4e4d8beb4d3c72e9d7767c64e1e05c37694e8d40049420",
+  "steps_per_case": 512,
+  "internal_holdout_evaluated": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false
+}

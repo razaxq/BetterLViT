@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "automation_id": "betterlvit",
+  "status": "PAUSED",
+  "kind": "heartbeat",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "prompt_exact_match": true,
+  "verified_unix": 1789134028.1619873,
+  "completed_run_reinspection_scheduled": false
+}

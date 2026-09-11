@@ -12,7 +12,15 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：B完成，接续Train优化器诊断（2026-09-11）
+## 文字引导方向：D优化器对照完成（2026-09-11）
+
+**D于23:25:30.404完成18案例×512步，首次检查距完成7.103分钟，检查1/2封存。** 源`c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd`、标签`diagnostic-text-optimizer-d1-20260911`；5份产物SHA和逐图/摘要独立复算通过，原Adam 0/256/512步精确复现B。18头CPU严格载入、manifest/完整来源/512步和所有张量有限性核验通过。只用Train，未重评内部holdout、官方Val/Test。
+
+受控结果支持coupled L2造成本配置T4/image塌缩；无衰减/AdamW恢复非零学习，但AdamW在固定32fit上T1/T2/T3/T4/image/template IoU相对R2分别−0.5694/−0.2691/−0.0903/−0.2241/−0.1529/+0.0229 pp。T4恢复后平均增加20.1563个FP、减少4.75个FN，无独立IoU增益证据。不能把优化器修复作为第二创新，也不能倒选64步的fit小正数。D不通过或放宽B的原阶段门，不直接扩展80轮。[D报告](../repro_archive/20260911/text_optimizer_diagnosis/REPORT.md)。
+
+HF `c7080ea8/`已核验16文件、13,007,022字节和全部Xet哈希，分类Train-only optimizer diagnostic。当前本批训练已全部结束，同一heartbeat已暂停并核验，避免重查封存run。下一步[可审查计划E0/E1](../repro_archive/20260911/text_optimizer_diagnosis/NEXT_PLAN.md)先检查Train上的纠错空间上界、同样本梯度/FP-FN方向及文字剩余定位证据；计划尚未执行，不开新80/150轮或访问Test。以下B/D派发记录为历史。
+
+## 文字引导方向：B完成与D启动历史（2026-09-11）
 
 **B六组已于23:04:28.152完成1024步、23:04:50.227完成内部holdout评估。** 首次检查距训练/评估结束4.755/4.387分钟，检查1/2关闭。原始文件SHA/逐图计数/10000次配对摘要独立复算通过，原5716张Train缓存概率逐位复现R2，模型状态/权重不变，无官方Val/Test。1131张Train内部holdout基线IoU79.644442%、Dice87.939493%；T1/T2/T3/T4/image/template的IoU分别79.491230/79.610980/79.579598/79.644442/79.644442/79.631225%，无正增益，T3/T4阶段门失败。[完整报告](../repro_archive/20260911/text_head_screening/REPORT.md)。这些图像曾参加R2训练，不能当作正式Val/Test或与A的Val横比。
 

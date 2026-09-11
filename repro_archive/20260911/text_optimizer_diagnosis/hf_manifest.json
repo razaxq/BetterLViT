@@ -1,0 +1,126 @@
+{
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "bucket_prefix": "c7080ea8",
+  "classification": "completed_train_only_optimizer_diagnostic",
+  "formal_test_result": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "files": [
+    {
+      "local": "D:\\BetterLViT\\.codex_tmp\\hf_text_optimizer_c7080ea8\\source.tar.gz",
+      "remote": "c7080ea8/source.tar.gz",
+      "bytes": 15116,
+      "xet_hash": "f316d34579f346a4ce7fca0a773d33cfe1a2ac3f4e90c299f900d385e1366e92",
+      "sha256": "218a7043bc3f01f23fa03b1b3ac5f0c428c3e4c55024d13092ff7a347c6b854f"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\heads.pt",
+      "remote": "c7080ea8/run/heads.pt",
+      "bytes": 9552635,
+      "xet_hash": "54e52673842b72d2680b79945d188a0a8fbcdab48a68a53cc200695cb7e00e34",
+      "sha256": "a5ece3d1ed144e50f568eaf88fb5c38a52dc5de57199157d5b52a7c6c5c4fb25"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\history.json",
+      "remote": "c7080ea8/run/history.json",
+      "bytes": 899541,
+      "xet_hash": "c0f5375fbf43791ae251dce576fe54760582f0105a68d794911dbe81c3b5eddc",
+      "sha256": "e6f6b80d51144aa6159db5ed6be41c8a7ab296133bbe4a9040bbfde2b51e2735"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\provenance.json",
+      "remote": "c7080ea8/run/provenance.json",
+      "bytes": 589,
+      "xet_hash": "31fe892a9497a9146afa1f6b243f955d358d2a63c6462af3434209289455ca03",
+      "sha256": "7e1f5181ea42abfed1a9b3de8d6e1515cada28ede7c7adc3bc644b37b2566594"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\summary.json",
+      "remote": "c7080ea8/run/summary.json",
+      "bytes": 9373,
+      "xet_hash": "94381a892b1cfa2d1680acd04442984fcda058771d195795bcdede5100e1941c",
+      "sha256": "5a3739620bee8b5560f916de4ee4412b3025b60805c3c2a0fe021487f425839e"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\train_diagnostics.json",
+      "remote": "c7080ea8/run/train_diagnostics.json",
+      "bytes": 2509030,
+      "xet_hash": "3c262ccfbb12ded5e6cfa4e17500bf323af467e20755580c5d14bfc44c247d38",
+      "sha256": "054de9b33eecc917dc1b339155900668e1c665825f0a66b7ce8209719c0bf3b5"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\runtime.json",
+      "remote": "c7080ea8/run/runtime.json",
+      "bytes": 1061,
+      "xet_hash": "4c83b5180b1e416a4575fa049e56d624d2c989c8ba69b929c1f0ea8e99543fbc",
+      "sha256": "f3f2dbbcf8c792673f13d02a4664c7f78b704c70d96fa299ca186939dad108b1"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\run.log",
+      "remote": "c7080ea8/run/run.log",
+      "bytes": 1662,
+      "xet_hash": "75b3f8e209d995e156084965528d2cd9c4f069386bd8d151d68b7d698149c698",
+      "sha256": "6fd4e27ac33f70e39b185c19668c42eb15aa6d89de6d8926dcd5cdb15ec0cddb"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\results\\independent_verification.json",
+      "remote": "c7080ea8/run/independent_verification.json",
+      "bytes": 339,
+      "xet_hash": "f08094885072f1a0974b25bdfa486da4091ac3883262cc851dc4cc2b30953451",
+      "sha256": "7e7a379115c92595d59464832c1a746f72151add47923c7d327a6fa57d8c3069"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\manifest.json",
+      "remote": "c7080ea8/manifest.json",
+      "bytes": 1616,
+      "xet_hash": "c84180dab168574eb8bdfa479cec29450806ec37dffa9d15576ed81def81d28f",
+      "sha256": "23d189a1a37edd6c22563c77bc585a904d6ed5fb57c30b78a4071568f7fb686b"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\PROTOCOL.md",
+      "remote": "c7080ea8/PROTOCOL.md",
+      "bytes": 2449,
+      "xet_hash": "cded6c463900f3f9d3a70c78d6d1597ce3c4870ef7f072ce3a2f0c1008a9718e",
+      "sha256": "81017ab1e3e27eb21e9606c8f9adac75b9e504cb285e8dedcac2d079d0fc2a4a"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\REPORT.md",
+      "remote": "c7080ea8/REPORT.md",
+      "bytes": 3691,
+      "xet_hash": "6302d96d9d6e5139265746d2794be8b78be5c17ccfc0b7cdbe7e3cf0e4034c6d",
+      "sha256": "b95822d2c216b0376b6733878814faa4f10254ebca088696ccfbd7490864c240"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\NEXT_PLAN.md",
+      "remote": "c7080ea8/NEXT_PLAN.md",
+      "bytes": 3611,
+      "xet_hash": "1f46feb57b80ba4d0aaf3412a90569b24d1600dfab1502ab331b58aea2201f79",
+      "sha256": "ad11077dc85bc90e2c7b513087916dbac85f1cb6981d63df11ffbe0a69749493"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\derived_analysis.json",
+      "remote": "c7080ea8/derived_analysis.json",
+      "bytes": 2234,
+      "xet_hash": "8f0857d7b27b2bc9afdf4549cf5314a6b94a6de32f8a3d8cacce09429972c5fd",
+      "sha256": "b4a52a4e051258b1ace6d471e0ab3f5832e44109486f9909bb9bac396c185261"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\checkpoint_verified.json",
+      "remote": "c7080ea8/checkpoint_verified.json",
+      "bytes": 2026,
+      "xet_hash": "6e938b2b765cb819c7e53b1d3e643552e5c5d84e3b2acae65543890ac815a9c2",
+      "sha256": "39905f8d76ed044eb2930649dad669f035e6a02984bda2545605e3ebb2890f95"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_optimizer_diagnosis\\verify_checkpoint.py",
+      "remote": "c7080ea8/verify_checkpoint.py",
+      "bytes": 2049,
+      "xet_hash": "ff59b194d12c788a366c795fc6341e7e812391de3b513d4ba7c79de6937caf93",
+      "sha256": "20f15496b97f889c1588efdac7e27bf875eaef4a4e312996d4e892da69255e07"
+    }
+  ],
+  "checkpoint_load_verified": true,
+  "steps_per_head": 512,
+  "heads": 18,
+  "additive_only": true
+}

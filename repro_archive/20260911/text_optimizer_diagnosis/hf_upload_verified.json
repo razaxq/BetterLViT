@@ -1,0 +1,15 @@
+{
+  "verified": true,
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "bucket": "razaxq/BetterLViT",
+  "bucket_prefix": "c7080ea8",
+  "classification": "completed_train_only_optimizer_diagnostic",
+  "files_verified": 16,
+  "logical_bytes": 13007022,
+  "all_sizes_and_xet_hashes_match": true,
+  "additive_only": true,
+  "remote_deletions": false,
+  "formal_test_result": false,
+  "test_split_accessed": false,
+  "completed_unix": 1789133945.6093585
+}

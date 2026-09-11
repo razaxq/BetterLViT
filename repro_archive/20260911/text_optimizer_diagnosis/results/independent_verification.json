@@ -1,0 +1,12 @@
+{
+  "verified": true,
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "cases": 18,
+  "steps_per_case": 512,
+  "train_diagnostic_samples": 32,
+  "artifact_hashes_verified": true,
+  "summary_recomputed": true,
+  "original_adam_reproduction": true,
+  "internal_holdout_evaluated": false,
+  "test_split_accessed": false
+}

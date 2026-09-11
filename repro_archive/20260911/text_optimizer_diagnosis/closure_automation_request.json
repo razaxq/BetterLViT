@@ -1,0 +1,10 @@
+{
+  "mode": "update",
+  "id": "betterlvit",
+  "kind": "heartbeat",
+  "name": "BetterLViT 区域监督",
+  "status": "PAUSED",
+  "targetThreadId": "01a074f2-5c58-7221-9a58-59850e626880",
+  "rrule": "FREQ=DAILY;BYHOUR=23;BYMINUTE=30;BYSECOND=0",
+  "prompt": "当前BetterLViT A/B/D三阶段及RS1/RS2/RS3均已完成并封存，无训练运行中，不再检查这些run。本heartbeat在D首次检查完成后暂停，避免每天重查旧进程。后续研究从D:/BetterLViT/experiment_docs_work/repro_archive/20260911/text_optimizer_diagnosis/NEXT_PLAN.md开始；恢复工作先读该计划、REPORT.md、README.md、EXPERIMENT_TRACKER.md及现有状态，不能自动重启旧训练或重评旧B holdout。\n\nD源c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd、标签diagnostic-text-optimizer-d1-20260911，18案例各512步已于2026年9月11日23:25:30.404悉尼时间全部完成；首次检查距完成426.177秒（7.103分钟），检查1/2关闭。5份原始结果逐文件SHA与独立指标复算通过，原Adam 0/256/512步32fit指标精确复现B。18头weights_only载入及strict state_dict、所有张量有限、完整SHA/manifest/512步一致通过。HF Bucket razaxq/BetterLViT/c7080ea8/已核验16文件、13007022字节、全部size/Xet，分类completed_train_only_optimizer_diagnostic，非正式Test。所有源/结果/报告/备份证明需保持GitHub推送完成。\n\nD结论：coupled L2导致此弱分支塌缩，Adam无衰减/AdamW恢复T4/image学习；但固定32张fit在512步AdamW的T1/T2/T3/T4/image/template相对R2 IoU分别-0.5694/-0.2691/-0.0903/-0.2241/-0.1529/+0.0229个百分点。T4修正幅度0.13282，32/32预测变化，平均新增FP20.15625、减少FN4.75；原Adam T4近零输出。末128相同批次AdamW T4 loss更低0.0004893，但统计与32fit IoU样本不完全相同，不能直接宣称所有样本loss-IoU冲突。诊断只在Train，未重评1131内部holdout或官方Val/Test，不证明稳定IoU或新架构增益。不可倒选64步的微小fit正向变化当成功。\n\nB源49905dbbdc644454a37a4a49098db0d5df5fe75a已封存，六组1024步无内部holdout IoU增益，T3/T4门失败。HF49905dbb/19文件15627795字节已核验。A源da17b3fbef0ca4ac6343575cf2af18fab3c76efb原文Val1429逐图精确R2、证明整个R2对关系敏感；A、B、D均不得当正式Test成绩。旧RS1/RS2/RS3及失败v1/v2也不再查询。\n\n下一步可审查计划E0/E1尚未执行：先只读原eligible fit缓存，分析受限残差接口的乐观纠错上界及同样本目标梯度/FP-FN方向，再判断正确文本对剩余错误是否有额外定位证据。不得先加入更多结构或把优化器修复称第二创新；不自动投入80/150轮或Test。投影的宽松修正上界与无投影界限需分清，GT仅用于离线诊断，不能变成推理输入。任何新训练必须新manifest、独立SHA/tag和预算，保留B/D负结果、不放宽旧门/复现容差、不调旧holdout。原B cache约1.78GB是D及后续可行性诊断的只读依赖，不清理或复制；shared fs不新增文件。新训练仍按最多两次预测式检查、完成后半小时内观察的约定，使用同一个heartbeat安排，不持续SSH。"
+}

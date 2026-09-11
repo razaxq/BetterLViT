@@ -1,0 +1,32 @@
+{
+  "verified": true,
+  "source_git_commit": "c7080ea82ecaca0e1f33df880d168e3eb7cbc6dd",
+  "checkpoint_sha256": "a5ece3d1ed144e50f568eaf88fb5c38a52dc5de57199157d5b52a7c6c5c4fb25",
+  "heads": 18,
+  "steps_per_head": 512,
+  "strict_state_dict_load": true,
+  "all_tensors_finite": true,
+  "model_forward_executed": false,
+  "internal_holdout_evaluated": false,
+  "test_split_accessed": false,
+  "state_hashes": {
+    "adam_l2/T1": "c3c939686dc6dcbcb196740d42771d5eff05216bf1aa9c2399817fe412aebdbf",
+    "adam_l2/T2": "31942055b124a64a21491b50df5dc0422d305e6d42625b4b7b67aeae8063656a",
+    "adam_l2/T3": "487d47248e8ab8d185de2fc3e747ff0d6f5a13e6455c8d2d93c9a729eeb528f2",
+    "adam_l2/T4": "879b9c72404a9bc2c926d4afeb39437c7ddcaf6ac497d3dacc675041abe38cfb",
+    "adam_l2/image": "c049c1786519c29d08b17e518a342add8f517fbbd7b9d2828317833826c4e3c4",
+    "adam_l2/template": "88458fb66371f1625a6c90ba52386631a641a658e9ae7416ead9c3dd44cf1c56",
+    "adam_zero_decay/T1": "a49f6403786d8e66e0bc7a50d882fc6a146de3635bf1488d91c415a5c0387911",
+    "adam_zero_decay/T2": "a61c44137cd466d65042256a62ea797fe0392478b3611d9214b9a2425eefab47",
+    "adam_zero_decay/T3": "ae4a0a875e79162494bd181a18b6e8eb4a41b789927e41f51caa159278025b11",
+    "adam_zero_decay/T4": "c46547ba39a2bf64238c85458b482f892a9d080a480f0115745fc67ab10ea1de",
+    "adam_zero_decay/image": "a71e09f18013df793f48b892647d4e93494cb22b0b793c81807fb331c35d6dba",
+    "adam_zero_decay/template": "413abf55b67f891ce4bb6019b26a3fb2f7d3b70f40806332d88c347c01cea569",
+    "adamw/T1": "b9a17647e1ee7a3d4b64ecbfbe7085e5f8268d8060e80797d7c8fe86618af49d",
+    "adamw/T2": "c6d71cf970bb8e25a363411126c1c507238d0536aa4fe628b8e2423807e6ae15",
+    "adamw/T3": "e7c60c51848755486f50ee414a269daf148b00af41b7c90d9f4210142ddaf171",
+    "adamw/T4": "70d51a83d3d277f5517259cf9d8b6d702fcb05934114d566f9c8f1f9a29d4537",
+    "adamw/image": "73c72d8160e3b61ed438a926923894d9de564a52b88af3af4249b2001f4a1a0b",
+    "adamw/template": "5d980fb2494df9808032e60c92ba65ddc434a0540797758b25ca8715594f172c"
+  }
+}
