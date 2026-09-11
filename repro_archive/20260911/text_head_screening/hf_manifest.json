@@ -1,0 +1,146 @@
+{
+  "source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "bucket_prefix": "49905dbb",
+  "classification": "completed_train_internal_frozen_head_pilot",
+  "formal_test_result": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "files": [
+    {
+      "local": "D:\\BetterLViT\\.codex_tmp\\hf_text_head_49905dbb\\source.tar.gz",
+      "remote": "49905dbb/source.tar.gz",
+      "bytes": 154686,
+      "xet_hash": "a48fb8c308fea078029735b8b8ceaf4d0fe53853be6696f59bbffaf9c8368258",
+      "sha256": "cde8548dfc2a4be0701fff5aae34f56cf5163949a4a042226305fadaa61231e3"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\cache_manifest.json",
+      "remote": "49905dbb/run/cache_manifest.json",
+      "bytes": 25751,
+      "xet_hash": "f07a6d16e7424a831d6889be4f2261243b15c2cb0f7f5aa4223562f46933d659",
+      "sha256": "d9ef4f9f34fdba8a9361fb158ec1b1d76c43eb21d194dd156b88026d964e5eac"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\heads.pt",
+      "remote": "49905dbb/run/heads.pt",
+      "bytes": 3187653,
+      "xet_hash": "2de9490c2ad24024c9fb51db43dd0cbeec51fb58ffd9d793f20a063ec67b7c07",
+      "sha256": "3bf949edf52225cb75910d262e3a1df139f3f25b1661e5ec29155c8d3a4abcc2"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\history.json",
+      "remote": "49905dbb/run/history.json",
+      "bytes": 565952,
+      "xet_hash": "2dd41c8070809174291975f2a5bfdbfad21d484b8862d0ccdd4443290fe9fa62",
+      "sha256": "6b0ea5a7dc24eaadc24df11962e3a96e261ffcfe4f8895ef1d81c19d2d3aca09"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\preflight.json",
+      "remote": "49905dbb/run/preflight.json",
+      "bytes": 632,
+      "xet_hash": "32f4ec393b4f3413851ae7cc02dcd1820bdc4a92a928af572581c2eeabac5510",
+      "sha256": "fbc825b3be1a5ba0cda0bb396c61f41af659c4ef7735ebcd807cf3d83697e455"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\provenance.json",
+      "remote": "49905dbb/run/provenance.json",
+      "bytes": 1295,
+      "xet_hash": "a23c499f3d5f7aacf756334ae23a00ddab67a9a9867a0764eb645bb319a10367",
+      "sha256": "426df3c3d0f35f868394438e1115c7537fe6cfed769f34fa1e47ed16737aa10e"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\records.json",
+      "remote": "49905dbb/run/records.json",
+      "bytes": 6752122,
+      "xet_hash": "07c9e315fb6a26577d2bb662d3563335f601e39abd884417c2de3f746d99d477",
+      "sha256": "b3d7341dff7369f70e6d2575bfdb2768b3a07c228fe32618d6dd40746c0d6692"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\summary.json",
+      "remote": "49905dbb/run/summary.json",
+      "bytes": 76669,
+      "xet_hash": "52e8f2d514d636fb3b7f083e13ff2e138c1a7066c17c10a158c1d3c9e55ef229",
+      "sha256": "b4c5d8dd306b2f3dd224cba9e21eb4b632efa88a8df3e94ff7df0ca9e279e372"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\train_diagnostics.json",
+      "remote": "49905dbb/run/train_diagnostics.json",
+      "bytes": 666002,
+      "xet_hash": "a2b161cdfba3d4aefd4bc54d865fa2462448d1b093192eef48a6b0b557cace3d",
+      "sha256": "bde5525b575f27d523ff421c1602296bfa7f4f2ca4f2879ca0147ea8463647cf"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\training_order.json",
+      "remote": "49905dbb/run/training_order.json",
+      "bytes": 190782,
+      "xet_hash": "1800811d3d1f5695168750353d253b58f5575ce74eac5c4cb5b792b305a27692",
+      "sha256": "53eb3b1125f4ebe391c50967d78d2d1f3adb11c789fcc2eaa5a83e0d06c637ea"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\runtime.json",
+      "remote": "49905dbb/run/runtime.json",
+      "bytes": 1753,
+      "xet_hash": "b977d909e5d5daf374c4a132ba4aa653cec4a9ca5981f4f732ed01edb29b4352",
+      "sha256": "e4276914ca24caa00148ddb02d55c4f62ce0230bbebb5a167bcb78139fe95c84"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\run.log",
+      "remote": "49905dbb/run/run.log",
+      "bytes": 9616,
+      "xet_hash": "7ef2d6bb9237d90533147e520f3966fad8c985f92ed6a0f680f9bb3c03ce1c05",
+      "sha256": "58d7f64f3d7619bebf996e19deea2b0a9eb6d7cd80a4e8c97a4fa815bab97eb3"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\results\\independent_verification.json",
+      "remote": "49905dbb/run/independent_verification.json",
+      "bytes": 318,
+      "xet_hash": "5963a27998cb3a3c49992a544441215b9541e6fe28697540b8f44420e041d663",
+      "sha256": "4ebe643cee13b73d06834c0c2baeb02686841dc184cbe40b153d5208437332d0"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\manifest.json",
+      "remote": "49905dbb/manifest.json",
+      "bytes": 3357,
+      "xet_hash": "7a8e35d2c339811761b8bf97ae75bfa47896c8acd5884404c9d873481b7a7016",
+      "sha256": "ec4a25a49c5b1fd35a20b7df1e0d92de9ee3aa48a469d9b0bfdacc83b9a8222d"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\PROTOCOL.md",
+      "remote": "49905dbb/PROTOCOL.md",
+      "bytes": 6782,
+      "xet_hash": "0f6644412aa9b936c6d7f7a7b01fe92114897e57cbf24d9f170318cf15a5aabb",
+      "sha256": "39ca35db807c8ddb94fcd9931ae8c1b12552c850c69c0b0acf846acddf857210"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\split.json",
+      "remote": "49905dbb/split.json",
+      "bytes": 3951625,
+      "xet_hash": "baff617fe063d314ccd2444c1b89922b86f57381b6d198fd75f6815b0a6ebccf",
+      "sha256": "c09c52e47f36a4b170fe1317b306a56a715e6fb975b61243ff20ce8303542f7a"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\REPORT.md",
+      "remote": "49905dbb/REPORT.md",
+      "bytes": 4500,
+      "xet_hash": "845ae3a75b75197be223a27f94f345b2d36cbb6a07fc76764625044ebb406d8e",
+      "sha256": "685e3dfcba96a77b87c6469e318837ba14726b4b05bfffa8dc4ef83e15cf711b"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\posthoc_collapse.json",
+      "remote": "49905dbb/posthoc_collapse.json",
+      "bytes": 24202,
+      "xet_hash": "def22a0ca9ed552c9a564cb5819afec916f3a2d24beb480b7af5503aa92db596",
+      "sha256": "38e035d4d9e6e15bf5a3535463ed3cbc35065e96b9aa85dfb47670b9941db5fa"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\text_head_screening\\diagnose_collapse.py",
+      "remote": "49905dbb/diagnose_collapse.py",
+      "bytes": 4098,
+      "xet_hash": "8a6566c3e5a2fcbfa830381060500743d7062e1238312951504fc334c06a7e7e",
+      "sha256": "3d67d07ae030d726be0d8a20ce507ae72349aae2fbd686ced5e948cad1961172"
+    }
+  ],
+  "checkpoint_load_verified": true,
+  "steps_per_head": 1024,
+  "additive_only": true
+}

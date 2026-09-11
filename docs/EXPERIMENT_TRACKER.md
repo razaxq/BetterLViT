@@ -12,7 +12,13 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
-## 文字引导方向：B六组筛选已后台提交（2026-09-11）
+## 文字引导方向：B完成，接续Train优化器诊断（2026-09-11）
+
+**B六组已于23:04:28.152完成1024步、23:04:50.227完成内部holdout评估。** 首次检查距训练/评估结束4.755/4.387分钟，检查1/2关闭。原始文件SHA/逐图计数/10000次配对摘要独立复算通过，原5716张Train缓存概率逐位复现R2，模型状态/权重不变，无官方Val/Test。1131张Train内部holdout基线IoU79.644442%、Dice87.939493%；T1/T2/T3/T4/image/template的IoU分别79.491230/79.610980/79.579598/79.644442/79.644442/79.631225%，无正增益，T3/T4阶段门失败。[完整报告](../repro_archive/20260911/text_head_screening/REPORT.md)。这些图像曾参加R2训练，不能当作正式Val/Test或与A的Val横比。
+
+T4/image几乎零修正，梯度及参数塌缩；T4的K范数约3.24→1.42e−20。只读首个fit批次与头权重诊断、初始状态/载入/源哈希核验通过；零初始化前层任务梯度为0而Adam coupled L2仍施加衰减，支持优化配置压制弱分支的解释，尚未完成优化器因果对照。普通T1/T3增加FP而IoU下降。B小头与源/结果已HF `49905dbb/`核验19文件、15,627,795字节及全部Xet哈希，不称正式Test模型。
+
+按已有授权新增[仅Train优化器诊断D](../repro_archive/20260911/text_optimizer_diagnosis/PROTOCOL.md)：Adam+L2、Adam无衰减、AdamW，每种原六头、原序列前512步、原1024余弦前半段；原Adam必须精确复现B的0/256/512步fit遥测。当前待提交预检/派发，不重评原内部holdout，不新增结构或自动开80轮/Test。以下B派发记录为历史。
 
 **22:59:57.133悉尼时间后台提交六组任务，PID274265。** 来源`49905dbbdc644454a37a4a49098db0d5df5fe75a`、组标签`pilot-r2-text-residual-b-v1-20260911`，远端`/root/text_head_b_49905dbb`，启动前系统盘余3,106,045,952字节，SSH已断开。同一heartbeat已改约**23:08首次检查**并核验，检查0/2；当前只有派发回执，尚无实际更新进度或新IoU成绩。[B回执与协议](../repro_archive/20260911/text_head_screening/README.md)。
 

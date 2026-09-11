@@ -1,0 +1,15 @@
+{
+  "verified": true,
+  "source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "bucket": "razaxq/BetterLViT",
+  "bucket_prefix": "49905dbb",
+  "classification": "completed_train_internal_frozen_head_pilot",
+  "files_verified": 19,
+  "logical_bytes": 15627795,
+  "all_sizes_and_xet_hashes_match": true,
+  "additive_only": true,
+  "remote_deletions": false,
+  "formal_test_result": false,
+  "test_split_accessed": false,
+  "completed_unix": 1789132559.7569478
+}

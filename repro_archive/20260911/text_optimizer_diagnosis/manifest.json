@@ -1,0 +1,41 @@
+{
+  "phase": "D_train_only_optimizer_collapse_diagnosis",
+  "seed": 1219,
+  "steps": 512,
+  "batch_size": 16,
+  "completed_b_directory": "/root/text_head_b_49905dbb",
+  "completed_b_source_git_commit": "49905dbbdc644454a37a4a49098db0d5df5fe75a",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "heads_sha256": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+  "initial_state_sha256": "73a8aa653d561879b0dff977204bed3bc75f3782f6bf270462dc2893d4c7cf73",
+  "b_artifact_sha256": {
+    "manifest.json": "ec4a25a49c5b1fd35a20b7df1e0d92de9ee3aa48a469d9b0bfdacc83b9a8222d",
+    "split.json": "c09c52e47f36a4b170fe1317b306a56a715e6fb975b61243ff20ce8303542f7a",
+    "results/training_order.json": "53eb3b1125f4ebe391c50967d78d2d1f3adb11c789fcc2eaa5a83e0d06c637ea",
+    "results/cache_manifest.json": "d9ef4f9f34fdba8a9361fb158ec1b1d76c43eb21d194dd156b88026d964e5eac",
+    "results/train_diagnostics.json": "bde5525b575f27d523ff421c1602296bfa7f4f2ca4f2879ca0147ea8463647cf"
+  },
+  "treatments": [
+    "adam_l2",
+    "adam_zero_decay",
+    "adamw"
+  ],
+  "heads_per_treatment": 6,
+  "lr_schedule_original_steps": 1024,
+  "cache_budget_bytes": 0,
+  "minimum_free_after_cache_bytes": 128000000,
+  "maximum_inspections": 2,
+  "first_check_delay_seconds": 480,
+  "completion_check_margin_seconds": 180,
+  "estimated_compute_seconds_from_B": 294.98387718200684,
+  "official_validation_accessed": false,
+  "test_split_allowed": false,
+  "internal_holdout_evaluated": false,
+  "no_automatic_architecture_pass": true,
+  "train_diagnostic_steps": [
+    0,
+    64,
+    256,
+    512
+  ]
+}
