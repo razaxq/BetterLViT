@@ -20,6 +20,8 @@
 
 **GPU诊断尚未启动，无新IoU或Test成绩。** 先执行既有RS3的22:00悉尼时间唯一末检及归档/HF验证，随后接续A；不提前查询RS3，也不改变其冻结训练。诊断自身最多两次预约检查，按实测批耗时预测末检。A完成后解释结果并注册B的普通文本/关系差分×有无投影及图像/模板控制，再做短程筛选；不因A运行成功自动开始80轮。
 
+执行源`c694e57be6b5ce224489ff9bab2acbb4d4846358`及标签`diagnostic-r2-text-path-a-v2-20260911`已推送GitHub，20:49部署到服务器独立目录，10份源文件哈希一致、9项服务器CPU测试通过；首次部署的目录兼容问题及失败源独立保留，未启动GPU。[部署回执](../repro_archive/20260911/text_grounding_execution/deployment.json)。20:50:59读回确认同一heartbeat仍预约22:00，已加入RS3→A→B接续说明，[预约核验](../repro_archive/20260911/text_grounding_execution/appointment_verified.json)。
+
 ## 文字引导方向：研究与已有方法核查完成（2026-09-11）
 
 用户要求第二创新点建立在文字之上，并继续核查可行性与已有研究。完成[研究报告](../repro_archive/20260911/text_grounding_research/REPORT.md)：覆盖C2Seg、SSA、RecLMIS、ARSeg、CausalCLIPSeg、FairVLM、TGC-Net、InstAlign、CROSS及体积保持分割等近邻，明确拆短语、双向注意力、空间反事实或保量层本身均不是新点。

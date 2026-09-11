@@ -1,0 +1,21 @@
+{
+  "diagnostic_source_git_commit": "c694e57be6b5ce224489ff9bab2acbb4d4846358",
+  "files_sha256": {
+    "run_diagnostic.py": "dcf562867f7bfe7dedc11fe18ccc3a247fa647898c0685252e9fcedadae5ca56",
+    "analysis.py": "3b382cb7f7fba51386463cf1520c346fc502f62151fc8661a39de33dc477b67d",
+    "text_policy.py": "56e521618ecc992bb91f469b52c8d03601696b5bc9506ec9fc2bc0575755dfeb",
+    "routing.py": "cf6d482299ffedf4ba1fb0d8f20d487e704335b2f9143edc267a4e77cdcafca2",
+    "check_policy.py": "478835a2d3d15339f528e2eee5ad870348fea4c491b78cd43618364e6aea6ff4",
+    "check_corpus.py": "3f20d1cf6682a7c3ec0290fceea9b8b8b9a65308926d9c28a35067b59ebf4ad2",
+    "control.py": "a398f3eb8c4408b7bd7e8564818461b023bd2c212d608934edb2d67dcc1d0771",
+    "manifest.json": "e570727736321ae9228c3c526d9e34960a2671b24379aac7541965c7f1e8cbad",
+    "PLAN.md": "2831ce3e40bc592321f9a7241bacab7c1606015ba787b52fe560889a71b573e8",
+    "r2_validation.json": "7b10abdb7e3152e028658e20155bf124a4ee994cb2922ca381a2a2d729e5346c"
+  },
+  "remote_directory": "/root/text_grounding_a_v2_20260911",
+  "deployed_unix": 1789123748.3018353,
+  "cpu_tests_passed": true,
+  "cpu_test_output": ".........\n----------------------------------------------------------------------\nRan 9 tests in 0.047s\n\nOK\n",
+  "gpu_queried": false,
+  "training_status_queried": false
+}

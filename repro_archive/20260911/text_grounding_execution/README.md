@@ -11,3 +11,7 @@ GPU实际预检和1429张完整Val需在RS3原定22:00悉尼时间末检、归�
 诊断代码的独立完整Git SHA及服务器逐文件校验值保存在部署回执；不修改已冻结的R2或RS3源码、权重和训练配方。现有同一个heartbeat负责接续，执行控制禁止提前启动、重复启动或超过两次检查。
 
 首次部署`f031ad7922042ff3c1b12e6e5b7dcdde3cdb764c`的服务器CPU检查暴露控制脚本对目录深度的假设，8项通过、1项导入失败；未加载模型、未访问GPU或查询训练。失败标签及目录保留，修复后使用独立v2目录及标签，后续只以成功`deployment.json`的来源为准，见`deployment_attempt_v1.json`。
+
+**成功部署已核验：** 2026-09-11 20:49悉尼时间，`c694e57be6b5ce224489ff9bab2acbb4d4846358`已部署到`/root/text_grounding_a_v2_20260911`；10份文件SHA256与Git源完全一致，服务器9项CPU测试通过。GitHub分支及标签`diagnostic-r2-text-path-a-v2-20260911`均指向该完整SHA。未加载模型、未查询GPU或RS3训练。
+
+20:50:59读回核验同一heartbeat `betterlvit`，保留今天22:00的RS3唯一末检；RS3完成归档核验后启动A，随后依实测批耗时改约诊断自身的末检，再按证据进入B。完整工具回执和保存配置见`appointment_verified.json`。当前没有`launch.json`或诊断成绩，不能写为GPU任务已派发。

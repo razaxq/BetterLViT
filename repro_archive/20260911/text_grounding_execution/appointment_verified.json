@@ -1,0 +1,45 @@
+{
+  "verified": true,
+  "checked_sydney": "2026-09-11T20:50:59.503809+10:00",
+  "next_check_sydney": "2026-09-11T22:00:00+10:00",
+  "same_heartbeat": true,
+  "rs3_final_check_preserved": true,
+  "diagnostic_source_git_commit": "c694e57be6b5ce224489ff9bab2acbb4d4846358",
+  "before": {
+    "version": 1,
+    "id": "betterlvit",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "继续当前任务已授权的BetterLViT区域监督首轮RS1→RS2→RS3。先读取D:/BetterLViT/experiment_docs_work/repro_archive/20260911/regional_supervision_execution/README.md、sources.json、rs3_state.json和预约回执，避免重复启动或重复检查。RS1/RS2均完成80轮和完整Val、独立核验、HF备份及GitHub归档，两组检查均2/2用尽，不再查询其训练状态。RS2 IoU72.8395%、Dice82.5258%，R2性能门和相对RS1增量门均未过；不据此修改RS3。RS1已备份Last迁到/root/regional_model_archive/b4dd566a/，原路径符号链接仍可访问，迁移哈希核验通过，共享fs未增加。RS3已于2026年9月11日17:13:13悉尼时间完成首次检查，来源f79842331e4e5e41526ed66da31ec174ea4a61b2，预算已用1/2：完整4/80轮，第5轮至少340/357训练批次，GPU100%、显存17402MiB，源码/manifest一致且跟踪文件干净，日志尾部无异常。第2—4轮平均217.763331秒，加120秒后续Train诊断余量，预测同日21:47:50训练结束。本次预约为同日22:00悉尼时间的唯一末检，运行inspect_run.py --label rs3 --phase final，不重复first、不提前连接。每组最多两次短连接状态检查，不保持SSH、不循环轮询：首次用实测完整轮时预测结束，将同一个heartbeat改约预测结束后约12分钟作为唯一末检，并核验实际保存的预约；末检核对距真实训练结束不超过30分钟。成功完成后依README归档、独立复算Val、核验来源SHA、80轮学习率及诊断状态恢复；若历史IoU与逐图导出差超过原核验界限，依reconcile_iou.py对已完成Best作一次有界Val指标诊断，保留原结果，不扩大容差；上传HF并验证文件大小/Xet哈希及下载产物，提交推送完整源代码和结果文档。RS3完成后补充与RS2的配对比较，汇总三组首轮性能门和区域增量结论；不把单种子Val称为稳定增益或已完成第二创新。三组均80轮seed1219，共同λ=0.128312；本阶段不访问Test、不延长150轮、不自动启动RS4或后续训练。若异常或预测失准，保留证据并如实报告，不超出两次预算反复检查。若需要存储维护，按已有授权先审计活跃引用及云端哈希，保留模型及可访问路径，共享fs实际字节保持20GB以下。首轮三组归档汇总完成后删除当前heartbeat。用户最终成果以Test macro IoU为准，此阶段只报告Val。",
+    "status": "ACTIVE",
+    "rrule": "FREQ=DAILY;BYHOUR=22;BYMINUTE=0;BYSECOND=0",
+    "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+    "created_at": 1789071524571,
+    "updated_at": 1789110824678
+  },
+  "after": {
+    "version": 1,
+    "id": "betterlvit",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "继续当前任务已授权的BetterLViT区域监督首轮RS1→RS2→RS3。先读取D:/BetterLViT/experiment_docs_work/repro_archive/20260911/regional_supervision_execution/README.md、sources.json、rs3_state.json和预约回执，避免重复启动或重复检查。RS1/RS2均完成80轮和完整Val、独立核验、HF备份及GitHub归档，两组检查均2/2用尽，不再查询其训练状态。RS2 IoU72.8395%、Dice82.5258%，R2性能门和相对RS1增量门均未过；不据此修改RS3。RS1已备份Last迁到/root/regional_model_archive/b4dd566a/，原路径符号链接仍可访问，迁移哈希核验通过，共享fs未增加。RS3已于2026年9月11日17:13:13悉尼时间完成首次检查，来源f79842331e4e5e41526ed66da31ec174ea4a61b2，预算已用1/2：完整4/80轮，第5轮至少340/357训练批次，GPU100%、显存17402MiB，源码/manifest一致且跟踪文件干净，日志尾部无异常。第2—4轮平均217.763331秒，加120秒后续Train诊断余量，预测同日21:47:50训练结束。本次预约为同日22:00悉尼时间的唯一末检，运行inspect_run.py --label rs3 --phase final，不重复first、不提前连接。每组最多两次短连接状态检查，不保持SSH、不循环轮询：首次用实测完整轮时预测结束，将同一个heartbeat改约预测结束后约12分钟作为唯一末检，并核验实际保存的预约；末检核对距真实训练结束不超过30分钟。成功完成后依README归档、独立复算Val、核验来源SHA、80轮学习率及诊断状态恢复；若历史IoU与逐图导出差超过原核验界限，依reconcile_iou.py对已完成Best作一次有界Val指标诊断，保留原结果，不扩大容差；上传HF并验证文件大小/Xet哈希及下载产物，提交推送完整源代码和结果文档。RS3完成后补充与RS2的配对比较，汇总三组首轮性能门和区域增量结论；不把单种子Val称为稳定增益或已完成第二创新。三组均80轮seed1219，共同λ=0.128312；区域监督首轮不访问Test、不延长150轮、不自动启动RS4；新文字方向按下文已授权顺序接续。若异常或预测失准，保留证据并如实报告，不超出两次预算反复检查。若需要存储维护，按已有授权先审计活跃引用及云端哈希，保留模型及可访问路径，共享fs实际字节保持20GB以下。RS3首轮三组归档汇总完成后，保留同一个heartbeat用于下文新文字方向，不创建重复预约。用户最终成果以Test macro IoU为准，此阶段只报告Val。\n\n用户于2026年9月11日追加授权按文字研究报告的阶段A→B顺序执行。先读D:/BetterLViT/experiment_docs_work/repro_archive/20260911/text_grounding_execution/README.md、PLAN.md、manifest.json、deployment.json及已有launch/state/inspection回执，再采取动作。成功部署来源为c694e57be6b5ce224489ff9bab2acbb4d4846358，标签diagnostic-r2-text-path-a-v2-20260911，远端/root/text_grounding_a_v2_20260911；本地及服务器9项CPU测试通过，GPU诊断尚未启动。首次f031ad7版本只发生CPU目录兼容失败、未加载模型，失败来源和目录保留，不能使用它启动。R2冻结源9eca26de5b301099805530edbf5a1a8718bea662，Best67，权重SHA256和规范化原始Val参照均锁定在manifest。\n\n本次22:00预约先完成原RS3唯一末检。若仍在运行、失败、来源不符或检查预算已用尽，保留证据，不能越过依赖或追加检查。RS3成功后完成归档、独立Val复算、HF文件大小/Xet校验及下载核验，推送结果。随后用D:/BetterLViT/.codex_tmp/text_audit_py312/Scripts/python.exe -B -X utf8执行文字目录中的control.py launch；控制器会校验RS3四份完成证据、最早22:00及GPU空闲，再后台派发A并立即断开SSH，不需要用户再次确认已授权A/B。已有deployment.json时不要重复deploy，已有launch_attempt/launch/state时先核对来源回执，禁止重复启动。\n\nA先32张Train原生/分路确定性预检，再一次完整1429张Val的5种规则×主LViT/EPPA/两路15条件。模型不更新，Test禁止。启动回执不是完成结果。launch后立即将同一个heartbeat改约state.json的planned_check_sydney（约5分钟后）并读回核验。预约到时只运行一次control.py collect，最多两次远程状态检查；第一次若已完成就直接收尾，若运行中按实测Train批耗时的ETA将同一heartbeat改约新的planned_check_sydney作为唯一末检。不得循环SSH、提前查询或维持长连接；若没有ETA遵循控制器的有界回退预约。末检核对真实结束到检查≤30分钟，预测失准如实报告，不用第三次检查掩盖。\n\nA完成后本地control.py verify独立复算，确认1429张原文IoU/Dice/Precision/Recall逐图复现差<1e-12、前后模型/权重哈希不变和无Test访问，下载JSON/log完整归档。对照原文、同义规范化、Train语义匹配、关系交换、去位置、通用描述，并重点解释relation_swap减canonical的配对差和真实token变化数，不能把错误文本分数当方法成绩或把扰动下降直接称语言理解。当前完整语义解析Train5512/5716、2388条可交换关系、204条回退，无截断/UNK。主通路的间接视觉影响仍可能传到EPPA，直接入口隔离不是所有影响路径隔离。\n\n依已授权方案继续阶段B研究、编码和低成本筛选：先根据A证据写判断，冻结新的独立源SHA/标签及manifest，再实现同R2特征、相同Train内部划分/初始化/损失/更新预算的T1普通文本匹配、T2关系差分、T3普通匹配+软总量投影、T4关系差分+投影，并包含同容量图像分支和仅模板空间图控制。缓存先计算实际字节预算，必要时确定性在线计算，不占满磁盘；共享fs实际字节低于20GB。冻结R2特征可能包含原文字作用，图像控制仅针对新增分支。完成CPU/CUDA数值、梯度、identity和稳定性预检后再启动受控短程筛选，预先注册比较与停止条件，不能根据Val修改文字规则反复重跑。若普通匹配也不能体现文字作用，暂停复杂差分设计并报告负证据；若只有保量有效，不使用文字创新名称。A/B都是机制诊断或筛选，不产生新正式Test结论；完整80轮、匹配种子及最终Test须满足研究报告后续阶段的冻结条件，不能由A运行成功自动触发。后续训练继续每组最多两次预测式预约检查及结束后允许的自动评估。每阶段提交推送可复现代码、失败证据、完整结果与解释文档，明确已完成、运行中、未执行。",
+    "status": "ACTIVE",
+    "rrule": "FREQ=DAILY;BYHOUR=22;BYMINUTE=0;BYSECOND=0",
+    "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+    "created_at": 1789071524571,
+    "updated_at": 1789123825629
+  },
+  "tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}
