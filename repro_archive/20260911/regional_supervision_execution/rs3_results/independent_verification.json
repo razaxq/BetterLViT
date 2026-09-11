@@ -1,0 +1,153 @@
+{
+  "verified": true,
+  "source_git_commit": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+  "test_split_accessed": false,
+  "epochs": 80,
+  "samples": 1429,
+  "best_epoch": 67,
+  "actual_lr_matches_manifest": true,
+  "macro_summaries_and_deltas_recomputed": true,
+  "audits_state_preserving": true,
+  "passed": false,
+  "checks": {
+    "iou_minimum": false,
+    "iou_ci_positive": false,
+    "dice_not_lower": true,
+    "precision_not_lower": false,
+    "small_dice_not_lower": true,
+    "small_recall_not_lower": true,
+    "brier_not_higher": true
+  },
+  "inspection_number": 2,
+  "seconds_after_training_end": 791.909346818924,
+  "within_30_minutes": true,
+  "export_minus_selection_iou": -3.937799752939952e-09,
+  "metric_reconciliation_verified": false,
+  "regional_increment": {
+    "control": "rs1_global_iou",
+    "candidate": "rs3_balanced_iou",
+    "seed": 1219,
+    "control_sha": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "candidate_sha": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+    "regional_increment": true,
+    "minimum_iou_delta": 0.001,
+    "deltas": {
+      "iou": {
+        "mean": -0.002207055473810149,
+        "small_mean": 0.0010784495346081576,
+        "ci95": [
+          -0.00520621196842218,
+          0.0007258149480857465
+        ]
+      },
+      "dice": {
+        "mean": -0.0015700663005095287,
+        "small_mean": 0.0005980049151942806,
+        "ci95": [
+          -0.0041910628294892305,
+          0.0009870142825867132
+        ]
+      },
+      "precision": {
+        "mean": 0.0032403205803411823,
+        "small_mean": 0.0011251967031709494,
+        "ci95": [
+          0.00046022791137882,
+          0.0060288806584607195
+        ]
+      },
+      "recall": {
+        "mean": -0.009022689884260592,
+        "small_mean": -0.010001499889276533,
+        "ci95": [
+          -0.012482354774283552,
+          -0.005640106039877178
+        ]
+      },
+      "brier": {
+        "mean": -0.00029179714250891195,
+        "small_mean": -0.001119536270748191,
+        "ci95": [
+          -0.0005315283292675254,
+          -5.367140015001849e-05
+        ]
+      }
+    },
+    "checks": {
+      "iou_minimum": false,
+      "iou_ci_positive": false
+    },
+    "passed": false,
+    "small_area_cutoff": 2075.0,
+    "small_count": 358,
+    "split": "validation",
+    "test_split_accessed": false,
+    "stable_gain_proven": false,
+    "input_sha256": {
+      "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs1_results\\validation.json": "8939809543db1d9d90fd94a9b85bc6f20d48e7c4297fd14f4945bf830e73e11c",
+      "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs3_results\\validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e"
+    }
+  },
+  "grouping_attribution": {
+    "control": "rs2_local_iou",
+    "candidate": "rs3_balanced_iou",
+    "seed": 1219,
+    "control_sha": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+    "candidate_sha": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+    "deltas": {
+      "iou": {
+        "mean": 0.0001621544567717464,
+        "small_mean": 0.0046893643344884965,
+        "ci95": [
+          -0.002626078629644572,
+          0.0030691426764021547
+        ]
+      },
+      "dice": {
+        "mean": 0.00021092835051247992,
+        "small_mean": 0.0038650180495746647,
+        "ci95": [
+          -0.002378774544449152,
+          0.002749422245560655
+        ]
+      },
+      "precision": {
+        "mean": -0.0036146617544215074,
+        "small_mean": -0.006907993753176438,
+        "ci95": [
+          -0.006293623987971263,
+          -0.0010022930850799808
+        ]
+      },
+      "recall": {
+        "mean": 0.00356652745732042,
+        "small_mean": 0.014827320580521336,
+        "ci95": [
+          0.00010563480408009115,
+          0.006915668201219624
+        ]
+      },
+      "brier": {
+        "mean": 0.0002251740912767985,
+        "small_mean": -5.055162116362302e-05,
+        "ci95": [
+          -2.6840483192078407e-05,
+          0.0005028511401775366
+        ]
+      }
+    },
+    "small_area_cutoff": 2075.0,
+    "small_count": 358,
+    "split": "validation",
+    "test_split_accessed": false,
+    "stable_gain_proven": false,
+    "comparison_role": "grouping_attribution_only",
+    "grouping_iou_ci_positive": false,
+    "gate_note": "Positive paired IoU CI is required for grouping attribution; R2 and RS1 gates remain separate.",
+    "input_sha256": {
+      "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs2_results\\validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32",
+      "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs3_results\\validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e"
+    },
+    "comparison_script_sha256": "fe11007e1763a9e3122ab7ac9e70661d094c92f2abf5e8e6c97aaed6e3438db6"
+  }
+}

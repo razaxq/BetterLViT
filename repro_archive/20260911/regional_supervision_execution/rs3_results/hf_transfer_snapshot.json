@@ -1,0 +1,9 @@
+{
+  "observed_unix": 1789128462.6651433,
+  "source_git_commit": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+  "verified_present_files": 21,
+  "expected_files": 21,
+  "verified_present_bytes": 1694438969,
+  "remaining_paths": [],
+  "scope": "HF artifact transfer only; no training inspection"
+}

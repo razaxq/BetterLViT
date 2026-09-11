@@ -1,0 +1,62 @@
+{
+  "control": "rs2_local_iou",
+  "candidate": "rs3_balanced_iou",
+  "seed": 1219,
+  "control_sha": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+  "candidate_sha": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+  "deltas": {
+    "iou": {
+      "mean": 0.0001621544567717464,
+      "small_mean": 0.0046893643344884965,
+      "ci95": [
+        -0.002626078629644572,
+        0.0030691426764021547
+      ]
+    },
+    "dice": {
+      "mean": 0.00021092835051247992,
+      "small_mean": 0.0038650180495746647,
+      "ci95": [
+        -0.002378774544449152,
+        0.002749422245560655
+      ]
+    },
+    "precision": {
+      "mean": -0.0036146617544215074,
+      "small_mean": -0.006907993753176438,
+      "ci95": [
+        -0.006293623987971263,
+        -0.0010022930850799808
+      ]
+    },
+    "recall": {
+      "mean": 0.00356652745732042,
+      "small_mean": 0.014827320580521336,
+      "ci95": [
+        0.00010563480408009115,
+        0.006915668201219624
+      ]
+    },
+    "brier": {
+      "mean": 0.0002251740912767985,
+      "small_mean": -5.055162116362302e-05,
+      "ci95": [
+        -2.6840483192078407e-05,
+        0.0005028511401775366
+      ]
+    }
+  },
+  "small_area_cutoff": 2075.0,
+  "small_count": 358,
+  "split": "validation",
+  "test_split_accessed": false,
+  "stable_gain_proven": false,
+  "comparison_role": "grouping_attribution_only",
+  "grouping_iou_ci_positive": false,
+  "gate_note": "Positive paired IoU CI is required for grouping attribution; R2 and RS1 gates remain separate.",
+  "input_sha256": {
+    "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs2_results\\validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32",
+    "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs3_results\\validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e"
+  },
+  "comparison_script_sha256": "fe11007e1763a9e3122ab7ac9e70661d094c92f2abf5e8e6c97aaed6e3438db6"
+}

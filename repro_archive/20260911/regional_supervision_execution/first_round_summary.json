@@ -1,0 +1,490 @@
+{
+  "classification": "completed_single_seed_validation_only_first_round",
+  "test_split_accessed": false,
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "baseline_sha256": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715",
+  "runs": [
+    {
+      "label": "rs1",
+      "source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+      "best_epoch": 69,
+      "metrics": {
+        "iou": 0.730764115987491,
+        "dice": 0.8270385565058533,
+        "precision": 0.8013755896888207,
+        "recall": 0.8926716319626083,
+        "brier": 0.021052394583466784
+      },
+      "versus_r2": {
+        "control": "r2_single_cosine",
+        "candidate": "rs1_global_iou",
+        "seed": 1219,
+        "control_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+        "candidate_sha": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+        "regional_increment": false,
+        "minimum_iou_delta": 0.003,
+        "deltas": {
+          "iou": {
+            "mean": 0.00411052216059139,
+            "small_mean": 0.0004976531700500376,
+            "ci95": [
+              0.0011811913587824977,
+              0.007022510488209345
+            ]
+          },
+          "dice": {
+            "mean": 0.0030042697211957133,
+            "small_mean": 0.0007269019099659696,
+            "ci95": [
+              0.0004248681962384569,
+              0.005668042854370812
+            ]
+          },
+          "precision": {
+            "mean": -0.003710428500590081,
+            "small_mean": -0.006731133742902352,
+            "ci95": [
+              -0.006305300565015232,
+              -0.0011205706303207069
+            ]
+          },
+          "recall": {
+            "mean": 0.01216951317416759,
+            "small_mean": 0.01983712631061802,
+            "ci95": [
+              0.008800715275966412,
+              0.015589616461271773
+            ]
+          },
+          "brier": {
+            "mean": -0.00010914836995877823,
+            "small_mean": 0.001197190642403778,
+            "ci95": [
+              -0.000328397092796607,
+              0.00012042181402837229
+            ]
+          }
+        },
+        "checks": {
+          "iou_minimum": true,
+          "iou_ci_positive": true,
+          "dice_not_lower": true,
+          "precision_not_lower": false,
+          "small_dice_not_lower": true,
+          "small_recall_not_lower": true,
+          "brier_not_higher": true
+        },
+        "passed": false,
+        "small_area_cutoff": 2075.0,
+        "small_count": 358,
+        "split": "validation",
+        "test_split_accessed": false,
+        "stable_gain_proven": false,
+        "input_sha256": {
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\recipe_execution\\r2_results\\validation.json": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715",
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs1_results\\validation.json": "8939809543db1d9d90fd94a9b85bc6f20d48e7c4297fd14f4945bf830e73e11c"
+        }
+      },
+      "validation_independently_verified": true,
+      "hf_upload_verified": true,
+      "hf_download_verified": true,
+      "hf_files": 21,
+      "hf_bytes": 1694955060,
+      "inspection_count": 2,
+      "seconds_after_training_end": 1012.4587924480438,
+      "training_ended_sydney": "2026-09-11T11:11:41.771175+10:00",
+      "input_sha256": {
+        "validation.json": "8939809543db1d9d90fd94a9b85bc6f20d48e7c4297fd14f4945bf830e73e11c",
+        "independent_verification.json": "6354c22bee4a6b923e860ae82f4332f32cc073508e86d965be5e968a648bf6d9",
+        "hf_upload_verified.json": "7e089be51f60513fdf268d47a1ed7759334744c8198d89d6a1b26ead0fff55a6",
+        "download_xet_verified.json": "3d535b0cc090f826b16227140dc694732b6718e0a4569b9f5c1c51f75035f92f"
+      }
+    },
+    {
+      "label": "rs2",
+      "source_git_commit": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+      "best_epoch": 75,
+      "metrics": {
+        "iou": 0.7283949060569092,
+        "dice": 0.8252575618548315,
+        "precision": 0.8082305720235834,
+        "recall": 0.8800824146210274,
+        "brier": 0.020535423349681076
+      },
+      "versus_r2": {
+        "control": "r2_single_cosine",
+        "candidate": "rs2_local_iou",
+        "seed": 1219,
+        "control_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+        "candidate_sha": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+        "regional_increment": false,
+        "minimum_iou_delta": 0.003,
+        "deltas": {
+          "iou": {
+            "mean": 0.0017413122300094944,
+            "small_mean": -0.0031132616298303016,
+            "ci95": [
+              -0.0011809594674007965,
+              0.004575473512822303
+            ]
+          },
+          "dice": {
+            "mean": 0.0012232750701737054,
+            "small_mean": -0.002540111224414413,
+            "ci95": [
+              -0.0012500533672047448,
+              0.003738427159497004
+            ]
+          },
+          "precision": {
+            "mean": 0.0031445538341726086,
+            "small_mean": 0.001302056713445035,
+            "ci95": [
+              0.0006583498962915937,
+              0.0057134417269111195
+            ]
+          },
+          "recall": {
+            "mean": -0.00041970416741342104,
+            "small_mean": -0.004991694159179849,
+            "ci95": [
+              -0.003948316665556531,
+              0.0030628140827712734
+            ]
+          },
+          "brier": {
+            "mean": -0.0006261196037444887,
+            "small_mean": 0.00012820599281920998,
+            "ci95": [
+              -0.0008789098620213124,
+              -0.00039004963944900146
+            ]
+          }
+        },
+        "checks": {
+          "iou_minimum": false,
+          "iou_ci_positive": false,
+          "dice_not_lower": true,
+          "precision_not_lower": true,
+          "small_dice_not_lower": false,
+          "small_recall_not_lower": false,
+          "brier_not_higher": true
+        },
+        "passed": false,
+        "small_area_cutoff": 2075.0,
+        "small_count": 358,
+        "split": "validation",
+        "test_split_accessed": false,
+        "stable_gain_proven": false,
+        "input_sha256": {
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\recipe_execution\\r2_results\\validation.json": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715",
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs2_results\\validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32"
+        }
+      },
+      "validation_independently_verified": true,
+      "hf_upload_verified": true,
+      "hf_download_verified": true,
+      "hf_files": 20,
+      "hf_bytes": 1694460839,
+      "inspection_count": 2,
+      "seconds_after_training_end": 585.8203866481781,
+      "training_ended_sydney": "2026-09-11T16:36:27.367686+10:00",
+      "input_sha256": {
+        "validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32",
+        "independent_verification.json": "e01c5879e618ae280d5d49f917b4991b373600c77f3a6304baa331a326ee4043",
+        "hf_upload_verified.json": "1ab3f1d193e0412bf22dda42dbb4d0058041675454459728546d1a8c60b469e4",
+        "download_xet_verified.json": "d98a4d1ec94cc7b7e07d674effaf840b354eb1f1584bfe06be752450dcd53851"
+      },
+      "versus_rs1": {
+        "control": "rs1_global_iou",
+        "candidate": "rs2_local_iou",
+        "seed": 1219,
+        "control_sha": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+        "candidate_sha": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+        "regional_increment": true,
+        "minimum_iou_delta": 0.001,
+        "deltas": {
+          "iou": {
+            "mean": -0.002369209930581895,
+            "small_mean": -0.003610914799880341,
+            "ci95": [
+              -0.005454367078826824,
+              0.0005224098066962603
+            ]
+          },
+          "dice": {
+            "mean": -0.0017809946510220084,
+            "small_mean": -0.003267013134380384,
+            "ci95": [
+              -0.004372175443961185,
+              0.000826670627165624
+            ]
+          },
+          "precision": {
+            "mean": 0.006854982334762689,
+            "small_mean": 0.008033190456347386,
+            "ci95": [
+              0.004244019447060522,
+              0.00941660772018049
+            ]
+          },
+          "recall": {
+            "mean": -0.012589217341581012,
+            "small_mean": -0.024828820469797865,
+            "ci95": [
+              -0.016296481048333086,
+              -0.009049952864895208
+            ]
+          },
+          "brier": {
+            "mean": -0.0005169712337857105,
+            "small_mean": -0.001068984649584568,
+            "ci95": [
+              -0.0007837310199555143,
+              -0.00026651224911386647
+            ]
+          }
+        },
+        "checks": {
+          "iou_minimum": false,
+          "iou_ci_positive": false
+        },
+        "passed": false,
+        "small_area_cutoff": 2075.0,
+        "small_count": 358,
+        "split": "validation",
+        "test_split_accessed": false,
+        "stable_gain_proven": false,
+        "input_sha256": {
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs1_results\\validation.json": "8939809543db1d9d90fd94a9b85bc6f20d48e7c4297fd14f4945bf830e73e11c",
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs2_results\\validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32"
+        }
+      }
+    },
+    {
+      "label": "rs3",
+      "source_git_commit": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+      "best_epoch": 67,
+      "metrics": {
+        "iou": 0.7285570605136809,
+        "dice": 0.825468490205344,
+        "precision": 0.8046159102691621,
+        "recall": 0.8836489420783479,
+        "brier": 0.02076059744095787
+      },
+      "versus_r2": {
+        "control": "r2_single_cosine",
+        "candidate": "rs3_balanced_iou",
+        "seed": 1219,
+        "control_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+        "candidate_sha": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+        "regional_increment": false,
+        "minimum_iou_delta": 0.003,
+        "deltas": {
+          "iou": {
+            "mean": 0.0019034666867812403,
+            "small_mean": 0.0015761027046581953,
+            "ci95": [
+              -0.0006681546930391202,
+              0.00450633787744864
+            ]
+          },
+          "dice": {
+            "mean": 0.0014342034206861849,
+            "small_mean": 0.0013249068251602512,
+            "ci95": [
+              -0.0008560595884050424,
+              0.003789242607416624
+            ]
+          },
+          "precision": {
+            "mean": -0.00047010792024889845,
+            "small_mean": -0.005605937039731402,
+            "ci95": [
+              -0.0029071958733900044,
+              0.0019478302079208613
+            ]
+          },
+          "recall": {
+            "mean": 0.003146823289906999,
+            "small_mean": 0.009835626421341488,
+            "ci95": [
+              -8.073997707034884e-05,
+              0.006421742030339431
+            ]
+          },
+          "brier": {
+            "mean": -0.0004009455124676902,
+            "small_mean": 7.765437165558695e-05,
+            "ci95": [
+              -0.0005943713212049554,
+              -0.00020759370102039468
+            ]
+          }
+        },
+        "checks": {
+          "iou_minimum": false,
+          "iou_ci_positive": false,
+          "dice_not_lower": true,
+          "precision_not_lower": false,
+          "small_dice_not_lower": true,
+          "small_recall_not_lower": true,
+          "brier_not_higher": true
+        },
+        "passed": false,
+        "small_area_cutoff": 2075.0,
+        "small_count": 358,
+        "split": "validation",
+        "test_split_accessed": false,
+        "stable_gain_proven": false,
+        "input_sha256": {
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260908\\recipe_execution\\r2_results\\validation.json": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715",
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs3_results\\validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e"
+        }
+      },
+      "validation_independently_verified": true,
+      "hf_upload_verified": true,
+      "hf_download_verified": true,
+      "hf_files": 21,
+      "hf_bytes": 1694438969,
+      "inspection_count": 2,
+      "seconds_after_training_end": 791.909346818924,
+      "training_ended_sydney": "2026-09-11T21:48:32.654035+10:00",
+      "input_sha256": {
+        "validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e",
+        "independent_verification.json": "dc1a0058da8c0d1ca23c088df279a995be28cb6222690bfbfae90bebf217ecf1",
+        "hf_upload_verified.json": "c7532915b913acb514ebb1d3f1bd15a6ab05cc9a2eecbd13f3e748cff50eebe1",
+        "download_xet_verified.json": "ba58587ebb1b099dcb697933d3685a1aecabef7e1c6d7aa22350acfffb9340da"
+      },
+      "versus_rs1": {
+        "control": "rs1_global_iou",
+        "candidate": "rs3_balanced_iou",
+        "seed": 1219,
+        "control_sha": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+        "candidate_sha": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+        "regional_increment": true,
+        "minimum_iou_delta": 0.001,
+        "deltas": {
+          "iou": {
+            "mean": -0.002207055473810149,
+            "small_mean": 0.0010784495346081576,
+            "ci95": [
+              -0.00520621196842218,
+              0.0007258149480857465
+            ]
+          },
+          "dice": {
+            "mean": -0.0015700663005095287,
+            "small_mean": 0.0005980049151942806,
+            "ci95": [
+              -0.0041910628294892305,
+              0.0009870142825867132
+            ]
+          },
+          "precision": {
+            "mean": 0.0032403205803411823,
+            "small_mean": 0.0011251967031709494,
+            "ci95": [
+              0.00046022791137882,
+              0.0060288806584607195
+            ]
+          },
+          "recall": {
+            "mean": -0.009022689884260592,
+            "small_mean": -0.010001499889276533,
+            "ci95": [
+              -0.012482354774283552,
+              -0.005640106039877178
+            ]
+          },
+          "brier": {
+            "mean": -0.00029179714250891195,
+            "small_mean": -0.001119536270748191,
+            "ci95": [
+              -0.0005315283292675254,
+              -5.367140015001849e-05
+            ]
+          }
+        },
+        "checks": {
+          "iou_minimum": false,
+          "iou_ci_positive": false
+        },
+        "passed": false,
+        "small_area_cutoff": 2075.0,
+        "small_count": 358,
+        "split": "validation",
+        "test_split_accessed": false,
+        "stable_gain_proven": false,
+        "input_sha256": {
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs1_results\\validation.json": "8939809543db1d9d90fd94a9b85bc6f20d48e7c4297fd14f4945bf830e73e11c",
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs3_results\\validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e"
+        }
+      },
+      "versus_rs2": {
+        "control": "rs2_local_iou",
+        "candidate": "rs3_balanced_iou",
+        "seed": 1219,
+        "control_sha": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+        "candidate_sha": "f79842331e4e5e41526ed66da31ec174ea4a61b2",
+        "deltas": {
+          "iou": {
+            "mean": 0.0001621544567717464,
+            "small_mean": 0.0046893643344884965,
+            "ci95": [
+              -0.002626078629644572,
+              0.0030691426764021547
+            ]
+          },
+          "dice": {
+            "mean": 0.00021092835051247992,
+            "small_mean": 0.0038650180495746647,
+            "ci95": [
+              -0.002378774544449152,
+              0.002749422245560655
+            ]
+          },
+          "precision": {
+            "mean": -0.0036146617544215074,
+            "small_mean": -0.006907993753176438,
+            "ci95": [
+              -0.006293623987971263,
+              -0.0010022930850799808
+            ]
+          },
+          "recall": {
+            "mean": 0.00356652745732042,
+            "small_mean": 0.014827320580521336,
+            "ci95": [
+              0.00010563480408009115,
+              0.006915668201219624
+            ]
+          },
+          "brier": {
+            "mean": 0.0002251740912767985,
+            "small_mean": -5.055162116362302e-05,
+            "ci95": [
+              -2.6840483192078407e-05,
+              0.0005028511401775366
+            ]
+          }
+        },
+        "small_area_cutoff": 2075.0,
+        "small_count": 358,
+        "split": "validation",
+        "test_split_accessed": false,
+        "stable_gain_proven": false,
+        "comparison_role": "grouping_attribution_only",
+        "grouping_iou_ci_positive": false,
+        "gate_note": "Positive paired IoU CI is required for grouping attribution; R2 and RS1 gates remain separate.",
+        "input_sha256": {
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs2_results\\validation.json": "09d2f5d3a6c008e731417f74971fd0bd62af71d98a729fb06f8cbfa3cd8b6f32",
+          "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260911\\regional_supervision_execution\\rs3_results\\validation.json": "349880587d334bc8425a04e5a395a56d0232a2c1105d6ad3d98e0ca6d1454e8e"
+        },
+        "comparison_script_sha256": "fe11007e1763a9e3122ab7ac9e70661d094c92f2abf5e8e6c97aaed6e3438db6"
+      }
+    }
+  ],
+  "all_registered_overall_gates_failed": true,
+  "next_step": "Preserve RS1 positive Val IoU evidence; no RS4 or epoch extension. Continue the authorized text-path diagnostic A, then evidence-gated B."
+}
