@@ -2,7 +2,9 @@
 
 本轮用户于2026-09-11明确要求“启动训练”。固定执行三个首轮候选，各80轮、seed1219、batch16、R2单次余弦、原Dice/Focal。RS1整图软IoU，RS2最终输出的56窗口/28步长局部软IoU，RS3仅改变为阳性/背景分组。按[阶段计划](../../../docs/REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md)推进，不按前一组数值修改后一组。
 
-## 当前状态：RS1完成并备份，RS2待接续提交
+## 当前状态：RS1完成并备份，RS2已提交、首检已预约
+
+RS2于悉尼**2026-09-11 11:41:35.575**提交后台训练，PID249881，SHA `2a389922cadb31a8bf7660bc33b3cb1ae94f20ab`，tag `experiment-rs2-regional-80e-seed1219-20260911`。固定80轮、seed1219、56窗口/28步长自然平均、λ=0.128312。当前为提交回执，尚未首检确认训练健康，无RS2完整结果，检查0/2。同一heartbeat `betterlvit` 已改约**今天11:57悉尼时间首次检查**，保存的rrule/目标thread/提示及预算均核验。届时用实测轮时预约唯一末检；不得现在额外连接。见`rs2_launch.json`、`rs2_automation_verified.json`。
 
 RS1于悉尼2026-09-11 11:11:41.771完成80轮训练，11:13:25.457完成1429张Val导出；Best69，来源`b4dd566ae472079c55e41cffd7727060bcfd6bf5`。两项退出码0，完整SHA、实际80轮学习率、逐图指标、四次Train诊断和Best/Last已核验，未访问Test。11:28:34.230执行唯一末检，距训练结束1012.459秒（16.87分钟），符合≤30分钟，检查预算2/2已用完。
 
@@ -10,9 +12,9 @@ RS1 Val IoU **73.0764%**、Dice **82.7039%**；相对R2 IoU **+0.4111个百分�
 
 训练历史的>=0.5/float32与原逐图导出的>0.5/float64有继承差异。另一次有界的已完成Best Val诊断确认恰好1个背景像素等于0.5，完整解释IoU差1.135662367e-7，两套结果复算残差均为0，检查点SHA256前后相同；没有更改原结果、阈值、Best或冻结源码。见`rs1_results/iou_reconciliation.json`。该诊断不是额外训练状态检查。
 
-RS1原始首检06:35、预测11:14:25结束、预约11:27末检的证据保留于`rs1_first_snapshot.json`、`rs1_final_automation_verified.json`，真实末检见`rs1_final_snapshot.json`。HF Bucket `razaxq/BetterLViT/b4dd566a/`已添加21文件、1,694,955,060字节，远端及独立本地清单的路径/大小/Xet哈希全部匹配；11项下载run产物字节/Xet亦匹配。Best/Last保留，fs仍18,559,782,256字节，训练盘余5,155,680,256字节。见`rs1_results/hf_upload_verified.json`、`download_xet_verified.json`；GitHub提交完成后接续RS2。
+RS1原始首检06:35、预测11:14:25结束、预约11:27末检的证据保留于`rs1_first_snapshot.json`、`rs1_final_automation_verified.json`，真实末检见`rs1_final_snapshot.json`。HF Bucket `razaxq/BetterLViT/b4dd566a/`已添加21文件、1,694,955,060字节，远端及独立本地清单的路径/大小/Xet哈希全部匹配；11项下载run产物字节/Xet亦匹配。Best/Last保留，fs仍18,559,782,256字节，训练盘备份后余5,155,680,256字节。见`rs1_results/hf_upload_verified.json`、`download_xet_verified.json`；归档提交`5ade2057a6d2b27e183834c43f0d4827cd8a4425`已推送GitHub并独立读取分支核验，随后接续RS2。
 
-RS2、RS3已冻结部署、完成全部CUDA预检并推送GitHub，尚未提交训练。三组新损失关闭时与正式R2分组优化器五步逐值一致，各组插入Train诊断前后五步也逐值一致；11项loss行为和5项筛选门检查通过。完整核验见`preflight_verified.json`，启动及预约见`rs1_launch.json`、`rs1_automation_verified.json`。原始校准和预检临时权重不会用于正式训练。
+RS2、RS3已冻结部署、完成全部CUDA预检并推送GitHub；RS2已提交，RS3尚未提交。三组新损失关闭时与正式R2分组优化器五步逐值一致，各组插入Train诊断前后五步也逐值一致；11项loss行为和5项筛选门检查通过。完整核验见`preflight_verified.json`。原始校准和预检临时权重不会用于正式训练。
 
 ## 准备和冻结
 

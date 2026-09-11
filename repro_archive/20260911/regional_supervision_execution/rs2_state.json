@@ -1,0 +1,16 @@
+{
+  "source_git_commit": "2a389922cadb31a8bf7660bc33b3cb1ae94f20ab",
+  "repository": "/root/autodl-tmp/BetterLViT-regional-rs2",
+  "remote_run": "/root/autodl-tmp/regional_runs/rs2_20260911",
+  "pid": 249881,
+  "started_unix": 1789090895.5753589,
+  "dispatch_only": true,
+  "inspections_completed": 0,
+  "scratch_free_bytes": 5155667968,
+  "fs_bytes": 18559782256,
+  "test_split_accessed": false,
+  "planned_first_check_unix": 1789091820,
+  "started_sydney": "2026-09-11T11:41:35.575359+10:00",
+  "planned_first_check_sydney": "2026-09-11T11:57:00+10:00",
+  "experiment_tag": "experiment-rs2-regional-80e-seed1219-20260911"
+}

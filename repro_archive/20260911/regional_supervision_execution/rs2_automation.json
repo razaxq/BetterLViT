@@ -1,0 +1,24 @@
+{
+  "tool_result": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  },
+  "requested": {
+    "id": "betterlvit",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "继续当前任务已授权的BetterLViT区域监督首轮训练RS1→RS2→RS3。先读取D:/BetterLViT/experiment_docs_work/repro_archive/20260911/regional_supervision_execution/README.md、sources.json、各run的state及预约回执，按本地记录的阶段行动，避免重复启动或重复检查。RS1已完整结束、两次检查2/2用尽，末检距训练结束16.87分钟；Val归档及独立复算通过，21文件已备份HF并通过大小/Xet双端验证，记录已推送GitHub，不再检查RS1训练。RS2于2026年9月11日11:41:35悉尼时间提交，来源2a389922cadb31a8bf7660bc33b3cb1ae94f20ab，检查预算0/2。本次预约为同日11:57悉尼时间的首次检查，应运行inspect_run.py --label rs2 --phase first，不提前连接。每组最多两次短连接状态检查，不保持SSH、不循环轮询：首次用实测完整轮时预测结束，将同一个heartbeat改约预测结束后约12分钟作为唯一末检，并核验保存后的预约；末检核对距真实训练结束不超过30分钟。成功完成后依README归档、独立复算Val、核验来源SHA及诊断；若历史IoU与逐图导出有阈值/浮点差异，依reconcile_iou.py对已完成Best作一次有界Val指标核验，保留原结果，不扩大容差蒙混过关；上传HF并验证文件大小/Xet哈希及下载产物，提交推送全部源代码和结果文档，再提交RS3并更新同一预约。三组均80轮seed1219，共同λ=0.128312，不因前组指标修改后组；此阶段不访问Test、不延长150轮、不自动启动RS4及后续方向。每次提交前检查空间，若不足则按已有存储授权审计后安全整理可重建缓存或迁移已完成且已核验备份的产物，保留模型及可访问路径，不绕过空间门；共享fs实际字节保持20GB以下。若异常或预测失准，保留证据并如实报告，不超出两次预算反复检查。全部首轮工作结束后删除该heartbeat。用户以Test macro IoU为最终成果指标，当前Val和预检不能表述为稳定增益。",
+    "rrule": "FREQ=DAILY;BYHOUR=11;BYMINUTE=57;BYSECOND=0",
+    "status": "ACTIVE",
+    "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880"
+  }
+}

@@ -14,6 +14,8 @@
 
 ## RS1完成，RS2/RS3按冻结顺序接续（2026-09-11）
 
+**RS2已提交：** 悉尼11:41:35.575提交80轮后台训练，PID249881，来源`2a389922cadb31a8bf7660bc33b3cb1ae94f20ab`，tag `experiment-rs2-regional-80e-seed1219-20260911`。56窗口/28步长局部软IoU自然平均，λ=0.128312；提交前训练盘余5,155,667,968字节、fs18,559,782,256字节，满足空间门。同一heartbeat首检改约**今天11:57悉尼时间**并核验配置，当前只有提交回执、检查0/2，无RS2完整结果。RS3等待前组归档后接续；RS1检查2/2已用完，不重复检查。[RS2启动](../repro_archive/20260911/regional_supervision_execution/rs2_launch.json)。
+
 RS1于悉尼11:11:41.771完成80轮、11:13:25.457完成1429张Val导出，Best69，来源`b4dd566ae472079c55e41cffd7727060bcfd6bf5`。唯一末检11:28:34.230距训练结束16.87分钟，符合半小时要求；检查2/2，无Test访问。逐图指标、80轮学习率、来源及四次Train诊断状态恢复均核验通过。[RS1完整报告](../repro_archive/20260911/regional_supervision_execution/rs1_results/REPORT.md)。
 
 | 模型 | Val IoU | Val Dice | Precision | Recall | Brier |
