@@ -1,0 +1,92 @@
+{
+  "baseline_repository": "/root/BetterLViT-recipe-r2",
+  "baseline_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "baseline_checkpoint": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+  "baseline_checkpoint_sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a",
+  "baseline_checkpoint_epoch_zero_based": 66,
+  "train_workbook_sha256": "fa292d8837d0e55cd4b3fe0cb367614045cb3d30de19b08bf0f62e1148db10a9",
+  "train_membership_sha256": "b58295942caaa6a455f995dcbccc4fc7e259e6b4a9b940b4d25344925dd9346d",
+  "train_count": 5716,
+  "phase": "F_frozen_visual_interface_fivefold_crossfit",
+  "seed": 1219,
+  "folds": 5,
+  "split_sha256": "7236fa2e2e7252ad28420f378aa0c0e8f33865760350ac427e389cee1d4ef1da",
+  "original_b_split_sha256": "c09c52e47f36a4b170fe1317b306a56a715e6fb975b61243ff20ce8303542f7a",
+  "b_directory": "/root/text_head_b_49905dbb",
+  "b_cache_manifest_sha256": "d9ef4f9f34fdba8a9361fb158ec1b1d76c43eb21d194dd156b88026d964e5eac",
+  "inherited_projection_sha256": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+  "sample_count": 4585,
+  "fold_counts": {
+    "0": 849,
+    "1": 875,
+    "2": 904,
+    "3": 937,
+    "4": 1020
+  },
+  "explicit_patient_id_samples": 2664,
+  "variants": [
+    "coarse_free",
+    "coarse_mass",
+    "fine_free",
+    "fine_mass"
+  ],
+  "candidate_points": 1024,
+  "candidate_selection": "descending sigmoid(z)*(1-sigmoid(z)), stable pixel-index tie break",
+  "feature_cache_shape": [
+    4585,
+    1024,
+    64
+  ],
+  "feature_cache_dtype": "float16",
+  "point_index_shape": [
+    4585,
+    1024
+  ],
+  "point_index_dtype": "uint16",
+  "exact_cache_bytes": 610355200,
+  "minimum_free_bytes": 256000000,
+  "batch_size": 16,
+  "steps_per_fold": 2048,
+  "optimizer": "AdamW",
+  "lr_start": 0.001,
+  "lr_end": 1e-05,
+  "weight_decay": 0.0001,
+  "gradient_norm_clip": 5.0,
+  "hidden_channels": [
+    128,
+    64
+  ],
+  "residual_bound": 0.5,
+  "loss": "Original R2 WeightedDiceFocal; .5 Dice + .5 focal, gamma2",
+  "projection_scope": "selected1024 only; all other probabilities unchanged",
+  "mass_error_tolerance": 0.02,
+  "threshold": 0.5,
+  "threshold_operator": ">",
+  "training_checkpoints": [
+    512,
+    1024,
+    1536,
+    2048
+  ],
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 1219,
+  "gate": {
+    "minimum_oof_iou_gain": 0.001,
+    "group_ci_lower_positive": true,
+    "minimum_positive_folds": 4,
+    "dice_no_drop": true,
+    "precision_no_drop": true,
+    "small_dice_no_drop": true,
+    "small_recall_no_drop": true,
+    "brier_no_increase": true
+  },
+  "fine_interface_gate": "fine candidate must pass base gate and beat matching coarse candidate with group CI lower>0",
+  "automatic_full_training": false,
+  "automatic_text_training": false,
+  "official_validation_accessed": false,
+  "test_split_accessed": false,
+  "old_b_holdout_accessed": false,
+  "shared_fs_written": false,
+  "maximum_inspections": 2,
+  "initial_check_completion_margin_seconds": 180
+}
