@@ -1,7 +1,7 @@
 {
   "profile": "r2_single_cosine",
   "paper_id": "R2",
-  "seed": 1219,
+  "seed": 3407,
   "epochs": 80,
   "batch_size": 16,
   "image_size": 224,
