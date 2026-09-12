@@ -1,0 +1,297 @@
+{
+  "epoch": 80,
+  "source_git_commit": "ec3d45cc43710b239e3dadef3f99eb1e2823aa8e",
+  "mode": "global",
+  "weight": 0.128312,
+  "scope": "32 fixed Train images; final-logit gradients, not parameter gradients",
+  "state_sha256_before": "de48c699d1d39f26b04af92f322ebc8b8bb3699ab05acc122f71d75d3b6f3100",
+  "state_sha256_after": "de48c699d1d39f26b04af92f322ebc8b8bb3699ab05acc122f71d75d3b6f3100",
+  "gradient_state_unchanged": true,
+  "rng_restored": true,
+  "batches": [
+    {
+      "cases": [
+        {
+          "name": "sub-S10944_ses-E20633_run-1_bp-chest_vp-pa_cr.png",
+          "tp": 7037,
+          "fp": 249,
+          "fn": 376,
+          "label_pixels": 7413
+        },
+        {
+          "name": "sub-S11720_ses-E22020_acq-1_run-1_bp-chest_vp-ll_dx.png",
+          "tp": 1899,
+          "fp": 63,
+          "fn": 148,
+          "label_pixels": 2047
+        },
+        {
+          "name": "covid_1461.png",
+          "tp": 5899,
+          "fp": 877,
+          "fn": 344,
+          "label_pixels": 6243
+        },
+        {
+          "name": "covid_1584.png",
+          "tp": 4423,
+          "fp": 549,
+          "fn": 252,
+          "label_pixels": 4675
+        },
+        {
+          "name": "sub-S10829_ses-E22481_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 776,
+          "fp": 71,
+          "fn": 253,
+          "label_pixels": 1029
+        },
+        {
+          "name": "covid_4582.png",
+          "tp": 1847,
+          "fp": 974,
+          "fn": 446,
+          "label_pixels": 2293
+        },
+        {
+          "name": "covid_4515.png",
+          "tp": 2492,
+          "fp": 914,
+          "fn": 726,
+          "label_pixels": 3218
+        },
+        {
+          "name": "covid_3597.png",
+          "tp": 12848,
+          "fp": 1127,
+          "fn": 90,
+          "label_pixels": 12938
+        }
+      ],
+      "main_loss": 0.07275547087192535,
+      "gradients": {
+        "global": {
+          "raw_loss": 0.2913205921649933,
+          "weighted_loss": 0.037379927821874624,
+          "raw_logit_gradient_ratio": 1.585243739707028,
+          "weighted_logit_gradient_ratio": 0.2034057947292882,
+          "logit_gradient_cosine": 0.7675220684465113,
+          "empty_window_fraction": 0.0
+        }
+      }
+    },
+    {
+      "cases": [
+        {
+          "name": "covid_4225.png",
+          "tp": 8048,
+          "fp": 299,
+          "fn": 402,
+          "label_pixels": 8450
+        },
+        {
+          "name": "sub-S11422_ses-E20652_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 4900,
+          "fp": 685,
+          "fn": 152,
+          "label_pixels": 5052
+        },
+        {
+          "name": "sub-S11206_ses-E19879_run-1_bp-chest_vp-ap_cr.png",
+          "tp": 8862,
+          "fp": 413,
+          "fn": 413,
+          "label_pixels": 9275
+        },
+        {
+          "name": "covid_819.png",
+          "tp": 5444,
+          "fp": 3638,
+          "fn": 229,
+          "label_pixels": 5673
+        },
+        {
+          "name": "sub-S10139_ses-E17873_run-1_bp-chest_vp-ap_cr.png",
+          "tp": 7539,
+          "fp": 2462,
+          "fn": 125,
+          "label_pixels": 7664
+        },
+        {
+          "name": "sub-S11402_ses-E22531_run-1_bp-chest_vp-ap_cr.png",
+          "tp": 2064,
+          "fp": 446,
+          "fn": 32,
+          "label_pixels": 2096
+        },
+        {
+          "name": "covid_2652.png",
+          "tp": 2573,
+          "fp": 200,
+          "fn": 129,
+          "label_pixels": 2702
+        },
+        {
+          "name": "covid_1744.png",
+          "tp": 15514,
+          "fp": 793,
+          "fn": 1338,
+          "label_pixels": 16852
+        }
+      ],
+      "main_loss": 0.058384500443935394,
+      "gradients": {
+        "global": {
+          "raw_loss": 0.24360497295856476,
+          "weighted_loss": 0.03125744129025936,
+          "raw_logit_gradient_ratio": 1.7450567050799,
+          "weighted_logit_gradient_ratio": 0.22391171594221215,
+          "logit_gradient_cosine": 0.7186245456006125,
+          "empty_window_fraction": 0.0
+        }
+      }
+    },
+    {
+      "cases": [
+        {
+          "name": "sub-S10944_ses-E24060_run-1_bp-chest_vp-ap_cr.png",
+          "tp": 8304,
+          "fp": 219,
+          "fn": 106,
+          "label_pixels": 8410
+        },
+        {
+          "name": "covid_1650.png",
+          "tp": 2472,
+          "fp": 387,
+          "fn": 960,
+          "label_pixels": 3432
+        },
+        {
+          "name": "sub-S10781_ses-E18729_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 7304,
+          "fp": 622,
+          "fn": 628,
+          "label_pixels": 7932
+        },
+        {
+          "name": "covid_1760.png",
+          "tp": 7010,
+          "fp": 366,
+          "fn": 312,
+          "label_pixels": 7322
+        },
+        {
+          "name": "covid_480.png",
+          "tp": 17065,
+          "fp": 2028,
+          "fn": 321,
+          "label_pixels": 17386
+        },
+        {
+          "name": "covid_1150.png",
+          "tp": 14349,
+          "fp": 977,
+          "fn": 83,
+          "label_pixels": 14432
+        },
+        {
+          "name": "covid_1918.png",
+          "tp": 16579,
+          "fp": 826,
+          "fn": 1168,
+          "label_pixels": 17747
+        },
+        {
+          "name": "sub-S12566_ses-E25794_run-1_bp-chest_vp-pa_cr.png",
+          "tp": 10320,
+          "fp": 333,
+          "fn": 224,
+          "label_pixels": 10544
+        }
+      ],
+      "main_loss": 0.04040016233921051,
+      "gradients": {
+        "global": {
+          "raw_loss": 0.18626642227172852,
+          "weighted_loss": 0.02390021717453003,
+          "raw_logit_gradient_ratio": 1.6613096050422582,
+          "weighted_logit_gradient_ratio": 0.21316595804218225,
+          "logit_gradient_cosine": 0.787184284175455,
+          "empty_window_fraction": 0.0
+        }
+      }
+    },
+    {
+      "cases": [
+        {
+          "name": "covid_1558.png",
+          "tp": 4796,
+          "fp": 854,
+          "fn": 234,
+          "label_pixels": 5030
+        },
+        {
+          "name": "sub-S10756_ses-E18825_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 11876,
+          "fp": 582,
+          "fn": 123,
+          "label_pixels": 11999
+        },
+        {
+          "name": "sub-S10675_ses-E21924_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 12078,
+          "fp": 368,
+          "fn": 131,
+          "label_pixels": 12209
+        },
+        {
+          "name": "covid_2730.png",
+          "tp": 3166,
+          "fp": 2695,
+          "fn": 35,
+          "label_pixels": 3201
+        },
+        {
+          "name": "sub-S10139_ses-E17507_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 7403,
+          "fp": 322,
+          "fn": 506,
+          "label_pixels": 7909
+        },
+        {
+          "name": "covid_3221.png",
+          "tp": 2469,
+          "fp": 490,
+          "fn": 343,
+          "label_pixels": 2812
+        },
+        {
+          "name": "sub-S10566_ses-E19601_run-1_bp-chest_vp-ap_dx.png",
+          "tp": 12940,
+          "fp": 296,
+          "fn": 281,
+          "label_pixels": 13221
+        },
+        {
+          "name": "covid_2271.png",
+          "tp": 7295,
+          "fp": 549,
+          "fn": 306,
+          "label_pixels": 7601
+        }
+      ],
+      "main_loss": 0.051048509776592255,
+      "gradients": {
+        "global": {
+          "raw_loss": 0.2062481790781021,
+          "weighted_loss": 0.02646411635386944,
+          "raw_logit_gradient_ratio": 1.6742082000204992,
+          "weighted_logit_gradient_ratio": 0.2148210025610303,
+          "logit_gradient_cosine": 0.7664584774576254,
+          "empty_window_fraction": 0.0
+        }
+      }
+    }
+  ]
+}

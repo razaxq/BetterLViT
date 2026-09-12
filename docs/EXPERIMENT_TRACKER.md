@@ -1,6 +1,6 @@
 # BetterLViT 实验台账
 
-更新时间：2026-09-12（Australia/Sydney）
+更新时间：2026-09-13（Australia/Sydney）
 
 本文件是后续实验配置、Git 溯源、验证结果和推进状态的唯一人工维护台账。停止继续维护 `改动计划.xlsx`；旧工作簿仅作为历史快照保留。
 
@@ -14,7 +14,18 @@
 
 ## IoU优先：RS1独立种子复验（2026-09-12）
 
-**3407首检完成：** 悉尼2026-09-12 20:01:00.586一次短连接确认完成4/80轮，第5轮日志已到160/357 batch，GPU99%、显存17,402MiB。运行来源`ec3d45cc43710b239e3dadef3f99eb1e2823aa8e`及manifest一致，远端跟踪文件干净，日志尾部无致命异常。第2—4轮平均222.361543秒，加120秒后续诊断余量，预测**9月13日00:43:08**训练结束。现有原生heartbeat `betterlvit` 已改约**9月13日00:56（悉尼时间）唯一末检**，实际配置核验通过。检查1/2，之后不再中途连接；尚无3407完整Val/Test成绩，不重复查询已关闭的2027。[3407首检与预测](../repro_archive/20260912/rs1_iou_replication/rs1s3407_first_snapshot.json)、[末检定时核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_automation_final_verified.json)。
+**3407已完成并备份：** 80轮及1429张Val导出均完成，Best74，来源`ec3d45cc43710b239e3dadef3f99eb1e2823aa8e`。唯一末检悉尼2026-09-13 00:58:08.233，距训练结束1169.774秒（19.496分钟），检查2/2关闭，符合半小时要求。训练/Val返回码0，来源、manifest、80轮实际学习率、Best选择、逐图计数/宏平均及四次Train诊断状态恢复全部核验；导出与历史选择IoU差−1.787e-9，无需重评，本阶段未访问Test。[完成快照](../repro_archive/20260912/rs1_iou_replication/rs1s3407_final_snapshot.json)、[独立核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_results/independent_verification.json)。
+
+| seed3407，Val | IoU | Dice | Precision | Recall | Brier |
+|---|---:|---:|---:|---:|---:|
+| R2同种子 | 72.6484% | 82.3421% | 80.7497% | 87.7171% | 0.020952 |
+| RS1 | 72.9237% | 82.5400% | 80.7909% | 88.1291% | 0.020824 |
+
+RS1−R2 IoU **+0.2753 pp**，分组描述性95%区间[−0.0213,+0.5727] pp；Dice+0.1979 pp、Precision+0.0412 pp、Recall+0.4120 pp、Brier−0.00012819。358张最小面积组IoU+0.2853 pp、Dice+0.2564 pp、Recall+1.6650 pp，但Precision−0.8379 pp、Brier+0.00061179；像素总FP减少21812、FN增加8890，不替代macro口径。[完整结果](../repro_archive/20260912/rs1_iou_replication/rs1s3407_results/REPORT.md)。
+
+HF `razaxq/BetterLViT/ec3d45cc/` 已完成24文件、1,694,476,648字节路径/大小/Xet双端核验；11份下载run产物（2,493,275字节）独立匹配，Best/Last原件保留。训练盘余2,487,640,064字节，fs维持18,559,782,256字节。两个新种子均完整执行，未改系数或按2027结果取消3407；整体判定见后续汇总。[备份核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_results/hf_upload_verified.json)、[下载核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_results/download_xet_verified.json)。
+
+**3407首检历史：** 悉尼2026-09-12 20:01:00.586确认完成4/80轮、第5轮160/357 batch，GPU99%、显存17,402MiB，来源/manifest一致且跟踪文件干净、日志尾部无致命异常。第2—4轮平均222.361543秒，加120秒余量预测9月13日00:43:08结束，末检预约00:56；实际末检时间和完成状态以上述终态记录为准。[首检与预测](../repro_archive/20260912/rs1_iou_replication/rs1s3407_first_snapshot.json)、[原末检定时](../repro_archive/20260912/rs1_iou_replication/rs1s3407_automation_final_verified.json)。
 
 **3407提交历史：** 2027完成核验、HF备份及GitHub发布`dd5d419948b61fd543bf3fd7a28bcf7d4af9e374`后，悉尼2026-09-12 19:44:16.801以PID312385提交80轮，tag `experiment-rs1-iou-80e-seed3407-20260912`，保持原冻结配方。提交前训练盘可用4,202,373,120字节，满足>4GB启动门；当时只有提交回执、检查0/2，初估9月13日00:37:51结束，已由上述实测预测更新。[3407提交](../repro_archive/20260912/rs1_iou_replication/rs1s3407_launch.json)、[原首检定时](../repro_archive/20260912/rs1_iou_replication/rs1s3407_automation_first_verified.json)。
 
