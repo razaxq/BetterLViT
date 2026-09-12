@@ -107,6 +107,18 @@ def main():
     lines.extend(['',f"IoU delta {comparison['deltas']['iou']['mean']*100:+.4f} pp; grouped descriptive CI {[x*100 for x in comparison['deltas']['iou']['ci95']]} pp.",'',
         'Single-seed discovery only; no Test access, stable gain or novelty claim. All small-area metrics and gradient observations are preserved.',
         f'Export-minus-checkpoint-selection IoU={selection_delta:.12g}. Training uses >=0.5 while frozen export uses >0.5; reconcile any material discrepancy before performance interpretation.'])
+    lines.extend(['',f"Smallest-mask quartile: {comparison['small_count']} images, area <= {comparison['small_area_cutoff']:.0f} pixels.",
+        '| Metric | Small-mask delta |','|---|---:|'])
+    for m in METRICS[:4]:
+        lines.append(f"| {m} | {comparison['deltas'][m]['small_mean']*100:+.4f} pp |")
+    lines.extend(['',f"Brier: R2 {base['macro_brier']:.8f}; {label.upper()} {val['macro_brier']:.8f}; delta {comparison['deltas']['brier']['mean']:+.8f}.",
+        f"Total pixel count differences (candidate minus control): {comparison['pixel_counts_reconstructed_and_metrics_verified']['delta']}. Counts do not replace per-image macro metrics.",
+        '',f"Final inspection {snapshot['checked_sydney']}; {snapshot['seconds_after_training_end']:.3f} seconds after training ended; inspections {snapshot['inspection_number']}/2.",
+        '', '| Observed Train epoch | Residual RMS / feature RMS | Attention entropy | Q gradient absmax |',
+        '|---|---:|---:|---:|'])
+    for o in observations:
+        lines.append(f"| {o['epoch']} | {o['residual_rms']/o['feature_rms']:.6f} | {o['attention_entropy']:.6f} | {o['gradients']['decoder_context.query.weight']:.6g} |")
+    lines.extend(['','These observations cover one ordinary Train batch at each of four epochs. Nonzero residuals/gradients show that the branch is active on those batches; they do not establish a beneficial causal effect or dataset-wide grounding.'])
     for name in ('REPORT.md','README.md'):(folder/name).write_text('\n'.join(lines)+'\n',encoding='utf-8')
     print(json.dumps(proof,indent=2))
 

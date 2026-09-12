@@ -1,0 +1,870 @@
+{
+  "checked_unix": 1789246691.8633382,
+  "runtime": {
+    "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+    "repository": "/root/autodl-tmp/BetterLViT-text-t1",
+    "run": "/root/autodl-tmp/text_decoder_runs/t1_80e_20260913",
+    "manifest": {
+      "profile": "t1_decoder_visual",
+      "paper_id": "T1",
+      "seed": 1219,
+      "epochs": 80,
+      "batch_size": 16,
+      "image_size": 224,
+      "train_drop_last": true,
+      "num_workers": 4,
+      "initialization": "from_scratch",
+      "loss_name": "dice_focal",
+      "optimizer": "Adam",
+      "weight_decay": 0.0001,
+      "selection_metric": "iou",
+      "threshold": 0.5,
+      "augmentation_policy": "legacy",
+      "lr_schedule": "single_cosine",
+      "planned_epoch_lrs": [
+        0.0003,
+        0.00029988180488548156,
+        0.000299527406432697,
+        0.000298937365018445,
+        0.0002981126136194818,
+        0.0002970544563372931,
+        0.0002957645663360413,
+        0.00029424498319694935,
+        0.0002924981096933035,
+        0.0002905267079911748,
+        0.00028833389528186686,
+        0.0002859231388529957,
+        0.0002832982506059952,
+        0.0002804633810287176,
+        0.0002774230126326589,
+        0.00027418195286518706,
+        0.0002707453265079793,
+        0.0002671185675736892,
+        0.00026330741071365536,
+        0.00025931788215023937,
+        0.0002551562901481291,
+        0.000250829215039676,
+        0.0002463434988200369,
+        0.00024170623432857337,
+        0.0002369247540336148,
+        0.00023200661843831875,
+        0.00022695960412596154,
+        0.00022179169146356164,
+        0.0002165110519832788,
+        0.00021112603546154254,
+        0.0002056451567163392,
+        0.00020007708214353414,
+        0.00019443061601351913,
+        0.00018871468654985094,
+        0.0001829383318118945,
+        0.00017711068540379374,
+        0.00017124096203236568,
+        0.00016533844293675515,
+        0.00015941246121288803,
+        0.00015347238705592798,
+        0.00014752761294407196,
+        0.00014158753878711194,
+        0.00013566155706324476,
+        0.0001297590379676343,
+        0.00012388931459620628,
+        0.00011806166818810543,
+        0.00011228531345014903,
+        0.00010656938398648078,
+        0.00010092291785646585,
+        9.535484328366082e-05,
+        8.98739645384574e-05,
+        8.448894801672122e-05,
+        7.92083085364383e-05,
+        7.404039587403837e-05,
+        6.899338156168123e-05,
+        6.407524596638513e-05,
+        5.9293765671426594e-05,
+        5.4656501179963124e-05,
+        5.017078496032398e-05,
+        4.5843709851870916e-05,
+        4.1682117849760676e-05,
+        3.769258928634457e-05,
+        3.388143242631079e-05,
+        3.025467349202066e-05,
+        2.6818047134812932e-05,
+        2.3576987367341105e-05,
+        2.0536618971282416e-05,
+        1.770174939400478e-05,
+        1.507686114700427e-05,
+        1.2666104718133115e-05,
+        1.047329200882518e-05,
+        8.501890306696488e-06,
+        6.755016803050646e-06,
+        5.235433663958695e-06,
+        3.945543662706889e-06,
+        2.887386380518162e-06,
+        2.0626349815549752e-06,
+        1.4725935673029728e-06,
+        1.1181951145183744e-06,
+        1e-06
+      ],
+      "lora": false,
+      "boundary_loss": false,
+      "new_supervision": false,
+      "visual_prior": false,
+      "test_split_allowed": false,
+      "auto_test_evaluate": false,
+      "auto_validation_export": true,
+      "control_profile": "r2_single_cosine",
+      "control_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "development_source_git_commit": "dfd0219005bf0f11925509efd3cdf0c8362b1486",
+      "experiment_tag": "experiment-t1-decoder-80e-seed1219-20260913",
+      "plan": "docs/TEXT_DECODER_CONTROLS_20260913.md",
+      "decoder_context_mode": "visual",
+      "adapter_parameters": 16896
+    },
+    "started_unix": 1789228718.5020018,
+    "phase": "complete",
+    "test_split_accessed": false,
+    "training_rc": 0,
+    "training_ended_unix": 1789246066.3750978,
+    "best_checkpoint": "/root/autodl-tmp/BetterLViT-text-t1/Covid19/BetterLViT/t1_decoder_visual/T1_Test_session_09.12_23h58/models/best_model-BetterLViT.pth.tar",
+    "validation_rc": 0,
+    "validation_ended_unix": 1789246176.2715328,
+    "completed_unix": 1789246176.2715554
+  },
+  "timing": [
+    {
+      "epoch": 1,
+      "epochs": 80,
+      "started_unix": 1789228733.9875252,
+      "ended_unix": 1789228958.0290933,
+      "duration_seconds": 224.04156843945384,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 2,
+      "epochs": 80,
+      "started_unix": 1789228958.0294538,
+      "ended_unix": 1789229172.1633449,
+      "duration_seconds": 214.13389090262353,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 3,
+      "epochs": 80,
+      "started_unix": 1789229172.1637363,
+      "ended_unix": 1789229385.792037,
+      "duration_seconds": 213.62830119393766,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 4,
+      "epochs": 80,
+      "started_unix": 1789229385.7924676,
+      "ended_unix": 1789229599.468842,
+      "duration_seconds": 213.67637496814132,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 5,
+      "epochs": 80,
+      "started_unix": 1789229599.4692194,
+      "ended_unix": 1789229812.8385525,
+      "duration_seconds": 213.36933364905417,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 1
+    },
+    {
+      "epoch": 6,
+      "epochs": 80,
+      "started_unix": 1789229812.8389826,
+      "ended_unix": 1789230027.2363558,
+      "duration_seconds": 214.39737380295992,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 6
+    },
+    {
+      "epoch": 7,
+      "epochs": 80,
+      "started_unix": 1789230027.236949,
+      "ended_unix": 1789230245.0720727,
+      "duration_seconds": 217.83512401767075,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 7
+    },
+    {
+      "epoch": 8,
+      "epochs": 80,
+      "started_unix": 1789230245.0725272,
+      "ended_unix": 1789230463.2382243,
+      "duration_seconds": 218.16569801792502,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 8
+    },
+    {
+      "epoch": 9,
+      "epochs": 80,
+      "started_unix": 1789230463.241449,
+      "ended_unix": 1789230677.1053529,
+      "duration_seconds": 213.86390419863164,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 8
+    },
+    {
+      "epoch": 10,
+      "epochs": 80,
+      "started_unix": 1789230677.1058457,
+      "ended_unix": 1789230895.0074096,
+      "duration_seconds": 217.901564322412,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 10
+    },
+    {
+      "epoch": 11,
+      "epochs": 80,
+      "started_unix": 1789230895.0079327,
+      "ended_unix": 1789231114.5217106,
+      "duration_seconds": 219.5137785039842,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 10
+    },
+    {
+      "epoch": 12,
+      "epochs": 80,
+      "started_unix": 1789231114.5221882,
+      "ended_unix": 1789231325.1004186,
+      "duration_seconds": 210.57823064737022,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 10
+    },
+    {
+      "epoch": 13,
+      "epochs": 80,
+      "started_unix": 1789231325.1009567,
+      "ended_unix": 1789231542.4354076,
+      "duration_seconds": 217.33445119671524,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 10
+    },
+    {
+      "epoch": 14,
+      "epochs": 80,
+      "started_unix": 1789231542.4357936,
+      "ended_unix": 1789231761.255358,
+      "duration_seconds": 218.8195650409907,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 10
+    },
+    {
+      "epoch": 15,
+      "epochs": 80,
+      "started_unix": 1789231761.2558746,
+      "ended_unix": 1789231979.6575403,
+      "duration_seconds": 218.40166586451232,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 10
+    },
+    {
+      "epoch": 16,
+      "epochs": 80,
+      "started_unix": 1789231979.6579745,
+      "ended_unix": 1789232197.165574,
+      "duration_seconds": 217.50760030560195,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 16
+    },
+    {
+      "epoch": 17,
+      "epochs": 80,
+      "started_unix": 1789232197.166277,
+      "ended_unix": 1789232415.1766274,
+      "duration_seconds": 218.01035079732537,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 16
+    },
+    {
+      "epoch": 18,
+      "epochs": 80,
+      "started_unix": 1789232415.177065,
+      "ended_unix": 1789232630.7547874,
+      "duration_seconds": 215.57772265002131,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 16
+    },
+    {
+      "epoch": 19,
+      "epochs": 80,
+      "started_unix": 1789232630.7551882,
+      "ended_unix": 1789232846.7963953,
+      "duration_seconds": 216.04120722040534,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 16
+    },
+    {
+      "epoch": 20,
+      "epochs": 80,
+      "started_unix": 1789232846.7968187,
+      "ended_unix": 1789233063.3678083,
+      "duration_seconds": 216.5709898341447,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 16
+    },
+    {
+      "epoch": 21,
+      "epochs": 80,
+      "started_unix": 1789233063.3682084,
+      "ended_unix": 1789233280.6107445,
+      "duration_seconds": 217.2425363138318,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 16
+    },
+    {
+      "epoch": 22,
+      "epochs": 80,
+      "started_unix": 1789233280.611123,
+      "ended_unix": 1789233498.2125542,
+      "duration_seconds": 217.6014313325286,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 22
+    },
+    {
+      "epoch": 23,
+      "epochs": 80,
+      "started_unix": 1789233498.212995,
+      "ended_unix": 1789233714.146625,
+      "duration_seconds": 215.9336300138384,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 22
+    },
+    {
+      "epoch": 24,
+      "epochs": 80,
+      "started_unix": 1789233714.1470306,
+      "ended_unix": 1789233932.0740075,
+      "duration_seconds": 217.92697768844664,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 25,
+      "epochs": 80,
+      "started_unix": 1789233932.0744169,
+      "ended_unix": 1789234149.2366242,
+      "duration_seconds": 217.1622076034546,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 26,
+      "epochs": 80,
+      "started_unix": 1789234149.2370467,
+      "ended_unix": 1789234367.5982091,
+      "duration_seconds": 218.36116303689778,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 27,
+      "epochs": 80,
+      "started_unix": 1789234367.5989254,
+      "ended_unix": 1789234585.8110633,
+      "duration_seconds": 218.21213826723397,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 28,
+      "epochs": 80,
+      "started_unix": 1789234585.8114753,
+      "ended_unix": 1789234804.1132293,
+      "duration_seconds": 218.30175451003015,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 29,
+      "epochs": 80,
+      "started_unix": 1789234804.113618,
+      "ended_unix": 1789235021.134472,
+      "duration_seconds": 217.02085434272885,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 30,
+      "epochs": 80,
+      "started_unix": 1789235021.1348956,
+      "ended_unix": 1789235237.118543,
+      "duration_seconds": 215.98364775814116,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 31,
+      "epochs": 80,
+      "started_unix": 1789235237.1188037,
+      "ended_unix": 1789235454.2612953,
+      "duration_seconds": 217.14249211922288,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 32,
+      "epochs": 80,
+      "started_unix": 1789235454.261704,
+      "ended_unix": 1789235672.0073602,
+      "duration_seconds": 217.74565659835935,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 33,
+      "epochs": 80,
+      "started_unix": 1789235672.0077798,
+      "ended_unix": 1789235890.3683727,
+      "duration_seconds": 218.3605932984501,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 34,
+      "epochs": 80,
+      "started_unix": 1789235890.3687618,
+      "ended_unix": 1789236107.5008166,
+      "duration_seconds": 217.13205486908555,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 35,
+      "epochs": 80,
+      "started_unix": 1789236107.5012426,
+      "ended_unix": 1789236325.393175,
+      "duration_seconds": 217.89193272404373,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 36,
+      "epochs": 80,
+      "started_unix": 1789236325.393561,
+      "ended_unix": 1789236542.1681552,
+      "duration_seconds": 216.77459439076483,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 37,
+      "epochs": 80,
+      "started_unix": 1789236542.1685185,
+      "ended_unix": 1789236759.9135592,
+      "duration_seconds": 217.7450406048447,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 24
+    },
+    {
+      "epoch": 38,
+      "epochs": 80,
+      "started_unix": 1789236759.9139385,
+      "ended_unix": 1789236977.8671455,
+      "duration_seconds": 217.95320758968592,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 38
+    },
+    {
+      "epoch": 39,
+      "epochs": 80,
+      "started_unix": 1789236977.8675513,
+      "ended_unix": 1789237196.7925916,
+      "duration_seconds": 218.92504068091512,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 39
+    },
+    {
+      "epoch": 40,
+      "epochs": 80,
+      "started_unix": 1789237196.7930477,
+      "ended_unix": 1789237409.2389634,
+      "duration_seconds": 212.4459161683917,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 40
+    },
+    {
+      "epoch": 41,
+      "epochs": 80,
+      "started_unix": 1789237409.2393513,
+      "ended_unix": 1789237627.3370104,
+      "duration_seconds": 218.09765964187682,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 41
+    },
+    {
+      "epoch": 42,
+      "epochs": 80,
+      "started_unix": 1789237627.3374171,
+      "ended_unix": 1789237845.9840996,
+      "duration_seconds": 218.64668268337846,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 42
+    },
+    {
+      "epoch": 43,
+      "epochs": 80,
+      "started_unix": 1789237845.9845068,
+      "ended_unix": 1789238063.6143408,
+      "duration_seconds": 217.62983448430896,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 42
+    },
+    {
+      "epoch": 44,
+      "epochs": 80,
+      "started_unix": 1789238063.6147501,
+      "ended_unix": 1789238281.2831578,
+      "duration_seconds": 217.66840800084174,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 45,
+      "epochs": 80,
+      "started_unix": 1789238281.2835536,
+      "ended_unix": 1789238499.155413,
+      "duration_seconds": 217.87186005152762,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 46,
+      "epochs": 80,
+      "started_unix": 1789238499.1560886,
+      "ended_unix": 1789238716.9510362,
+      "duration_seconds": 217.79494761675596,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 47,
+      "epochs": 80,
+      "started_unix": 1789238716.951444,
+      "ended_unix": 1789238933.105051,
+      "duration_seconds": 216.153608225286,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 48,
+      "epochs": 80,
+      "started_unix": 1789238933.1054697,
+      "ended_unix": 1789239147.4375675,
+      "duration_seconds": 214.33209819160402,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 49,
+      "epochs": 80,
+      "started_unix": 1789239147.437848,
+      "ended_unix": 1789239358.0270114,
+      "duration_seconds": 210.58916346356273,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 50,
+      "epochs": 80,
+      "started_unix": 1789239358.0274196,
+      "ended_unix": 1789239571.1748328,
+      "duration_seconds": 213.14741356298327,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 51,
+      "epochs": 80,
+      "started_unix": 1789239571.1752822,
+      "ended_unix": 1789239784.4459226,
+      "duration_seconds": 213.270640572533,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 52,
+      "epochs": 80,
+      "started_unix": 1789239784.446377,
+      "ended_unix": 1789239998.955749,
+      "duration_seconds": 214.50937237776816,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 53,
+      "epochs": 80,
+      "started_unix": 1789239998.9562654,
+      "ended_unix": 1789240211.1430905,
+      "duration_seconds": 212.18682532012463,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 54,
+      "epochs": 80,
+      "started_unix": 1789240211.143581,
+      "ended_unix": 1789240424.9855077,
+      "duration_seconds": 213.8419273123145,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 55,
+      "epochs": 80,
+      "started_unix": 1789240424.9859467,
+      "ended_unix": 1789240638.43163,
+      "duration_seconds": 213.44568373821676,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 56,
+      "epochs": 80,
+      "started_unix": 1789240638.432073,
+      "ended_unix": 1789240853.146279,
+      "duration_seconds": 214.7142061777413,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 57,
+      "epochs": 80,
+      "started_unix": 1789240853.1466932,
+      "ended_unix": 1789241068.820085,
+      "duration_seconds": 215.67339217104018,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 58,
+      "epochs": 80,
+      "started_unix": 1789241068.8204608,
+      "ended_unix": 1789241283.702912,
+      "duration_seconds": 214.8824517466128,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 59,
+      "epochs": 80,
+      "started_unix": 1789241283.7033029,
+      "ended_unix": 1789241501.3888643,
+      "duration_seconds": 217.6855615824461,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 44
+    },
+    {
+      "epoch": 60,
+      "epochs": 80,
+      "started_unix": 1789241501.3892646,
+      "ended_unix": 1789241720.0806966,
+      "duration_seconds": 218.69143233820796,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 60
+    },
+    {
+      "epoch": 61,
+      "epochs": 80,
+      "started_unix": 1789241720.0811646,
+      "ended_unix": 1789241937.353841,
+      "duration_seconds": 217.2726766616106,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 60
+    },
+    {
+      "epoch": 62,
+      "epochs": 80,
+      "started_unix": 1789241937.35425,
+      "ended_unix": 1789242155.0095088,
+      "duration_seconds": 217.6552593447268,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 60
+    },
+    {
+      "epoch": 63,
+      "epochs": 80,
+      "started_unix": 1789242155.009935,
+      "ended_unix": 1789242374.5933971,
+      "duration_seconds": 219.5834627225995,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 63
+    },
+    {
+      "epoch": 64,
+      "epochs": 80,
+      "started_unix": 1789242374.593779,
+      "ended_unix": 1789242591.4012012,
+      "duration_seconds": 216.80742218531668,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 63
+    },
+    {
+      "epoch": 65,
+      "epochs": 80,
+      "started_unix": 1789242591.4016016,
+      "ended_unix": 1789242807.748989,
+      "duration_seconds": 216.34738864935935,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 63
+    },
+    {
+      "epoch": 66,
+      "epochs": 80,
+      "started_unix": 1789242807.7494166,
+      "ended_unix": 1789243025.9598525,
+      "duration_seconds": 218.210436033085,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 63
+    },
+    {
+      "epoch": 67,
+      "epochs": 80,
+      "started_unix": 1789243025.9602711,
+      "ended_unix": 1789243239.7664034,
+      "duration_seconds": 213.8061324954033,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 68,
+      "epochs": 80,
+      "started_unix": 1789243239.766804,
+      "ended_unix": 1789243454.0970936,
+      "duration_seconds": 214.33028977364302,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 69,
+      "epochs": 80,
+      "started_unix": 1789243454.0974982,
+      "ended_unix": 1789243672.0959618,
+      "duration_seconds": 217.99846428632736,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 70,
+      "epochs": 80,
+      "started_unix": 1789243672.0964985,
+      "ended_unix": 1789243889.8437798,
+      "duration_seconds": 217.74728173203766,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 71,
+      "epochs": 80,
+      "started_unix": 1789243889.84421,
+      "ended_unix": 1789244104.2564063,
+      "duration_seconds": 214.41219716332853,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 72,
+      "epochs": 80,
+      "started_unix": 1789244104.2569249,
+      "ended_unix": 1789244321.0225956,
+      "duration_seconds": 216.76567096821964,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 73,
+      "epochs": 80,
+      "started_unix": 1789244321.0230331,
+      "ended_unix": 1789244538.977924,
+      "duration_seconds": 217.95489162392914,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 74,
+      "epochs": 80,
+      "started_unix": 1789244538.978494,
+      "ended_unix": 1789244757.0323043,
+      "duration_seconds": 218.05381064862013,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 75,
+      "epochs": 80,
+      "started_unix": 1789244757.0328164,
+      "ended_unix": 1789244975.1600873,
+      "duration_seconds": 218.12727136909962,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 76,
+      "epochs": 80,
+      "started_unix": 1789244975.1605332,
+      "ended_unix": 1789245192.790178,
+      "duration_seconds": 217.62964501418173,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 77,
+      "epochs": 80,
+      "started_unix": 1789245192.7905982,
+      "ended_unix": 1789245410.2987745,
+      "duration_seconds": 217.50817666575313,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 78,
+      "epochs": 80,
+      "started_unix": 1789245410.299169,
+      "ended_unix": 1789245628.2116096,
+      "duration_seconds": 217.9124417770654,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 79,
+      "epochs": 80,
+      "started_unix": 1789245628.2122998,
+      "ended_unix": 1789245846.6538463,
+      "duration_seconds": 218.44154704548419,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    },
+    {
+      "epoch": 80,
+      "epochs": 80,
+      "started_unix": 1789245846.6545684,
+      "ended_unix": 1789246064.8731606,
+      "duration_seconds": 218.21859219111502,
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "best_epoch": 67
+    }
+  ],
+  "training_log_tail": "816 |     0.8476 |    0.7539 |     0.1002 |     0.8189 |    0.7199 |   3.77e-05 |     \n   63 |     0.0814 |     0.8485 |    0.7552 |     0.1001 |     0.8214 |    0.7238 |   3.39e-05 |     \n   64 |     0.0804 |     0.8505 |    0.7580 |     0.0989 |     0.8216 |    0.7236 |   3.03e-05 |     \n   65 |     0.0800 |     0.8511 |    0.7586 |     0.0990 |     0.8212 |    0.7227 |   2.68e-05 |     \n   66 |     0.0789 |     0.8528 |    0.7609 |     0.0992 |     0.8216 |    0.7236 |   2.36e-05 |     \n   67 |     0.0781 |     0.8542 |    0.7623 |     0.1010 |     0.8229 |    0.7256 |   2.05e-05 |    *\n   68 |     0.0771 |     0.8561 |    0.7647 |     0.1019 |     0.8215 |    0.7236 |   1.77e-05 |     \n   69 |     0.0763 |     0.8571 |    0.7663 |     0.0991 |     0.8225 |    0.7246 |   1.51e-05 |     \n   70 |     0.0757 |     0.8584 |    0.7679 |     0.1018 |     0.8230 |    0.7255 |   1.27e-05 |     \n   71 |     0.0751 |     0.8594 |    0.7694 |     0.0997 |     0.8221 |    0.7238 |   1.05e-05 |     \n   72 |     0.0750 |     0.8595 |    0.7694 |     0.0993 |     0.8232 |    0.7255 |   8.50e-06 |     \n   73 |     0.0745 |     0.8607 |    0.7709 |     0.1018 |     0.8212 |    0.7230 |   6.76e-06 |     \n   74 |     0.0739 |     0.8619 |    0.7727 |     0.1012 |     0.8221 |    0.7242 |   5.24e-06 |     \n   75 |     0.0741 |     0.8615 |    0.7722 |     0.1026 |     0.8222 |    0.7248 |   3.95e-06 |     \n   76 |     0.0735 |     0.8631 |    0.7744 |     0.1007 |     0.8217 |    0.7236 |   2.89e-06 |     \n   77 |     0.0733 |     0.8627 |    0.7735 |     0.1018 |     0.8211 |    0.7231 |   2.06e-06 |     \n   78 |     0.0728 |     0.8632 |    0.7745 |     0.1022 |     0.8215 |    0.7237 |   1.47e-06 |     \n   79 |     0.0724 |     0.8641 |    0.7754 |     0.1010 |     0.8223 |    0.7246 |   1.12e-06 |     \n   80 |     0.0729 |     0.8634 |    0.7746 |     0.1016 |     0.8215 |    0.7236 |   1.00e-06 |     \n--- R2 + matched intermediate decoder visual attention control validation statistics ---\nup4: ca=0.9133+/-0.0828, sa=1.0090+/-0.0058, amp=0.0000, suppress=0.0000, guide_abs=0.1905\nup4 residuals: local_mean=6.514e-02, global_mean=0.0115, local_strength=0.1195, global_strength=0.1131, gain=[0.9920,1.0452], saturation=0.0939, text_film=0.0150\nup4 haar: reconstruction_error=5.960e-07, skip_low/high=0.7852/0.2148, plam_low/high=1.0000/0.0000\nup4 strengths: plam=0.9064, region=0.1195, detail=0.1131; residual_std region/detail/refine=0.2955/0.4608/0.3714\nup4 guide_mix: entropy=0.9720, raw_low=0.3330, plam_low=0.1782, decoder_low=0.3042, detail=0.1847; agreement plam/decoder=0.5046/0.5492, support=0.8299+/-0.0774\nup4 adaptive_frequency: ALPF strength=0.2536, weights=0.1448/0.7172/0.1381, sum=1.0000, entropy=0.7200, delta_std=0.0903; AHPF strength=0.0804, weights=0.2771/0.5591/0.1638, sum=1.0000, entropy=0.8857, residual_std=0.1225, scaled_std=0.0098\nup3: ca=1.0051+/-0.1259, sa=1.0108+/-0.0044, amp=0.0000, suppress=0.0000, guide_abs=0.3732\nup3 residuals: local_mean=3.725e-02, global_mean=0.0537, local_strength=0.1165, global_strength=0.1206, gain=[0.9905,1.0327], saturation=0.0306, text_film=0.0264\nup3 haar: reconstruction_error=9.537e-07, skip_low/high=0.7729/0.2271, plam_low/high=1.0000/0.0000\nup3 strengths: plam=0.8869, region=0.1165, detail=0.1206; residual_std region/detail/refine=0.3188/0.5655/0.4723\nup3 guide_mix: entropy=0.9809, raw_low=0.3153, plam_low=0.2219, decoder_low=0.2912, detail=0.1716; agreement plam/decoder=0.6472/0.2303, support=0.8516+/-0.0519\nup3 adaptive_frequency: ALPF strength=0.2885, weights=0.1037/0.3773/0.5190, sum=1.0000, entropy=0.7609, delta_std=0.0775; AHPF strength=0.1103, weights=0.6232/0.1971/0.1796, sum=1.0000, entropy=0.7489, residual_std=0.0895, scaled_std=0.0099\nup2: ca=0.9422+/-0.0592, sa=1.0029+/-0.0032, amp=0.0000, suppress=0.0000, guide_abs=0.2309\nup2 residuals: local_mean=-1.331e-03, global_mean=0.0263, local_strength=0.1208, global_strength=0.1153, gain=[0.9632,1.0358], saturation=0.0000, text_film=0.0294\nup2 haar: reconstruction_error=9.537e-07, skip_low/high=0.7599/0.2401, plam_low/high=1.0000/0.0000\nup2 strengths: plam=0.8414, region=0.1208, detail=0.1153; residual_std region/detail/refine=0.2063/0.2810/0.1069\nup2 guide_mix: entropy=0.9402, raw_low=0.2909, plam_low=0.1500, decoder_low=0.3992, detail=0.1599; agreement plam/decoder=0.4289/0.2600, support=0.5920+/-0.0369\nup1: ca=0.8648+/-0.0957, sa=1.0016+/-0.0108, amp=0.0000, suppress=0.0000, guide_abs=0.1839\nup1 residuals: local_mean=-9.910e-03, global_mean=0.0371, local_strength=0.1288, global_strength=0.0787, gain=[0.9218,1.0770], saturation=0.0474, text_film=0.0289\nup1 haar: reconstruction_error=2.861e-06, skip_low/high=0.7160/0.2840, plam_low/high=1.0000/0.0000\nup1 strengths: plam=0.9209, region=0.1288, detail=0.0787; residual_std region/detail/refine=0.5933/0.4137/0.1747\nup1 guide_mix: entropy=0.9578, raw_low=0.2749, plam_low=0.2773, decoder_low=0.3306, detail=0.1172; agreement plam/decoder=0.5921/0.0788, support=0.7076+/-0.1027\n",
+  "runtime_source_clean": true,
+  "gpu": "0 %, 1 MiB",
+  "validation_summary": {
+    "samples": 1429,
+    "macro_iou": 0.7255892435431995,
+    "macro_dice": 0.8229391415575613,
+    "macro_precision": 0.8056142545339193,
+    "macro_recall": 0.8788755792276307,
+    "macro_brier": 0.021080955690908846,
+    "checkpoint_best_epoch": 67,
+    "checkpoint_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330"
+  },
+  "inspection_number": 2,
+  "seconds_after_training_end": 625.488240480423,
+  "within_30_minutes": true,
+  "checked_sydney": "2026-09-13T06:58:11.863338+10:00"
+}

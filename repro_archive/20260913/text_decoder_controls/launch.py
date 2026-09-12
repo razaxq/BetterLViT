@@ -45,9 +45,18 @@ print(json.dumps(value))
 result['planned_first_check_unix']=math.ceil((result['started_unix']+900)/60)*60
 history=read(DOCS/'repro_archive/20260908/recipe_execution/r2_results/runtime.json')
 ratio=proof['candidates'][label]['steady_seconds_per_batch']/read(HERE/'preflight/baseline.json')['steady_seconds_per_batch']
+reference='historical_r2_actual_runtime_scaled_by_preflight'
+if label=='t2':
+    # Use the just-completed matched control to account for current throughput.
+    history=read(HERE/'t1_results/runtime.json')
+    assert history['phase']=='complete' and history['training_rc']==history['validation_rc']==0
+    assert history['source_git_commit']==read(HERE/'sources.json')['t1']['source_git_commit']
+    ratio=proof['candidates']['t2']['steady_seconds_per_batch']/proof['candidates']['t1']['steady_seconds_per_batch']
+    reference='completed_t1_actual_runtime_scaled_by_t2_over_t1_preflight'
 seconds=(history['training_ended_unix']-history['started_unix'])*ratio
 result.update(initial_prediction_training_seconds=seconds,
-    initial_predicted_training_end_unix=result['started_unix']+seconds,experiment_tag=source['experiment_tag'])
+    initial_predicted_training_end_unix=result['started_unix']+seconds,experiment_tag=source['experiment_tag'],
+    initial_prediction_method=reference,forecast_reference_source_git_commit=history['source_git_commit'])
 for key in ('started_unix','planned_first_check_unix','initial_predicted_training_end_unix'):
     result[key.replace('_unix','_sydney')]=datetime.fromtimestamp(result[key],ZoneInfo('Australia/Sydney')).isoformat()
 save(label+'_launch.json',result);save(label+'_state.json',result)

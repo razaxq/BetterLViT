@@ -1,0 +1,141 @@
+/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Validation-only:   0%|                                | 0/90 [00:00<?, ?batch/s]Validation-only:   1%|▎                       | 1/90 [00:02<03:07,  2.11s/batch]Validation-only:   2%|▌                       | 2/90 [00:03<02:17,  1.57s/batch]Validation-only:   3%|▊                       | 3/90 [00:04<01:49,  1.26s/batch]Validation-only:   4%|█                       | 4/90 [00:05<01:36,  1.12s/batch]Validation-only:   6%|█▎                      | 5/90 [00:06<01:34,  1.12s/batch]Validation-only:   7%|█▌                      | 6/90 [00:07<01:30,  1.08s/batch]Validation-only:   8%|█▊                      | 7/90 [00:08<01:29,  1.08s/batch]Validation-only:   9%|██▏                     | 8/90 [00:09<01:24,  1.03s/batch]Validation-only:  10%|██▍                     | 9/90 [00:10<01:24,  1.05s/batch]Validation-only:  11%|██▌                    | 10/90 [00:11<01:22,  1.04s/batch]Validation-only:  12%|██▊                    | 11/90 [00:12<01:20,  1.02s/batch]Validation-only:  13%|███                    | 12/90 [00:13<01:19,  1.02s/batch]Validation-only:  14%|███▎                   | 13/90 [00:14<01:17,  1.01s/batch]Validation-only:  16%|███▌                   | 14/90 [00:15<01:16,  1.01s/batch]Validation-only:  17%|███▊                   | 15/90 [00:16<01:15,  1.01s/batch]Validation-only:  18%|████                   | 16/90 [00:17<01:14,  1.00s/batch]Validation-only:  19%|████▎                  | 17/90 [00:18<01:12,  1.00batch/s]Validation-only:  20%|████▌                  | 18/90 [00:19<01:12,  1.00s/batch]Validation-only:  21%|████▊                  | 19/90 [00:20<01:13,  1.03s/batch]Validation-only:  22%|█████                  | 20/90 [00:21<01:11,  1.02s/batch]Validation-only:  23%|█████▎                 | 21/90 [00:22<01:10,  1.02s/batch]Validation-only:  24%|█████▌                 | 22/90 [00:23<01:08,  1.01s/batch]Validation-only:  26%|█████▉                 | 23/90 [00:24<01:09,  1.04s/batch]Validation-only:  27%|██████▏                | 24/90 [00:25<01:09,  1.05s/batch]Validation-only:  28%|██████▍                | 25/90 [00:26<01:05,  1.01s/batch]Validation-only:  29%|██████▋                | 26/90 [00:27<01:04,  1.01s/batch]Validation-only:  30%|██████▉                | 27/90 [00:28<01:03,  1.01s/batch]Validation-only:  31%|███████▏               | 28/90 [00:29<01:02,  1.00s/batch]Validation-only:  32%|███████▍               | 29/90 [00:30<01:03,  1.03s/batch]Validation-only:  33%|███████▋               | 30/90 [00:31<01:03,  1.05s/batch]Validation-only:  34%|███████▉               | 31/90 [00:32<00:59,  1.01s/batch]Validation-only:  36%|████████▏              | 32/90 [00:33<00:58,  1.01s/batch]Validation-only:  37%|████████▍              | 33/90 [00:34<00:57,  1.00s/batch]Validation-only:  38%|████████▋              | 34/90 [00:35<00:57,  1.03s/batch]Validation-only:  39%|████████▉              | 35/90 [00:36<00:54,  1.00batch/s]Validation-only:  40%|█████████▏             | 36/90 [00:37<00:53,  1.00batch/s]Validation-only:  41%|█████████▍             | 37/90 [00:38<00:52,  1.01batch/s]Validation-only:  42%|█████████▋             | 38/90 [00:39<00:51,  1.00batch/s]Validation-only:  43%|█████████▉             | 39/90 [00:40<00:50,  1.00batch/s]Validation-only:  44%|██████████▏            | 40/90 [00:41<00:50,  1.00s/batch]Validation-only:  46%|██████████▍            | 41/90 [00:42<00:48,  1.00batch/s]Validation-only:  47%|██████████▋            | 42/90 [00:43<00:50,  1.06s/batch]Validation-only:  48%|██████████▉            | 43/90 [00:44<00:47,  1.01s/batch]Validation-only:  49%|███████████▏           | 44/90 [00:45<00:46,  1.01s/batch]Validation-only:  50%|███████████▌           | 45/90 [00:46<00:45,  1.01s/batch]Validation-only:  51%|███████████▊           | 46/90 [00:47<00:44,  1.00s/batch]Validation-only:  52%|████████████           | 47/90 [00:48<00:43,  1.00s/batch]Validation-only:  53%|████████████▎          | 48/90 [00:49<00:42,  1.00s/batch]Validation-only:  54%|████████████▌          | 49/90 [00:50<00:41,  1.00s/batch]Validation-only:  56%|████████████▊          | 50/90 [00:51<00:40,  1.00s/batch]Validation-only:  57%|█████████████          | 51/90 [00:52<00:39,  1.00s/batch]Validation-only:  58%|█████████████▎         | 52/90 [00:53<00:37,  1.00batch/s]Validation-only:  59%|█████████████▌         | 53/90 [00:54<00:36,  1.01batch/s]Validation-only:  60%|█████████████▊         | 54/90 [00:55<00:35,  1.00batch/s]Validation-only:  61%|██████████████         | 55/90 [00:56<00:35,  1.00s/batch]Validation-only:  62%|██████████████▎        | 56/90 [00:57<00:34,  1.00s/batch]Validation-only:  63%|██████████████▌        | 57/90 [00:58<00:33,  1.00s/batch]Validation-only:  64%|██████████████▊        | 58/90 [00:59<00:31,  1.03batch/s]Validation-only:  66%|███████████████        | 59/90 [01:00<00:30,  1.02batch/s]Validation-only:  67%|███████████████▎       | 60/90 [01:01<00:29,  1.01batch/s]Validation-only:  68%|███████████████▌       | 61/90 [01:02<00:29,  1.02s/batch]Validation-only:  69%|███████████████▊       | 62/90 [01:03<00:28,  1.01s/batch]Validation-only:  70%|████████████████       | 63/90 [01:04<00:27,  1.01s/batch]Validation-only:  71%|████████████████▎      | 64/90 [01:05<00:26,  1.01s/batch]Validation-only:  72%|████████████████▌      | 65/90 [01:06<00:25,  1.00s/batch]Validation-only:  73%|████████████████▊      | 66/90 [01:07<00:23,  1.03batch/s]Validation-only:  74%|█████████████████      | 67/90 [01:08<00:21,  1.05batch/s]Validation-only:  76%|█████████████████▍     | 68/90 [01:09<00:20,  1.07batch/s]Validation-only:  77%|█████████████████▋     | 69/90 [01:10<00:19,  1.08batch/s]Validation-only:  78%|█████████████████▉     | 70/90 [01:11<00:18,  1.09batch/s]Validation-only:  79%|██████████████████▏    | 71/90 [01:12<00:17,  1.10batch/s]Validation-only:  80%|██████████████████▍    | 72/90 [01:12<00:16,  1.10batch/s]Validation-only:  81%|██████████████████▋    | 73/90 [01:13<00:15,  1.07batch/s]Validation-only:  82%|██████████████████▉    | 74/90 [01:14<00:14,  1.08batch/s]Validation-only:  83%|███████████████████▏   | 75/90 [01:15<00:13,  1.09batch/s]Validation-only:  84%|███████████████████▍   | 76/90 [01:16<00:12,  1.10batch/s]Validation-only:  86%|███████████████████▋   | 77/90 [01:17<00:11,  1.10batch/s]Validation-only:  87%|███████████████████▉   | 78/90 [01:18<00:10,  1.10batch/s]Validation-only:  88%|████████████████████▏  | 79/90 [01:19<00:09,  1.11batch/s]Validation-only:  89%|████████████████████▍  | 80/90 [01:20<00:09,  1.11batch/s]Validation-only:  90%|████████████████████▋  | 81/90 [01:21<00:08,  1.11batch/s]Validation-only:  91%|████████████████████▉  | 82/90 [01:22<00:07,  1.11batch/s]Validation-only:  92%|█████████████████████▏ | 83/90 [01:22<00:06,  1.11batch/s]Validation-only:  93%|█████████████████████▍ | 84/90 [01:23<00:05,  1.11batch/s]Validation-only:  94%|█████████████████████▋ | 85/90 [01:24<00:04,  1.15batch/s]Validation-only:  96%|█████████████████████▉ | 86/90 [01:25<00:03,  1.14batch/s]Validation-only:  97%|██████████████████████▏| 87/90 [01:26<00:02,  1.13batch/s]Validation-only:  98%|██████████████████████▍| 88/90 [01:27<00:01,  1.12batch/s]Validation-only:  99%|██████████████████████▋| 89/90 [01:28<00:00,  1.09batch/s]Validation-only: 100%|███████████████████████| 90/90 [01:28<00:00,  1.25batch/s]Validation-only: 100%|███████████████████████| 90/90 [01:28<00:00,  1.01batch/s]
+{
+  "split": "validation",
+  "test_split_accessed": false,
+  "experiment": "t1_decoder_visual",
+  "paper_id": "T1",
+  "architecture_version": "decoder_context_v1_visual",
+  "checkpoint": "/root/autodl-tmp/BetterLViT-text-t1/Covid19/BetterLViT/t1_decoder_visual/T1_Test_session_09.12_23h58/models/best_model-BetterLViT.pth.tar",
+  "checkpoint_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+  "analysis_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+  "visual_prior": null,
+  "training_recipe": {
+    "version": "c4_recipe_v1",
+    "augmentation_policy": "legacy",
+    "lr_schedule": "single_cosine",
+    "epochs": 80,
+    "lr_max": 0.0003,
+    "lr_min": 1e-06,
+    "optimizer": "Adam",
+    "weight_decay": 0.0001,
+    "planned_epoch_lrs": [
+      0.0003,
+      0.00029988180488548156,
+      0.000299527406432697,
+      0.000298937365018445,
+      0.0002981126136194818,
+      0.0002970544563372931,
+      0.0002957645663360413,
+      0.00029424498319694935,
+      0.0002924981096933035,
+      0.0002905267079911748,
+      0.00028833389528186686,
+      0.0002859231388529957,
+      0.0002832982506059952,
+      0.0002804633810287176,
+      0.0002774230126326589,
+      0.00027418195286518706,
+      0.0002707453265079793,
+      0.0002671185675736892,
+      0.00026330741071365536,
+      0.00025931788215023937,
+      0.0002551562901481291,
+      0.000250829215039676,
+      0.0002463434988200369,
+      0.00024170623432857334,
+      0.0002369247540336148,
+      0.00023200661843831875,
+      0.00022695960412596154,
+      0.00022179169146356164,
+      0.0002165110519832788,
+      0.00021112603546154254,
+      0.0002056451567163392,
+      0.00020007708214353414,
+      0.00019443061601351913,
+      0.00018871468654985094,
+      0.0001829383318118945,
+      0.00017711068540379374,
+      0.00017124096203236568,
+      0.00016533844293675515,
+      0.00015941246121288803,
+      0.00015347238705592798,
+      0.00014752761294407196,
+      0.00014158753878711194,
+      0.00013566155706324476,
+      0.0001297590379676343,
+      0.00012388931459620628,
+      0.00011806166818810543,
+      0.00011228531345014903,
+      0.00010656938398648078,
+      0.00010092291785646585,
+      9.535484328366082e-05,
+      8.98739645384574e-05,
+      8.448894801672122e-05,
+      7.92083085364383e-05,
+      7.404039587403837e-05,
+      6.899338156168123e-05,
+      6.407524596638513e-05,
+      5.9293765671426594e-05,
+      5.4656501179963124e-05,
+      5.017078496032398e-05,
+      4.5843709851870916e-05,
+      4.1682117849760676e-05,
+      3.769258928634457e-05,
+      3.388143242631079e-05,
+      3.025467349202066e-05,
+      2.6818047134812932e-05,
+      2.3576987367341105e-05,
+      2.0536618971282416e-05,
+      1.770174939400478e-05,
+      1.507686114700427e-05,
+      1.2666104718133115e-05,
+      1.047329200882518e-05,
+      8.501890306696488e-06,
+      6.755016803050646e-06,
+      5.235433663958695e-06,
+      3.945543662706889e-06,
+      2.887386380518162e-06,
+      2.0626349815549752e-06,
+      1.4725935673029728e-06,
+      1.1181951145183744e-06,
+      1e-06
+    ],
+    "lr_epoch_convention": "first and last training epochs include endpoints"
+  },
+  "decoder_context": {
+    "version": "decoder_context_v1",
+    "mode": "visual",
+    "stage": "after_up3_before_up2",
+    "channels": 128,
+    "width": 32,
+    "heads": 4,
+    "maximum_context_tokens": 32,
+    "parameters": 16896,
+    "residual_scale": 0.1,
+    "output_zero_init": true,
+    "extra_loss": false
+  },
+  "checkpoint_best_epoch": 67,
+  "selection_metric": "iou",
+  "seed": 1219,
+  "epochs": 80,
+  "race_pe_enabled": false,
+  "threshold": 0.5,
+  "samples": 1429,
+  "macro_dice": 0.8229391415575613,
+  "macro_iou": 0.7255892435431995,
+  "macro_precision": 0.8056142545339193,
+  "macro_recall": 0.8788755792276307,
+  "macro_brier": 0.021080955690908846,
+  "macro_boundary_f1_tolerance_2": 0.7423323681647541,
+  "text_use_lora": false,
+  "boundary_loss_weight": 0.0,
+  "bcdh_enabled": false,
+  "cdrr_enabled": false,
+  "race_enabled": false,
+  "bcdh_stats_last_batch": {},
+  "cdrr_stats_last_batch": {},
+  "race_stats_last_batch": {}
+}

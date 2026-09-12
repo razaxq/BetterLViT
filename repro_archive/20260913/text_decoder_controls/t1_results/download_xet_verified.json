@@ -1,0 +1,57 @@
+{
+  "verified": true,
+  "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+  "files": [
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\checkpoint_metadata.json",
+      "remote": "72295aa3/run/checkpoint_metadata.json",
+      "bytes": 7047,
+      "xet_hash": "bdcf7109bf1de5e2ea73dc8cd194e5bbff9c304d1dd7b10b5cdd1f138cb8cbdb"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\decoder_observations.jsonl",
+      "remote": "72295aa3/run/decoder_observations.jsonl",
+      "bytes": 3017,
+      "xet_hash": "e32f0a57119029f5678f1db2f0e16f5f7c883a91d13e1a3debe7721c4e35160f"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\epoch_history.json",
+      "remote": "72295aa3/run/epoch_history.json",
+      "bytes": 850836,
+      "xet_hash": "22164d69fd94adba7923c3778d099e45c5cecd048758f6e61bdd8b8bdfc8edbb"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\epoch_timing.jsonl",
+      "remote": "72295aa3/run/epoch_timing.jsonl",
+      "bytes": 17592,
+      "xet_hash": "ab858520a071b02675cf48f6b3e356a463505f2ed8815fe05bb0732fd913094c"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\runtime.json",
+      "remote": "72295aa3/run/runtime.json",
+      "bytes": 4031,
+      "xet_hash": "eeb4dc4606de508cdc35fb6b3dbed19d96c68ded72de4a7ec5fcc2a1f4d1f395"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\training.log",
+      "remote": "72295aa3/run/training.log",
+      "bytes": 857929,
+      "xet_hash": "73f4435964b59b5f98323f099bfcb44216222eb2ee6638b1541945289f3658a6"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\validation.json",
+      "remote": "72295aa3/run/validation.json",
+      "bytes": 668065,
+      "xet_hash": "51c566140a494870c83f91f5da1a77a449bc1bbc9a9ade2ec462148e9c9c7588"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260913\\text_decoder_controls\\t1_results\\validation.log",
+      "remote": "72295aa3/run/validation.log",
+      "bytes": 14082,
+      "xet_hash": "09437d575b09b7ef1137b393e1b99ffb88c69f8029690c77a78d15f232343fab"
+    }
+  ],
+  "verified_files": 8,
+  "logical_bytes": 2422599,
+  "scope": "Downloaded static run artifacts only; weights stay on server"
+}
