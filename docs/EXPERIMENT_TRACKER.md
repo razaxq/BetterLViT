@@ -12,6 +12,10 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## F Test补测：用户明确要求（2026-09-12）
+
+用户在F结果报告后要求“试试测试集”，本次据此单独授权固定模型的Test评估，保留原筛选失败事实。完整2113图、R2 seed1219 Best67、batch16、严格>0.5，四组×五折的最终2048步头全部报告；按头计算macro再等权平均，不挑折、不做集成、不重训。重点关注Test前已指定的fine_mass，并保留粗尺度及无保量对照。原F的Train-only协议与历史访问状态不改写。[补测协议及代码](../repro_archive/20260912/local_refinement_test/PROTOCOL.md)。
+
 ## 文字引导方向：F完成，四组未通过推进门（2026-09-12）
 
 **01:34:44.262悉尼时间完成全部5折×4头×2048步和4585图OOF评估，首次检查距训练/评估结束12.121/12.008分钟，检查1/2关闭。** 执行源`a76e1005d5f4b028f5e991c2cf79564b79e66203`，标签`pilot-local-refinement-f2-20260912`；15份原始产物SHA、分组/预算/计数/转移/小病灶阈值独立复算、20头及恢复优化器严格载入/哈希/有限性均通过。没有旧B holdout、官方Val/Test新访问。以下为原B fit内新增头的交叉拟合结果，原R2曾训练过这些图像，不是独立泛化或Test成绩。[完整五折与失败项](../repro_archive/20260912/local_refinement_screen/REPORT.md)。
