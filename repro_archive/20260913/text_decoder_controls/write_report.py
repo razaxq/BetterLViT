@@ -44,7 +44,7 @@ for label in ('t1','t2'):
             lines+=['',f"{label.upper()} HF备份：{b['bucket']}/{b['bucket_prefix']}/，{b['verified_files']}文件、{b['logical_bytes']}字节双端size/Xet核验，原Best/Last保留。备份核验时训练盘可用{b['scratch_free_bytes']}字节，shared实际{b['fs_bytes']}字节。"]
 if (HERE/'t2_launch.json').exists():
     s=read(HERE/'t2_launch.json')
-    lines+=['',f"T2已于{s['started_sydney']}提交80轮训练，来源保持冻结的488ef093de80df71ee77741a8c7ee7b938c7d6b5；初估结束{s['initial_predicted_training_end_sydney']}，首次检查{s['planned_first_check_sydney']}。这是提交回执和初始估计，等待预测首检。"]
+    lines+=['',f"T2提交历史：{s['started_sydney']}提交80轮训练，来源保持冻结的488ef093de80df71ee77741a8c7ee7b938c7d6b5；提交时初估结束{s['initial_predicted_training_end_sydney']}，首次检查预约{s['planned_first_check_sydney']}。此段保留提交回执与最初预测，后续实测以上述检查快照为准。"]
 if (HERE/'storage_cleanup.json').exists():
     c=read(HERE/'storage_cleanup.json')
     proofs=[read(p) for p in sorted((HERE/'historical_backup').glob('*_verified.json'))]

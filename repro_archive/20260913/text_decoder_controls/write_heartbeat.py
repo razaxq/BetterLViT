@@ -26,7 +26,7 @@ prompt=f'''继续用户已授权的BetterLViT文字IoU实验。工作目录D:/Be
 
 仅当snapshot显示complete后，执行同目录archive_completed.py --label {a.label}、analyze.py --label {a.label}、upload_completed.py --label {a.label}、verify_downloads.py --label {a.label}、publish.py --message 合适的完整描述 --completed-label {a.label}。这些读取已完成静态产物不另算训练轮询。自动Val已由冻结runner串联；必须等待完成JSON，不能在评估运行时报告成绩。核查80轮/Best/source、整数计数macro、固定阈值、四个Train观察及日志；若export与选择IoU差>=1e-7则先解释>=与>阈值差异，必要时对完成Best做只读Val核验，不能掩盖。报告IoU/Dice、small-mask、paired grouped CI；T2完成后还需t2_vs_t1.json。
 
-{next_step}T2完成后总结三组，说明单种子发现性质，暂停此监控。后续短语绑定/图像证据控制根据结果继续研究，未通过文字对照不直接声称创新。完整负结果也必须提交。
+{next_step}T2完成后总结三组，说明单种子发现性质；若本批已结束且不再需要后续检查，删除此heartbeat，避免重复触发旧实验。后续短语绑定/图像证据控制根据结果继续研究，未通过文字对照不直接声称创新。完整负结果也必须提交。
 
 保留当前RS1 Best/Last、F/B缓存、数据和环境。五个老Last已在新历史备份补齐且独立hash/引用检查后清理；不可重复清理。每次新启动仍需scratch>4GB、shared实际<20000000000字节。HF用缓存凭据、AutoDL学术加速，按源短SHA加性上传并双端size/Xet验证，不输出token，不删除云端。所有新增源代码、文档和回执提交并推送GitHub；origin是本地bare，实际推送https://github.com/razaxq/BetterLViT.git。不要改历史训练工作树。'''
 prompt+=completed_context

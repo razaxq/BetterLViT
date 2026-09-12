@@ -5,7 +5,7 @@
   "pid": 338722,
   "started_unix": 1789247120.1539168,
   "dispatch_only": true,
-  "inspections_completed": 0,
+  "inspections_completed": 1,
   "scratch_free_bytes": 4997881856,
   "fs_bytes": 18559782256,
   "test_split_accessed": false,
@@ -27,5 +27,12 @@
   "forecast_reference_source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
   "started_sydney": "2026-09-13T07:05:20.153917+10:00",
   "planned_first_check_sydney": "2026-09-13T07:21:00+10:00",
-  "initial_predicted_training_end_sydney": "2026-09-13T12:02:27.347550+10:00"
+  "initial_predicted_training_end_sydney": "2026-09-13T12:02:27.347550+10:00",
+  "inspection_attempt_started_unix": 1789248155.1941624,
+  "mean_epoch_seconds": 216.87756196968257,
+  "predicted_training_end_unix": 1789264501.9440913,
+  "final_check_unix": 1789265280,
+  "remaining_audit_allowance_seconds": 0,
+  "last_phase": "training",
+  "last_checked_unix": 1789248160.0496714
 }
