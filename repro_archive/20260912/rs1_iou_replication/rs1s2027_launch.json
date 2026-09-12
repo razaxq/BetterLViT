@@ -1,0 +1,29 @@
+{
+  "source_git_commit": "758c6c54d47129dd4130c567668d2ab0271144c3",
+  "repository": "/root/autodl-tmp/BetterLViT-rs1s2027-iou",
+  "remote_run": "/root/autodl-tmp/rs1_iou_runs/rs1s2027_20260912",
+  "pid": 301242,
+  "started_unix": 1789187530.8650942,
+  "dispatch_only": true,
+  "inspections_completed": 0,
+  "scratch_free_bytes": 5918408704,
+  "fs_bytes": 18559782256,
+  "test_split_accessed": false,
+  "runtime_environment": {
+    "python": "3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]",
+    "platform": "Linux-5.15.0-101-generic-x86_64-with-glibc2.35",
+    "packages": {
+      "torch": "2.9.1+cu128",
+      "numpy": "1.26.4",
+      "transformers": "4.57.6",
+      "torchvision": "0.24.1+cu128"
+    }
+  },
+  "planned_first_check_unix": 1789188480,
+  "started_sydney": "2026-09-12T14:32:10.865094+10:00",
+  "planned_first_check_sydney": "2026-09-12T14:48:00+10:00",
+  "experiment_tag": "experiment-rs1-iou-80e-seed2027-20260912",
+  "initial_prediction_training_seconds": 17614.29706096649,
+  "initial_predicted_training_end_unix": 1789205145.1621552,
+  "initial_predicted_training_end_sydney": "2026-09-12T19:25:45.162155+10:00"
+}

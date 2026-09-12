@@ -1,0 +1,25 @@
+{
+  "request": {
+    "id": "betterlvit",
+    "mode": "update",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "继续 BetterLViT 用户已授权的“IoU 优先”实验：RS1 seed2027、seed3407 各从头80轮，顺序执行，与已完成的匹配种子R2比较。工作目录 D:/BetterLViT/experiment_docs_work；先读 repro_archive/20260912/rs1_iou_replication/README.md、PROTOCOL.md、sources.json、*_state.json 和 docs/EXPERIMENT_TRACKER.md。禁止用旧的Precision任意不降门否决；两个新种子都完整执行，不能因2027数值结果修改或取消3407。本阶段自动导出Val，不新增Test访问。最终实际性能仍需后续统一Test验证。\n\n来源固定：rs1s2027 为758c6c54d47129dd4130c567668d2ab0271144c3，tag experiment-rs1-iou-80e-seed2027-20260912，远端仓库 /root/autodl-tmp/BetterLViT-rs1s2027-iou，运行目录 /root/autodl-tmp/rs1_iou_runs/rs1s2027_20260912。rs1s3407 为ec3d45cc43710b239e3dadef3f99eb1e2823aa8e，tag experiment-rs1-iou-80e-seed3407-20260912，远端仓库 /root/autodl-tmp/BetterLViT-rs1s3407-iou，运行目录 /root/autodl-tmp/rs1_iou_runs/rs1s3407_20260912。两源已部署并推送GitHub；所有真实Train预检均应已记录于preflight_verified.json，包括旧预检单一Adam与正式分组Adam分别复现、关闭新项与实际R2五步一致、审计状态恢复。不要再跑GPU预检或更新训练工作树。\n\n只使用现有heartbeat betterlvit；保持当前线程，不新建任务/重复定时，不持续SSH或轮询。每组最多两次状态检查。先读本地state里的时间和次数，未到预约时间仅重新安排该heartbeat，不连接服务器。到planned_first_check_unix且次数0时，执行 python -X utf8 repro_archive/20260912/rs1_iou_replication/inspect_run.py --label 当前标签 --phase first 一次。若仍在训练，使用返回的第2—4轮实测预测，把同一heartbeat安排到final_check_unix对应的悉尼时刻；这是预计结束后约12分钟的唯一末检，目标真实结束后30分钟内。到final_check_unix且次数1时执行同入口 --phase final 一次。保存并发布快照、预测和native定时回执。两次预算包括失败的检查尝试；不要反复刷新，不查询任何旧A/B/D/E/F、RS1/RS2/RS3。若第一检已完整结束则关闭为1/2。若异常或末检仍未结束，保留真实状态、时间差及预算并如实汇报，不能声称完成或擅自多次检查。\n\n只有快照runtime.phase=complete后才能按README依次运行 archive_completed.py --label 标签、analyze.py --label 标签、upload_completed.py --label 标签、verify_downloads.py --label 标签；这些读取已结束的静态结果。来源40字符SHA、80轮实际学习率、Val选Best、1429逐图macro/整数FPFN重算、四次Train诊断状态恢复都要核验。若导出IoU与历史选择指标差>=1e-7，使用reconcile_iou.py对该已完成Best作一次Val复算，再分析；原导出不改写、不放宽容差。HF使用已有缓存凭据从stdin传递，禁止回显令牌；按训练短SHA目录加法上传Best/Last、完整源码、日志、Val和报告，云端路径/大小/Xet双端核验后才称完成。保留Best、F/B缓存及数据，不写shared fs；storage_cleanup.json中的四个Last副本清理已完成，不重复删除。\n\n2027完成后，更新tracker为全部真实Val结果/检查时差/HF证据，执行 publish.py --completed-label rs1s2027 --message \"Archive RS1 seed2027 IoU replication\"，确认实际GitHub远端已推送，随后 launch.py --label rs1s3407 提交下一组（无论2027数值正负）。该入口会要求前组归档、HF、独立下载及GitHub回执和可用空间>4GB；不得跳过来源或资源检查。按新launch.json的planned_first_check_unix更新同一heartbeat，保存回执并提交推送启动状态。与此前一样，提交回执不是健康训练成绩。\n\n3407完成后同样归档、核验、上传、发布，然后运行 analyze.py --aggregate。主要判断两个新种子都正向、等权平均IoU>=+0.3个百分点、逐图平均新种子差值的分组bootstrap描述性95%下界>0；1219是发现证据，不参与主要门。所有三个种子、Dice/Precision/Recall/Brier、小面积和FPFN完整报告。图像抽样CI不能冒充跨训练种子显著性。按冻结结果选择RS1或R2作为后续文字实验共同配方；RS1不能算第二创新。按TEXT_NEXT.md继续准备同位置的视觉容量、普通文字注意力、短语绑定及图像证据控制的分项对照，只有另行注册具体代码/预算并通过预检后才投入下一次GPU训练。当前批全部完成且无新训练时暂停该heartbeat。\n\n所有代码、计划、预检、状态、完整正负结果必须推送GitHub docs/experiment-tracker；origin是本地bare，使用 https://github.com/razaxq/BetterLViT.git。执行目录的publish.py会限定暂存范围并核验远端SHA。遵循当前用户授权，不额外请求继续下一种子的确认，不挑种子、不根据结果改变本批参数，不把计划或正在训练说成成绩。\n",
+    "rrule": "FREQ=DAILY;BYHOUR=14;BYMINUTE=48;BYSECOND=0",
+    "status": "ACTIVE",
+    "targetThreadId": "01a074f2-5c58-7221-9a58-59850e626880"
+  },
+  "response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"ACTIVE\"}"
+      }
+    ],
+    "isError": false
+  }
+}
