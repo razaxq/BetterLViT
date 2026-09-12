@@ -1,0 +1,18 @@
+{
+  "evaluation_source_git_commit": "0de058d24c07e646e8ce626d4752bf0c4dd33442",
+  "remote_directory": "/root/autodl-tmp/local_refinement_test_0de058d2",
+  "pid": 296723,
+  "submitted_unix": 1789183336.8215106,
+  "deployed_sha256": {
+    "evaluate.py": "e48d3e91f2d38ae63df71a47403983d1c272684145f22ee01e1cbe9720b93194",
+    "authorization.json": "870923fe149c3b9aa91a09e4896a7a0bcfae66fe2b761afb0fef31f85447c957",
+    "PROTOCOL.md": "d58688a2060ecb0bfe39795ab1c0211d3f9e2b6282aa0f093cd4d20430773f3e",
+    "refiner.py": "22e48f0969ae9afdcfb00e08fa1b1aacf467e4ac3ed03ee023221556772cc9b8",
+    "mass_projection.py": "dba27a77e6ed3a8f35fbdf7d003b443ad4ae9d76c9968e64bcd39c0e9ed62c21",
+    "analysis.py": "063d2f9bb386d479abb07af1acfa5336e33909f0936489e404f21b681a80f80f",
+    "r2_historical_test.json": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792"
+  },
+  "first_collect_unix": 1789183816.8215106,
+  "no_persistent_ssh": true,
+  "free_bytes": 2566844416
+}
