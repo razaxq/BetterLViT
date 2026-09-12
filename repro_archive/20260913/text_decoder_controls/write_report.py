@@ -17,7 +17,13 @@ lines+=['','两组均在up3输出128×56×56后、up2前加入同容量分支；
     '执行顺序：T1完整80轮与自动Best验证集导出，核验、备份、发布后接T2完整80轮，不按T1早期排名取消T2。先比较T1−T0、T2−T0、T2−T1，逐图macro IoU优先，报告Dice、小病灶与分组bootstrap。当前预检未访问Val/Test，尚无新模型的完整IoU结果；本轮筛选不新增Test访问，最终性能主张仍需冻结候选后的Test结果。']
 if (HERE/'t1_launch.json').exists():
     s=read(HERE/'t1_launch.json')
-    lines+=['',f"T1提交时间：{s['started_sydney']}；初估结束：{s['initial_predicted_training_end_sydney']}；首次预测检查：{s['planned_first_check_sydney']}。这里只是提交回执与预检速度推算，不能当成训练健康或完成快照。首检将用实测轮耗时更新末检，末检定在预测结束后12分钟，记录实际间隔并以<=30分钟为目标。"]
+    lines+=['',f"T1提交历史：{s['started_sydney']}；提交时初估结束：{s['initial_predicted_training_end_sydney']}；首次预测检查预约：{s['planned_first_check_sydney']}。此段保留提交回执和最初预测，后续实测快照以下述检查记录为准。"]
+for label in ('t1','t2'):
+    path=HERE/(label+'_first_verified.json')
+    if path.exists():
+        v=read(path);f=v['forecast'];progress=v['latest_logged_train_progress']
+        detail=f"第{progress[0]}轮{progress[1]}/{progress[2]} batch" if progress else '日志无可解析的新轮进度'
+        lines+=['',f"{label.upper()}首检：{v['checked_sydney']}确认完成{v['completed_epochs']}/80轮，{detail}，GPU {v['gpu']}；来源、manifest和跟踪文件一致，日志尾部未见致命错误。已使用1/2检查，最近完整post-warmup轮平均{f['mean_epoch_seconds']:.6f}秒，预测训练结束{f['predicted_training_end_sydney']}；唯一末检预约{f['final_check_sydney']}。这是训练健康和时间预测记录，不是完成结果或IoU增益证据；实际结束到检查间隔需末检核验。"]
 if (HERE/'storage_cleanup.json').exists():
     c=read(HERE/'storage_cleanup.json')
     proofs=[read(p) for p in sorted((HERE/'historical_backup').glob('*_verified.json'))]

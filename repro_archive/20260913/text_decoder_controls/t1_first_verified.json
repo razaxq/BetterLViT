@@ -1,0 +1,27 @@
+{
+  "verified": true,
+  "label": "t1",
+  "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+  "checked_sydney": "2026-09-13T02:15:09.717987+10:00",
+  "completed_epochs": 4,
+  "latest_logged_train_progress": [
+    5,
+    200,
+    357
+  ],
+  "gpu": "96 %, 17404 MiB",
+  "inspection_number": 1,
+  "source_and_manifest_match": true,
+  "log_tail_no_fatal_error": true,
+  "forecast": {
+    "mean_epoch_seconds": 213.81285568823418,
+    "predicted_training_end_unix": 1789245849.2458744,
+    "final_check_unix": 1789246620,
+    "remaining_audit_allowance_seconds": 0,
+    "predicted_training_end_sydney": "2026-09-13T06:44:09.245874+10:00",
+    "final_check_sydney": "2026-09-13T06:57:00+10:00"
+  },
+  "formal_result_available": false,
+  "test_split_accessed": false,
+  "scope": "Only the saved first inspection; no second server access"
+}

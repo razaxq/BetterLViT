@@ -5,7 +5,7 @@
   "pid": 327654,
   "started_unix": 1789228714.6207552,
   "dispatch_only": true,
-  "inspections_completed": 0,
+  "inspections_completed": 1,
   "scratch_free_bytes": 6714408960,
   "fs_bytes": 18559782256,
   "test_split_accessed": false,
@@ -25,5 +25,12 @@
   "experiment_tag": "experiment-t1-decoder-80e-seed1219-20260913",
   "started_sydney": "2026-09-13T01:58:34.620755+10:00",
   "planned_first_check_sydney": "2026-09-13T02:14:00+10:00",
-  "initial_predicted_training_end_sydney": "2026-09-13T07:03:12.780295+10:00"
+  "initial_predicted_training_end_sydney": "2026-09-13T07:03:12.780295+10:00",
+  "inspection_attempt_started_unix": 1789229704.428335,
+  "mean_epoch_seconds": 213.81285568823418,
+  "predicted_training_end_unix": 1789245849.2458744,
+  "final_check_unix": 1789246620,
+  "remaining_audit_allowance_seconds": 0,
+  "last_phase": "training",
+  "last_checked_unix": 1789229709.717987
 }
