@@ -1,0 +1,16 @@
+{
+  "verified": true,
+  "automation_id": "betterlvit",
+  "status": "ACTIVE",
+  "kind": "heartbeat",
+  "rrule": "FREQ=DAILY;BYHOUR=19;BYMINUTE=37;BYSECOND=0",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "label": "rs1s2027",
+  "phase": "final",
+  "planned_check_sydney": "2026-09-12T19:37:00+10:00",
+  "planned_check_unix": 1789205820,
+  "inspections_completed": 1,
+  "source_git_commit": "758c6c54d47129dd4130c567668d2ab0271144c3",
+  "prompt_matches_registered_workflow": true,
+  "app_trims_trailing_newline": true
+}

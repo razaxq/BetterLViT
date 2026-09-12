@@ -14,7 +14,9 @@
 
 ## IoU优先：RS1独立种子复验（2026-09-12）
 
-**已提交2027：** 悉尼2026-09-12 14:32:10.865以PID301242提交后台80轮，来源`758c6c54d47129dd4130c567668d2ab0271144c3`；提交前训练盘余5,918,408,704字节，fs18,559,782,256字节，Python3.12.3/Torch2.9.1+cu128。当前只有dispatch回执，状态检查0/2，不代表已验证健康或有最终成绩。原生heartbeat `betterlvit` 已实际更新为**今天14:48悉尼时间首检**并核验本地生效配置；此前RS1耗时17,614.297秒，初步预测本组今天19:25:45训练结束，首检后按实测速率更新唯一末检。3407尚未提交，等待2027完成核验、备份和发布后自动接续。[启动回执](../repro_archive/20260912/rs1_iou_replication/rs1s2027_launch.json)、[生效定时核验](../repro_archive/20260912/rs1_iou_replication/automation_launch_verified.json)。
+**2027首检完成：** 悉尼2026-09-12 14:48:58.095一次短连接确认已完成4/80轮，第5轮进行到日志记录的200/357 batch；GPU100%、显存17,402MiB，日志尾部无致命异常。运行来源`758c6c54d47129dd4130c567668d2ab0271144c3`与冻结manifest完全一致，远端跟踪文件干净。第2—4轮平均217.135353秒，加120秒后续诊断余量，预测今天**19:24:08**训练结束。原生heartbeat `betterlvit` 已改约**今天19:37（悉尼时间）唯一末检**并核验实际生效配置，当前检查1/2，不再中途连接。尚无完整Val/Test成绩；3407等待2027完成、核验、HF/GitHub归档后接续。[首检与实测预测](../repro_archive/20260912/rs1_iou_replication/rs1s2027_first_snapshot.json)、[末检定时核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_automation_final_verified.json)。
+
+**2027提交历史：** 悉尼2026-09-12 14:32:10.865以PID301242提交后台80轮；提交前训练盘余5,918,408,704字节，fs18,559,782,256字节，Python3.12.3/Torch2.9.1+cu128。当时仅有dispatch回执、检查0/2，按历史耗时初估19:25:45结束，已由上述首检实测预测更新。[启动回执](../repro_archive/20260912/rs1_iou_replication/rs1s2027_launch.json)、[原首检定时](../repro_archive/20260912/rs1_iou_replication/automation_launch_verified.json)。
 
 用户授权“按你说的办，IoU优先”。新阶段补跑RS1 seed2027和3407各80轮，与已完成的同种子R2逐图Val配对；保持原Dice/Focal＋0.128312×整图软IoU、单次余弦、冻结CXR-BERT/no-LoRA、其余训练配方不变。两组均完整执行，不根据2027结果取消或修改3407。旧1219的+0.4111 pp Val IoU仅作发现证据；旧严格综合门失败事实保留。[冻结协议](../repro_archive/20260912/rs1_iou_replication/PROTOCOL.md)。
 
