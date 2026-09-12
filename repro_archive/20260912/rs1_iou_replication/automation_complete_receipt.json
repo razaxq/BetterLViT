@@ -1,0 +1,25 @@
+{
+  "request": {
+    "id": "betterlvit",
+    "mode": "update",
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "prompt": "BetterLViT RS1 IoU优先独立种子复验已于悉尼2026-09-13完成，本批无运行中的训练；暂停本heartbeat，不再查询或启动旧2027、3407及A/B/D/E/F、RS1/RS2/RS3。工作目录D:/BetterLViT/experiment_docs_work，先读repro_archive/20260912/rs1_iou_replication/COMPLETE_REPORT.md、replication_summary.json、TEXT_IMPLEMENTATION_PLAN.md和docs/EXPERIMENT_TRACKER.md。\n\n2027来源758c6c54d47129dd4130c567668d2ab0271144c3，80轮Best68，Val IoU73.0666%、Dice82.7017%，相对同种子R2 IoU+0.0185 pp。3407来源ec3d45cc43710b239e3dadef3f99eb1e2823aa8e，80轮Best74，Val IoU72.9237%、Dice82.5400%，相对同种子R2 IoU+0.2753 pp。两个新种子的平均IoU差值+0.1469 pp，SD0.1816 pp，分组描述性95%区间[-0.0549,+0.3476] pp；“两者均正向”通过，但平均>=0.3 pp及区间下界>0未通过，按注册协议保留R2为后续共同训练配方。旧1219是发现证据，三种子平均+0.2350 pp只作描述。Precision不是自动否决项，本批未新增Test访问，不声称稳定Test增益或第二创新点成立。\n\n两组训练/Val返回码0，来源、80轮学习率、Best、逐图macro与整数计数、四次Train审计状态恢复均核验。各检查2/2，末检距训练结束分别447.446和1169.774秒，均在半小时内。HF Bucket razaxq/BetterLViT/758c6c54/和ec3d45cc/各24文件、分别1694459127和1694476648字节已双端size/Xet核验，各11份下载run文件亦一致；原Best/Last保留。最新完成备份时训练盘余2487640064字节，shared fs实际18559782256字节。不要重复上传或清理既有模型、F/B缓存；新训练前重新做具体资源检查。\n\n后续用户已授权方向是提升IoU并研究文字作用。TEXT_IMPLEMENTATION_PLAN.md已将入口定位到原R2的up3输出d3、up2之前，拟用同为16896参数的T1新增视觉适配器和T2普通文字注意力比较，再分项验证T3短语绑定与T4图像证据控制。当前仅完成源码审计与实现规格，未实现或训练新候选。继续时建立独立开发工作树、写具体代码和冻结预算/SHA/tag，做CPU检查与真实Train CUDA预检后再提交新训练；保留原EPPA和单次余弦/no-LoRA/boundary_loss=0，不能为候选单独换增强或loss。普通attention、短语池化、门控本身不是新颖性证明，按已有文献清单核查重合并做匹配消融。未提及不等于背景；legacy旋转/翻转下不要直接套固定图像方位先验。\n\n所有代码、完整正负结果、报告及回执保持GitHub docs/experiment-tracker同步。origin是本地bare，推送明确使用https://github.com/razaxq/BetterLViT.git。当前监控已结束，不自行重复旧检查；未来每次新训练仍需最多两次预测检查、结束后半小时内末检、独立来源和完成后评估/归档。",
+    "rrule": "FREQ=DAILY;BYHOUR=0;BYMINUTE=56;BYSECOND=0",
+    "status": "PAUSED",
+    "targetThreadId": "01a074f2-5c58-7221-9a58-59850e626880"
+  },
+  "response": {
+    "content": [
+      {
+        "type": "text",
+        "text": "Updated automation in the app."
+      },
+      {
+        "type": "text",
+        "text": "{\"automationId\":\"betterlvit\",\"mode\":\"update\",\"status\":\"PAUSED\"}"
+      }
+    ],
+    "isError": false
+  }
+}

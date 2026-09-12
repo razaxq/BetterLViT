@@ -1,0 +1,13 @@
+{
+  "verified": true,
+  "automation_id": "betterlvit",
+  "status": "PAUSED",
+  "target_thread_id": "01a074f2-5c58-7221-9a58-59850e626880",
+  "prompt_matches_current_completion": true,
+  "both_runs_complete": true,
+  "inspections_per_run": {
+    "rs1s2027": 2,
+    "rs1s3407": 2
+  },
+  "new_training_launched": false
+}

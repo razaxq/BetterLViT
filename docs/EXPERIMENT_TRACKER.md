@@ -14,6 +14,12 @@
 
 ## IoU优先：RS1独立种子复验（2026-09-12）
 
+**两新种子复验结束（2026-09-13）：** 2027与3407的Val IoU差值分别为+0.0185、+0.2753 pp，等权平均**+0.1469 pp**，训练种子样本SD0.1816 pp；逐图平均两种子差值后作分组bootstrap的描述性95%区间[−0.0549,+0.3476] pp。注册三条件仅“两个种子都正向”通过，未达到平均≥0.3 pp且区间下界>0，因此后续文字实验共同配方保留**R2**。这不是Precision否决，也不改写RS1存在小幅正向点估计的事实。加入发现种子1219后三种子平均IoU差值+0.2350 pp、SD0.1994 pp，仅作描述，不参与主要判定；本批没有新Test结果或稳定Test收益证明。[全指标完成报告](../repro_archive/20260912/rs1_iou_replication/COMPLETE_REPORT.md)、[注册汇总JSON](../repro_archive/20260912/rs1_iou_replication/replication_summary.json)。
+
+本批两组均80轮、各检查2/2、结束后半小时内末检，完整结果和Best/Last已分别在HF短SHA目录双端核验；无新训练提交。下一阶段已完成六份原R2 Git对象源码核查，拟在`up3`输出`d3`（128×56×56）后、`up2`前设置参数相同的视觉适配器/普通文字注意力对照，再分项研究短语绑定和图像证据控制。当前只有实现规格及源码审计，**尚未实现或训练新候选**，不认领第二创新点。[实现规格草案](../repro_archive/20260912/rs1_iou_replication/TEXT_IMPLEMENTATION_PLAN.md)、[源码接口审计](../repro_archive/20260912/rs1_iou_replication/text_interface_audit.json)。
+
+原生heartbeat `betterlvit` 已暂停并核验实际状态为PAUSED，不再重复旧实验检查；两组本地state均为complete、检查2/2。后续新训练需单独的源码/预算与预测定时。[监控关闭核验](../repro_archive/20260912/rs1_iou_replication/automation_complete_verified.json)。
+
 **3407已完成并备份：** 80轮及1429张Val导出均完成，Best74，来源`ec3d45cc43710b239e3dadef3f99eb1e2823aa8e`。唯一末检悉尼2026-09-13 00:58:08.233，距训练结束1169.774秒（19.496分钟），检查2/2关闭，符合半小时要求。训练/Val返回码0，来源、manifest、80轮实际学习率、Best选择、逐图计数/宏平均及四次Train诊断状态恢复全部核验；导出与历史选择IoU差−1.787e-9，无需重评，本阶段未访问Test。[完成快照](../repro_archive/20260912/rs1_iou_replication/rs1s3407_final_snapshot.json)、[独立核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_results/independent_verification.json)。
 
 | seed3407，Val | IoU | Dice | Precision | Recall | Brier |
