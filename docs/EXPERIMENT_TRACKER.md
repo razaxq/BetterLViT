@@ -12,6 +12,18 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## IoU优先：RS1独立种子复验（2026-09-12）
+
+用户授权“按你说的办，IoU优先”。新阶段补跑RS1 seed2027和3407各80轮，与已完成的同种子R2逐图Val配对；保持原Dice/Focal＋0.128312×整图软IoU、单次余弦、冻结CXR-BERT/no-LoRA、其余训练配方不变。两组均完整执行，不根据2027结果取消或修改3407。旧1219的+0.4111 pp Val IoU仅作发现证据；旧严格综合门失败事实保留。[冻结协议](../repro_archive/20260912/rs1_iou_replication/PROTOCOL.md)。
+
+主要判定只看两个新种子：IoU差值都>0、等权均值≥+0.3 pp、先逐图平均两种子差值再按可识别患者/文件分组bootstrap的描述性95%下界>0。完整报告Dice/Precision/Recall/Brier、小面积和FP/FN，Precision任意小负变化不自动否决。描述性图像区间不等于跨训练种子统计显著性。本阶段自动导出1429张Val，不新增Test；后续最终成绩仍以统一Test比较为准。RS1是训练配方，不能认领第二文字创新。
+
+两源已独立部署、GitHub分支/tag解析核验：2027 `758c6c54d47129dd4130c567668d2ab0271144c3`，tag `experiment-rs1-iou-80e-seed2027-20260912`；3407 `ec3d45cc43710b239e3dadef3f99eb1e2823aa8e`，tag `experiment-rs1-iou-80e-seed3407-20260912`。两个种子的真实Train五步CUDA检查均通过：默认分组Adam关闭新增项，与历史R2工作树的正式分组方式输出/loss完全一致；单一Adam路径单独复现历史旧预检；RS1正常与插入诊断的五步结果完全一致。历史预检与正式训练参数组的区别已在协议补充说明，未修改正式优化器或训练源。[预检核验](../repro_archive/20260912/rs1_iou_replication/preflight_verified.json)。
+
+资源整理删除的仅为RS2/RS3/S1/S2四份已完成、HF云端size/Xet核验、无活跃引用的Last本地副本，总计3,385,491,304字节；所有Best、数据及F/B缓存保留。训练盘可用2,536,030,208→5,921,529,856字节，fs实际18,559,782,256字节保持不变。[逐文件清理证据](../repro_archive/20260912/rs1_iou_replication/storage_cleanup.json)。
+
+执行入口及后续步骤见[README](../repro_archive/20260912/rs1_iou_replication/README.md)；提交后约15分钟首检、按第2—4轮实测预测安排唯一末检，目标实际结束后30分钟内，不持续SSH。每组完成后核验、HF/GitHub归档，再接续下一种子；正式启动以launch.json回执为准。当前文本中间解码方向只有[后续对照顺序](../repro_archive/20260912/rs1_iou_replication/TEXT_NEXT.md)，尚未编码/训练该文字候选。
+
 ## F Test补测完成：保量方案小幅提升（2026-09-12）
 
 用户在F结果报告后要求“试试测试集”，本次据此单独授权固定模型的Test评估，保留原筛选失败事实。完整2113图、R2 seed1219 Best67、batch16、严格>0.5，四组×五折的最终2048步头全部报告；按头计算macro再等权平均，不挑折、不做集成、不重训。重点关注Test前已指定的fine_mass，并保留粗尺度及无保量对照。原F的Train-only协议与历史访问状态不改写。[补测协议及代码](../repro_archive/20260912/local_refinement_test/PROTOCOL.md)。

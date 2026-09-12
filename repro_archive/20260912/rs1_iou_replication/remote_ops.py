@@ -20,6 +20,10 @@ def environment(source):
     cache='/root/autodl-fs/betterlvit_5090_migration/root_cache/huggingface'
     return dict(BETTERLVIT_EXPERIMENT='rs1_global_iou',BETTERLVIT_GIT_COMMIT=source['source_git_commit'],
         BETTERLVIT_SEED=str(source['seed']),BETTERLVIT_EPOCHS='80',BETTERLVIT_BATCH_SIZE='16',
+        BETTERLVIT_CUDNN_ENABLED='1',BETTERLVIT_DETERMINISTIC='1',BETTERLVIT_RESUME_PATH='',
         CUBLAS_WORKSPACE_CONFIG=':4096:8',PYTHONHASHSEED=str(source['seed']),TOKENIZERS_PARALLELISM='false',
         HF_HOME=cache,HF_HUB_CACHE=cache+'/hub',HF_MODULES_CACHE=cache+'/modules',
         HF_HUB_OFFLINE='1',TRANSFORMERS_OFFLINE='1',TEST_SPLIT_ALLOWED='0',AUTO_TEST_EVALUATE='0')
+
+def copy_to_remote(path,destination):
+    subprocess.run(['scp','-i',KEY,'-P','21465','-o','BatchMode=yes',str(path),HOST+':'+destination],check=True,capture_output=True)

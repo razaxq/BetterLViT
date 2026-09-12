@@ -1,0 +1,27 @@
+{
+  "status": "ok",
+  "candidates": {
+    "rs1s2027": {
+      "source_git_commit": "758c6c54d47129dd4130c567668d2ab0271144c3",
+      "seed": 2027,
+      "legacy_r2_smoke_test_five_steps_exact": true,
+      "actual_formal_r2_grouped_optimizer_five_steps_exact": true,
+      "audit_repeat_exact": true,
+      "loss_and_model_unchanged_from_rs1": true,
+      "peak_allocated_bytes": 16502079488,
+      "steady_seconds_per_batch": 0.5987362066904703
+    },
+    "rs1s3407": {
+      "source_git_commit": "ec3d45cc43710b239e3dadef3f99eb1e2823aa8e",
+      "seed": 3407,
+      "legacy_r2_smoke_test_five_steps_exact": true,
+      "actual_formal_r2_grouped_optimizer_five_steps_exact": true,
+      "audit_repeat_exact": true,
+      "loss_and_model_unchanged_from_rs1": true,
+      "peak_allocated_bytes": 16502079488,
+      "steady_seconds_per_batch": 0.5986865361531576
+    }
+  },
+  "test_split_accessed": false,
+  "formal_training_performed": false
+}

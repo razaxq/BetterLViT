@@ -1,0 +1,49 @@
+{
+  "returncode": 0,
+  "result": {
+    "status": "ok",
+    "source_git_commit": "758c6c54d47129dd4130c567668d2ab0271144c3",
+    "profile": "rs1_global_iou",
+    "weight": 0.128312,
+    "seed": 2027,
+    "formal_training_performed": false,
+    "test_split_accessed": false,
+    "initial_base_sha256": "8414b731956ddc55f941b4b69911341875c3a06e1bfd6da8069511e3d263b44b",
+    "initial_rng": {
+      "cpu": "84033287968d6505fb97b970f1c5667a20749e66faae8d26f973060c5a012b64",
+      "cuda": "68a77a28beca092c5371d84ad1b65793b78a4c15c0ee04800f638140be4eddbb"
+    },
+    "input_image_sha256": "a5b5c79601a1930cf56d5baeb0edbdd454efefd8703d23f64b6d5d758b246d2d",
+    "output_sha256_each_step": [
+      "e8f3c46bdabc365318f4c6281fc3374d8be6a13ebfaec8aecd2927bf66ff7c52",
+      "420a933526c97c7335120bfaa093c81788184c7e1ad939169b902c887008a6a4",
+      "da99cbfd73bf374cd28cecf7e1b23d18d9a263bdc148ca62426b673679bb679a",
+      "d517942617a2fb90b19f798402f670753a9931fe76e15667b0fca0a5cceb9918",
+      "c7514cf4f96b6c02e7e7f2a10895b42fc601376a013a52aced3778f6d8445bcc"
+    ],
+    "first_output_sha256": "e8f3c46bdabc365318f4c6281fc3374d8be6a13ebfaec8aecd2927bf66ff7c52",
+    "loss_each_step": [
+      0.48769766092300415,
+      0.39708662033081055,
+      0.3627508282661438,
+      0.3463161587715149,
+      0.3335411846637726
+    ],
+    "seconds_each_step": [
+      1.539686918258667,
+      0.5778276920318604,
+      0.5728087425231934,
+      0.57318115234375,
+      0.5771579742431641
+    ],
+    "steady_seconds_per_batch": 0.5743826230367025,
+    "temporary_optimizer_steps": 5,
+    "peak_allocated_bytes": 16502077440,
+    "audit_exercised": false,
+    "regional_disabled": true,
+    "legacy_optimizer": true
+  },
+  "stdout": "{\"status\": \"ok\", \"source_git_commit\": \"758c6c54d47129dd4130c567668d2ab0271144c3\", \"profile\": \"rs1_global_iou\", \"weight\": 0.128312, \"seed\": 2027, \"formal_training_performed\": false, \"test_split_accessed\": false, \"initial_base_sha256\": \"8414b731956ddc55f941b4b69911341875c3a06e1bfd6da8069511e3d263b44b\", \"initial_rng\": {\"cpu\": \"84033287968d6505fb97b970f1c5667a20749e66faae8d26f973060c5a012b64\", \"cuda\": \"68a77a28beca092c5371d84ad1b65793b78a4c15c0ee04800f638140be4eddbb\"}, \"input_image_sha256\": \"a5b5c79601a1930cf56d5baeb0edbdd454efefd8703d23f64b6d5d758b246d2d\", \"output_sha256_each_step\": [\"e8f3c46bdabc365318f4c6281fc3374d8be6a13ebfaec8aecd2927bf66ff7c52\", \"420a933526c97c7335120bfaa093c81788184c7e1ad939169b902c887008a6a4\", \"da99cbfd73bf374cd28cecf7e1b23d18d9a263bdc148ca62426b673679bb679a\", \"d517942617a2fb90b19f798402f670753a9931fe76e15667b0fca0a5cceb9918\", \"c7514cf4f96b6c02e7e7f2a10895b42fc601376a013a52aced3778f6d8445bcc\"], \"first_output_sha256\": \"e8f3c46bdabc365318f4c6281fc3374d8be6a13ebfaec8aecd2927bf66ff7c52\", \"loss_each_step\": [0.48769766092300415, 0.39708662033081055, 0.3627508282661438, 0.3463161587715149, 0.3335411846637726], \"seconds_each_step\": [1.539686918258667, 0.5778276920318604, 0.5728087425231934, 0.57318115234375, 0.5771579742431641], \"steady_seconds_per_batch\": 0.5743826230367025, \"temporary_optimizer_steps\": 5, \"peak_allocated_bytes\": 16502077440, \"audit_exercised\": false, \"regional_disabled\": true, \"legacy_optimizer\": true}\n",
+  "stderr": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n",
+  "provenance": {}
+}

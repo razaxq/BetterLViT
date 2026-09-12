@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "repository": "https://github.com/razaxq/BetterLViT.git",
+  "refs": {
+    "refs/heads/paper/rs1-iou-replication-seed2027": "758c6c54d47129dd4130c567668d2ab0271144c3",
+    "refs/heads/paper/rs1-iou-replication-seed3407": "ec3d45cc43710b239e3dadef3f99eb1e2823aa8e",
+    "refs/tags/experiment-rs1-iou-80e-seed2027-20260912": "758c6c54d47129dd4130c567668d2ab0271144c3",
+    "refs/tags/experiment-rs1-iou-80e-seed3407-20260912": "ec3d45cc43710b239e3dadef3f99eb1e2823aa8e"
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "rs1s2027": {
+    "seed": 2027,
+    "label": "rs1s2027",
+    "source_git_commit": "758c6c54d47129dd4130c567668d2ab0271144c3",
+    "experiment_tag": "experiment-rs1-iou-80e-seed2027-20260912",
+    "branch": "paper/rs1-iou-replication-seed2027",
+    "local_repository": "D:\\BetterLViT\\rs1_iou_s2027_work",
+    "repository": "/root/autodl-tmp/BetterLViT-rs1s2027-iou",
+    "remote_run": "/root/autodl-tmp/rs1_iou_runs/rs1s2027_20260912",
+    "profile": "rs1_global_iou",
+    "replication_parent": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "baseline": {
+      "branch": "paper/r2s2027-replication",
+      "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "profile": "r2_single_cosine",
+      "seed": 2027,
+      "role": "r2",
+      "previous_label": "c4s2027",
+      "experiment_tag": "experiment-r2-recipe-80e-seed2027-20260909",
+      "repository": "/root/BetterLViT-recipe-r2s2027",
+      "local_repository": "D:\\BetterLViT\\recipe_r2s2027_work",
+      "remote_run": "/root/recipe_runs/r2s2027_80_20260909"
+    },
+    "baseline_validation_relative": "repro_archive/20260909/recipe_replication/r2s2027_results/validation.json",
+    "baseline_validation_sha256": "0a4364c3def13e62996325b6d3f214b127326ee1c6c2a88f970a81730ad5121d",
+    "changed_files_from_rs1": [
+      "docs/RS1_IOU_REPLICATION.md",
+      "experiment_manifests/active_recipe.json",
+      "experiment_manifests/active_regional.json",
+      "regional_protocol.py"
+    ],
+    "previous_label": null
+  },
+  "rs1s3407": {
+    "seed": 3407,
+    "label": "rs1s3407",
+    "source_git_commit": "ec3d45cc43710b239e3dadef3f99eb1e2823aa8e",
+    "experiment_tag": "experiment-rs1-iou-80e-seed3407-20260912",
+    "branch": "paper/rs1-iou-replication-seed3407",
+    "local_repository": "D:\\BetterLViT\\rs1_iou_s3407_work",
+    "repository": "/root/autodl-tmp/BetterLViT-rs1s3407-iou",
+    "remote_run": "/root/autodl-tmp/rs1_iou_runs/rs1s3407_20260912",
+    "profile": "rs1_global_iou",
+    "replication_parent": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+    "baseline": {
+      "branch": "paper/r2s3407-replication",
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "profile": "r2_single_cosine",
+      "seed": 3407,
+      "role": "r2",
+      "previous_label": "c4s3407",
+      "experiment_tag": "experiment-r2-recipe-80e-seed3407-20260909",
+      "repository": "/root/BetterLViT-recipe-r2s3407",
+      "local_repository": "D:\\BetterLViT\\recipe_r2s3407_work",
+      "remote_run": "/root/recipe_runs/r2s3407_80_20260909"
+    },
+    "baseline_validation_relative": "repro_archive/20260909/recipe_replication/r2s3407_results/validation.json",
+    "baseline_validation_sha256": "bb684168687812e71ce95e0e1c0e93fbc407411e1a25220b3994a4fa315d0f2a",
+    "changed_files_from_rs1": [
+      "docs/RS1_IOU_REPLICATION.md",
+      "experiment_manifests/active_recipe.json",
+      "experiment_manifests/active_regional.json",
+      "regional_protocol.py"
+    ],
+    "previous_label": "rs1s2027"
+  }
+}
