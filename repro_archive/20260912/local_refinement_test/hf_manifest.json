@@ -1,0 +1,136 @@
+{
+  "evaluation_source_git_commit": "06c7675a644c818eee77e32730364f7c8767eab1",
+  "f_source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "classification": "user_requested_fixed_F_heads_Test_evaluation_after_failed_Train_screen",
+  "test_split_accessed": true,
+  "no_new_training": true,
+  "no_test_selection": true,
+  "files": [
+    {
+      "local": "D:\\BetterLViT\\.codex_tmp\\hf_local_refinement_test_06c7675a\\source.tar.gz",
+      "remote": "06c7675a/source.tar.gz",
+      "bytes": 22692,
+      "xet_hash": "11b0fea4f8b381cfdc21b6d312533a3b7dc825fb0f07412012c9eab445c3b263",
+      "sha256": "35289de84bd50fd235c8e328bccd938a3c99ff073dbeec4a0e1e0fd3492eea66"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\results\\records.json",
+      "remote": "06c7675a/test/records.json",
+      "bytes": 29690775,
+      "xet_hash": "ef52383ed8e1ffeb7f7c1fe85abec643a66c90253d15b46a41fb50f79ee92ffb",
+      "sha256": "7ebb3a27c033d8c6e3c28061ffd1874b18da438aba361001b7d3253cab128df3"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\results\\provenance.json",
+      "remote": "06c7675a/test/provenance.json",
+      "bytes": 4256,
+      "xet_hash": "710a5c17d7d658785e5048750d33294fe42de89e47b655fe8b66e66c4112148b",
+      "sha256": "d8cfdc8254e635ba61da42f0c369b23ce6ffb4e1085632bcb7ccaeab2433c8e7"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\results\\runtime.json",
+      "remote": "06c7675a/test/runtime.json",
+      "bytes": 545,
+      "xet_hash": "6eca637c801aa578b840e41863d50368017383961ac537e4a82670a741a41fd7",
+      "sha256": "78b0475e748b167fde134553bea7a11cefb98ad1b52760ae617193e0d93472e9"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\results\\run.log",
+      "remote": "06c7675a/test/run.log",
+      "bytes": 748,
+      "xet_hash": "2f95d10baf99a370e5791e218df9ebb7f21982d2ea0e60b516d5decb5559f61c",
+      "sha256": "3426b111b317866e4a79bed441910362d55905530b2650c31b3fae98839fe902"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\PROTOCOL.md",
+      "remote": "06c7675a/PROTOCOL.md",
+      "bytes": 2578,
+      "xet_hash": "ae782f3205266ca1f94eb3bafbe4f6795510e5643465fc0f770fee2b0a8a1756",
+      "sha256": "e2f0fb763d477309383fc0ac66a7d07d1307631ebc3696ab7b56c16e4b8320da"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\authorization.json",
+      "remote": "06c7675a/authorization.json",
+      "bytes": 7245,
+      "xet_hash": "61b93eb785c6941238a8b4122509c7ed715965c3fac4d8a86429f1bbd7f38512",
+      "sha256": "870923fe149c3b9aa91a09e4896a7a0bcfae66fe2b761afb0fef31f85447c957"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\launch.json",
+      "remote": "06c7675a/launch.json",
+      "bytes": 3280,
+      "xet_hash": "13206937d612a16310503468dd9fc4cc52f46ffbce732fbec192ba7a6586367c",
+      "sha256": "be8b7777d284b63c57efe0543c7ede8aa723fd4fba329da91e6833fa982841ca"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\state.json",
+      "remote": "06c7675a/state.json",
+      "bytes": 266,
+      "xet_hash": "259db6e894ab90da4e9c6c4a567b6c3f64c4a01ec92abccff9be9adbfae56fc7",
+      "sha256": "42d3e3cf9c282df92990f301607b31c7ec7b62cb01c9784ab565209df58eaf4d"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\summary.json",
+      "remote": "06c7675a/summary.json",
+      "bytes": 10670,
+      "xet_hash": "02fc5045d986f1cfe99d75dca036a1e954b1c556005ad734387b92ec68065a8e",
+      "sha256": "71e8b9afe79453bccde4f403cfe6e5c7887229b98d2b380d0a84d2bc5563c53d"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\REPORT.md",
+      "remote": "06c7675a/REPORT.md",
+      "bytes": 4364,
+      "xet_hash": "f3e8f1a9b2a633d8a3d076ff7d912508804695215e6712fc19db86604ff09b0a",
+      "sha256": "6bbbfcc1e0201bfb536900614a2b2aa03a5d9ce06842655be2ea7d40679ecf24"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_test\\source_verified.json",
+      "remote": "06c7675a/source_verified.json",
+      "bytes": 416,
+      "xet_hash": "8cf86b15460fb6a453dc168b8b0e916604b58decee525478ad76a34d5d52f421",
+      "sha256": "f7b9076d1e11828c62ecfcafdbfff6c7772aa8725c8b4a4ebb4f73e956a83902"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_0_heads.pt",
+      "remote": "06c7675a/heads/fold_0_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "510d56621c589f97a5979fbf33d1d519dbe995a33f0e20ecfe1c6b9fba4f2c16",
+      "sha256": "c10262924aee47f3cd88d0a6ad4d820bf54a751ca30470231e3e6f80dd75f51d"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_1_heads.pt",
+      "remote": "06c7675a/heads/fold_1_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "5076cfe98543bf5433e2996f1b90aba5fdef69a922af9930ed1c584b9ee21fd6",
+      "sha256": "036628b71a17357f22605087e40eb73b7e3ba8ab4a116f0a208a77edc816b7d9"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_2_heads.pt",
+      "remote": "06c7675a/heads/fold_2_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "afc2a46e1177520d16feec9974365183aad7ca392c4b54975dbf712b0703c411",
+      "sha256": "d1393a0e5689b2e7dfc7cb6aa10bc4b663e9ca1287df9351f1ace35848bf3649"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_3_heads.pt",
+      "remote": "06c7675a/heads/fold_3_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "ffc4febc804791dc2047913699036dbcf92b5380c527ec4322dfd73c2ff32478",
+      "sha256": "a73669293c9e5f6b3ba1fcc520816055068e598aa9ab3f18d075b19e0b242c88"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\results\\fold_4_heads.pt",
+      "remote": "06c7675a/heads/fold_4_heads.pt",
+      "bytes": 424769,
+      "xet_hash": "0e74374120e60aa326cf6d2d64fc51e158fc763270e338bcbd5be41ed68c5fb4",
+      "sha256": "387e7ef3a136d0df0aba1b5ef4225016e76c3c9dff399406cab6db9dc432f8b5"
+    },
+    {
+      "local": "D:\\BetterLViT\\experiment_docs_work\\repro_archive\\20260912\\local_refinement_screen\\checkpoint_verified.json",
+      "remote": "06c7675a/heads/checkpoint_verified.json",
+      "bytes": 2044,
+      "xet_hash": "cc052204f57444cee4164bd153c6206d1d8b74826ca7d866568409112b426e6a",
+      "sha256": "c9989654a411c3a929e3cbd5cd89b16b0aae278fb96f23634c7f08860d8ec03a"
+    }
+  ]
+}

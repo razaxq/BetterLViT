@@ -1,7 +1,9 @@
 {
-  "phase": "submitted",
-  "inspections": 1,
+  "phase": "complete",
+  "inspections": 2,
   "maximum_inspections": 2,
   "planned_collect_unix": 1789184305.0470371,
-  "first_inspection_failed_before_test_images": true
+  "first_inspection_failed_before_test_images": true,
+  "completion_delay_seconds": 296.5996193885803,
+  "completion_observed_within30min": true
 }

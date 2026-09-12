@@ -1,0 +1,22 @@
+{
+  "runtime": {
+    "phase": "complete",
+    "evaluation_source_git_commit": "06c7675a644c818eee77e32730364f7c8767eab1",
+    "started_unix": 1789183947.1482975,
+    "samples": 2113,
+    "expected_completion_unix": 1789184060.9204307,
+    "completed_unix": 1789184033.2680583,
+    "artifacts": {
+      "records.json": {
+        "bytes": 29690775,
+        "sha256": "7ebb3a27c033d8c6e3c28061ffd1874b18da438aba361001b7d3253cab128df3"
+      },
+      "provenance.json": {
+        "bytes": 4256,
+        "sha256": "d8cfdc8254e635ba61da42f0c369b23ce6ffb4e1085632bcb7ccaeab2433c8e7"
+      }
+    }
+  },
+  "observed_unix": 1789184329.8676777,
+  "log": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n{\"samples\": 256, \"elapsed_seconds\": 9.527012825012207}\n{\"samples\": 512, \"elapsed_seconds\": 18.271465063095093}\n{\"samples\": 768, \"elapsed_seconds\": 26.954720497131348}\n{\"samples\": 1024, \"elapsed_seconds\": 35.5975878238678}\n{\"samples\": 1280, \"elapsed_seconds\": 44.3269989490509}\n{\"samples\": 1536, \"elapsed_seconds\": 53.59089684486389}\n{\"samples\": 1792, \"elapsed_seconds\": 62.40347623825073}\n{\"samples\": 2048, \"elapsed_seconds\": 71.63520526885986}\n"
+}

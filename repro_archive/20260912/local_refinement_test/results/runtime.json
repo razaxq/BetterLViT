@@ -1,0 +1,18 @@
+{
+  "phase": "complete",
+  "evaluation_source_git_commit": "06c7675a644c818eee77e32730364f7c8767eab1",
+  "started_unix": 1789183947.1482975,
+  "samples": 2113,
+  "expected_completion_unix": 1789184060.9204307,
+  "completed_unix": 1789184033.2680583,
+  "artifacts": {
+    "records.json": {
+      "bytes": 29690775,
+      "sha256": "7ebb3a27c033d8c6e3c28061ffd1874b18da438aba361001b7d3253cab128df3"
+    },
+    "provenance.json": {
+      "bytes": 4256,
+      "sha256": "d8cfdc8254e635ba61da42f0c369b23ce6ffb4e1085632bcb7ccaeab2433c8e7"
+    }
+  }
+}

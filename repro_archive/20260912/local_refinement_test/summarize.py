@@ -80,6 +80,13 @@ def run():
         ci=x['group_iou_ci95'];lines.append(f"- {v}−R2：IoU {x['delta']['iou']*100:+.6f} pp；group 95% CI [{ci[0]*100:+.6f}, {ci[1]*100:+.6f}] pp；平均FP/FN变化 {x['delta']['fp']:+.4f}/{x['delta']['fn']:+.4f} 像素/图。")
     for pair,x in contrasts.items():
         ci=x['group_iou_ci95'];lines.append(f"- {pair}：IoU {x['delta_iou']*100:+.6f} pp；group 95% CI [{ci[0]*100:+.6f}, {ci[1]*100:+.6f}] pp。")
+    primary=variants['fine_mass'];difference=contrasts['fine_mass-coarse_mass']
+    state=read(HERE/'state.json')
+    lines+=['', '## 本次结果判断', '',
+        f"Test前指定的fine_mass平均IoU {primary['mean']['iou']*100:.6f}%、Dice {primary['mean']['dice']*100:.6f}%；对R2分别{primary['delta']['iou']*100:+.6f}/{primary['delta']['dice']*100:+.6f}个百分点，五个固定头均正向。相对粗尺度保量仅{difference['delta_iou']*100:+.6f}个百分点，配对组区间跨0。", '',
+        f"保量两组均有小幅Test提升，无保量两组均低于R2，方向与Train内筛选一致。fine_mass的Precision变化{primary['delta']['precision']*100:+.6f}个百分点、Recall变化{primary['delta']['recall']*100:+.6f}个百分点；每图净FP变化{primary['delta']['fp']:+.4f}、FN变化{primary['delta']['fn']:+.4f}。这是约0.056个百分点的小收益，不能写成提升5.6%或0.56个百分点。", '',
+        '该补测支持已固定保量头存在小幅正向Test信号，尚不足以证明细尺度结构的额外价值或多个独立训练种子的稳定提升；原Train内预注册门未通过的事实不变。', '',
+        f"全部完成后的收集延迟{state['completion_delay_seconds']:.3f}秒，累计检查{state['inspections']}/2（含首次在读取Test图像前的部署失败）。无持续SSH。"]
     lines+=['',f"按文件名可识别患者/其余独立文件组成{summary['group_count']}组。先按图平均五头增量，再做10000次组bootstrap；该区间只描述这一组已训练模型在Test样本上的差异，未做多重比较校正，不能代替多个独立训练种子。",'',
         'R2的2113张逐图IoU/Dice/Precision/Recall及GT/预测面积与历史输出精确一致。20头文件/state哈希、权重前后不变、无梯度、候选外不变、保量误差，以及本地逐图计数和错误转移复算均通过。','',
         '未根据Test挑折、改阈值或重训；本次没有新增文字输入，不构成文字创新成立的证据。', '',
