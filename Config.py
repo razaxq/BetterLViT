@@ -75,6 +75,7 @@ experiment_output_name = experiment_name + '_evaluation.json'
 source_git_commit = os.environ.get('BETTERLVIT_GIT_COMMIT', '').strip()
 visual_prior_enabled = bool(paper_experiment.get('visual_prior_enabled', False))
 training_recipe_enabled = bool(paper_experiment.get('training_recipe_enabled', False))
+decoder_context_mode = paper_experiment.get('decoder_context_mode', 'none')
 augmentation_policy = paper_experiment.get('augmentation_policy', 'legacy')
 lr_schedule = paper_experiment.get('lr_schedule', 'warm_restarts')
 visual_random_init = bool(paper_experiment.get('visual_random_init', False))
@@ -198,6 +199,7 @@ def get_CTranS_config():
     config.n_classes = 1
     config.decoder_fusion_mode = decoder_fusion_mode
     config.visual_prior_enabled = visual_prior_enabled
+    config.decoder_context_mode = decoder_context_mode
     config.visual_random_init = visual_random_init
     config.visual_encoder_kind = visual_encoder_kind
     config.visual_model_root = visual_model_root

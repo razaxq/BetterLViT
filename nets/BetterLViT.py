@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import torch
 from peft import LoraConfig, get_peft_model
 from transformers import AutoModel
 
@@ -67,6 +68,17 @@ class BetterLViT(LViT):
             self.visual_prior = FrozenVisualPrior(
                 config.visual_model_root, kind=config.visual_encoder_kind,
                 random_init=config.visual_random_init)
+
+        self.decoder_context = None
+        mode = getattr(config, 'decoder_context_mode', 'none')
+        if mode != 'none':
+            if self.decoder_fusion_mode != 'fam_eppa_v4b' or self.use_lora or self.visual_prior is not None:
+                raise ValueError('Decoder controls require frozen-text FAM-EPPA without external visual prior')
+            from .decoder_context import DecoderContextAdapter
+            # Construct after every original module; restore CPU RNG so original
+            # weights AND subsequent dropout/sampler RNG match the R2 control.
+            with torch.random.fork_rng(devices=[]):
+                self.decoder_context = DecoderContextAdapter(mode)
 
     def _inject_visual_prior(self, feature, image):
         if self.visual_prior is None:

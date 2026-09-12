@@ -207,6 +207,17 @@ for _name, _id, _augmentation, _schedule in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+for _name, _id, _mode in (
+    ('t1_decoder_visual', 'T1', 'visual'),
+    ('t2_decoder_text', 'T2', 'text'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['r2_single_cosine'])
+    _profile.update(paper_id=_id, decoder_context_mode=_mode,
+        description='R2 + matched intermediate decoder ' + _mode + ' attention control',
+        architecture_version='decoder_context_v1_' + _mode)
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

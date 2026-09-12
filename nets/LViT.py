@@ -497,6 +497,9 @@ class LViT(nn.Module):
         else:
             d4 = self.up4(x5, x4, plam4, text=text)
             d3 = self.up3(d4, x3, plam3, text=text)
+            adapter = getattr(self, 'decoder_context', None)
+            if adapter is not None:
+                d3 = adapter(d3, text2, text_mask)
             d2 = self.up2(d3, x2, plam2, text=text)
             d1 = self.up1(d2, x1, plam1, text=text)
         base_logits = self.outc(d1)

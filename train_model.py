@@ -16,6 +16,7 @@ from torchvision import transforms
 
 import Config as config
 from training_recipe import SingleCosineSchedule, recipe_metadata
+from nets.decoder_context import adapter_metadata
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
 from nets.BetterLViT import BetterLViT
@@ -158,6 +159,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'seed': int(config.seed),
         'source_git_commit': config.source_git_commit,
         'training_recipe': recipe_metadata(config),
+        'decoder_context': adapter_metadata(config.decoder_context_mode),
         'visual_prior': (
             model.visual_prior.provenance if getattr(model, 'visual_prior', None) is not None else None
         ),

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import torch.optim
+import json
 import math
 import os
 import time
@@ -68,6 +69,13 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         masks = masks.cuda(non_blocking=True)
         input_ids = input_ids.cuda(non_blocking=True)
         attention_mask = attention_mask.cuda(non_blocking=True)
+
+        target_model = model.module if isinstance(model, torch.nn.DataParallel) else model
+        decoder_adapter = getattr(target_model, 'decoder_context', None)
+        capture_decoder = (model.training and decoder_adapter is not None and i == 1
+                           and epoch + 1 in (1, 10, 40, 80))
+        if decoder_adapter is not None:
+            decoder_adapter.capture_stats = capture_decoder
 
 
         # ====================================================
@@ -138,6 +146,15 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
         if model.training:
             optimizer.zero_grad()
             out_loss.backward()
+            if capture_decoder:
+                observation = dict(epoch=epoch+1, batch=i, source_git_commit=config.source_git_commit,
+                    **decoder_adapter.last_stats,
+                    gradients={n:float(p.grad.detach().abs().max()) for n,p in target_model.named_parameters()
+                        if p.grad is not None and (n.startswith('decoder_context.') or n.startswith('text_module2.'))})
+                observation_path = os.environ.get('BETTERLVIT_DECODER_OBSERVATIONS_PATH')
+                if observation_path:
+                    with open(observation_path, 'a', encoding='utf-8') as observation_file:
+                        observation_file.write(json.dumps(observation)+'\n')
             optimizer.step()
 
         if epoch % config.vis_frequency == 0 and logging_mode == 'Val':

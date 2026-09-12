@@ -20,7 +20,9 @@ def rates_equal(actual, expected):
 
 def validate_recipe_manifest(manifest):
     policies = {'r1_chest_augmentation':('chest_orientation','warm_restarts'),
-                'r2_single_cosine':('legacy','single_cosine')}
+                'r2_single_cosine':('legacy','single_cosine'),
+                't1_decoder_visual':('legacy','single_cosine'),
+                't2_decoder_text':('legacy','single_cosine')}
     expected = policies[manifest['profile']]
     assert (manifest['augmentation_policy'],manifest['lr_schedule']) == expected
     assert manifest['epochs'] == 80 and manifest['batch_size'] == 16
