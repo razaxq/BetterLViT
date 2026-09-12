@@ -1,0 +1,29 @@
+{
+  "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+  "repository": "/root/autodl-tmp/BetterLViT-text-t1",
+  "remote_run": "/root/autodl-tmp/text_decoder_runs/t1_80e_20260913",
+  "pid": 327654,
+  "started_unix": 1789228714.6207552,
+  "dispatch_only": true,
+  "inspections_completed": 0,
+  "scratch_free_bytes": 6714408960,
+  "fs_bytes": 18559782256,
+  "test_split_accessed": false,
+  "runtime_environment": {
+    "python": "3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]",
+    "platform": "Linux-5.15.0-101-generic-x86_64-with-glibc2.35",
+    "packages": {
+      "torch": "2.9.1+cu128",
+      "numpy": "1.26.4",
+      "transformers": "4.57.6",
+      "torchvision": "0.24.1+cu128"
+    }
+  },
+  "planned_first_check_unix": 1789229640,
+  "initial_prediction_training_seconds": 18278.159540266908,
+  "initial_predicted_training_end_unix": 1789246992.7802954,
+  "experiment_tag": "experiment-t1-decoder-80e-seed1219-20260913",
+  "started_sydney": "2026-09-13T01:58:34.620755+10:00",
+  "planned_first_check_sydney": "2026-09-13T02:14:00+10:00",
+  "initial_predicted_training_end_sydney": "2026-09-13T07:03:12.780295+10:00"
+}
