@@ -1,0 +1,26 @@
+{
+  "t1": {
+    "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+    "development_source_git_commit": "dfd0219005bf0f11925509efd3cdf0c8362b1486",
+    "branch": "paper/t1-decoder-80e-seed1219",
+    "experiment_tag": "experiment-t1-decoder-80e-seed1219-20260913",
+    "local_repository": "D:\\BetterLViT\\text_t1_work",
+    "repository": "/root/autodl-tmp/BetterLViT-text-t1",
+    "remote_run": "/root/autodl-tmp/text_decoder_runs/t1_80e_20260913",
+    "profile": "t1_decoder_visual",
+    "seed": 1219,
+    "previous_label": null
+  },
+  "t2": {
+    "source_git_commit": "488ef093de80df71ee77741a8c7ee7b938c7d6b5",
+    "development_source_git_commit": "dfd0219005bf0f11925509efd3cdf0c8362b1486",
+    "branch": "paper/t2-decoder-80e-seed1219",
+    "experiment_tag": "experiment-t2-decoder-80e-seed1219-20260913",
+    "local_repository": "D:\\BetterLViT\\text_t2_work",
+    "repository": "/root/autodl-tmp/BetterLViT-text-t2",
+    "remote_run": "/root/autodl-tmp/text_decoder_runs/t2_80e_20260913",
+    "profile": "t2_decoder_text",
+    "seed": 1219,
+    "previous_label": "t1"
+  }
+}

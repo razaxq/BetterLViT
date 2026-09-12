@@ -1,0 +1,15 @@
+ACADEMIC_ACCELERATION_CONFIGURED
+UPLOAD_BEGIN 281bc1b4/models/best_model-BetterLViT.pth.tar
+HF_VERIFIED 281bc1b4/models/best_model-BetterLViT.pth.tar
+UPLOAD_BEGIN 281bc1b4/models/last_model-BetterLViT.pth.tar
+HF_VERIFIED 281bc1b4/models/last_model-BetterLViT.pth.tar
+UPLOAD_BEGIN 281bc1b4/source.tar.gz
+HF_VERIFIED 281bc1b4/source.tar.gz
+UPLOAD_BEGIN 281bc1b4/checkpoint_archive.json
+HF_VERIFIED 281bc1b4/checkpoint_archive.json
+UPLOAD_BEGIN 281bc1b4/C0_Test_session_09.02_11h59.log
+HF_VERIFIED 281bc1b4/C0_Test_session_09.02_11h59.log
+UPLOAD_BEGIN 281bc1b4/tensorboard/events.out.tfevents.1788321575.autodl-container-401a47801e-11976c14
+HF_VERIFIED 281bc1b4/tensorboard/events.out.tfevents.1788321575.autodl-container-401a47801e-11976c14
+{"source_git_commit": "281bc1b40c782f6f42b8caa332e1fe1045cb29e0", "bucket_prefix": "281bc1b4", "classification": "completed_historical_pilot_checkpoint_archive", "checkpoint_completed_epochs": 40, "configured_epochs": 40, "new_evaluation_performed": false, "files": [{"source": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/best_model-BetterLViT.pth.tar", "remote": "281bc1b4/models/best_model-BetterLViT.pth.tar", "bytes": 845180927, "xet_hash": "53bad481deeb0f21ca4b41045d96004eb76f8f3ed35df6e9aceafb97fe2e2983"}, {"source": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/last_model-BetterLViT.pth.tar", "remote": "281bc1b4/models/last_model-BetterLViT.pth.tar", "bytes": 845214143, "xet_hash": "7395d8c558f37c62f8f671047dbd6bef1710deae480e547ba516b3ca42ce4d83"}, {"source": "/root/autodl-tmp/text_decoder_runs/historical_backup/281bc1b4/source.tar.gz", "remote": "281bc1b4/source.tar.gz", "bytes": 152752, "xet_hash": "345a73e1b09af7402e132c2747d5b1d847927d5de3253a4078cc26b6ae963551"}, {"source": "/root/autodl-tmp/text_decoder_runs/historical_backup/281bc1b4/checkpoint_archive.json", "remote": "281bc1b4/checkpoint_archive.json", "bytes": 992, "xet_hash": "3e4a0359576dd74d304e1a7c674eb52e35c1f720b7bbbeb224378407b2719420"}, {"source": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/C0_Test_session_09.02_11h59.log", "remote": "281bc1b4/C0_Test_session_09.02_11h59.log", "bytes": 349045, "xet_hash": "41ca482a998619bfd718f3c276972b65acd0d9cced91a6e5b8fda55ba3704134"}, {"source": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/tensorboard_logs/events.out.tfevents.1788321575.autodl-container-401a47801e-11976c14", "remote": "281bc1b4/tensorboard/events.out.tfevents.1788321575.autodl-container-401a47801e-11976c14", "bytes": 298408, "xet_hash": "a1b9beb743e93076adecefff41d7b0b31b567612584c08f8fd6395c8040b0a77"}], "verified": true, "verified_files": 6, "bucket": "razaxq/BetterLViT"}
+

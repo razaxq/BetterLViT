@@ -1,0 +1,46 @@
+{
+  "source_git_commit": "e00138529f5ce5ac3996f58e54f764274789081e",
+  "bucket_prefix": "e0013852",
+  "classification": "completed_historical_pilot_checkpoint_archive",
+  "checkpoint_completed_epochs": 40,
+  "configured_epochs": 40,
+  "new_evaluation_performed": false,
+  "files": [
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/best_model-BetterLViT.pth.tar",
+      "remote": "e0013852/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "xet_hash": "c68ba76c94ebaa0722da8f93d64502c8cb44c349e42c05f2f0c647c44964f64f"
+    },
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/last_model-BetterLViT.pth.tar",
+      "remote": "e0013852/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "xet_hash": "f36f7d789a9ff8f79ed7d572de89397fd554eecd08fc12df58034abd93e68070"
+    },
+    {
+      "source": "/root/autodl-tmp/text_decoder_runs/historical_backup/e0013852/source.tar.gz",
+      "remote": "e0013852/source.tar.gz",
+      "bytes": 140022,
+      "xet_hash": "dac25321a5fecb7b2041b43817609a68c70de9811fbd2fbbe5bd5dddde930faa"
+    },
+    {
+      "source": "/root/autodl-tmp/text_decoder_runs/historical_backup/e0013852/checkpoint_archive.json",
+      "remote": "e0013852/checkpoint_archive.json",
+      "bytes": 1000,
+      "xet_hash": "0c27e9106eb6e6c02e44a3bb47da877c7cf74b589457a774c26e8f9aba924cb0"
+    },
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/P1_Test_session_09.01_22h09.log",
+      "remote": "e0013852/P1_Test_session_09.01_22h09.log",
+      "bytes": 359451,
+      "xet_hash": "caa01c232172d5709ade1bd0cbbaec36e24c0b793fffa09ceed7c2a84fb6acbc"
+    },
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/tensorboard_logs/events.out.tfevents.1788271794.autodl-container-401a47801e-11976c14",
+      "remote": "e0013852/tensorboard/events.out.tfevents.1788271794.autodl-container-401a47801e-11976c14",
+      "bytes": 342953,
+      "xet_hash": "c43cc40991352131a900eaea65c6c27718761dcbad11af93a02c7b7c902038ae"
+    }
+  ]
+}

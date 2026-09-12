@@ -1,0 +1,259 @@
+{
+  "free": 2487640064,
+  "root_free": 630132736,
+  "shared_bytes": 18559782256,
+  "gpu": "",
+  "files": [
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a5/Covid19/BetterLViT/a5_lora_fmiseg_focal/A5_Test_session_08.30_02h34/models/best_model-BetterLViT.pth.tar",
+      "bytes": 861082979,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a6-frozen/Covid19/BetterLViT/a6_tcsr/A6_Test_session_08.30_18h48/models/best_model-BetterLViT.pth.tar",
+      "bytes": 836539219,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a6/Covid19/BetterLViT/a6_lora_tcsr/A6_Test_session_08.30_13h01/models/last_model-BetterLViT.pth.tar",
+      "bytes": 868601555,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a7-frozen/Covid19/BetterLViT/a7_tcsr_freq/A7_Test_session_08.31_04h48/models/best_model-BetterLViT.pth.tar",
+      "bytes": 847357819,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a8-tcsrv2/Covid19/BetterLViT/a8_tcsrv2_freq_focal/A8_Test_session_09.01_09h44/models/best_model-BetterLViT.pth.tar",
+      "bytes": 848152835,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-a9-frozen/Covid19/BetterLViT/a9_frozen_freq_focal/A9_Test_session_08.31_16h12/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845544191,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a0_lora/A0_Test_session_08.27_23h47/models/last_model-BetterLViT.pth.tar",
+      "bytes": 866597527,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a0_lora/A0_Test_session_08.28_00h17/models/best_model-BetterLViT.pth.tar",
+      "bytes": 866621783,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a1_lora_focal/A1_Test_session_08.28_08h33/models/best_model-BetterLViT.pth.tar",
+      "bytes": 866615063,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a2_lora_freq/A2_Test_session_08.28_15h24/models/best_model-BetterLViT.pth.tar",
+      "bytes": 877461823,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a3_lora_fmiseg/A3_Test_session_08.29_04h18/models/best_model-BetterLViT.pth.tar",
+      "bytes": 861040675,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/a4_lora_freq_focal/A4_Test_session_08.29_16h27/models/best_model-BetterLViT.pth.tar",
+      "bytes": 877461823,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h11/models/best_model-BetterLViT.pth.tar",
+      "bytes": 834470615,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h11/models/last_model-BetterLViT.pth.tar",
+      "bytes": 834470871,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h33/models/best_model-BetterLViT.pth.tar",
+      "bytes": 834493719,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_00h33/models/last_model-BetterLViT.pth.tar",
+      "bytes": 834502999,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-ablation/Covid19/BetterLViT/b0_baseline/B0_Test_session_08.27_18h10/models/best_model-BetterLViT.pth.tar",
+      "bytes": 834496023,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845180927,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845214143,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c2-cdrr/Covid19/BetterLViT/c2_cdrr_control/C2_Test_session_09.03_12h27/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845214463,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c2-cdrr/Covid19/BetterLViT/c2_cdrr_control/C2_Test_session_09.03_12h27/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845214463,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23/Covid19/BetterLViT/p3_tcsrv23_calibrated_gate/P3_Test_session_09.02_05h34/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846288227,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23/Covid19/BetterLViT/p3_tcsrv23_calibrated_gate/P3_Test_session_09.02_05h34/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846288227,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24/Covid19/BetterLViT/p4_tcsrv24_sparse_boundary/P4_Test_session_09.02_08h39/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846287651,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p4-tcsrv24/Covid19/BetterLViT/p4_tcsrv24_sparse_boundary/P4_Test_session_09.02_08h39/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846287651,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25/Covid19/BetterLViT/p5_tcsrv25_local_tversky/P5_Test_session_09.02_14h58/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846256803,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p5-tcsrv25/Covid19/BetterLViT/p5_tcsrv25_local_tversky/P5_Test_session_09.02_14h58/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846290595,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p7-cdrr/Covid19/BetterLViT/p7_cdrr_v1/P7_Test_session_09.03_14h54/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845490119,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p7-cdrr/Covid19/BetterLViT/p7_cdrr_v1/P7_Test_session_09.03_14h54/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845493383,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-c3/Covid19/BetterLViT/c3_race_control/C3_Test_session_09.03_18h30/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845336703,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-c3/Covid19/BetterLViT/c3_race_control/C3_Test_session_09.03_18h30/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845336703,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-p8/Covid19/BetterLViT/p8_race_fuse_v1/P8_Test_session_09.03_23h19/models/best_model-BetterLViT.pth.tar",
+      "bytes": 850700823,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-race-p8/Covid19/BetterLViT/p8_race_fuse_v1/P8_Test_session_09.03_23h19/models/last_model-BetterLViT.pth.tar",
+      "bytes": 850700823,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845733487,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845733487,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11-150/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_20h26/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845948271,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-visual-aux-s1/Covid19/BetterLViT/s1_r2_pixel_aux/S1_Test_session_09.10_15h09/models/best_model-BetterLViT.pth.tar",
+      "bytes": 847349209,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-visual-aux-s2/Covid19/BetterLViT/s2_r2_visual_aux/S2_Test_session_09.10_20h30/models/best_model-BetterLViT.pth.tar",
+      "bytes": 847392785,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs1/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.11_04h18/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845347135,
+      "symlink": true
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs1/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.11_04h18/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845312447,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs2/Covid19/BetterLViT/rs2_local_iou/RS2_Test_session_09.11_09h41/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845331327,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-regional-rs3/Covid19/BetterLViT/rs3_balanced_iou/RS3_Test_session_09.11_14h55/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845306111,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-rs1s2027-iou/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.12_12h32/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845347199,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-rs1s2027-iou/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.12_12h32/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845309311,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-rs1s3407-iou/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.12_17h44/models/last_model-BetterLViT.pth.tar",
+      "bytes": 845347135,
+      "symlink": false
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-rs1s3407-iou/Covid19/BetterLViT/rs1_global_iou/RS1_Test_session_09.12_17h44/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845328191,
+      "symlink": false
+    }
+  ],
+  "checked_unix": 1789227402.7272117
+}

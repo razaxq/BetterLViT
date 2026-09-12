@@ -1,0 +1,51 @@
+{
+  "source_git_commit": "58be4f092b4a1c2f141e510ff40766fb58d4519b",
+  "bucket_prefix": "58be4f09",
+  "classification": "completed_historical_pilot_checkpoint_archive",
+  "checkpoint_completed_epochs": 40,
+  "configured_epochs": 40,
+  "new_evaluation_performed": false,
+  "files": [
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/best_model-BetterLViT.pth.tar",
+      "remote": "58be4f09/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "xet_hash": "f6d9fd1c16687f004b904ce3f2beb671e45e624a36418697e85a1e3e532ce4a2"
+    },
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/last_model-BetterLViT.pth.tar",
+      "remote": "58be4f09/models/last_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "xet_hash": "388c6aa6f1a077a04c96639c5452d4b9269c88412fb0f77133d55c6a3f2f58eb"
+    },
+    {
+      "source": "/root/autodl-tmp/text_decoder_runs/historical_backup/58be4f09/source.tar.gz",
+      "remote": "58be4f09/source.tar.gz",
+      "bytes": 145867,
+      "xet_hash": "e6f2e4f9278002f9b9341256f58391ec1994bad190cfe3c327d34367dea216f2"
+    },
+    {
+      "source": "/root/autodl-tmp/text_decoder_runs/historical_backup/58be4f09/checkpoint_archive.json",
+      "remote": "58be4f09/checkpoint_archive.json",
+      "bytes": 1008,
+      "xet_hash": "d0f906f575df716c467a8311c5db0fc414d9cc22ab4f215fca4a0780bdd1ea93"
+    },
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/P2_Test_session_09.02_01h16.log",
+      "remote": "58be4f09/P2_Test_session_09.02_01h16.log",
+      "bytes": 355953,
+      "xet_hash": "9bd638ff29e932b8f38b29e3645e8a6958f367a4defb582fdb989cdac76edb67"
+    },
+    {
+      "source": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/tensorboard_logs/events.out.tfevents.1788282996.autodl-container-401a47801e-11976c14",
+      "remote": "58be4f09/tensorboard/events.out.tfevents.1788282996.autodl-container-401a47801e-11976c14",
+      "bytes": 294728,
+      "xet_hash": "2ff63fd6ecd657b7244f246d2c6f62dca2e8282841347d4fb4451f24db7bc29d"
+    }
+  ],
+  "verified": true,
+  "verified_files": 6,
+  "bucket": "razaxq/BetterLViT",
+  "independent_local_listing_verified": true,
+  "completed_unix": 1789228354.5918627
+}

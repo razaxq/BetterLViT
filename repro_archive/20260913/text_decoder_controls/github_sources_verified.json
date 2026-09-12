@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "repository": "https://github.com/razaxq/BetterLViT.git",
+  "refs": {
+    "refs/heads/paper/t1-decoder-80e-seed1219": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+    "refs/heads/paper/t2-decoder-80e-seed1219": "488ef093de80df71ee77741a8c7ee7b938c7d6b5",
+    "refs/tags/experiment-t1-decoder-80e-seed1219-20260913": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+    "refs/tags/experiment-t2-decoder-80e-seed1219-20260913": "488ef093de80df71ee77741a8c7ee7b938c7d6b5"
+  }
+}

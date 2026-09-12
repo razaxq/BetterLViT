@@ -1,0 +1,19 @@
+# 中间解码层文字对照：执行状态
+
+共同训练配方保持R2，IoU优先。普通文字注意力是后续文字创新的必要对照，本身不作为第二创新点。
+
+| 组别 | 内容 | 预算/来源 | 当前状态 |
+|---|---|---|---|
+| T0 | 原R2，无新增分支 | 已完成80轮，seed1219，9eca26de5b301099805530edbf5a1a8718bea662 | 复用匹配对照；Val IoU72.6654%、Dice82.4034% |
+| T1 | 新增视觉context attention，16896参数 | 80轮，seed1219，`72295aa38649fea8ffed2cdd7330c3a18504a330` | 已实现、冻结、预检通过；尚未启动 |
+| T2 | 新增文字context attention，16896参数 | 80轮，seed1219，`488ef093de80df71ee77741a8c7ee7b938c7d6b5` | 已实现、冻结、预检通过；尚未启动 |
+
+两组均在up3输出128×56×56后、up2前加入同容量分支；4头、宽32、32个context token。T1不读取报告长度；T2屏蔽padding，空报告回到零残差。原EPPA、原文字路径、legacy增强、Dice/Focal、无LoRA、80轮单次余弦均保持。
+
+已验证：CPU masking/空报告/梯度检查；真实Train batch16五步；原R2与关闭分支后的完整五步grouped Adam输出/loss精确一致；两候选原模型权重、输入、CPU/CUDA RNG、第一次预测及适配器初始化分别精确匹配。观察开关开/关五步loss、输出、梯度完全相同。候选参数均16896、实测接口B×128×56×56和B×32×128、峰值分配约15.44GiB。短步loss不作为IoU增益证据。
+
+执行顺序：T1完整80轮与自动Best验证集导出，核验、备份、发布后接T2完整80轮，不按T1早期排名取消T2。先比较T1−T0、T2−T0、T2−T1，逐图macro IoU优先，报告Dice、小病灶与分组bootstrap。当前预检未访问Val/Test，尚无新模型的完整IoU结果；本轮筛选不新增Test访问，最终性能主张仍需冻结候选后的Test结果。
+
+存储：补齐C0/P1/P2/P3四个历史pilot的source、log、Best/Last和TB，共24文件、6772735826字节，按源短SHA双端size/Xet核验。这是已完成历史训练的检查点归档，没有新增或重新认证其评估。连同已备份P11，删除5个无活动引用的旧Last副本，释放4230478299字节；训练盘可用2483920896→6714408960字节；shared实际18559782256字节，小于20GB。所有Best、近期RS1 Best/Last、F/B缓存、数据与环境保留。
+
+源分支和独立实验tag已在GitHub核对；代码与执行证据一并保存。详见PROTOCOL.md、sources.json、preflight_verified.json、storage_cleanup.json及原生定时核验回执。

@@ -12,13 +12,35 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## 中间解码层文字对照 T1/T2（2026-09-13）
+
+共同训练配方保持R2，IoU优先。普通文字注意力是后续文字创新的必要对照，本身不作为第二创新点。
+
+| 组别 | 内容 | 预算/来源 | 当前状态 |
+|---|---|---|---|
+| T0 | 原R2，无新增分支 | 已完成80轮，seed1219，9eca26de5b301099805530edbf5a1a8718bea662 | 复用匹配对照；Val IoU72.6654%、Dice82.4034% |
+| T1 | 新增视觉context attention，16896参数 | 80轮，seed1219，`72295aa38649fea8ffed2cdd7330c3a18504a330` | 已实现、冻结、预检通过；尚未启动 |
+| T2 | 新增文字context attention，16896参数 | 80轮，seed1219，`488ef093de80df71ee77741a8c7ee7b938c7d6b5` | 已实现、冻结、预检通过；尚未启动 |
+
+两组均在up3输出128×56×56后、up2前加入同容量分支；4头、宽32、32个context token。T1不读取报告长度；T2屏蔽padding，空报告回到零残差。原EPPA、原文字路径、legacy增强、Dice/Focal、无LoRA、80轮单次余弦均保持。
+
+已验证：CPU masking/空报告/梯度检查；真实Train batch16五步；原R2与关闭分支后的完整五步grouped Adam输出/loss精确一致；两候选原模型权重、输入、CPU/CUDA RNG、第一次预测及适配器初始化分别精确匹配。观察开关开/关五步loss、输出、梯度完全相同。候选参数均16896、实测接口B×128×56×56和B×32×128、峰值分配约15.44GiB。短步loss不作为IoU增益证据。
+
+执行顺序：T1完整80轮与自动Best验证集导出，核验、备份、发布后接T2完整80轮，不按T1早期排名取消T2。先比较T1−T0、T2−T0、T2−T1，逐图macro IoU优先，报告Dice、小病灶与分组bootstrap。当前预检未访问Val/Test，尚无新模型的完整IoU结果；本轮筛选不新增Test访问，最终性能主张仍需冻结候选后的Test结果。
+
+存储：补齐C0/P1/P2/P3四个历史pilot的source、log、Best/Last和TB，共24文件、6772735826字节，按源短SHA双端size/Xet核验。这是已完成历史训练的检查点归档，没有新增或重新认证其评估。连同已备份P11，删除5个无活动引用的旧Last副本，释放4230478299字节；训练盘可用2483920896→6714408960字节；shared实际18559782256字节，小于20GB。所有Best、近期RS1 Best/Last、F/B缓存、数据与环境保留。
+
+源分支和独立实验tag已在GitHub核对；代码与执行证据一并保存。详见PROTOCOL.md、sources.json、preflight_verified.json、storage_cleanup.json及原生定时核验回执。
+
+[完整执行档案](../repro_archive/20260913/text_decoder_controls/README.md)。
+
 ## IoU优先：RS1独立种子复验（2026-09-12）
 
 **两新种子复验结束（2026-09-13）：** 2027与3407的Val IoU差值分别为+0.0185、+0.2753 pp，等权平均**+0.1469 pp**，训练种子样本SD0.1816 pp；逐图平均两种子差值后作分组bootstrap的描述性95%区间[−0.0549,+0.3476] pp。注册三条件仅“两个种子都正向”通过，未达到平均≥0.3 pp且区间下界>0，因此后续文字实验共同配方保留**R2**。这不是Precision否决，也不改写RS1存在小幅正向点估计的事实。加入发现种子1219后三种子平均IoU差值+0.2350 pp、SD0.1994 pp，仅作描述，不参与主要判定；本批没有新Test结果或稳定Test收益证明。[全指标完成报告](../repro_archive/20260912/rs1_iou_replication/COMPLETE_REPORT.md)、[注册汇总JSON](../repro_archive/20260912/rs1_iou_replication/replication_summary.json)。
 
-本批两组均80轮、各检查2/2、结束后半小时内末检，完整结果和Best/Last已分别在HF短SHA目录双端核验；无新训练提交。下一阶段已完成六份原R2 Git对象源码核查，拟在`up3`输出`d3`（128×56×56）后、`up2`前设置参数相同的视觉适配器/普通文字注意力对照，再分项研究短语绑定和图像证据控制。当前只有实现规格及源码审计，**尚未实现或训练新候选**，不认领第二创新点。[实现规格草案](../repro_archive/20260912/rs1_iou_replication/TEXT_IMPLEMENTATION_PLAN.md)、[源码接口审计](../repro_archive/20260912/rs1_iou_replication/text_interface_audit.json)。
+RS1本批两组均80轮、各检查2/2、结束后半小时内末检，完整结果和Best/Last已分别在HF短SHA目录双端核验。以下为T1/T2实现前的规格历史记录；当前状态以上方新阶段为准。当时下一阶段已完成六份原R2 Git对象源码核查，拟在`up3`输出`d3`（128×56×56）后、`up2`前设置参数相同的视觉适配器/普通文字注意力对照，再分项研究短语绑定和图像证据控制。当时只有实现规格及源码审计，**尚未实现或训练新候选**，不认领第二创新点。[实现规格草案](../repro_archive/20260912/rs1_iou_replication/TEXT_IMPLEMENTATION_PLAN.md)、[源码接口审计](../repro_archive/20260912/rs1_iou_replication/text_interface_audit.json)。
 
-原生heartbeat `betterlvit` 已暂停并核验实际状态为PAUSED，不再重复旧实验检查；两组本地state均为complete、检查2/2。后续新训练需单独的源码/预算与预测定时。[监控关闭核验](../repro_archive/20260912/rs1_iou_replication/automation_complete_verified.json)。
+RS1结束时原生heartbeat `betterlvit` 已暂停并核验为PAUSED；新T1/T2定时以后续新回执为准，不再重复旧实验检查；两组本地state均为complete、检查2/2。后续新训练需单独的源码/预算与预测定时。[监控关闭核验](../repro_archive/20260912/rs1_iou_replication/automation_complete_verified.json)。
 
 **3407已完成并备份：** 80轮及1429张Val导出均完成，Best74，来源`ec3d45cc43710b239e3dadef3f99eb1e2823aa8e`。唯一末检悉尼2026-09-13 00:58:08.233，距训练结束1169.774秒（19.496分钟），检查2/2关闭，符合半小时要求。训练/Val返回码0，来源、manifest、80轮实际学习率、Best选择、逐图计数/宏平均及四次Train诊断状态恢复全部核验；导出与历史选择IoU差−1.787e-9，无需重评，本阶段未访问Test。[完成快照](../repro_archive/20260912/rs1_iou_replication/rs1s3407_final_snapshot.json)、[独立核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_results/independent_verification.json)。
 

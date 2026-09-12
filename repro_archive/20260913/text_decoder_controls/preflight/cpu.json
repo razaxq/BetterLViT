@@ -1,0 +1,77 @@
+{
+  "status": "ok",
+  "device": "cpu",
+  "matched_parameters": 16896,
+  "zero_init_identity": true,
+  "padding_key_invariance": true,
+  "empty_fallback": true,
+  "visual_control_ignores_text": true,
+  "cpu_rng_preserved": true,
+  "same_adapter_initialization": true,
+  "early_gradients": {
+    "visual": [
+      {
+        "query_norm.weight": 0.0,
+        "query_norm.bias": 0.0,
+        "context_norm.weight": 0.0,
+        "context_norm.bias": 0.0,
+        "query.weight": 0.0,
+        "key.weight": 0.0,
+        "value.weight": 0.0,
+        "output.weight": 0.000278319523204118
+      },
+      {
+        "query_norm.weight": 7.722861710135476e-07,
+        "query_norm.bias": 5.132082151249051e-06,
+        "context_norm.weight": 3.263973121647723e-05,
+        "context_norm.bias": 0.00016680554836057127,
+        "query.weight": 4.183618329989258e-06,
+        "key.weight": 4.706284016720019e-06,
+        "value.weight": 6.824681622674689e-05,
+        "output.weight": 0.0002782866940833628
+      },
+      {
+        "query_norm.weight": 1.6424783098045737e-06,
+        "query_norm.bias": 1.0688243492040783e-05,
+        "context_norm.weight": 6.782405398553237e-05,
+        "context_norm.bias": 0.00032426329562440515,
+        "query.weight": 8.331877324962988e-06,
+        "key.weight": 9.765104550751857e-06,
+        "value.weight": 0.00013740120630245656,
+        "output.weight": 0.0002959329285658896
+      }
+    ],
+    "text": [
+      {
+        "query_norm.weight": 0.0,
+        "query_norm.bias": 0.0,
+        "context_norm.weight": 0.0,
+        "context_norm.bias": 0.0,
+        "query.weight": 0.0,
+        "key.weight": 0.0,
+        "value.weight": 0.0,
+        "output.weight": 0.0002670236281119287
+      },
+      {
+        "query_norm.weight": 6.114931352385611e-07,
+        "query_norm.bias": 5.2179543672536965e-06,
+        "context_norm.weight": 4.106999404029921e-05,
+        "context_norm.bias": 6.610255513805896e-05,
+        "query.weight": 4.103296760149533e-06,
+        "key.weight": 7.114269919838989e-06,
+        "value.weight": 4.842655107495375e-05,
+        "output.weight": 0.00026692819665186107
+      },
+      {
+        "query_norm.weight": 1.251244725608558e-06,
+        "query_norm.bias": 9.589517503627576e-06,
+        "context_norm.weight": 8.397609053645283e-05,
+        "context_norm.bias": 0.00013525874237529933,
+        "query.weight": 8.23931895865826e-06,
+        "key.weight": 1.4274415661930107e-05,
+        "value.weight": 9.707365097710863e-05,
+        "output.weight": 0.0002836704661604017
+      }
+    ]
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "status": "ok",
+  "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+  "seed": 1219,
+  "profile": "t1_decoder_visual",
+  "adapter_disabled": true,
+  "observation_enabled": false,
+  "harness_sha256": "2a4600ce63f637758bab39f4cdb6952b8f8b83dbbf9e89c836afbbac5dbe2219",
+  "input_image_sha256": "d1a7bf48c28c2cfcdc355c8a1c99dcf29049ce0f4d89d90fbaf1fd5b2e0c798b",
+  "input_text_sha256": "4b2a6a13632967618e26d9f12e49d3ba44b5cf8c71a5a3672c6a4b88cc7c846f",
+  "initial_base_sha256": "6c9033efbc4c3d8d723ea24d5793833b1b84041951b9592e0274cdd8d652c1b9",
+  "initial_adapter_sha256": null,
+  "initial_rng": {
+    "cpu": "560bda599614e31edfae014111f9ecbf0031ac07328405101d025c5d58b2278d",
+    "cuda": "c211c682f0fd7c99d400d3f508af67cdbc998f326e5e0593015cfda556f600f9"
+  },
+  "output_sha256_each_step": [
+    "246feaa997468b4696ac8d02772f479d38f9315814ba220fed614be7abaa39b7",
+    "9ee4306466e1924bdd15ed1b9859e3a70f577dfae3e7b1c212b4dc6d866752e2",
+    "1cb89b4b7217fd3acc80a1e351fc98aa2d877dc682fe9b2d9484c9b36c872736",
+    "342a2c16699d03caa2cbae9f4a36547059b47f2c873e779b1c350a2a3720b584",
+    "696377708f5c3e6919b18238fa1525a15c5dbefcdfdf02a352b3ce01eaed0339"
+  ],
+  "loss_each_step": [
+    0.48949211835861206,
+    0.4354998767375946,
+    0.41256991028785706,
+    0.38889753818511963,
+    0.37464505434036255
+  ],
+  "seconds_each_step": [
+    1.4921660423278809,
+    0.5717153549194336,
+    0.5707821846008301,
+    0.5713348388671875,
+    0.5713918209075928
+  ],
+  "steady_seconds_per_batch": 0.5711696147918701,
+  "peak_allocated_bytes": 16486544384,
+  "shapes": {},
+  "adapter_parameters": 0,
+  "residual_rms_each_step": [],
+  "gradient_absmax_each_step": [
+    {
+      "text_module2.weight": 0.0017937535885721445,
+      "text_module2.bias": 0.006516445428133011
+    },
+    {
+      "text_module2.weight": 0.0004032079305034131,
+      "text_module2.bias": 0.001130392076447606
+    },
+    {
+      "text_module2.weight": 0.00018702674424275756,
+      "text_module2.bias": 0.0004010354168713093
+    },
+    {
+      "text_module2.weight": 0.00013415042485576123,
+      "text_module2.bias": 0.00032772455597296357
+    },
+    {
+      "text_module2.weight": 9.207271068589762e-05,
+      "text_module2.bias": 0.0001899948692880571
+    }
+  ],
+  "temporary_optimizer_steps": 5,
+  "formal_training_performed": false,
+  "test_split_accessed": false,
+  "val_split_accessed": false,
+  "grouped_adam": true
+}

@@ -1,0 +1,64 @@
+{
+  "verified": true,
+  "applied": false,
+  "before": {
+    "scratch_free_bytes": 2483920896,
+    "shared_bytes": 18559782256
+  },
+  "after": {
+    "scratch_free_bytes": 2483920896,
+    "shared_bytes": 18559782256
+  },
+  "files": [
+    {
+      "path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/last_model-BetterLViT.pth.tar",
+      "best_path": "/root/autodl-tmp/BetterLViT-dual-grain-p11/Covid19/BetterLViT/p11_dual_grain/P11_Test_session_09.07_15h00/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845733487,
+      "inode": 4333229184,
+      "mtime_ns": 1788782106654020421,
+      "sha256": "698f6937bee4670d966d3eb35636016edbc1b6e75495df296388e38948fb485c",
+      "source_git_commit": "2fc6ab5c8e4662d741fd8b994e55b780391948ac"
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/last_model-BetterLViT.pth.tar",
+      "best_path": "/root/autodl-tmp/BetterLViT-paper-c0-tversky/Covid19/BetterLViT/c0_frozen_freq_tversky/C0_Test_session_09.02_11h59/models/best_model-BetterLViT.pth.tar",
+      "bytes": 845214143,
+      "inode": 2158981556,
+      "mtime_ns": 1788330210634134738,
+      "sha256": "f156702575a8e4a83314648a6bee6f0431027ebbd648de65f9e139e485b86ac1",
+      "source_git_commit": "281bc1b40c782f6f42b8caa332e1fe1045cb29e0"
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/last_model-BetterLViT.pth.tar",
+      "best_path": "/root/autodl-tmp/BetterLViT-paper-p1-tcsrv21/Covid19/BetterLViT/p1_tcsrv21_boundary_router/P1_Test_session_09.01_22h09/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846957735,
+      "inode": 19341819069,
+      "mtime_ns": 1788280997790653411,
+      "sha256": "cab7ccf09bca4fcc974ded83b6cc9445d307f6f03d4b25dea9dfaa253869b251",
+      "source_git_commit": "e00138529f5ce5ac3996f58e54f764274789081e"
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/last_model-BetterLViT.pth.tar",
+      "best_path": "/root/autodl-tmp/BetterLViT-paper-p2-tcsrv22/Covid19/BetterLViT/p2_tcsrv22_single_hop_boundary/P2_Test_session_09.02_01h16/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846284707,
+      "inode": 2158987256,
+      "mtime_ns": 1788292163305346834,
+      "sha256": "3dd2557c21d35e6ff7c760037e5e7ee545e9a6bd5b36836096a1b09d19177a46",
+      "source_git_commit": "58be4f092b4a1c2f141e510ff40766fb58d4519b"
+    },
+    {
+      "path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23/Covid19/BetterLViT/p3_tcsrv23_calibrated_gate/P3_Test_session_09.02_05h34/models/last_model-BetterLViT.pth.tar",
+      "best_path": "/root/autodl-tmp/BetterLViT-paper-p3-tcsrv23/Covid19/BetterLViT/p3_tcsrv23_calibrated_gate/P3_Test_session_09.02_05h34/models/best_model-BetterLViT.pth.tar",
+      "bytes": 846288227,
+      "inode": 17217041178,
+      "mtime_ns": 1788307615648095358,
+      "sha256": "559935105d919fadaf58e633625f100bdd7035ae2f61e4289522f102e48f40e6",
+      "source_git_commit": "874adf6b51e9e3a30b5295b36a1992b6c9098abb"
+    }
+  ],
+  "logical_bytes": 4230478299,
+  "best_preserved": true,
+  "rs1_models_and_caches_preserved": true,
+  "active_references": [],
+  "completed_unix": 1789228599.335923
+}
