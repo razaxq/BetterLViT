@@ -1,7 +1,7 @@
 {
   "profile": "rs1_global_iou",
   "paper_id": "RS1",
-  "seed": 1219,
+  "seed": 2027,
   "epochs": 80,
   "batch_size": 16,
   "image_size": 224,
@@ -105,9 +105,9 @@
   "auto_test_evaluate": false,
   "auto_validation_export": true,
   "control_profile": "r2_single_cosine",
-  "control_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "control_source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
   "development_source_git_commit": "d56c0043e26b9160bf616a4d9acced6244cacd84",
-  "experiment_tag": "experiment-rs1-regional-80e-seed1219-20260911",
+  "experiment_tag": "experiment-rs1-iou-80e-seed2027-20260912",
   "plan": "docs/REGIONAL_CALIBRATION.md",
   "regional_mode": "global",
   "regional_weight": 0.128312,
@@ -126,5 +126,10 @@
     80
   ],
   "experiment_plan_git_commit": "709e4ecbe7d34d3ca01b6a48bdc6259b82026d10",
-  "experiment_plan_path": "docs/REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md"
+  "experiment_plan_path": "docs/REGIONAL_SUPERVISION_EXPERIMENT_PLAN_20260911.md",
+  "replication_of_source_git_commit": "b4dd566ae472079c55e41cffd7727060bcfd6bf5",
+  "replication_plan_git_commit": "1753de560392507bb1e0be416e72f95c27ee789e",
+  "replication_plan_path": "repro_archive/20260912/rs1_iou_replication/PROTOCOL.md",
+  "primary_metric": "per_image_macro_iou",
+  "secondary_metrics_are_not_strict_vetoes": true
 }

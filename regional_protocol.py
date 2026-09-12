@@ -6,7 +6,7 @@ PROFILES = {'rs1_global_iou':'global', 'rs2_local_iou':'local', 'rs3_balanced_io
 
 def validate_regional_manifest(m):
     assert m['profile'] in PROFILES and m['regional_mode'] == PROFILES[m['profile']]
-    assert m['epochs'] == 80 and m['seed'] == 1219 and m['batch_size'] == 16 and m['image_size'] == 224
+    assert m['epochs'] == 80 and m['seed'] in (1219, 2027, 3407) and m['batch_size'] == 16 and m['image_size'] == 224
     assert m['train_drop_last'] and m['num_workers'] == 4
     assert m['selection_metric'] == 'iou' and m['threshold'] == .5
     assert m['loss_name'] == 'dice_focal' and m['initialization'] == 'from_scratch'
