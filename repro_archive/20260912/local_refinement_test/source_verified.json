@@ -1,0 +1,11 @@
+{
+  "verified": true,
+  "evaluation_source_git_commit": "06c7675a644c818eee77e32730364f7c8767eab1",
+  "f_source_git_commit": "a76e1005d5f4b028f5e991c2cf79564b79e66203",
+  "deployed_files_exact_in_git": true,
+  "inherited_inference_code_unchanged": true,
+  "no_optimizer_backward_or_step": true,
+  "all_twenty_existing_heads": true,
+  "feature_quantization_matches_training": true,
+  "no_server_status_query": true
+}
