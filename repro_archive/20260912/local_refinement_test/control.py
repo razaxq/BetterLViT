@@ -10,7 +10,7 @@ import zlib
 from analysis import digest,write_json
 HERE=Path(__file__).resolve().parent;DOCS=HERE.parents[2]
 PY='/root/autodl-tmp/envs/betterlvit-paper/bin/python'
-FILES=('evaluate.py','authorization.json','PROTOCOL.md','refiner.py','mass_projection.py','analysis.py')
+FILES=('evaluate.py','authorization.json','PROTOCOL.md','refiner.py','mass_projection.py','analysis.py','screen_analysis.py','refiner_names.py')
 def remote(code,timeout=120):
     p=subprocess.run(['ssh','-i','C:/Users/dtftn/.ssh/seetacloud_betterlvit_ed25519','-p','21465','-o','BatchMode=yes',
         '-o','ConnectTimeout=15','root@connect.westb.seetacloud.com',PY+' -'],input=code,text=True,encoding='utf-8',
@@ -27,6 +27,7 @@ def launch():
         assert raw==(HERE/name).read_bytes(),name
         payload[name]=base64.b64encode(zlib.compress(raw)).decode()
     a=json.loads((HERE/'authorization.json').read_text(encoding='utf-8'))
+    assert set(a['inherited_files_sha256'])<=set(FILES),'Every verified dependency must be deployed'
     historical=DOCS/a['historical_test_relative'];assert digest(historical)==a['historical_test_sha256']
     payload['r2_historical_test.json']=base64.b64encode(zlib.compress(historical.read_bytes())).decode()
     root='/root/autodl-tmp/local_refinement_test_'+sha[:8]
@@ -41,18 +42,29 @@ hashes={}
 for name,value in PAYLOAD.items():
     assert Path(name).name==name
     raw=zlib.decompress(base64.b64decode(value));(root/name).write_bytes(raw);hashes[name]=hashlib.sha256(raw).hexdigest()
+authorization=json.loads((root/'authorization.json').read_text())
+assert set(authorization['inherited_files_sha256'])<=set(hashes)
+env=dict(os.environ,CUBLAS_WORKSPACE_CONFIG=':4096:8',PYTHONHASHSEED='1219',PYTHONDONTWRITEBYTECODE='1')
+with (root/'preflight.log').open('x') as log:
+    check=subprocess.run(['/root/autodl-tmp/envs/betterlvit-paper/bin/python','-B','-u',str(root/'evaluate.py'),
+        '--output',str(root/'preflight'),'--source-sha',SHA,'--preflight-only'],cwd=root,stdin=subprocess.DEVNULL,
+        stdout=log,stderr=subprocess.STDOUT,env=env,timeout=90)
+assert check.returncode==0,(root/'preflight.log').read_text()[-4000:]
+preflight=json.loads((root/'preflight/preflight.json').read_text());assert preflight['verified'] and preflight['test_images_loaded']==0
 started=time.time()
 with (root/'evaluate.log').open('x') as log:
     p=subprocess.Popen(['/root/autodl-tmp/envs/betterlvit-paper/bin/python','-B','-u',str(root/'evaluate.py'),
         '--output',str(root/'results'),'--source-sha',SHA],cwd=root,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,
         start_new_session=True,close_fds=True,env=dict(os.environ,CUBLAS_WORKSPACE_CONFIG=':4096:8',PYTHONHASHSEED='1219',PYTHONDONTWRITEBYTECODE='1'))
 receipt=dict(evaluation_source_git_commit=SHA,remote_directory=ROOT,pid=p.pid,submitted_unix=started,
-    deployed_sha256=hashes,first_collect_unix=started+480,no_persistent_ssh=True,free_bytes=shutil.disk_usage(root).free)
+    deployed_sha256=hashes,first_collect_unix=started+360,no_persistent_ssh=True,free_bytes=shutil.disk_usage(root).free,
+    model_and_dependency_preflight=preflight)
 (root/'launch.json').write_text(json.dumps(receipt));print(json.dumps(receipt))
 ''')
     assert all(result['deployed_sha256'][n]==digest(HERE/n) for n in FILES)
     write_json(HERE/'launch.json',result)
-    write_json(HERE/'state.json',dict(phase='submitted',inspections=0,maximum_inspections=2,planned_collect_unix=result['first_collect_unix']))
+    write_json(HERE/'state.json',dict(phase='submitted',inspections=1,maximum_inspections=2,planned_collect_unix=result['first_collect_unix'],
+        first_inspection_failed_before_test_images=True))
     print(json.dumps(result))
 def collect():
     d=json.loads((HERE/'launch.json').read_text());state=json.loads((HERE/'state.json').read_text())

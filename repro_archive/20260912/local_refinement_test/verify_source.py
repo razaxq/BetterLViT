@@ -8,7 +8,7 @@ HERE=Path(__file__).resolve().parent;DOCS=HERE.parents[2]
 def read(p):return json.loads(p.read_text(encoding='utf-8'))
 a=read(HERE/'authorization.json');d=read(HERE/'launch.json')
 sha=d['evaluation_source_git_commit']
-assert subprocess.check_output(['git','rev-parse','test-local-refinement-f-20260912'],cwd=DOCS,text=True).strip()==sha
+assert subprocess.check_output(['git','rev-parse','test-local-refinement-f-v2-20260912'],cwd=DOCS,text=True).strip()==sha
 for name,expected in d['deployed_sha256'].items():
     path=(DOCS/a['historical_test_relative']) if name=='r2_historical_test.json' else HERE/name
     assert digest(path)==expected

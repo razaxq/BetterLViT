@@ -79,6 +79,10 @@ def main(args,runtime):
             assert all(torch.isfinite(t).all() for t in head.state_dict().values())
             assert state_hash(head)==A['head_state_sha256'][key]
             heads[key]=head;head_before[key]=state_hash(head)
+    if args.preflight_only:
+        write_json(args.output/'preflight.json',dict(verified=True,evaluation_source_git_commit=args.source_sha,
+            head_states=head_before,baseline_state_sha256=before,test_images_loaded=0,heads_loaded=20))
+        return
     workbook=Path(config.test_dataset)/'Test_text.xlsx'
     texts=read_text(str(workbook))
     dataset=ImageToImage2D(config.test_dataset,config.task_name,texts,ValGenerator([224,224]),image_size=224)
@@ -140,11 +144,12 @@ def main(args,runtime):
         maximum_allocated_gpu_bytes=torch.cuda.max_memory_allocated()))
 
 if __name__=='__main__':
-    ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,required=True);ap.add_argument('--source-sha',required=True);args=ap.parse_args()
+    ap=argparse.ArgumentParser();ap.add_argument('--output',type=Path,required=True);ap.add_argument('--source-sha',required=True)
+    ap.add_argument('--preflight-only',action='store_true');args=ap.parse_args()
     args.output.mkdir(exist_ok=False);runtime=dict(phase='loading',evaluation_source_git_commit=args.source_sha,started_unix=time.time())
     write_json(args.output/'runtime.json',runtime)
     try:
-        main(args,runtime);runtime.update(phase='complete',samples=2113,completed_unix=time.time())
+        main(args,runtime);runtime.update(phase='complete',samples=0 if args.preflight_only else 2113,completed_unix=time.time())
         runtime['artifacts']={p.name:dict(bytes=p.stat().st_size,sha256=digest(p)) for p in args.output.iterdir() if p.name!='runtime.json'}
     except BaseException:
         runtime.update(phase='failed',failed_unix=time.time(),error=traceback.format_exc());traceback.print_exc()
