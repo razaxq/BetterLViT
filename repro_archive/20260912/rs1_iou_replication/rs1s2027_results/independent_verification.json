@@ -1,0 +1,17 @@
+{
+  "verified": true,
+  "source_git_commit": "758c6c54d47129dd4130c567668d2ab0271144c3",
+  "seed": 2027,
+  "epochs": 80,
+  "samples": 1429,
+  "best_epoch": 68,
+  "actual_lr_matches_manifest": true,
+  "macro_metrics_recomputed_from_integer_counts": true,
+  "audits_state_preserving": true,
+  "test_split_accessed": false,
+  "inspection_number": 2,
+  "seconds_after_training_end": 447.4459340572357,
+  "within_30_minutes": true,
+  "export_minus_selection_iou": 9.620823027134406e-10,
+  "metric_reconciliation_verified": false
+}

@@ -11,7 +11,7 @@ from huggingface_hub import HfApi,get_token
 from remote_ops import HERE,KEY,remote,save
 
 BUCKET='razaxq/BetterLViT'
-HELPER=HERE.parents[1]/'20260910/hf_recovery/upload_verified_manifest.py'
+HELPER=HERE/'upload_verified_manifest.py'
 
 
 def main():

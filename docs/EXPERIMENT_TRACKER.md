@@ -14,7 +14,18 @@
 
 ## IoU优先：RS1独立种子复验（2026-09-12）
 
-**2027首检完成：** 悉尼2026-09-12 14:48:58.095一次短连接确认已完成4/80轮，第5轮进行到日志记录的200/357 batch；GPU100%、显存17,402MiB，日志尾部无致命异常。运行来源`758c6c54d47129dd4130c567668d2ab0271144c3`与冻结manifest完全一致，远端跟踪文件干净。第2—4轮平均217.135353秒，加120秒后续诊断余量，预测今天**19:24:08**训练结束。原生heartbeat `betterlvit` 已改约**今天19:37（悉尼时间）唯一末检**并核验实际生效配置，当前检查1/2，不再中途连接。尚无完整Val/Test成绩；3407等待2027完成、核验、HF/GitHub归档后接续。[首检与实测预测](../repro_archive/20260912/rs1_iou_replication/rs1s2027_first_snapshot.json)、[末检定时核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_automation_final_verified.json)。
+**2027已完成并备份：** 悉尼2026-09-12 19:30:36.105完成80轮，19:32:22.915完成1429张Val导出，Best68。唯一末检19:38:03.551，距训练结束447.446秒（7.457分钟）、距全部评估结束340.636秒，检查2/2已关闭且符合半小时要求。两项返回码0、完整来源`758c6c54d47129dd4130c567668d2ab0271144c3`、manifest、80轮实际学习率、Best选择、逐图整数计数/宏平均、四次Train诊断的模型/梯度/RNG状态恢复均核验通过。导出与训练选择IoU仅差9.621e-10，无需重评；本阶段未访问Test。[完成快照](../repro_archive/20260912/rs1_iou_replication/rs1s2027_final_snapshot.json)、[独立核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_results/independent_verification.json)。
+
+| seed2027，Val | IoU | Dice | Precision | Recall | Brier |
+|---|---:|---:|---:|---:|---:|
+| R2同种子 | 73.0481% | 82.7094% | 81.1339% | 87.9701% | 0.020810 |
+| RS1 | 73.0666% | 82.7017% | 80.9182% | 88.2547% | 0.020601 |
+
+RS1−R2 IoU **+0.0185 pp**，1194个可识别患者/文件组的描述性95%区间[−0.2538,+0.2941] pp；Dice−0.0076 pp、Precision−0.2158 pp、Recall+0.2846 pp、Brier−0.00020859。358张最小GT面积组（≤2075像素）IoU−0.4751 pp、Dice−0.4414 pp、Recall+0.5909 pp；像素总FP减少6742、FN减少10068，但不能将这些全局计数代替逐图macro指标。此种子只呈近乎持平的IoU点估计，尚未复现旧1219的明显收益；不以Precision下降单独否决，也不据此取消3407。两新种子的正式整体门需待3407完成后统一判断。[完整报告及配对结果](../repro_archive/20260912/rs1_iou_replication/rs1s2027_results/REPORT.md)。
+
+HF Bucket `razaxq/BetterLViT/758c6c54/` 于悉尼19:43:07.876完成24文件、1,694,459,127字节的路径/大小/Xet双端核验，包含Best/Last、源码、日志、Val及分析；11份下载的静态run产物（2,494,575字节）独立Xet一致，原Best/Last保留。训练盘可用4,202,373,120字节，fs实际18,559,782,256字节。为识别本批独立种子分类，上传器使用本执行目录的专属helper并保留旧helper；未修改训练源或推进门。[云端备份核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_results/hf_upload_verified.json)、[下载文件核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_results/download_xet_verified.json)。
+
+**2027首检历史：** 悉尼2026-09-12 14:48:58.095一次短连接确认已完成4/80轮，第5轮进行到日志记录的200/357 batch；GPU100%、显存17,402MiB，日志尾部无致命异常。来源和manifest一致、远端跟踪文件干净；第2—4轮平均217.135353秒，加120秒余量预测19:24:08结束，并将唯一末检安排到19:37。实际完成/末检时间以以上完成记录为准。[首检与实测预测](../repro_archive/20260912/rs1_iou_replication/rs1s2027_first_snapshot.json)、[原末检定时核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_automation_final_verified.json)。
 
 **2027提交历史：** 悉尼2026-09-12 14:32:10.865以PID301242提交后台80轮；提交前训练盘余5,918,408,704字节，fs18,559,782,256字节，Python3.12.3/Torch2.9.1+cu128。当时仅有dispatch回执、检查0/2，按历史耗时初估19:25:45结束，已由上述首检实测预测更新。[启动回执](../repro_archive/20260912/rs1_iou_replication/rs1s2027_launch.json)、[原首检定时](../repro_archive/20260912/rs1_iou_replication/automation_launch_verified.json)。
 

@@ -5,7 +5,7 @@
   "pid": 301242,
   "started_unix": 1789187530.8650942,
   "dispatch_only": true,
-  "inspections_completed": 1,
+  "inspections_completed": 2,
   "scratch_free_bytes": 5918408704,
   "fs_bytes": 18559782256,
   "test_split_accessed": false,
@@ -26,11 +26,11 @@
   "initial_prediction_training_seconds": 17614.29706096649,
   "initial_predicted_training_end_unix": 1789205145.1621552,
   "initial_predicted_training_end_sydney": "2026-09-12T19:25:45.162155+10:00",
-  "inspection_attempt_started_unix": 1789188533.3724003,
+  "inspection_attempt_started_unix": 1789205878.3246608,
   "mean_epoch_seconds": 217.1353534863641,
   "predicted_training_end_unix": 1789205047.7338417,
   "final_check_unix": 1789205820,
   "remaining_audit_allowance_seconds": 120,
-  "last_phase": "training",
-  "last_checked_unix": 1789188538.094822
+  "last_phase": "complete",
+  "last_checked_unix": 1789205883.5507884
 }

@@ -36,6 +36,8 @@ python -X utf8 repro_archive/20260912/rs1_iou_replication/publish.py --completed
 
 If selection/export IoU differs by>=1e-7, run the existing `reconcile_iou.py --label LABEL` on that completed Best only, then re-run analysis. This retains original exports and independently explains `>=0.5` float32 training versus `>0.5` float64 export; it cannot change selected epoch, metric convention, or gate. Update the tracker with all results, actual timing and verified upload receipts before publication. HF upload uses cached credentials over stdin, short training SHA prefix, additive writes, independent path/size/Xet listing and preserved originals. Never print tokens. Do not declare an upload complete without receipts.
 
+The uploader uses the experiment-local `upload_verified_manifest.py`: its accepted classification is specifically `completed_validation_only_80e_independent_seed_replication`, requiring successful training/Val return codes, Test=false and the matching full-SHA/short-prefix relation. This helper was isolated from the historical HF helper before the first replication upload, whose old allowlist lacked this new classification; no trained source, analysis criterion or historical helper was changed.
+
 After2027 archival/publishing, dispatch3407 even if2027 numeric IoU is negative; update the same heartbeat to its first check. After3407 archival/publishing, run `analyze.py --aggregate`, publish the report and follow `TEXT_NEXT.md` using the selected common recipe. Do not re-open old F experiments or use the old precision veto. If there is no new live training, pause the heartbeat after the completed-stage report; any next training needs its own registered source/recipe and predictive schedule.
 
 ## Storage
