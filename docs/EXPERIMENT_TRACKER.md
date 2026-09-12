@@ -14,6 +14,8 @@
 
 ## IoU优先：RS1独立种子复验（2026-09-12）
 
+**3407已提交：** 2027完成核验、HF备份及GitHub发布`dd5d419948b61fd543bf3fd7a28bcf7d4af9e374`后，悉尼2026-09-12 19:44:16.801以PID312385提交下一组80轮，来源`ec3d45cc43710b239e3dadef3f99eb1e2823aa8e`，tag `experiment-rs1-iou-80e-seed3407-20260912`，保持原冻结配方。提交前训练盘可用4,202,373,120字节，满足>4GB启动门。原生heartbeat `betterlvit` 已改约**今天20:00悉尼时间首检**并核验实际配置；按历史RS1耗时初估**9月13日00:37:51**训练结束，首检后以实测速率更新唯一末检。目前只有提交回执、检查0/2，无3407健康状态或成绩；不重复查询已关闭的2027。[3407提交](../repro_archive/20260912/rs1_iou_replication/rs1s3407_launch.json)、[首检定时核验](../repro_archive/20260912/rs1_iou_replication/rs1s3407_automation_first_verified.json)。
+
 **2027已完成并备份：** 悉尼2026-09-12 19:30:36.105完成80轮，19:32:22.915完成1429张Val导出，Best68。唯一末检19:38:03.551，距训练结束447.446秒（7.457分钟）、距全部评估结束340.636秒，检查2/2已关闭且符合半小时要求。两项返回码0、完整来源`758c6c54d47129dd4130c567668d2ab0271144c3`、manifest、80轮实际学习率、Best选择、逐图整数计数/宏平均、四次Train诊断的模型/梯度/RNG状态恢复均核验通过。导出与训练选择IoU仅差9.621e-10，无需重评；本阶段未访问Test。[完成快照](../repro_archive/20260912/rs1_iou_replication/rs1s2027_final_snapshot.json)、[独立核验](../repro_archive/20260912/rs1_iou_replication/rs1s2027_results/independent_verification.json)。
 
 | seed2027，Val | IoU | Dice | Precision | Recall | Brier |
