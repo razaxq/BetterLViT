@@ -44,3 +44,13 @@ end estimate is2026-09-14 00:13:41; replace it with the first-inspection forecas
 Four historical pilot backups (24files) were verified before removing only
 their inactive local Last copies. All corresponding Best files remain. Scratch
 free6647136256 bytes at launch; shared18559782256 bytes. Do not repeat cleanup.
+
+## First inspection verified
+
+At2026-09-13 19:42:22 Australia/Sydney, M1 had completed4/80 epochs, with
+logged training progress epoch5 batch160/357. Source and manifest matched;
+GPU100%,17404MiB; no fatal error in the saved log tail. This is a health
+snapshot, not a formal result. Epochs2-4 averaged215.057984seconds. Predicted
+training end2026-09-14 00:13:13; the only final inspection is scheduled at00:26
+and verified against native app settings. Inspection budget used1/2. No extra
+training status access is permitted before that appointment. M2 remains queued.
