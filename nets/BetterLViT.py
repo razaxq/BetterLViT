@@ -74,11 +74,12 @@ class BetterLViT(LViT):
         if mode != 'none':
             if self.decoder_fusion_mode != 'fam_eppa_v4b' or self.use_lora or self.visual_prior is not None:
                 raise ValueError('Decoder controls require frozen-text FAM-EPPA without external visual prior')
-            from .decoder_context import DecoderContextAdapter
+            from .decoder_context import DecoderContextAdapter, VisualValueRegroupAdapter
             # Construct after every original module; restore CPU RNG so original
             # weights AND subsequent dropout/sampler RNG match the R2 control.
             with torch.random.fork_rng(devices=[]):
-                self.decoder_context = DecoderContextAdapter(mode)
+                self.decoder_context = (VisualValueRegroupAdapter(mode)
+                    if mode.startswith('regroup_') else DecoderContextAdapter(mode))
 
     def _inject_visual_prior(self, feature, image):
         if self.visual_prior is None:

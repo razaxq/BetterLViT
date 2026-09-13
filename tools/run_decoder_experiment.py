@@ -29,9 +29,11 @@ def main():
     manifest_path = repo / 'experiment_manifests' / 'active_decoder.json'
     manifest = json.loads(manifest_path.read_text())
     validate_recipe_manifest(manifest)
-    assert manifest['profile'] in ('t1_decoder_visual','t2_decoder_text')
+    modes = {'t1_decoder_visual':'visual', 't2_decoder_text':'text',
+             'm1_visual_regroup':'regroup_visual', 'm2_text_regroup':'regroup_text'}
+    assert manifest['profile'] in modes
     assert manifest['seed']==1219 and manifest['adapter_parameters']==16896
-    assert manifest['decoder_context_mode']=={'t1_decoder_visual':'visual','t2_decoder_text':'text'}[manifest['profile']]
+    assert manifest['decoder_context_mode']==modes[manifest['profile']]
     assert not list((repo/'Covid19').glob('**/*.pth.tar')), 'Never retrain a used worktree'
     assert shutil.disk_usage(repo).free>4_000_000_000
     assert int(subprocess.check_output(['du','-sb','/autodl-fs/data'],text=True).split()[0])<20_000_000_000

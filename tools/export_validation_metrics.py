@@ -45,6 +45,7 @@ ALLOWED_EXPERIMENTS = (
     "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
     "r1_chest_augmentation", "r2_single_cosine",
     "t1_decoder_visual", "t2_decoder_text",
+    "m1_visual_regroup", "m2_text_regroup",
 )
 
 

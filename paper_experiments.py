@@ -218,6 +218,17 @@ for _name, _id, _mode in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+for _name, _id, _mode in (
+    ('m1_visual_regroup', 'M1', 'regroup_visual'),
+    ('m2_text_regroup', 'M2', 'regroup_text'),
+):
+    _profile = dict(PAPER_EXPERIMENTS['r2_single_cosine'])
+    _profile.update(paper_id=_id, decoder_context_mode=_mode,
+        description='R2 + image-value context regrouping with ' + _mode + ' anchors',
+        architecture_version='decoder_visual_value_regroup_v1_' + _mode)
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()
