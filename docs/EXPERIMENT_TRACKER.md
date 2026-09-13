@@ -12,6 +12,18 @@
 - 当前及后续架构实验不使用 LoRA。Focal 可以使用；禁止使用 boundary loss，正式配置必须保持 `boundary_loss=0.0`。
 - C0/P5 是已完成的 Dice/Tversky 配对验证：`0.5 * Dice + 0.5 * Tversky`，Tversky 的 FP/FN 权重为 `0.7/0.3`。这不代表后续主线禁用 Focal。
 
+## 第二创新点执行：M1/M2视觉特征分组候选（2026-09-13）
+
+用户要求“出一个计划后直接进行”。继T1/T2及固定T2干预后，另外登记文字引导视觉分组与回传的候选假说。新分支的Q来自图像、K来自视觉或文字锚点、V始终来自图像；同一相似度分别按锚点和图像位置归一化，汇集后回传，减去本位置投影形成残差。位于up3后、up2前，保留EPPA V4-B与原R2配方。此为机制探索，不是已确认的第二创新点；OCR/RecLMIS相关先例和旧短语拒配入口失败的事实均已写入协议。
+
+M1 `04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d`，tag `experiment-m1-regroup-80e-seed1219-20260913`；M2 `8930f4b39b155d927c1556f396fb4919ca5c7c94`，tag `experiment-m2-regroup-80e-seed1219-20260913`。共用开发实现 `878cfd67c6792e467f5da49bdd74cad3aee0ffc5`，独立冻结manifest。两组均16896参数、80轮、seed1219、batch16，无LoRA、Dice/Focal、boundary0、单次余弦；先M1再M2，M1排名不决定是否取消M2。源码及四个GitHub refs已独立解析核验。
+
+行为检查及六项五步真实Train CUDA预检均通过：关闭模块与原R2五步输出/loss精确相同；候选初始base/RNG/输出一致、两候选初始adapter一致；正常梯度、empty/padding处理、纯图像value数据流、观察日志不干扰。两组峰值分配16659145216/16659145728字节；预检steady约0.5802/0.5786秒每batch，只代表预检耗时，不是整轮性能结论。无Val/Test预检访问。详细见[中文计划](../repro_archive/20260913/visual_value_regroup/PLAN.md)、[事前协议](../repro_archive/20260913/visual_value_regroup/PROTOCOL.md)、[预检证据](../repro_archive/20260913/visual_value_regroup/preflight_verified.json)。
+
+事前发现门：M2-R2 macro IoU至少+0.003且分组描述性95%CI下限>0；M2-M1 IoU及CI下限>0；M2对两者Dice及小病灶IoU不退化。阈值固定>0.5、完整1429张Val，无新Test。通过后才额外种子和机制消融；本阶段不能声称稳定增益或创新成立。
+
+执行状态：预检完成，历史模型备份与空间准备进行中，尚未正式派发训练；实际派发后更新此状态。历史备份仅保存已完成checkpoint/source，不重新认证其评估成绩。
+
 ## 第二创新点执行：T2干预与机制重审（2026-09-13）
 
 用户明确最终目标是找到第二创新点，并授权“按你说的办”。以与FAM-EPPA配合的可验证结构贡献为目标，不将普通注意力、调参或仅阈值收益认领为第二创新。

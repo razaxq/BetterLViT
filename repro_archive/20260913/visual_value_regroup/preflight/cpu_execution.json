@@ -1,0 +1,87 @@
+{
+  "returncode": 0,
+  "result": {
+    "status": "ok",
+    "parameters": 16896,
+    "initialization_and_rng_exact": true,
+    "masking_and_empty": true,
+    "visual_values_only": true,
+    "zero_image_no_injection": true,
+    "constant_image_no_injection": true,
+    "observation_forward_exact": true,
+    "checks": {
+      "regroup_visual": {
+        "constant_image_max_error": 5.960464477539063e-08,
+        "gradients": [
+          {
+            "query_norm.weight": 0.0,
+            "query_norm.bias": 0.0,
+            "context_norm.weight": 0.0,
+            "context_norm.bias": 0.0,
+            "query.weight": 0.0,
+            "key.weight": 0.0,
+            "value.weight": 0.0,
+            "output.weight": 0.0002582729503046721
+          },
+          {
+            "query_norm.weight": 3.866813585773343e-06,
+            "query_norm.bias": 4.724635616071282e-08,
+            "context_norm.weight": 6.51833786946554e-08,
+            "context_norm.bias": 3.003675033141917e-07,
+            "query.weight": 6.670143761766667e-07,
+            "key.weight": 3.7823193110853026e-07,
+            "value.weight": 5.484690973389661e-06,
+            "output.weight": 0.00025815932895056903
+          },
+          {
+            "query_norm.weight": 7.85028259997489e-06,
+            "query_norm.bias": 9.892868035876745e-08,
+            "context_norm.weight": 1.4741512188720662e-07,
+            "context_norm.bias": 6.457125891756732e-07,
+            "query.weight": 1.4041664826436318e-06,
+            "key.weight": 7.851309078432678e-07,
+            "value.weight": 1.0972788913932163e-05,
+            "output.weight": 0.0002601936866994947
+          }
+        ]
+      },
+      "regroup_text": {
+        "constant_image_max_error": 5.960464477539063e-08,
+        "gradients": [
+          {
+            "query_norm.weight": 0.0,
+            "query_norm.bias": 0.0,
+            "context_norm.weight": 0.0,
+            "context_norm.bias": 0.0,
+            "query.weight": 0.0,
+            "key.weight": 0.0,
+            "value.weight": 0.0,
+            "output.weight": 0.00014354160521179438
+          },
+          {
+            "query_norm.weight": 1.9798067114606965e-06,
+            "query_norm.bias": 3.0185610455646383e-08,
+            "context_norm.weight": 2.1278029294080625e-07,
+            "context_norm.bias": 3.580152849735896e-07,
+            "query.weight": 7.228417189253378e-07,
+            "key.weight": 7.54231848532072e-07,
+            "value.weight": 3.3001467727444833e-06,
+            "output.weight": 0.00014347674732562155
+          },
+          {
+            "query_norm.weight": 4.040176463604439e-06,
+            "query_norm.bias": 6.398754948122587e-08,
+            "context_norm.weight": 4.7600343577869353e-07,
+            "context_norm.bias": 8.00590100880072e-07,
+            "query.weight": 1.533177737655933e-06,
+            "key.weight": 1.5616176369803725e-06,
+            "value.weight": 6.601410859730095e-06,
+            "output.weight": 0.00014817189367022365
+          }
+        ]
+      }
+    }
+  },
+  "stdout": "{\"status\": \"ok\", \"parameters\": 16896, \"initialization_and_rng_exact\": true, \"masking_and_empty\": true, \"visual_values_only\": true, \"zero_image_no_injection\": true, \"constant_image_no_injection\": true, \"observation_forward_exact\": true, \"checks\": {\"regroup_visual\": {\"constant_image_max_error\": 5.960464477539063e-08, \"gradients\": [{\"query_norm.weight\": 0.0, \"query_norm.bias\": 0.0, \"context_norm.weight\": 0.0, \"context_norm.bias\": 0.0, \"query.weight\": 0.0, \"key.weight\": 0.0, \"value.weight\": 0.0, \"output.weight\": 0.0002582729503046721}, {\"query_norm.weight\": 3.866813585773343e-06, \"query_norm.bias\": 4.724635616071282e-08, \"context_norm.weight\": 6.51833786946554e-08, \"context_norm.bias\": 3.003675033141917e-07, \"query.weight\": 6.670143761766667e-07, \"key.weight\": 3.7823193110853026e-07, \"value.weight\": 5.484690973389661e-06, \"output.weight\": 0.00025815932895056903}, {\"query_norm.weight\": 7.85028259997489e-06, \"query_norm.bias\": 9.892868035876745e-08, \"context_norm.weight\": 1.4741512188720662e-07, \"context_norm.bias\": 6.457125891756732e-07, \"query.weight\": 1.4041664826436318e-06, \"key.weight\": 7.851309078432678e-07, \"value.weight\": 1.0972788913932163e-05, \"output.weight\": 0.0002601936866994947}]}, \"regroup_text\": {\"constant_image_max_error\": 5.960464477539063e-08, \"gradients\": [{\"query_norm.weight\": 0.0, \"query_norm.bias\": 0.0, \"context_norm.weight\": 0.0, \"context_norm.bias\": 0.0, \"query.weight\": 0.0, \"key.weight\": 0.0, \"value.weight\": 0.0, \"output.weight\": 0.00014354160521179438}, {\"query_norm.weight\": 1.9798067114606965e-06, \"query_norm.bias\": 3.0185610455646383e-08, \"context_norm.weight\": 2.1278029294080625e-07, \"context_norm.bias\": 3.580152849735896e-07, \"query.weight\": 7.228417189253378e-07, \"key.weight\": 7.54231848532072e-07, \"value.weight\": 3.3001467727444833e-06, \"output.weight\": 0.00014347674732562155}, {\"query_norm.weight\": 4.040176463604439e-06, \"query_norm.bias\": 6.398754948122587e-08, \"context_norm.weight\": 4.7600343577869353e-07, \"context_norm.bias\": 8.00590100880072e-07, \"query.weight\": 1.533177737655933e-06, \"key.weight\": 1.5616176369803725e-06, \"value.weight\": 6.601410859730095e-06, \"output.weight\": 0.00014817189367022365}]}}}\n",
+  "stderr": "/root/autodl-tmp/BetterLViT-regroup-m1/tools/check_visual_value_regroup.py:33: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.\nConsider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)\n  err=float((m(flat,text,mask)-flat).abs().max());assert err<2e-6\n"
+}

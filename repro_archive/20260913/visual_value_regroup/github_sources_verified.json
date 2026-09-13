@@ -1,0 +1,10 @@
+{
+  "verified": true,
+  "repository": "https://github.com/razaxq/BetterLViT.git",
+  "refs": {
+    "refs/heads/paper/m1-regroup-80e-seed1219": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+    "refs/heads/paper/m2-regroup-80e-seed1219": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+    "refs/tags/experiment-m1-regroup-80e-seed1219-20260913": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+    "refs/tags/experiment-m2-regroup-80e-seed1219-20260913": "8930f4b39b155d927c1556f396fb4919ca5c7c94"
+  }
+}

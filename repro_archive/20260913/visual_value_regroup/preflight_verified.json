@@ -1,0 +1,62 @@
+{
+  "verified": true,
+  "baseline_five_steps_exact": true,
+  "initial_weights_rng_and_output_exact": true,
+  "observations_noninterference_exact": true,
+  "matched_parameters": 16896,
+  "candidates": {
+    "m1": {
+      "source_git_commit": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+      "peak_allocated_bytes": 16659145216,
+      "steady_seconds_per_batch": 0.5802289644877116,
+      "shapes": {
+        "feature": [
+          16,
+          128,
+          56,
+          56
+        ],
+        "text": [
+          16,
+          32,
+          128
+        ]
+      },
+      "residual_rms_each_step": [
+        0.0,
+        0.00010016774467658252,
+        0.00015847125905565917,
+        0.00019667638116516173,
+        0.0002465081633999944
+      ]
+    },
+    "m2": {
+      "source_git_commit": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+      "peak_allocated_bytes": 16659145728,
+      "steady_seconds_per_batch": 0.5785694122314453,
+      "shapes": {
+        "feature": [
+          16,
+          128,
+          56,
+          56
+        ],
+        "text": [
+          16,
+          32,
+          128
+        ]
+      },
+      "residual_rms_each_step": [
+        0.0,
+        0.00010015389852924272,
+        0.00015900959260761738,
+        0.00019739240815397352,
+        0.00024839540128596127
+      ]
+    }
+  },
+  "formal_training_performed": false,
+  "test_split_accessed": false,
+  "val_split_accessed": false
+}

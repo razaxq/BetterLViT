@@ -1,0 +1,26 @@
+{
+  "m1": {
+    "source_git_commit": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+    "development_source_git_commit": "878cfd67c6792e467f5da49bdd74cad3aee0ffc5",
+    "branch": "paper/m1-regroup-80e-seed1219",
+    "experiment_tag": "experiment-m1-regroup-80e-seed1219-20260913",
+    "local_repository": "D:\\BetterLViT\\regroup_m1_work",
+    "repository": "/root/autodl-tmp/BetterLViT-regroup-m1",
+    "remote_run": "/root/autodl-tmp/visual_regroup_runs/m1_80e_20260913",
+    "profile": "m1_visual_regroup",
+    "seed": 1219,
+    "previous_label": null
+  },
+  "m2": {
+    "source_git_commit": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+    "development_source_git_commit": "878cfd67c6792e467f5da49bdd74cad3aee0ffc5",
+    "branch": "paper/m2-regroup-80e-seed1219",
+    "experiment_tag": "experiment-m2-regroup-80e-seed1219-20260913",
+    "local_repository": "D:\\BetterLViT\\regroup_m2_work",
+    "repository": "/root/autodl-tmp/BetterLViT-regroup-m2",
+    "remote_run": "/root/autodl-tmp/visual_regroup_runs/m2_80e_20260913",
+    "profile": "m2_text_regroup",
+    "seed": 1219,
+    "previous_label": "m1"
+  }
+}
