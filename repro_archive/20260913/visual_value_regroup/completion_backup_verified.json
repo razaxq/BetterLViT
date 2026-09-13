@@ -1,0 +1,21 @@
+{
+  "verified": true,
+  "bucket": "razaxq/BetterLViT",
+  "prefix": "475fa5f7",
+  "files": {
+    "475fa5f7/discovery_evidence.tar.gz": {
+      "bytes": 1040525,
+      "xet_hash": "4f162139bdeab76a5ceae4d58f9601e3c893c9a2ee65e8b727321cd9406bb87b"
+    },
+    "475fa5f7/manifest.json": {
+      "bytes": 26188,
+      "xet_hash": "06555f4798e36f346277dcd6fac8a57ffdd67c8891393c2f12ab9d0d4a04fd60"
+    }
+  },
+  "archived_file_count": 127,
+  "logical_bytes": 1066713,
+  "additive_only": true,
+  "new_weights_uploaded": false,
+  "documentation_source_git_commit": "475fa5f724f345b5e53981a8a23480efff0290e8",
+  "discovery_gate_passed": false
+}

@@ -24,7 +24,7 @@ M2已完成80轮训练和1429张Val自动导出，Best67，源`8930f4b39b155d927
 
 M2-R2 IoU -0.0682 pp，分组描述性95%CI[-0.3521,+0.2198] pp；M2-M1 IoU -0.1855 pp，CI[-0.4384,+0.0671] pp，均跨0。M2-R2最小病灶358张IoU -0.7793 pp、Dice -0.7677 pp、Precision -1.7827 pp、Recall +1.5494 pp；总体FP +55995、FN -26705像素。相对M1小病灶IoU -0.6853 pp，总体FP +45830。限制新增值向量来自图像，在此配置下仍未避免预测范围扩大的表现；不能据此确定退化的唯一因果机制。
 
-结果不满足原定发现门，未证明文字锚点的独立收益，也不能声称第二创新点成立。本版本不扩展额外种子、延长训练、调阈值或新增Test，不改预注册门槛。M2已归档至HF `razaxq/BetterLViT/8930f4b3/`，22文件、1694304312字节，双端size/Xet和本地下载核验通过，Best/Last保留；M1此前21文件归档同样完成。冻结判据脚本已执行，八项条件均未通过，最终decision已保存。本批heartbeat已通过原生工具删除并核验配置文件不存在。最近完成快照GPU空闲；没有第三次训练轮询。shared实际18559782256字节，M2归档后scratch可用3214114816字节。单种子Val不能证明所有类似机制无效。 [中文完整报告](../repro_archive/20260913/visual_value_regroup/RESULTS_ZH.md)、[冻结判据结果](../repro_archive/20260913/visual_value_regroup/discovery_decision.json)。
+结果不满足原定发现门，未证明文字锚点的独立收益，也不能声称第二创新点成立。本版本不扩展额外种子、延长训练、调阈值或新增Test，不改预注册门槛。M2已归档至HF `razaxq/BetterLViT/8930f4b3/`，22文件、1694304312字节，双端size/Xet和本地下载核验通过，Best/Last保留；M1此前21文件归档同样完成。冻结判据脚本已执行，八项条件均未通过，最终decision已保存。本批heartbeat已通过原生工具删除并核验配置文件不存在。最近完成快照GPU空闲；没有第三次训练轮询。shared实际18559782256字节，M2归档后scratch可用3214114816字节。单种子Val不能证明所有类似机制无效。 完整收尾资料已另备份至HF `razaxq/BetterLViT/475fa5f7/`：127份复现文件，两个上传对象共1066713字节，云端size/Xet及归档内逐文件SHA256核验通过，不重复上传模型。 [中文完整报告](../repro_archive/20260913/visual_value_regroup/RESULTS_ZH.md)、[冻结判据结果](../repro_archive/20260913/visual_value_regroup/discovery_decision.json)。
 
 ## 第二创新点执行：M1/M2视觉特征分组候选（2026-09-13）
 
