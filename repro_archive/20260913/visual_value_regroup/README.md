@@ -77,3 +77,13 @@ matched preflight timings. M2 inspections0/2; dispatch only, no health/result
 claim yet. Do not restart M1 or M2. Current state:m2_state.json. M1 results and
 all four archival proofs are under m1_results. transition_verified.json records
 the completed handoff. No new Test access; the second innovation remains unproven.
+
+## M2 first inspection verified
+
+At2026-09-14 00:50:55 Sydney, M2 completed4/80 epochs; latest saved Train
+progress was epoch5 batch260/357. GPU99%,17404MiB, source/manifest matched,
+source clean, no fatal error in the saved log tail. No new Test access.
+Epochs2-4 averaged218.669116seconds; predicted training end05:25:18. The sole
+final inspection is scheduled05:38 and native app settings were verified.
+Inspection budget used1/2. No further routine status access until that time.
+These are health observations, not formal results. M1 remains fully archived.
