@@ -1,0 +1,11 @@
+{
+  "verified": true,
+  "label": "m2",
+  "phase": "first",
+  "automation_id": "betterlvit-m1-m2",
+  "target_thread_id": "01a099db-3ddf-7df1-acbc-51b8f06ea9ae",
+  "planned_check_unix": 1789310940,
+  "rrule": "FREQ=DAILY;BYHOUR=0;BYMINUTE=49;BYSECOND=0",
+  "inspections_completed": 0,
+  "source_git_commit": "8930f4b39b155d927c1556f396fb4919ca5c7c94"
+}

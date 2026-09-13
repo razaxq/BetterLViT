@@ -1,0 +1,14 @@
+{
+  "verified": true,
+  "m1_completed_and_archived": true,
+  "m1_source_git_commit": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+  "m1_inspections": 2,
+  "m2_dispatched": true,
+  "m2_source_git_commit": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+  "m2_inspections": 0,
+  "m2_first_check_sydney": "2026-09-14T00:49:00+10:00",
+  "native_schedule_verified": true,
+  "test_split_accessed": false,
+  "second_innovation_confirmed": false,
+  "scope": "Completed M1 artifacts and M2 dispatch only; no M2 health inspection yet"
+}

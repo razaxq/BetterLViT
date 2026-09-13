@@ -1,0 +1,31 @@
+{
+  "source_git_commit": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+  "repository": "/root/autodl-tmp/BetterLViT-regroup-m2",
+  "remote_run": "/root/autodl-tmp/visual_regroup_runs/m2_80e_20260913",
+  "pid": 375088,
+  "started_unix": 1789309994.2682667,
+  "dispatch_only": true,
+  "inspections_completed": 0,
+  "scratch_free_bytes": 4930658304,
+  "fs_bytes": 18559782256,
+  "test_split_accessed": false,
+  "runtime_environment": {
+    "python": "3.12.3 | packaged by Anaconda, Inc. | (main, May  6 2024, 19:46:43) [GCC 11.2.0]",
+    "platform": "Linux-5.15.0-101-generic-x86_64-with-glibc2.35",
+    "packages": {
+      "torch": "2.9.1+cu128",
+      "numpy": "1.26.4",
+      "transformers": "4.57.6",
+      "torchvision": "0.24.1+cu128"
+    }
+  },
+  "planned_first_check_unix": 1789310940,
+  "initial_prediction_training_seconds": 17423.115864188287,
+  "initial_predicted_training_end_unix": 1789327417.384131,
+  "experiment_tag": "experiment-m2-regroup-80e-seed1219-20260913",
+  "initial_prediction_method": "completed_m1_actual_runtime_scaled_by_m2_over_m1_preflight",
+  "forecast_reference_source_git_commit": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+  "started_sydney": "2026-09-14T00:33:14.268267+10:00",
+  "planned_first_check_sydney": "2026-09-14T00:49:00+10:00",
+  "initial_predicted_training_end_sydney": "2026-09-14T05:23:37.384131+10:00"
+}

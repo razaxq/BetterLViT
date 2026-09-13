@@ -65,3 +65,15 @@ This single-seed visual control does not demonstrate stable gain or establish
 a text-specific contribution. Source/LR/counts/observers/checkpoint selection
 are verified; no new Test access. Cloud archival verified:21files,1694302126bytes under04be8e18, dual size/Xet checks; local downloaded run evidence verified. Best/Last retained. Do not launch
 M2 before all four completion/backup/download/GitHub proofs are verified.
+
+## M2 dispatched after all M1 archival gates
+
+M1 completion, cloud size/Xet checks, local downloaded artifact hashes, and
+GitHub publication all verified. M2 dispatched2026-09-14 00:33:14 Sydney,
+PID375088, source8930f4b39b155d927c1556f396fb4919ca5c7c94. Its first inspection
+is scheduled00:49 in the same native heartbeat and app settings are verified.
+Initial training end estimate05:23:37, based on completed M1 runtime scaled by
+matched preflight timings. M2 inspections0/2; dispatch only, no health/result
+claim yet. Do not restart M1 or M2. Current state:m2_state.json. M1 results and
+all four archival proofs are under m1_results. transition_verified.json records
+the completed handoff. No new Test access; the second innovation remains unproven.
