@@ -1,5 +1,11 @@
 # M1 / M2 visual-value regrouping discovery
 
+CURRENT STATUS: CLOSED. Both runs completed and archived. All eight discovery
+conditions failed; no Test access or seed expansion. Native heartbeat deleted
+and absence verified. See RESULTS_ZH.md, discovery_decision.json and
+batch_closed_verified.json. The second-innovation objective is not achieved.
+The dated sections below preserve execution history, not current pending work.
+
 This continues the user's authorized search for a second structural innovation
 complementary to EPPA. It follows the closed T1/T2 controls and frozen T2
 interventions. The previous phrase/null-match entry condition did not pass.

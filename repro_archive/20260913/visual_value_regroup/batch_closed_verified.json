@@ -1,0 +1,26 @@
+{
+  "verified": true,
+  "batch_closed": true,
+  "discovery_gate_passed": false,
+  "second_innovation_confirmed": false,
+  "automatic_expansion": false,
+  "test_split_accessed": false,
+  "automation_deleted": true,
+  "runs": {
+    "m1": {
+      "source_git_commit": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+      "phase": "complete",
+      "inspections": 2,
+      "hf_verified": true
+    },
+    "m2": {
+      "source_git_commit": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+      "phase": "complete",
+      "inspections": 2,
+      "hf_verified": true
+    }
+  },
+  "latest_completed_snapshot_gpu": "0 %, 1 MiB",
+  "extra_training_status_checks": false,
+  "scope": "Final immutable run evidence and local scheduling state; no third training inspection"
+}
