@@ -49,6 +49,10 @@ if selection.exists():
         lines+=['','Val阈值已冻结，Test最终结论仍待完成。']
 lines+=['','完整协议、冻结计划、源码、部署和下载哈希、逐图整数计数及阈值选择回执均保存在本目录。'
     '没有新训练或新checkpoint，因此不复制已有的大型模型文件。']
+if (HERE/'hf_upload_verified.json').exists():
+    b=read(HERE/'hf_upload_verified.json');assert b['verified']
+    lines+=['',f"HF备份已完成：{b['bucket']}/{b['prefix']}/，归档{b['archived_file_count']}份复现资料，"
+        f"两个上传文件共{b['logical_bytes']}字节，远端列表、大小与Xet哈希均匹配；没有重复上传模型权重。"]
 (HERE/'README.md').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
 tracker=DOCS/'docs/EXPERIMENT_TRACKER.md';text=tracker.read_text(encoding='utf-8')
 heading='## R2单模型快速IoU验证（2026-09-13）'
