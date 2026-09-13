@@ -1,0 +1,9 @@
+/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+Traceback (most recent call last):
+  File "/root/autodl-tmp/t2_intervention_20260913/diagnose.py", line 178, in <module>
+    main()
+  File "/root/autodl-tmp/t2_intervention_20260913/diagnose.py", line 134, in main
+    cached = cache[[lookup[str(n)] for n in bn]].cuda()
+                    ~~~~~~^^^^^^^^
+KeyError: 'covid_1002.png'

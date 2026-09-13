@@ -1,0 +1,25 @@
+{
+  "pid": 360038,
+  "started_unix": 1789288801.4860985,
+  "analysis_script_sha256": "8f3a3174c320e352ed93046d51a886b8d7a5bf20cff88446da127a77608b774c",
+  "command": [
+    "/root/autodl-tmp/envs/betterlvit-paper/bin/python",
+    "/root/autodl-tmp/t2_binding_probe_20260913/binding_probe.py",
+    "--repository",
+    "/root/autodl-tmp/BetterLViT-text-t2",
+    "--reference",
+    "/root/autodl-tmp/t2_binding_probe_20260913/reference.json",
+    "--output",
+    "/root/autodl-tmp/t2_binding_probe_20260913/result.json"
+  ],
+  "analysis_git_commit": "e3b9ab01baa9c5f8d66547368c0659302554cbac",
+  "resource_audit": {
+    "gpu_idle": true,
+    "disk": {
+      "total": 53687091200,
+      "used": 50411831296,
+      "free": 3275259904
+    }
+  },
+  "remote_run": "/root/autodl-tmp/t2_binding_probe_20260913"
+}

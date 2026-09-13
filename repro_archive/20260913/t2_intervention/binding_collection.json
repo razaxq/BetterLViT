@@ -1,0 +1,7 @@
+{
+  "checked_unix": 1789288901.3707027,
+  "complete": true,
+  "process_exists": false,
+  "log_tail": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n{\"phase\": \"binding\", \"samples\": 16, \"elapsed_seconds\": 25.329095363616943}\n{\"phase\": \"binding\", \"samples\": 496, \"elapsed_seconds\": 45.54852080345154}\n{\"phase\": \"binding\", \"samples\": 976, \"elapsed_seconds\": 65.44548439979553}\n{\"phase\": \"train_gradient\", \"batch\": 1, \"forward_absmax\": 0.0}\n{\"phase\": \"train_gradient\", \"batch\": 2, \"forward_absmax\": 0.0}\n{\"phase\": \"train_gradient\", \"batch\": 3, \"forward_absmax\": 0.0}\n{\"phase\": \"train_gradient\", \"batch\": 4, \"forward_absmax\": 0.0}\n{\"status\": \"complete\", \"eligible\": 257, \"elapsed_seconds\": 96.51849555969238}\n",
+  "result_sha256": "98ecf52442665d9b70d886fa7c35ce76a4924bd286dac3f2aaf8738ff332971f"
+}
