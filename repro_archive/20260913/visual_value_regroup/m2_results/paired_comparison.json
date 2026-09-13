@@ -1,0 +1,108 @@
+{
+  "seed": 1219,
+  "control_sha": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "candidate_sha": "8930f4b39b155d927c1556f396fb4919ca5c7c94",
+  "baseline": {
+    "iou": 0.7266535938268995,
+    "dice": 0.8240342867846576,
+    "precision": 0.8050860181894107,
+    "recall": 0.8805021187884409,
+    "brier": 0.02116154295342556
+  },
+  "candidate": {
+    "iou": 0.7259716405415201,
+    "dice": 0.823084329365361,
+    "precision": 0.7969861072647698,
+    "recall": 0.8894256259088177,
+    "brier": 0.021370204211861102
+  },
+  "deltas": {
+    "iou": {
+      "mean": -0.0006819532853793813,
+      "small_mean": -0.007793314588725657,
+      "ci95": [
+        -0.0035207369319736254,
+        0.002197835255986826
+      ],
+      "groups": 1194,
+      "explicit_patient_groups": 597,
+      "resamples": 10000,
+      "bootstrap_seed": 1219,
+      "interpretation": "Descriptive grouped image interval, not across-training-seed significance"
+    },
+    "dice": {
+      "mean": -0.0009499574192965934,
+      "small_mean": -0.007676829381960247,
+      "ci95": [
+        -0.003557804324700026,
+        0.0017957341230324469
+      ],
+      "groups": 1194,
+      "explicit_patient_groups": 597,
+      "resamples": 10000,
+      "bootstrap_seed": 1219,
+      "interpretation": "Descriptive grouped image interval, not across-training-seed significance"
+    },
+    "precision": {
+      "mean": -0.008099910924641029,
+      "small_mean": -0.017826824651855096,
+      "ci95": [
+        -0.011311205099323136,
+        -0.004966538981078311
+      ],
+      "groups": 1194,
+      "explicit_patient_groups": 597,
+      "resamples": 10000,
+      "bootstrap_seed": 1219,
+      "interpretation": "Descriptive grouped image interval, not across-training-seed significance"
+    },
+    "recall": {
+      "mean": 0.008923507120376855,
+      "small_mean": 0.015494332782167618,
+      "ci95": [
+        0.005222095562876131,
+        0.012714677373817493
+      ],
+      "groups": 1194,
+      "explicit_patient_groups": 597,
+      "resamples": 10000,
+      "bootstrap_seed": 1219,
+      "interpretation": "Descriptive grouped image interval, not across-training-seed significance"
+    },
+    "brier": {
+      "mean": 0.0002086612584355386,
+      "small_mean": 0.0006375193918752893,
+      "ci95": [
+        -8.34207862920267e-06,
+        0.0004287366623440404
+      ],
+      "groups": 1194,
+      "explicit_patient_groups": 597,
+      "resamples": 10000,
+      "bootstrap_seed": 1219,
+      "interpretation": "Descriptive grouped image interval, not across-training-seed significance"
+    }
+  },
+  "pixel_counts_reconstructed_and_metrics_verified": {
+    "control": {
+      "tp": 7880583,
+      "fp": 1384650,
+      "fn": 647116
+    },
+    "candidate": {
+      "tp": 7907288,
+      "fp": 1440645,
+      "fn": 620411
+    },
+    "delta": {
+      "tp": 26705,
+      "fp": 55995,
+      "fn": -26705
+    }
+  },
+  "small_area_cutoff": 2075.0,
+  "small_count": 358,
+  "split": "validation",
+  "test_split_accessed": false,
+  "discovery_seed_only": true
+}
