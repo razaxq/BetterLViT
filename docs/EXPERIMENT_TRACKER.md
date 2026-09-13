@@ -22,7 +22,14 @@ M1 `04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d`，tag `experiment-m1-regroup-80e-s
 
 事前发现门：M2-R2 macro IoU至少+0.003且分组描述性95%CI下限>0；M2-M1 IoU及CI下限>0；M2对两者Dice及小病灶IoU不退化。阈值固定>0.5、完整1429张Val，无新Test。通过后才额外种子和机制消融；本阶段不能声称稳定增益或创新成立。
 
-执行状态：M1已于悉尼2026-09-13 19:25:59.599派发后台，PID364010，源SHA与冻结版本一致；这是派发回执，尚未进行首轮健康检查，不能据此声称训练已完成。首检预约19:41，原生heartbeat `betterlvit-m1-m2` 已创建并核验实际配置，目标为当前线程。按历史R2耗时与预检比值初步预测M1训练于2026-09-14 00:13:41结束，首检后以实际epoch耗时修正。M1成功后自动Val导出、核验和备份，再自动接续M2；目前M2尚未派发。每组最多首检/末检两次。详见[m1_state.json](../repro_archive/20260913/visual_value_regroup/m1_state.json)。
+执行状态：M1的80轮训练与1429张Val导出均已完成，训练/验证退出码均0，Best为epoch67，源码与manifest匹配且源码干净。悉尼2026-09-14 00:26:59末检，距训练结束582.250秒，满足30分钟目标；检查已用2/2，不再轮询M1。固定阈值>0.5，macro指标已从逐图整数计数复算，实际LR和四个Train观察核验通过，导出与checkpoint选择IoU仅差1.793e-9，无需额外阈值核验。未新增Test访问。
+
+| 模型 | Val macro IoU | Dice | Precision | Recall | Brier |
+|---|---:|---:|---:|---:|---:|
+| R2复用 | 72.6654% | 82.4034% | 80.5086% | 88.0502% | 0.02116154 |
+| M1视觉聚合 | 72.7827% | 82.5333% | 80.4997% | 88.3978% | 0.02103743 |
+
+M1-R2 IoU +0.1173 pp，分组描述性95%CI[-0.1469,+0.3871] pp，跨0；Dice +0.1298 pp。最小mask四分位358张、面积<=2075像素，IoU -0.0941 pp、Dice +0.0584 pp。总体FP +10165、FN -17816像素。这是单种子视觉对照，未证明稳定收益；不能归因于新增文字条件，也不是第二创新点成立。M1的排名不决定是否取消M2；按原协议完成备份和发布后仍接续M2。HF `razaxq/BetterLViT/04be8e18/`共21文件、1694302126字节已双端size/Xet核验，本地下载证据也已核验；Best/Last保留。shared18559782256字节、scratch可用4930658304字节。M2等待本次GitHub归档核验后派发。[完整结果](../repro_archive/20260913/visual_value_regroup/m1_results/REPORT.md)、[配对分析](../repro_archive/20260913/visual_value_regroup/m1_results/paired_comparison.json)。
 
 M1首检已于悉尼2026-09-13 19:42:22完成并独立核验：4/80轮结束，日志到第5轮160/357 batch；GPU100%、17404 MiB。冻结源码与manifest一致、源码干净，日志尾部无致命异常，未访问Test。此为健康快照，不是正式结果。第2至4轮平均215.057984秒，预测训练于2026-09-14 00:13:13结束，唯一末检预约2026-09-14 00:26，原生heartbeat实际配置已核验。已用检查1/2，首检后不再查询训练状态。详见当前目录m1_first_snapshot.json、m1_first_verified.json及m1_automation_final_verified.json。
 

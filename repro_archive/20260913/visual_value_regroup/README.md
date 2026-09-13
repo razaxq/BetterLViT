@@ -54,3 +54,14 @@ snapshot, not a formal result. Epochs2-4 averaged215.057984seconds. Predicted
 training end2026-09-14 00:13:13; the only final inspection is scheduled at00:26
 and verified against native app settings. Inspection budget used1/2. No extra
 training status access is permitted before that appointment. M2 remains queued.
+
+## M1 completed (M2 pending archival gate)
+
+M1 completed80epochs and automatic1429-image Val export, both returncodes0,
+Best67. Final inspection at2026-09-14 00:26:59 Sydney was582.250seconds after
+training ended, inspection2/2. IoU72.7827%,Dice82.5333%; versus R2 IoU+0.1173pp,
+grouped descriptive95%CI[-0.1469,+0.3871]pp. Smallest-mask IoU-0.0941pp.
+This single-seed visual control does not demonstrate stable gain or establish
+a text-specific contribution. Source/LR/counts/observers/checkpoint selection
+are verified; no new Test access. Cloud archival verified:21files,1694302126bytes under04be8e18, dual size/Xet checks; local downloaded run evidence verified. Best/Last retained. Do not launch
+M2 before all four completion/backup/download/GitHub proofs are verified.

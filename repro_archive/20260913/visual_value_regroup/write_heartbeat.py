@@ -19,6 +19,13 @@ M1完整完成、备份、下载核验和GitHub发布之后，无论M1排名好�
 M2完成并完整归档后，运行assess_discovery.py，按事前门槛评判：M2-R2 IoU>=0.003且分组描述性CI下限>0，M2-M1 IoU>0且CI下限>0，Dice及最小病灶四分位IoU对两组都不退化。报告IoU/Dice、precision/recall、Brier、小病灶和FP/FN。只属于单种子Val发现证据，无新Test访问。通过后才准备配对额外种子及机制消融；不通过则关闭本版本并保留负结果，不降低门槛或改名认领创新。OCR/RecLMIS已有类似分组/重建思想，任何创新结论还需要文献差异化和机制证据。第二创新点目标仍需后续验证。
 
 两组结束后提交最终报告、判据JSON和台账，推送GitHub，删除本批heartbeat，避免再次触发旧实验。所有自动化只能通过原生工具创建/更新/删除，不直接编辑TOML。'''
+if a.label=='m2':
+    proof=read(HERE/'m1_results/independent_verification.json')
+    backup=read(HERE/'m1_results/hf_upload_verified.json')
+    assert proof['verified'] and backup['verified'] and backup['independent_local_listing_verified']
+    prompt+='''
+
+M2阶段限定：M1已完成80轮、Best67、完整Val及云端备份、下载核验和GitHub归档，M2也已派发。上文M1完成后启动M2的步骤已经执行，禁止再次调用launch.py --label m2，也不要重复归档或检查M1。当前仅处理M2的本次预约及后续唯一末检。M1 Val IoU72.7827%、Dice82.5333%，相对R2 IoU+0.1173pp，分组描述性95%CI[-0.1469,+0.3871]pp，最小病灶IoU-0.0941pp；不构成稳定收益证据。M2结束后与原R2及此M1同时比较，并按预注册门槛作发现阶段决策。'''
 (HERE/'heartbeat_prompt.txt').write_text(prompt+'\n',encoding='utf-8',newline='\n')
 settings=dict(mode='create',kind='heartbeat',destination='thread',name='BetterLViT M1 M2',prompt=prompt,status='ACTIVE',
     rrule=f'FREQ=DAILY;BYHOUR={at.hour};BYMINUTE={at.minute};BYSECOND=0')
