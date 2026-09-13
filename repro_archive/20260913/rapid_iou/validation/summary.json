@@ -1,0 +1,49 @@
+{
+  "verified": true,
+  "split": "validation",
+  "source_git_commit": "4f7561ec923d78349557bd1b1f29330ca5dc6be6",
+  "checkpoint_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+  "result_sha256": "e667eb08f498873dc19e5b8e5550152fc7e330edd01405662a8210a40b1ccef6",
+  "threshold": 0.54,
+  "baseline_threshold": 0.5,
+  "baseline": {
+    "iou": 0.7266535938268995,
+    "dice": 0.8240342867846576,
+    "precision": 0.8050860181894107,
+    "recall": 0.8805021187884409
+  },
+  "candidate": {
+    "iou": 0.7277350389348527,
+    "dice": 0.8244961110748269,
+    "precision": 0.8181322268157141,
+    "recall": 0.8663462582973559
+  },
+  "delta": {
+    "iou": 0.0010814451079531376,
+    "dice": 0.0004618242901691565,
+    "precision": 0.013046208626303138,
+    "recall": -0.014155860491084893
+  },
+  "small_delta": {
+    "iou": 0.0008672592835505039,
+    "dice": 0.0009060666379147965,
+    "precision": 0.013750373267465634,
+    "recall": -0.01843228553454809
+  },
+  "small_count": 358,
+  "small_area_cutoff": 2075.0,
+  "bootstrap": {
+    "ci95": [
+      0.000370897062140095,
+      0.0017950070364632508
+    ],
+    "groups": 1194,
+    "resamples": 10000,
+    "interpretation": "Descriptive clustered image interval, not independent training seeds; Val selection optimism remains"
+  },
+  "test_split_accessed": false,
+  "no_extra_parameters": true,
+  "no_extra_deployed_forward_passes": true,
+  "novelty_claim": false,
+  "passed_validation_gate": true
+}

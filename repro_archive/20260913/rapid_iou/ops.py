@@ -87,7 +87,15 @@ with (run/'runner.log').open('w') as log:
         stdout=log,stderr=subprocess.STDOUT,start_new_session=True,close_fds=True)
 print(json.dumps(dict(pid=proc.pid,split=SPLIT,started_unix=time.time(),detached=True)))
 ''')
-        result['predicted_check_unix']=result['started_unix']+(240 if a.split=='validation' else 300)
+        if a.split=='test':
+            v=json.loads((HERE/'validation/result.json').read_text())
+            runtime=json.loads((HERE/'validation/runtime.json').read_text())
+            setup=max(0,runtime['ended_unix']-runtime['started_unix']-v['inference_seconds'])
+            seconds=setup+v['inference_seconds']*plan['test_samples']/plan['validation_samples']+45
+            result['prediction_method']='completed_validation_setup_plus_sample_scaled_inference_plus_45_seconds'
+        else:
+            seconds=240
+        result['predicted_check_unix']=result['started_unix']+seconds
         save(a.split+'_launch.json',result)
     else:
         result=remote('ROOT='+repr(REMOTE)+'\nSPLIT='+repr(a.split)+'\n'+'''

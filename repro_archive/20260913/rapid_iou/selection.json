@@ -1,0 +1,16 @@
+{
+  "frozen": true,
+  "plan_sha256": "574b241069d060a5909685086100481d573e9fcd8c1cb2bd0ed11fc147fde2b6",
+  "validation_result_sha256": "e667eb08f498873dc19e5b8e5550152fc7e330edd01405662a8210a40b1ccef6",
+  "evaluation_source_git_commit": "4f7561ec923d78349557bd1b1f29330ca5dc6be6",
+  "methods": {
+    "r2s1219": {
+      "threshold": 0.54,
+      "passed_validation_gate": true,
+      "macro_iou_delta": 0.0010814451079531376,
+      "small_iou_delta": 0.0008672592835505039
+    }
+  },
+  "rejected": {},
+  "test_split_accessed": false
+}
