@@ -1,0 +1,10 @@
+{
+  "evaluation_source_git_commit": "4f7561ec923d78349557bd1b1f29330ca5dc6be6",
+  "sha256": {
+    "evaluate.py": "d3e7241f530446009d86f39076e59eda5c82aa76a3451215c2ed7cccd1b88f25",
+    "plan.json": "574b241069d060a5909685086100481d573e9fcd8c1cb2bd0ed11fc147fde2b6",
+    "PROTOCOL.md": "596993823628a378c38f0ab319ae77d102ac76a262e6d370d0cf05e7afda7439",
+    "runner.py": "9d3fa4c8dd469d0f78a25855f40feff74325513536cff3a0c761bb06e81dd659",
+    "references/r2s1219_validation.json": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715"
+  }
+}
