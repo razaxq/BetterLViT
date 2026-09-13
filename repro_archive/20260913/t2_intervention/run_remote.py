@@ -10,7 +10,7 @@ HERE = Path(__file__).resolve().parent
 DOCS = HERE.parents[2]
 sys.path.insert(0,str(HERE.parent/'text_decoder_controls'))
 from remote_ops import remote,copy_to_remote,environment,PYTHON,HOST,KEY
-RUN = '/root/autodl-tmp/t2_intervention_20260913'
+RUN = '/root/autodl-tmp/t2_intervention_20260913_v2'
 
 def save(name,data):
     (HERE/name).write_text(json.dumps(data,indent=2)+'\n',encoding='utf-8')

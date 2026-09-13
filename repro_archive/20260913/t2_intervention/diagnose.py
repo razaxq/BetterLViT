@@ -101,7 +101,7 @@ def main():
     before = model_digest(model)
     dataset, loader = ex.validation_loader(16)
     assert len(dataset) == 1429
-    names = [str(n) for n in dataset.mask_list]
+    names = [str(n).replace('mask_', '') for n in dataset.mask_list]
     lookup = {n:i for i,n in enumerate(names)}
     assert len(lookup) == len(names)
     donors = donor_indices(names, dataset.input_ids, dataset.attention_masks)

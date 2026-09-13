@@ -1,0 +1,25 @@
+{
+  "pid": 359264,
+  "started_unix": 1789288310.3735034,
+  "analysis_script_sha256": "858ebf44c7228c02b97cf14ac0d3dc4ff224889f92136d1d2be049d82e3f7821",
+  "command": [
+    "/root/autodl-tmp/envs/betterlvit-paper/bin/python",
+    "/root/autodl-tmp/t2_intervention_20260913/diagnose.py",
+    "--repository",
+    "/root/autodl-tmp/BetterLViT-text-t2",
+    "--reference",
+    "/root/autodl-tmp/t2_intervention_20260913/reference.json",
+    "--output",
+    "/root/autodl-tmp/t2_intervention_20260913/result.json"
+  ],
+  "analysis_git_commit": "f15dad6aa85f70b9a93103e0484e145104ab7c78",
+  "resource_audit": {
+    "gpu_idle": true,
+    "disk": {
+      "total": 53687091200,
+      "used": 50408333312,
+      "free": 3278757888
+    }
+  },
+  "remote_run": "/root/autodl-tmp/t2_intervention_20260913"
+}

@@ -1,0 +1,1 @@
+Stopped naturally with image/mask filename KeyError after first real Val batch; no result accepted. Corrected name mapping; fresh v2 execution directory.
