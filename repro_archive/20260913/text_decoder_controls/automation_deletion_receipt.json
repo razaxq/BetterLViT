@@ -1,0 +1,10 @@
+{
+  "automationId": "betterlvit",
+  "mode": "delete",
+  "deleteStatus": "deleted",
+  "snapshot": {
+    "kind": "heartbeat",
+    "name": "BetterLViT 区域监督",
+    "rrule": "FREQ=DAILY;BYHOUR=12;BYMINUTE=8;BYSECOND=0"
+  }
+}

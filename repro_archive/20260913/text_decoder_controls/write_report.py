@@ -51,6 +51,16 @@ if (HERE/'storage_cleanup.json').exists():
     total=sum(f['bytes'] for p in proofs for f in p['files'])
     lines+=['',f"启动前存储清理历史：补齐C0/P1/P2/P3四个历史pilot的source、log、Best/Last和TB，共{sum(p['verified_files'] for p in proofs)}文件、{total}字节，按源短SHA双端size/Xet核验。这是已完成历史训练的检查点归档，没有新增或重新认证其评估。连同已备份P11，删除5个无活动引用的旧Last副本，释放{c['logical_bytes']}字节；当时训练盘可用{c['before']['scratch_free_bytes']}→{c['after']['scratch_free_bytes']}字节；shared实际{c['after']['shared_bytes']}字节，小于20GB。所有Best、近期RS1 Best/Last、F/B缓存、数据与环境保留。"]
 lines+=['','源分支和独立实验tag已在GitHub核对；代码与执行证据一并保存。详见PROTOCOL.md、sources.json、preflight_verified.json、storage_cleanup.json及原生定时核验回执。']
+completed=HERE/'completed_comparison.json'
+if completed.exists():
+    c=read(completed);assert c['verified']
+    delta=c['comparisons']['T2_minus_R2']['metric_deltas']['iou']*100
+    delta_t1=c['comparisons']['T2_minus_T1']['metric_deltas']['iou']*100
+    lines+=['',f'本批T0/T1/T2对照已结束：T2−R2 IoU {delta:+.4f} pp，T2−T1 {delta_t1:+.4f} pp，未通过预登记的文字推进方向。继续保留R2；先做冻结分支干预诊断，再决定T3/T4实现。完整三组表、面积分组和证据边界见COMPLETE_REPORT.md；当前没有新训练在运行。']
+closed=HERE/'batch_closed_verified.json'
+if closed.exists():
+    c=read(closed);assert c['verified'] and c['automation_config_absent']
+    lines+=['','本批原生heartbeat `betterlvit` 已删除，工具回执与本地配置消失已核验，不再重复检查已完成训练。上述首次/末次预约均为历史执行记录。']
 (HERE/'README.md').write_text('\n'.join(lines)+'\n',encoding='utf-8',newline='\n')
 tracker=DOCS/'docs/EXPERIMENT_TRACKER.md';text=tracker.read_text(encoding='utf-8')
 heading='## 中间解码层文字对照 T1/T2（2026-09-13）'

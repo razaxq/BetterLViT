@@ -1,0 +1,249 @@
+{
+  "verified": true,
+  "split": "validation",
+  "test_split_accessed": false,
+  "discovery_seed_only": true,
+  "seed": 1219,
+  "samples": 1429,
+  "source_artifacts": {
+    "R2": {
+      "path": "repro_archive/20260908/recipe_execution/r2_results/validation.json",
+      "sha256": "499454205afec4336c11d8dd2bd8a988317917e77a1f4ee6ab8de5c723b8f715",
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662"
+    },
+    "T1": {
+      "path": "repro_archive/20260913/text_decoder_controls/t1_results/validation.json",
+      "sha256": "d2506ac2a5353755148dabd230f1a4db9f833aeb159a051174c6cea49d8e8956",
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330"
+    },
+    "T2": {
+      "path": "repro_archive/20260913/text_decoder_controls/t2_results/validation.json",
+      "sha256": "6ea98a923f7f21e8879e68e637025b6e7579df014b859b14787b804293b4cd00",
+      "source_git_commit": "488ef093de80df71ee77741a8c7ee7b938c7d6b5"
+    }
+  },
+  "area_cutoffs": [
+    2075.0,
+    4989.0,
+    8775.0
+  ],
+  "comparisons": {
+    "T1_minus_R2": {
+      "metric_deltas": {
+        "iou": -0.001064350283699973,
+        "dice": -0.001095145227096387,
+        "precision": 0.000528236344508383,
+        "recall": -0.001626539560810137,
+        "brier": -8.058726251671596e-05
+      },
+      "iou_improved": 732,
+      "iou_worsened": 691,
+      "iou_unchanged": 6,
+      "area_strata": [
+        {
+          "quartile": 1,
+          "count": 358,
+          "area_min": 202,
+          "area_max": 2075,
+          "metric_deltas": {
+            "iou": -0.005917547087147336,
+            "dice": -0.0051970208089663576,
+            "precision": -0.0007576328178515233,
+            "recall": -0.008320679065525765,
+            "brier": 8.80824229691821e-05
+          },
+          "contribution_to_all_image_iou_delta": -0.0014824925522734403
+        },
+        {
+          "quartile": 2,
+          "count": 357,
+          "area_min": 2076,
+          "area_max": 4989,
+          "metric_deltas": {
+            "iou": -0.00295530496517722,
+            "dice": -0.002410017868477373,
+            "precision": -0.0007266688254022055,
+            "recall": -0.000618725105546444,
+            "brier": 0.00024387404081224905
+          },
+          "contribution_to_all_image_iou_delta": -0.0007383092180323776
+        },
+        {
+          "quartile": 3,
+          "count": 357,
+          "area_min": 4997,
+          "area_max": 8775,
+          "metric_deltas": {
+            "iou": 0.0039238567444927685,
+            "dice": 0.002760026803885823,
+            "precision": 0.002435058585382631,
+            "recall": 0.0030029417952357217,
+            "brier": -0.00042562661244726935
+          },
+          "contribution_to_all_image_iou_delta": 0.0009802777171336028
+        },
+        {
+          "quartile": 4,
+          "count": 357,
+          "area_min": 8852,
+          "area_max": 30339,
+          "metric_deltas": {
+            "iou": 0.0007051885618370689,
+            "dice": 0.000477920812740624,
+            "precision": 0.0011657903103089997,
+            "recall": -0.0005509447763544379,
+            "brier": -0.00022915136550602825
+          },
+          "contribution_to_all_image_iou_delta": 0.00017617376947224182
+        }
+      ],
+      "remaining_three_quartiles_iou_delta": 0.0005579134470508728
+    },
+    "T2_minus_R2": {
+      "metric_deltas": {
+        "iou": -0.001990322790728473,
+        "dice": -0.0017074034478319763,
+        "precision": -0.00517567017016475,
+        "recall": 0.004142100094389751,
+        "brier": 0.000321923187664958
+      },
+      "iou_improved": 725,
+      "iou_worsened": 701,
+      "iou_unchanged": 3,
+      "area_strata": [
+        {
+          "quartile": 1,
+          "count": 358,
+          "area_min": 202,
+          "area_max": 2075,
+          "metric_deltas": {
+            "iou": -0.01005309607709412,
+            "dice": -0.009222536740993525,
+            "precision": -0.009357299163174996,
+            "recall": 0.0003408917082893265,
+            "brier": 0.0007131363494521619
+          },
+          "contribution_to_all_image_iou_delta": -0.0025185503118262385
+        },
+        {
+          "quartile": 2,
+          "count": 357,
+          "area_min": 2076,
+          "area_max": 4989,
+          "metric_deltas": {
+            "iou": 0.0014232930445988508,
+            "dice": 0.0019714512642749664,
+            "precision": -0.011798977987295145,
+            "recall": 0.014123344493908308,
+            "brier": 0.00035922397879770493
+          },
+          "contribution_to_all_image_iou_delta": 0.0003555742595673826
+        },
+        {
+          "quartile": 3,
+          "count": 357,
+          "area_min": 4997,
+          "area_max": 8775,
+          "metric_deltas": {
+            "iou": 0.002017093704532221,
+            "dice": 0.0013399906071403136,
+            "precision": 0.00017113526956765598,
+            "recall": 0.003906508116914221,
+            "brier": 0.00020971182521067514
+          },
+          "contribution_to_all_image_iou_delta": 0.0005039205406004219
+        },
+        {
+          "quartile": 4,
+          "count": 357,
+          "area_min": 8852,
+          "area_max": 30339,
+          "metric_deltas": {
+            "iou": -0.0013259970358293748,
+            "dice": -0.0008974681282113907,
+            "precision": 0.0002941744467225107,
+            "recall": -0.0017916962990147543,
+            "brier": 4.5247620122109046e-06
+          },
+          "contribution_to_all_image_iou_delta": -0.00033126727907003975
+        }
+      ],
+      "remaining_three_quartiles_iou_delta": 0.000704796571100566
+    },
+    "T2_minus_T1": {
+      "metric_deltas": {
+        "iou": -0.0009259725070285004,
+        "dice": -0.0006122582207355893,
+        "precision": -0.005703906514673132,
+        "recall": 0.005768639655199888,
+        "brier": 0.00040251045018167397
+      },
+      "iou_improved": 698,
+      "iou_worsened": 728,
+      "iou_unchanged": 3,
+      "area_strata": [
+        {
+          "quartile": 1,
+          "count": 358,
+          "area_min": 202,
+          "area_max": 2075,
+          "metric_deltas": {
+            "iou": -0.004135548989946784,
+            "dice": -0.00402551593202717,
+            "precision": -0.008599666345323472,
+            "recall": 0.00866157077381509,
+            "brier": 0.0006250539264829799
+          },
+          "contribution_to_all_image_iou_delta": -0.0010360577595527982
+        },
+        {
+          "quartile": 2,
+          "count": 357,
+          "area_min": 2076,
+          "area_max": 4989,
+          "metric_deltas": {
+            "iou": 0.0043785980097760715,
+            "dice": 0.0043814691327523385,
+            "precision": -0.01107230916189294,
+            "recall": 0.01474206959945475,
+            "brier": 0.00011534993798545578
+          },
+          "contribution_to_all_image_iou_delta": 0.0010938834775997604
+        },
+        {
+          "quartile": 3,
+          "count": 357,
+          "area_min": 4997,
+          "area_max": 8775,
+          "metric_deltas": {
+            "iou": -0.0019067630399605478,
+            "dice": -0.0014200361967455092,
+            "precision": -0.0022639233158149755,
+            "recall": 0.0009035663216784992,
+            "brier": 0.0006353384376579445
+          },
+          "contribution_to_all_image_iou_delta": -0.00047635717653318093
+        },
+        {
+          "quartile": 4,
+          "count": 357,
+          "area_min": 8852,
+          "area_max": 30339,
+          "metric_deltas": {
+            "iou": -0.0020311855976664437,
+            "dice": -0.0013753889409520146,
+            "precision": -0.000871615863586489,
+            "recall": -0.0012407515226603163,
+            "brier": 0.0002336761275182392
+          },
+          "contribution_to_all_image_iou_delta": -0.0005074410485422816
+        }
+      ],
+      "remaining_three_quartiles_iou_delta": 0.0001468831240496931
+    }
+  },
+  "t2_registered_extension_direction_passed": false,
+  "retained_control": "R2",
+  "new_training_started": false,
+  "interpretation": "Post-hoc descriptive error stratification; no causal, Test, or seed-stability claim"
+}

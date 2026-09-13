@@ -20,7 +20,7 @@
 |---|---|---|---|
 | T0 | 原R2，无新增分支 | 已完成80轮，seed1219，9eca26de5b301099805530edbf5a1a8718bea662 | 复用匹配对照；Val IoU72.6654%、Dice82.4034% |
 | T1 | 新增视觉context attention，16896参数 | 80轮，seed1219，`72295aa38649fea8ffed2cdd7330c3a18504a330` | 80轮及Val已完成，Best67；已检查2/2 |
-| T2 | 新增文字context attention，16896参数 | 80轮，seed1219，`488ef093de80df71ee77741a8c7ee7b938c7d6b5` | 已提交；最近确认阶段training；已检查1/2 |
+| T2 | 新增文字context attention，16896参数 | 80轮，seed1219，`488ef093de80df71ee77741a8c7ee7b938c7d6b5` | 80轮及Val已完成，Best69；已检查2/2 |
 
 两组均在up3输出128×56×56后、up2前加入同容量分支；4头、宽32、32个context token。T1不读取报告长度；T2屏蔽padding，空报告回到零残差。原EPPA、原文字路径、legacy增强、Dice/Focal、无LoRA、80轮单次余弦均保持。
 
@@ -38,11 +38,19 @@ T1完成核验：80轮、Best67，1429张Val的macro IoU **72.5589%**、Dice **8
 
 T1 HF备份：razaxq/BetterLViT/72295aa3/，21文件、1694294316字节双端size/Xet核验，原Best/Last保留。备份核验时训练盘可用4997881856字节，shared实际18559782256字节。
 
+T2完成核验：80轮、Best69，1429张Val的macro IoU **72.4663%**、Dice **82.2327%**；相对R2 IoU -0.1990 pp，Dice -0.1707 pp，IoU分组描述性95%区间[-0.5002,+0.1068] pp。最小面积358张IoU变化-1.0053 pp。末检2026-09-13T12:13:12.353477+10:00，距训练结束1067.924秒，检查2/2，半小时内=True。全部轮学习率、Best来源、逐图整数计数与macro均核验；单种子Val不能证明稳定Test增益。详见t2_results/REPORT.md和paired_comparison.json。
+
+T2 HF备份：razaxq/BetterLViT/488ef093/，22文件、1694303992字节双端size/Xet核验，原Best/Last保留。备份核验时训练盘可用3281473536字节，shared实际18559782256字节。
+
 T2提交历史：2026-09-13T07:05:20.153917+10:00提交80轮训练，来源保持冻结的488ef093de80df71ee77741a8c7ee7b938c7d6b5；提交时初估结束2026-09-13T12:02:27.347550+10:00，首次检查预约2026-09-13T07:21:00+10:00。此段保留提交回执与最初预测，后续实测以上述检查快照为准。
 
 启动前存储清理历史：补齐C0/P1/P2/P3四个历史pilot的source、log、Best/Last和TB，共24文件、6772735826字节，按源短SHA双端size/Xet核验。这是已完成历史训练的检查点归档，没有新增或重新认证其评估。连同已备份P11，删除5个无活动引用的旧Last副本，释放4230478299字节；当时训练盘可用2483920896→6714408960字节；shared实际18559782256字节，小于20GB。所有Best、近期RS1 Best/Last、F/B缓存、数据与环境保留。
 
 源分支和独立实验tag已在GitHub核对；代码与执行证据一并保存。详见PROTOCOL.md、sources.json、preflight_verified.json、storage_cleanup.json及原生定时核验回执。
+
+本批T0/T1/T2对照已结束：T2−R2 IoU -0.1990 pp，T2−T1 -0.0926 pp，未通过预登记的文字推进方向。继续保留R2；先做冻结分支干预诊断，再决定T3/T4实现。完整三组表、面积分组和证据边界见COMPLETE_REPORT.md；当前没有新训练在运行。
+
+本批原生heartbeat `betterlvit` 已删除，工具回执与本地配置消失已核验，不再重复检查已完成训练。上述首次/末次预约均为历史执行记录。
 
 [完整执行档案](../repro_archive/20260913/text_decoder_controls/README.md)。
 

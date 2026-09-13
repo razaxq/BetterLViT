@@ -1,0 +1,21 @@
+{
+  "verified": true,
+  "checked_unix": 1789265899.3806305,
+  "automation_id": "betterlvit",
+  "native_delete_status": "deleted",
+  "automation_config_absent": true,
+  "completed_runs": {
+    "t1": {
+      "source_git_commit": "72295aa38649fea8ffed2cdd7330c3a18504a330",
+      "inspections_completed": 2,
+      "seconds_after_training_end": 625.488240480423
+    },
+    "t2": {
+      "source_git_commit": "488ef093de80df71ee77741a8c7ee7b938c7d6b5",
+      "inspections_completed": 2,
+      "seconds_after_training_end": 1067.9237129688263
+    }
+  },
+  "new_training_started": false,
+  "test_split_accessed": false
+}
