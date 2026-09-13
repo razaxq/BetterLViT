@@ -31,3 +31,16 @@ Storage cleanup is separate from evidence certification: backup_historical.py
 preserves historical completed checkpoints without claiming fresh evaluations.
 storage_cleanup.py requires fresh matching cloud hashes, complete Last metadata,
 a retained sibling Best, and no active GPU/training/file references.
+
+## Dispatch snapshot
+
+M1 dispatched at2026-09-13 19:25:59 Australia/Sydney, PID364010. This is a
+process dispatch receipt, not a completed health check or a training result.
+First inspection registered at19:41 in native heartbeat betterlvit-m1-m2,
+attached to current thread01a099db-3ddf-7df1-acbc-51b8f06ea9ae. M2 is queued
+by the continuation workflow and has not been dispatched. Initial M1 training
+end estimate is2026-09-14 00:13:41; replace it with the first-inspection forecast.
+
+Four historical pilot backups (24files) were verified before removing only
+their inactive local Last copies. All corresponding Best files remain. Scratch
+free6647136256 bytes at launch; shared18559782256 bytes. Do not repeat cleanup.

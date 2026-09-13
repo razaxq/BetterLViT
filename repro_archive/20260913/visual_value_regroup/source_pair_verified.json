@@ -1,0 +1,9 @@
+{
+  "verified": true,
+  "recipe_manifest_validated": true,
+  "matched_implementation_exact": true,
+  "source_worktrees_clean": true,
+  "only_variant_difference_file": [
+    "experiment_manifests/active_decoder.json"
+  ]
+}

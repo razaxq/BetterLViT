@@ -20,7 +20,7 @@ M2完成并完整归档后，运行assess_discovery.py，按事前门槛评判�
 
 两组结束后提交最终报告、判据JSON和台账，推送GitHub，删除本批heartbeat，避免再次触发旧实验。所有自动化只能通过原生工具创建/更新/删除，不直接编辑TOML。'''
 (HERE/'heartbeat_prompt.txt').write_text(prompt+'\n',encoding='utf-8',newline='\n')
-settings=dict(mode='create',kind='heartbeat',name='BetterLViT M1 M2',prompt=prompt,status='ACTIVE',
+settings=dict(mode='create',kind='heartbeat',destination='thread',name='BetterLViT M1 M2',prompt=prompt,status='ACTIVE',
     rrule=f'FREQ=DAILY;BYHOUR={at.hour};BYMINUTE={at.minute};BYSECOND=0')
 identity=HERE/'automation_identity.json'
 if identity.exists():
