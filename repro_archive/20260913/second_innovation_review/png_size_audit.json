@@ -1,0 +1,9 @@
+{
+  "kind": "local_migration_copy_png_header_audit_not_remote_or_pixel_hash_verification",
+  "image_dir": "D:\\BetterLViT\\BetterLViT\\BetterLViT_完整迁移包_2026-08-16\\03_数据\\datasets\\Covid19\\Train_Folder\\img",
+  "samples": 5716,
+  "sizes": {
+    "224x224": 5716
+  },
+  "filename_and_header_sha256": "9b4198c7532981646a452e683a41df1ee520e03b5da6038f6bac2b11031405c8"
+}
