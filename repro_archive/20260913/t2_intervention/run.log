@@ -1,0 +1,9 @@
+/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers
+  warnings.warn(f"Importing from {__name__} is deprecated, please import via timm.layers", FutureWarning)
+{"batch": 1, "samples": 16, "elapsed_seconds": 25.132534980773926}
+{"batch": 16, "samples": 256, "elapsed_seconds": 44.72316336631775}
+{"batch": 31, "samples": 496, "elapsed_seconds": 63.82732796669006}
+{"batch": 46, "samples": 736, "elapsed_seconds": 82.61637210845947}
+{"batch": 61, "samples": 976, "elapsed_seconds": 101.72875332832336}
+{"batch": 76, "samples": 1216, "elapsed_seconds": 120.41847896575928}
+{"status": "complete", "summaries": {"real": {"iou": 0.7246632710361711, "dice": 0.8223268833368258, "precision": 0.7999103480192462, "recall": 0.8846442188828305, "brier": 0.02148346614109052}, "off": {"iou": 0.7121353072957257, "dice": 0.8125181921109361, "precision": 0.8195990227129718, "recall": 0.848862611288044, "brier": 0.0216398275004735}, "mismatch": {"iou": 0.7052101224041474, "dice": 0.8064597360451436, "precision": 0.7768952908806337, "recall": 0.8911017101865361, "brier": 0.02433853849441745}}, "elapsed_seconds": 143.7787730693817}
