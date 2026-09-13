@@ -1,0 +1,15 @@
+{
+  "verified": true,
+  "scope": "Local dispatch and scheduling audit only; no extra training inspection",
+  "source_git_commit": "04be8e182d8802fb9e529e0a1f6d7cd2e2eb961d",
+  "m1_dispatched": true,
+  "m2_dispatched": false,
+  "preflight_passed": true,
+  "storage_backup_and_cleanup_verified": true,
+  "training_inspections_completed": 0,
+  "first_check_unix": 1789292460,
+  "native_schedule_verified": true,
+  "confirmed_new_innovation": false,
+  "formal_training_result_available": false,
+  "test_split_accessed": false
+}
