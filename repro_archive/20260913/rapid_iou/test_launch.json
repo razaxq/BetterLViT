@@ -1,0 +1,8 @@
+{
+  "pid": 354968,
+  "split": "test",
+  "started_unix": 1789277942.9713373,
+  "detached": true,
+  "prediction_method": "completed_validation_setup_plus_sample_scaled_inference_plus_45_seconds",
+  "predicted_check_unix": 1789278036.0170321
+}

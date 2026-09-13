@@ -1,0 +1,21 @@
+{
+  "verified": true,
+  "files": {
+    "runner.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtime.json": {
+      "bytes": 222,
+      "sha256": "38ef141e0f8392cf4953436920f8653cd3502418a529012908423b5654253b05"
+    },
+    "evaluation.log": {
+      "bytes": 1115,
+      "sha256": "d88d2093cd56dae70ee110e393113c871329456fedb462b6e10fad90ee2fbe7a"
+    },
+    "result.json": {
+      "bytes": 185776,
+      "sha256": "3604d506b0ada5f024b2dfaa9615cbfd7fb64e6c9b33d2a8f726d6e4ee7637c6"
+    }
+  }
+}

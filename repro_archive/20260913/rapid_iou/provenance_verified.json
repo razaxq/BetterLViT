@@ -1,0 +1,17 @@
+{
+  "verified": true,
+  "selection_committed_before_test": true,
+  "selection_git_commit": "98e41aab3cff66160bfaed39cb0cbe263922eb83",
+  "selection_commit_unix": 1789277909,
+  "test_started_unix": 1789277943.045739,
+  "evaluation_source_git_commit": "4f7561ec923d78349557bd1b1f29330ca5dc6be6",
+  "test_thresholds": [
+    0.5,
+    0.54
+  ],
+  "checkpoint_sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a",
+  "exact_historical_05_counts": true,
+  "result_sha256": "3604d506b0ada5f024b2dfaa9615cbfd7fb64e6c9b33d2a8f726d6e4ee7637c6",
+  "no_extra_parameters": true,
+  "no_extra_forward_passes": true
+}

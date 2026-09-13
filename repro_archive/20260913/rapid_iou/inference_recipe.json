@@ -1,0 +1,23 @@
+{
+  "checkpoint": {
+    "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+    "path": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+    "bytes": 845298175,
+    "mtime_ns": 1788898923618356697,
+    "sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a"
+  },
+  "model": "R2 seed1219 Best67",
+  "threshold": 0.54,
+  "threshold_comparison": "float32 probability > float32(0.54)",
+  "image_size": 224,
+  "original_text_input": true,
+  "ensemble": false,
+  "tta": false,
+  "component_filter": false,
+  "additional_parameters": 0,
+  "forward_passes_per_image": 1,
+  "threshold_selected_on": "validation",
+  "selection_git_commit": "98e41aab3cff66160bfaed39cb0cbe263922eb83",
+  "evaluation_source_git_commit": "4f7561ec923d78349557bd1b1f29330ca5dc6be6",
+  "classification": "inference engineering, not a new architecture"
+}

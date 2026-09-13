@@ -1,0 +1,30 @@
+{
+  "runtime": {
+    "phase": "complete",
+    "split": "test",
+    "evaluation_source_git_commit": "4f7561ec923d78349557bd1b1f29330ca5dc6be6",
+    "started_unix": 1789277943.045739,
+    "no_training": true,
+    "returncode": 0,
+    "ended_unix": 1789277992.5722709
+  },
+  "files": {
+    "runner.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "runtime.json": {
+      "bytes": 222,
+      "sha256": "38ef141e0f8392cf4953436920f8653cd3502418a529012908423b5654253b05"
+    },
+    "evaluation.log": {
+      "bytes": 1115,
+      "sha256": "d88d2093cd56dae70ee110e393113c871329456fedb462b6e10fad90ee2fbe7a"
+    },
+    "result.json": {
+      "bytes": 185776,
+      "sha256": "3604d506b0ada5f024b2dfaa9615cbfd7fb64e6c9b33d2a8f726d6e4ee7637c6"
+    }
+  },
+  "log_tail": "/root/autodl-tmp/envs/betterlvit-paper/lib/python3.12/site-packages/timm/models/layers/__init__.py:49: FutureWarning: Importing from timm.models.layers is deprecated, please import via timm.layers\n  warnings.warn(f\"Importing from {__name__} is deprecated, please import via timm.layers\", FutureWarning)\n{\"completed\": true, \"split\": \"test\", \"test_split_accessed\": true, \"evaluation_source_git_commit\": \"4f7561ec923d78349557bd1b1f29330ca5dc6be6\", \"script_sha256\": \"d3e7241f530446009d86f39076e59eda5c82aa76a3451215c2ed7cccd1b88f25\", \"plan_sha256\": \"574b241069d060a5909685086100481d573e9fcd8c1cb2bd0ed11fc147fde2b6\", \"selection_sha256\": \"bb5672a68f0459efcf0c0ba6896f44289089756179a5f562dcc0f5f39bfc3161\", \"samples\": 2113, \"parity\": {\"r2s1219\": {\"exact_per_image_counts\": true, \"reference_sha256\": \"f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792\"}}, \"started_unix\": 1789277956.3300397, \"completed_unix\": 1789277991.31498, \"first_batch_seconds\": 0.8835775852203369, \"inference_seconds\": 34.98494100570679, \"peak_cuda_bytes\": 5454655488, \"no_training\": true, \"no_tta\": true, \"no_component_filter\": true}\n"
+}

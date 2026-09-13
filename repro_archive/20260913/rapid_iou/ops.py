@@ -76,6 +76,7 @@ print(json.dumps(dict(directory_created=True)))
             selection=json.loads((HERE/'selection.json').read_text());assert selection['methods'] and selection['frozen']
             copy(HERE/'selection.json',REMOTE+'/selection.json')
             ref=DOCS/'repro_archive/20260910/recipe_test/results/r2s1219_test.json'
+            (HERE/'references/r2s1219_test.json').write_bytes(ref.read_bytes())
             copy(ref,REMOTE+'/references/r2s1219_test.json')
         result=remote('ROOT='+repr(REMOTE)+'\nSPLIT='+repr(a.split)+'\nPYTHON='+repr(PYTHON)+'\n'+'''
 import json,os,subprocess,time
