@@ -28,6 +28,8 @@
 
 首个诊断尝试因图像/掩码文件名前缀不一致在首个真实Val batch后失败，已保留回执并修正；成功结果来自独立v2执行目录。分析源码`dfaabca6e4c2af4228c8f92690d01ee6865f13ce`，固定模型源`488ef093de80df71ee77741a8c7ee7b938c7d6b5`。[完整诊断](../repro_archive/20260913/t2_intervention/REPORT.md)、[协议](../repro_archive/20260913/t2_intervention/PROTOCOL.md)。
 
+HF `razaxq/BetterLViT/e3b9ab01/` 已备份29份复现资料，两个上传文件共699728字节，路径、大小与Xet哈希双端一致，没有重复上传模型。收尾核验GPU空闲、固定T2源码无修改，shared实际18559782256字节，未删除模型或缓存。[备份核验](../repro_archive/20260913/t2_intervention/hf_upload_verified.json)。
+
 ## R2单模型快速IoU验证（2026-09-13）
 
 目标是复用现有R2取得实际IoU提升。当前仅一个seed1219、Best67模型，不增加参数、模型推理次数或训练。不执行集成、TTA或小区域过滤。阈值优化不作为第二创新点。

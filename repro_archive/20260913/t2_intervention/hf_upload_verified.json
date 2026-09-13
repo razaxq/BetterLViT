@@ -1,0 +1,19 @@
+{
+  "verified": true,
+  "bucket": "razaxq/BetterLViT",
+  "prefix": "e3b9ab01",
+  "files": {
+    "e3b9ab01/diagnostic_evidence.tar.gz": {
+      "bytes": 694011,
+      "xet_hash": "680befc2bc0214606cc229e30a51b2f88b089cef29b0a9381fa9e61dc1edd24c"
+    },
+    "e3b9ab01/manifest.json": {
+      "bytes": 5717,
+      "xet_hash": "dedc1cbcba37aceaee56b426a4fd2b2a40477d194a77914fc4485d2d6ac7ea58"
+    }
+  },
+  "archived_file_count": 29,
+  "additive_only": true,
+  "new_weights_uploaded": false,
+  "documentation_source_git_commit": "3d959618adfbda36466ba3aeadad4a8effd8d117"
+}
