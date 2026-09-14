@@ -207,6 +207,21 @@ for _name, _id, _augmentation, _schedule in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+# P8 restart: original V1 routing on the fixed R2 recipe, then binding repair only.
+for _name, _id, _binding in (
+    ('p8_r2_original', 'P8R2', False),
+    ('p8_r2_binding', 'P8B2', True),
+):
+    _profile = dict(PAPER_EXPERIMENTS['p8_race_fuse_v1'])
+    _profile.update(paper_id=_id, training_recipe_enabled=True,
+        augmentation_policy='legacy', lr_schedule='single_cosine',
+        selection_metric='iou', race_pe_enabled=False,
+        race_binding_repair=_binding,
+        description='P8 V1 on R2; explicit side binding repair=' + str(_binding),
+        architecture_version='p8_restart_v1_' + _name)
+    PAPER_EXPERIMENTS[_name] = _profile
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

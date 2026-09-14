@@ -100,6 +100,7 @@ race_pe_enabled = bool(paper_experiment.get('race_pe_enabled', False))
 race_pe_route_enabled = bool(paper_experiment.get('race_pe_route_enabled', True))
 race_pe_pixel_only = bool(paper_experiment.get('race_pe_pixel_only', False))
 selection_metric = paper_experiment.get('selection_metric', 'dice')
+race_binding_repair = bool(paper_experiment.get('race_binding_repair', False))
 race_enabled = bool(paper_experiment.get('race_enabled', False))
 race_aux_weight = float(paper_experiment.get('race_aux_weight', 0.0))
 race_hidden_channels = int(
