@@ -85,6 +85,7 @@ class RACEFuse(nn.Module):
             for value in channels
         ])
         self._last_stats = {}
+        self.route_enabled = True
 
     @staticmethod
     def _masked_mean(text, text_mask):
@@ -112,10 +113,13 @@ class RACEFuse(nn.Module):
             value, zone_evidence, stats = route(
                 skip, report_prior, zone_basis, text_zones
             )
-            routed.append(value)
+            # Auxiliary heads retain encoder gradients; disabled routes never
+            # enter the decoder, even if a strength parameter is nonzero.
+            routed.append(value if self.route_enabled else skip)
             visual_zones.append(zone_evidence)
             route_stats.append(stats)
         self._last_stats = {
+            "route_enabled": self.route_enabled,
             "architecture_version": self.architecture_version,
             "slot_probability_mean": float(
                 slot_probabilities.detach().mean().cpu()

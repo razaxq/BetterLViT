@@ -438,6 +438,8 @@ class LViT(nn.Module):
             )
             if getattr(config, "race_pe_enabled", False):
                 self.race.route_enabled = getattr(config, "race_pe_route_enabled", True)
+            else:
+                self.race.route_enabled = getattr(config, "race_route_enabled", True)
         else:
             self.race = None
 

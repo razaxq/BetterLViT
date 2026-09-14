@@ -222,6 +222,14 @@ for _name, _id, _binding in (
     PAPER_EXPERIMENTS[_name] = _profile
 
 
+PAPER_EXPERIMENTS['p8_r2_binding_aux'] = dict(
+    PAPER_EXPERIMENTS['p8_r2_binding'],
+    paper_id='P8BA', race_route_enabled=False,
+    description='R2 plus binding-repaired P8 auxiliary supervision; identity skip routes',
+    architecture_version='p8_binding_aux_only_v1',
+)
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

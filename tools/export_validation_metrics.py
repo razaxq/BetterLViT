@@ -43,6 +43,7 @@ ALLOWED_EXPERIMENTS = (
     "c6_race_pe_pixel_aux", "c7_race_pe_aux_only",
     "c9_visual_random", "p12_visual_prior", "p12_visual_natural",
     "r1_chest_augmentation", "r2_single_cosine",
+    "p8_r2_original", "p8_r2_binding", "p8_r2_binding_aux",
 )
 
 
@@ -124,6 +125,8 @@ def parse_args():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--batch-size", type=int, default=16)
     parser.add_argument("--threshold", type=float, default=0.5)
+    parser.add_argument("--split", choices=('validation','test'), default='validation')
+    parser.add_argument("--expected-best-epoch", type=int)
     return parser.parse_args()
 
 
@@ -142,13 +145,13 @@ def build_model():
     )
 
 
-def validation_loader(batch_size):
+def validation_loader(batch_size, split='validation'):
     text = read_text(os.path.join(
-        config.task_dataset,
-        "Train_Val_text.xlsx",
+        config.test_dataset if split == 'test' else config.task_dataset,
+        "Test_text.xlsx" if split == 'test' else "Train_Val_text.xlsx",
     ))
     dataset = ImageToImage2D(
-        config.val_dataset,
+        config.test_dataset if split == 'test' else config.val_dataset,
         config.task_name,
         text,
         ValGenerator(output_size=[config.img_size, config.img_size]),
@@ -173,6 +176,16 @@ def git_commit():
 
 def main():
     args = parse_args()
+    if args.split == 'test':
+        if os.environ.get('TEST_SPLIT_ALLOWED') != '1' or args.experiment != 'p8_r2_binding_aux':
+            raise RuntimeError('Test is authorized only for the frozen auxiliary-only experiment')
+        if args.threshold != .5 or args.batch_size != 16 or args.expected_best_epoch is None:
+            raise RuntimeError('Fixed threshold, batch and previously Val-selected Best are required')
+    if args.experiment == 'p8_r2_binding_aux':
+        if args.output.exists():
+            raise RuntimeError('Do not overwrite an existing evaluation')
+        if subprocess.check_output(['git','-C',str(REPO_ROOT),'status','--porcelain','--untracked-files=no'],text=True).strip():
+            raise RuntimeError('Evaluation source changed')
     if args.batch_size <= 0 or not 0.0 <= args.threshold <= 1.0:
         raise ValueError("Invalid batch size or threshold.")
     if not torch.cuda.is_available():
@@ -207,6 +220,11 @@ def main():
     if config.training_recipe_enabled and checkpoint.get('training_recipe') != recipe_metadata(config):
         raise RuntimeError('Training recipe provenance mismatch')
     checkpoint_commit = checkpoint.get("source_git_commit")
+    if args.experiment == 'p8_r2_binding_aux':
+        assert checkpoint['seed']==1219 and checkpoint['epochs']==80
+        assert checkpoint['race_route_enabled'] is False and checkpoint['race_binding_repair'] is True
+    if args.expected_best_epoch is not None:
+        assert checkpoint['best_epoch']==args.expected_best_epoch
     if checkpoint_commit != analysis_commit:
         raise RuntimeError(
             "Checkpoint commit mismatch: expected {!r}, found {!r}."
@@ -236,13 +254,15 @@ def main():
         raise RuntimeError('Checkpoint external visual provenance does not match evaluator')
     model.load_state_dict(checkpoint["state_dict"], strict=True)
     model = model.cuda().eval()
-    dataset, loader = validation_loader(args.batch_size)
+    dataset, loader = validation_loader(args.batch_size, args.split)
+    if args.experiment == 'p8_r2_binding_aux':
+        assert len(dataset)==(2113 if args.split == 'test' else 1429)
 
     records = []
     with torch.inference_mode():
         for batch, names in tqdm(
             loader,
-            desc="Validation-only",
+            desc=args.split,
             unit="batch",
             ncols=80,
         ):
@@ -356,8 +376,10 @@ def main():
     cdrr = getattr(model, "cdrr", None)
     race = getattr(model, "race", None)
     result = {
-        "split": "validation",
-        "test_split_accessed": False,
+        "split": args.split,
+        "test_split_accessed": args.split == 'test',
+        "race_route_enabled": config.race_route_enabled,
+        "race_binding_repair": config.race_binding_repair,
         "experiment": config.experiment_name,
         "paper_id": config.experiment_paper_id,
         "architecture_version": config.experiment_architecture_version,

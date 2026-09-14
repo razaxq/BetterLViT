@@ -145,6 +145,8 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
         'race_pe_pixel_only': config.race_pe_pixel_only,
         'race_pe_route_enabled': config.race_pe_route_enabled,
         'race_enabled': bool(getattr(config, 'race_enabled', False)),
+        'race_route_enabled': bool(getattr(config, 'race_route_enabled', True)),
+        'race_binding_repair': bool(getattr(config, 'race_binding_repair', False)),
         'race_config': {
             'aux_weight': float(getattr(config, 'race_aux_weight', 0.0)),
             'hidden_channels': int(
