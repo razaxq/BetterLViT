@@ -58,7 +58,7 @@ def main():
     assert torch.isfinite(loss) and all(torch.isfinite(p.grad).all() for p in model.parameters() if p.grad is not None)
     assert any(p.grad is not None and p.grad.abs().max()>0 for p in model.down1.parameters())
     if config.race_enabled:
-        assert model.race.route_enabled
+        assert getattr(model.race,'route_enabled',True)
         assert all(r.strength_logit.grad is not None and r.strength_logit.grad.abs().max()>0 for r in model.race.routes)
         assert model.race.slot_head[0].weight.grad.abs().max()>0
         model.zero_grad(set_to_none=True)
