@@ -230,6 +230,23 @@ PAPER_EXPERIMENTS['p8_r2_binding_aux'] = dict(
 )
 
 
+PAPER_EXPERIMENTS['j0_plam_r2'] = dict(
+    PAPER_EXPERIMENTS['r2_single_cosine'], paper_id='J0',
+    decoder_fusion_mode='legacy_plam', race_enabled=False,
+    race_route_enabled=False, race_binding_repair=False, race_aux_weight=0.0,
+    stage1_match_fsdr_initialization=True,
+    description='Frozen CXR-BERT; original PLAM; no RACE; Dice/Focal; 80e single cosine',
+    architecture_version='stage1_j0_plam_r2_v1',
+)
+PAPER_EXPERIMENTS['j2_plam_race_binding'] = dict(
+    PAPER_EXPERIMENTS['p8_r2_binding'], paper_id='J2',
+    decoder_fusion_mode='legacy_plam', race_route_enabled=True,
+    stage1_match_fsdr_initialization=True,
+    description='Frozen CXR-BERT; original PLAM; complete binding-repaired RACE; Dice/Focal plus auxiliary; 80e single cosine',
+    architecture_version='stage1_j2_plam_race_binding_v1',
+)
+
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

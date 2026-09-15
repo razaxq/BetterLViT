@@ -337,6 +337,8 @@ class LViT(nn.Module):
             'ahpf_strength_init': EPPA_AHPF_STRENGTH_INIT,
             'ahpf_strength_floor': EPPA_AHPF_STRENGTH_FLOOR,
         }
+        decoder_initial_rng = torch.get_rng_state() if getattr(
+            config, 'stage1_match_fsdr_initialization', False) else None
         if self.decoder_fusion_mode == 'legacy_plam':
             block = LegacyPLAMUpblock
             self.up4 = block(in_channels * 16, in_channels * 4, nb_Conv=2)
@@ -376,6 +378,26 @@ class LViT(nn.Module):
             self.up1 = make_eppa_block(
                 3, in_channels * 2, in_channels, 'up1'
             )
+        if decoder_initial_rng is not None:
+            if self.decoder_fusion_mode != 'legacy_plam':
+                raise ValueError('Shared FSDR initialization applies only to new PLAM controls')
+            # Replay fresh FSDR initialization, not a trained checkpoint. Match
+            # common convolutions and subsequent RNG without retaining FSDR.
+            torch.set_rng_state(decoder_initial_rng)
+            for index, stage, block_in, block_out in (
+                (0, 'up4', in_channels * 16, in_channels * 4),
+                (1, 'up3', in_channels * 8, in_channels * 2),
+                (2, 'up2', in_channels * 4, in_channels),
+                (3, 'up1', in_channels * 2, in_channels),
+            ):
+                reference = UpblockAttention(
+                    block_in, block_out, nb_Conv=2,
+                    min_bottleneck_channels=EPPA_MIN_BOTTLENECK_CHANNELS[index],
+                    use_adaptive_frequency=stage in EPPA_ADAPTIVE_FREQUENCY_STAGES,
+                    **eppa_common,
+                )
+                getattr(self, stage).nConvs.load_state_dict(reference.nConvs.state_dict(), strict=True)
+                del reference
         self.outc = nn.Conv2d(in_channels, n_classes, kernel_size=(1, 1), stride=(1, 1))
         self.last_activation = nn.Sigmoid()  # if using BCELoss
         self.multi_activation = nn.Softmax()

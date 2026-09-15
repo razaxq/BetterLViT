@@ -212,6 +212,8 @@ def get_CTranS_config():
     config.cdrr_delta_max = cdrr_delta_max
     config.cdrr_active_fraction = cdrr_active_fraction
     config.race_enabled = race_enabled
+    config.stage1_match_fsdr_initialization = bool(
+        paper_experiment.get('stage1_match_fsdr_initialization', False))
     config.race_route_enabled = race_route_enabled
     config.race_pe_enabled = race_pe_enabled
     config.race_pe_route_enabled = race_pe_route_enabled

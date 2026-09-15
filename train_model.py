@@ -115,6 +115,7 @@ def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
             getattr(config, 'boundary_loss_weight', 0.0)
         ),
         'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
+        'stage1_match_fsdr_initialization': bool(config.paper_experiment.get('stage1_match_fsdr_initialization', False)),
         'bcdh_enabled': bool(getattr(config, 'bcdh_enabled', False)),
         'bcdh_config': {
             'aux_weight': float(getattr(config, 'bcdh_aux_weight', 0.0)),
