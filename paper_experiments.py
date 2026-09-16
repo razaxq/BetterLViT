@@ -247,6 +247,19 @@ PAPER_EXPERIMENTS['j2_plam_race_binding'] = dict(
 )
 
 
+
+# User-authorized learning-rate-only reruns, seed 1219, 2026-09-16.
+for _name, _parent, _id in (
+    ('cr0_plam', 'j0_plam_r2', 'CR0'),
+    ('cr3_fsdr_race_binding', 'p8_r2_binding', 'CR3'),
+):
+    PAPER_EXPERIMENTS[_name] = dict(
+        PAPER_EXPERIMENTS[_parent], paper_id=_id,
+        lr_schedule='warm_restarts',
+        description='Warm-restart 80e seed1219 counterpart of ' + _parent,
+        architecture_version='cos_restart_pair_v1_' + _name,
+    )
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()
