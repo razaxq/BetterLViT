@@ -11,10 +11,13 @@ def main():
     old={};exec(subprocess.check_output(['git','show','014f42cf084dab01ab4e771a511efcec84276261:paper_experiments.py'],cwd=ROOT),old)
     assert all(PAPER_EXPERIMENTS[k]==v for k,v in old['PAPER_EXPERIMENTS'].items())
     ignored={'paper_id','description','architecture_version','lr_schedule'}
-    for new,parent in [('cr0_plam','j0_plam_r2'),('cr3_fsdr_race_binding','p8_r2_binding')]:
+    for new,parent in [('cr2_plam_race_binding','j2_plam_race_binding')]:
         assert {k:v for k,v in PAPER_EXPERIMENTS[new].items() if k not in ignored}=={k:v for k,v in PAPER_EXPERIMENTS[parent].items() if k not in ignored}
     frozen={};exec(subprocess.check_output(['git','show','023056f38ccf18e64232dcb08eaeef2465e9ba13:paper_experiments.py'],cwd=ROOT),frozen)
-    assert PAPER_EXPERIMENTS==frozen['PAPER_EXPERIMENTS']
+    assert all(PAPER_EXPERIMENTS[k]==v for k,v in frozen['PAPER_EXPERIMENTS'].items())
+    assert set(PAPER_EXPERIMENTS)-set(frozen['PAPER_EXPERIMENTS'])==set(PROFILES)
+    parent=dict(PAPER_EXPERIMENTS['r2_single_cosine'],race_enabled=False,race_route_enabled=False,race_binding_repair=False,race_aux_weight=0.,stage1_match_fsdr_initialization=False)
+    assert {k:v for k,v in PAPER_EXPERIMENTS['cr1_fsdr'].items() if k not in ignored}=={k:v for k,v in parent.items() if k not in ignored}
     m=validate_manifest(json.loads((ROOT/'experiment_manifests/active_cos_restart.json').read_text()))
     for key,value in [('epochs',150),('threshold',.4),('race_aux_weight',.01),('seed',17),('lr_schedule','single_cosine')]:
         invalid=copy.deepcopy(m);invalid[key]=value

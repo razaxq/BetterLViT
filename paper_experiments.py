@@ -260,6 +260,21 @@ for _name, _parent, _id in (
         architecture_version='cos_restart_pair_v1_' + _name,
     )
 
+# Complete the user-authorized four-cell, three-seed whole-module ablation.
+PAPER_EXPERIMENTS['cr1_fsdr'] = dict(
+    PAPER_EXPERIMENTS['r2_single_cosine'], paper_id='CR1',
+    lr_schedule='warm_restarts', race_enabled=False, race_route_enabled=False,
+    race_binding_repair=False, race_aux_weight=0., stage1_match_fsdr_initialization=False,
+    description='Frozen CXR-BERT; FSDR; no RACE; 80e warm restarts',
+    architecture_version='cos_restart_overall_v1_cr1_fsdr',
+)
+PAPER_EXPERIMENTS['cr2_plam_race_binding'] = dict(
+    PAPER_EXPERIMENTS['j2_plam_race_binding'], paper_id='CR2',
+    lr_schedule='warm_restarts',
+    description='Frozen CXR-BERT; original PLAM; complete RACE; 80e warm restarts',
+    architecture_version='cos_restart_overall_v1_cr2_plam_race_binding',
+)
+
 def get_paper_experiment(name):
     """Return a copied, validated experiment profile."""
     normalized = str(name).strip().lower()

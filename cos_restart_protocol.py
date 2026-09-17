@@ -1,16 +1,16 @@
-"""Four authorized additional warm-restart runs, with immutable recipes."""
+"""Six authorized missing-cell warm-restart runs, with immutable recipes."""
 import os
 from paper_experiments import get_paper_experiment
 from training_recipe import planned_rates, rates_equal
 
-PROFILES = {'cr0_plam':('CR0','legacy_plam',False),
-            'cr3_fsdr_race_binding':('CR3','fam_eppa_v4b',True)}
+PROFILES = {'cr1_fsdr':('CR1','fam_eppa_v4b',False),
+            'cr2_plam_race_binding':('CR2','legacy_plam',True)}
 
 
 def validate_manifest(m):
     group,decoder,race=PROFILES[m['profile']]
     p=get_paper_experiment(m['profile'])
-    assert m['configuration']==group and m['seed'] in (2027,3407)
+    assert m['configuration']==group and m['seed'] in (1219,2027,3407)
     expected=dict(epochs=80,batch_size=16,image_size=224,num_workers=4,train_drop_last=True,
         loss_name='dice_focal',optimizer='Adam',weight_decay=.0001,selection_metric='iou',threshold=.5,
         augmentation_policy='legacy',lr_schedule='warm_restarts',initialization='from_scratch',
