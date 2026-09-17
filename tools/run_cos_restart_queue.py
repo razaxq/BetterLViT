@@ -1,4 +1,4 @@
-"""Exactly two serial authorized runs; stop on failure, never auto-change config."""
+"""Exactly four additional serial authorized runs; stop on failure, never auto-change config."""
 import argparse,fcntl,json,subprocess,sys,time
 from pathlib import Path
 from run_cos_restart import write
@@ -6,8 +6,9 @@ from run_cos_restart import write
 def main():
     p=argparse.ArgumentParser();p.add_argument('--manifest',type=Path,required=True);a=p.parse_args()
     spec=json.loads(a.manifest.read_text());stage=a.manifest.parent
-    assert len(spec['runs'])==2 and spec['scope']=='cos_restart_pair_only'
-    assert len({r['source_git_commit'] for r in spec['runs']})==2
+    assert len(spec['runs'])==4 and spec['scope']=='cos_restart_three_seed_extension'
+    assert len({r['source_git_commit'] for r in spec['runs']})==4
+    assert {(r['configuration'],r['seed']) for r in spec['runs']}=={(g,s) for g in ('CR0','CR3') for s in (2027,3407)}
     assert not (stage/'queue_status.json').exists(),'Refuse duplicate queue; inspect existing status'
     lock=(stage/'queue.lock').open('w');fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
     state=dict(phase='running',started_unix=time.time(),active=None,runs=[])

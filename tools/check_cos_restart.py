@@ -13,8 +13,10 @@ def main():
     ignored={'paper_id','description','architecture_version','lr_schedule'}
     for new,parent in [('cr0_plam','j0_plam_r2'),('cr3_fsdr_race_binding','p8_r2_binding')]:
         assert {k:v for k,v in PAPER_EXPERIMENTS[new].items() if k not in ignored}=={k:v for k,v in PAPER_EXPERIMENTS[parent].items() if k not in ignored}
+    frozen={};exec(subprocess.check_output(['git','show','023056f38ccf18e64232dcb08eaeef2465e9ba13:paper_experiments.py'],cwd=ROOT),frozen)
+    assert PAPER_EXPERIMENTS==frozen['PAPER_EXPERIMENTS']
     m=validate_manifest(json.loads((ROOT/'experiment_manifests/active_cos_restart.json').read_text()))
-    for key,value in [('epochs',150),('threshold',.4),('race_aux_weight',.01),('seed',2027),('lr_schedule','single_cosine')]:
+    for key,value in [('epochs',150),('threshold',.4),('race_aux_weight',.01),('seed',17),('lr_schedule','single_cosine')]:
         invalid=copy.deepcopy(m);invalid[key]=value
         try:validate_manifest(invalid)
         except (AssertionError,KeyError):pass
