@@ -1,0 +1,431 @@
+{
+  "status": "complete",
+  "scope": "stage1_whole_module_only",
+  "new_runs": 8,
+  "reused_runs": 4,
+  "total_models": 12,
+  "seeds": [
+    1219,
+    2027,
+    3407
+  ],
+  "rows": [
+    {
+      "group": "J0",
+      "configuration": "原版PLAM，无FSDR、无RACE",
+      "seed": 1219,
+      "best_epoch": 61,
+      "val_iou": 0.7225930286155378,
+      "val_dice": 0.819336509334292,
+      "test_iou": 0.7556750522336712,
+      "test_dice": 0.8406037074337933,
+      "source_git_commit": "a8a63d7d992d455f1e0d640a8dca9ccca72a491e",
+      "experiment_tag": "experiment-stage1-j0-80e-seed1219-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j0s1219/Covid19/BetterLViT/j0_plam_r2/J0_Test_session_09.15_14h47/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "037707113b7eec8e406e15f19146fd8c081b9cc845a777dfd2e1f4ab7f552569",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s1219\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s1219\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J0",
+      "configuration": "原版PLAM，无FSDR、无RACE",
+      "seed": 2027,
+      "best_epoch": 72,
+      "val_iou": 0.7235435636030164,
+      "val_dice": 0.8212877351284444,
+      "test_iou": 0.754667685881272,
+      "test_dice": 0.8407708544347343,
+      "source_git_commit": "099bb07e09bb6711acff263311ba5e7d39fdc81c",
+      "experiment_tag": "experiment-stage1-j0-80e-seed2027-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j0s2027/Covid19/BetterLViT/j0_plam_r2/J0_Test_session_09.16_01h46/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "f88a629472157dce554483dc6f76f649fe248bd8578337c02b30eac3f4b79ce0",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s2027\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J0",
+      "configuration": "原版PLAM，无FSDR、无RACE",
+      "seed": 3407,
+      "best_epoch": 74,
+      "val_iou": 0.7235484628655068,
+      "val_dice": 0.8203485576749422,
+      "test_iou": 0.7539828007117387,
+      "test_dice": 0.8393788171575878,
+      "source_git_commit": "fb11f009ea2dd1b286c9ea71dcc2dfb67d026a42",
+      "experiment_tag": "experiment-stage1-j0-80e-seed3407-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j0s3407/Covid19/BetterLViT/j0_plam_r2/J0_Test_session_09.16_12h49/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "d82a2e902828737902bbe3a95e4d90e8fe8869cc1d79e9ef86d7d932c9bbe980",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s3407\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J1",
+      "configuration": "FSDR替换PLAM，无RACE",
+      "seed": 1219,
+      "best_epoch": 67,
+      "val_iou": 0.7266535938268995,
+      "val_dice": 0.8240342867846576,
+      "test_iou": 0.7580983080794957,
+      "test_dice": 0.8442357558557602,
+      "source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662",
+      "experiment_tag": "experiment-r2-recipe-80e-seed1219-20260908-v2",
+      "best_checkpoint": "/root/BetterLViT-recipe-r2/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_00h21/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "b36d1392861592181c6e908a4ce81fec27167ab21c5ec92cbbb4c3553b57542a",
+      "validation_result": "D:\\BetterLViT\\outputs\\recipe_20260908\\r2_validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s1219_test.json",
+      "origin": "reused"
+    },
+    {
+      "group": "J1",
+      "configuration": "FSDR替换PLAM，无RACE",
+      "seed": 2027,
+      "best_epoch": 68,
+      "val_iou": 0.7304811821884171,
+      "val_dice": 0.8270935579188645,
+      "test_iou": 0.7608585504493884,
+      "test_dice": 0.8457388894396928,
+      "source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab",
+      "experiment_tag": "experiment-r2-recipe-80e-seed2027-20260909",
+      "best_checkpoint": "/root/BetterLViT-recipe-r2s2027/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_10h40/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "809fd4f454da621afdee1113a5e922008e08b2efa78d772c2e9682265b6ef2fc",
+      "validation_result": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s2027_validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s2027_test.json",
+      "origin": "reused"
+    },
+    {
+      "group": "J1",
+      "configuration": "FSDR替换PLAM，无RACE",
+      "seed": 3407,
+      "best_epoch": 75,
+      "val_iou": 0.7264841055295278,
+      "val_dice": 0.8234211685822802,
+      "test_iou": 0.7605435221739733,
+      "test_dice": 0.8451174629437327,
+      "source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2",
+      "experiment_tag": "experiment-r2-recipe-80e-seed3407-20260909",
+      "best_checkpoint": "/root/BetterLViT-recipe-r2s3407/Covid19/BetterLViT/r2_single_cosine/R2_Test_session_09.09_20h47/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "5a142fe73e519ea8bdda54cbd659a2327b7789557dc1f2712dfa6f9ee50d2d5d",
+      "validation_result": "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s3407_validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s3407_test.json",
+      "origin": "reused"
+    },
+    {
+      "group": "J2",
+      "configuration": "原版PLAM＋完整RACE（含绑定修复辅助监督）",
+      "seed": 1219,
+      "best_epoch": 78,
+      "val_iou": 0.7249392487822852,
+      "val_dice": 0.8214756280886679,
+      "test_iou": 0.758189287159852,
+      "test_dice": 0.8427117611194825,
+      "source_git_commit": "e2096e14f6b95e4f41e9164d211f9d44582bea24",
+      "experiment_tag": "experiment-stage1-j2-80e-seed1219-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j2s1219/Covid19/BetterLViT/j2_plam_race_binding/J2_Test_session_09.15_17h28/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "c9b61afddaff1c782d4d412b4688471c22642425819e7a54769f4a1e037b5eaa",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s1219\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s1219\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J2",
+      "configuration": "原版PLAM＋完整RACE（含绑定修复辅助监督）",
+      "seed": 2027,
+      "best_epoch": 72,
+      "val_iou": 0.7251544936363753,
+      "val_dice": 0.8214158475385019,
+      "test_iou": 0.7564579875800803,
+      "test_dice": 0.8416483460399299,
+      "source_git_commit": "1c3a6baa1cf80239b1ec9cb99b2625ef5ecc35f4",
+      "experiment_tag": "experiment-stage1-j2-80e-seed2027-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j2s2027/Covid19/BetterLViT/j2_plam_race_binding/J2_Test_session_09.16_04h25/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "a314ca12945c9baaf1aa0b1332e4d4fd1747d469170e09408e9691eea97b09a7",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s2027\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J2",
+      "configuration": "原版PLAM＋完整RACE（含绑定修复辅助监督）",
+      "seed": 3407,
+      "best_epoch": 66,
+      "val_iou": 0.7262349912032372,
+      "val_dice": 0.8227745681535414,
+      "test_iou": 0.7562394029328435,
+      "test_dice": 0.8414247216094198,
+      "source_git_commit": "46e311b9ad721be41a516f43e11a92f5a8207682",
+      "experiment_tag": "experiment-stage1-j2-80e-seed3407-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j2s3407/Covid19/BetterLViT/j2_plam_race_binding/J2_Test_session_09.16_15h28/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "42184395aa91deb7611ecfd11ecdabed2b3831328c339b0b98a4b7bea3ed24b5",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s3407\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J3",
+      "configuration": "FSDR替换PLAM＋完整RACE（含绑定修复辅助监督）",
+      "seed": 1219,
+      "best_epoch": 75,
+      "val_iou": 0.7281153892839903,
+      "val_dice": 0.8251255979389873,
+      "test_iou": 0.7624854356683717,
+      "test_dice": 0.8470967185691495,
+      "source_git_commit": "c6e52a9b13576cab9e2451c550d03ad274bc09e2",
+      "experiment_tag": "experiment-p8-r2-binding-80e-seed1219-20260914",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-p8-r2-binding/Covid19/BetterLViT/p8_r2_binding/P8B2_Test_session_09.14_23h22/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "910b12fb9c20fa658e4b746a92c543bda14ce52f906e93a65ce91da08f27683c",
+      "validation_result": "D:\\BetterLViT\\outputs\\p8_research_20260914\\p8_r2_binding_validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\p8_research_20260914\\test_20260915\\p8_r2_binding_test.json",
+      "origin": "reused"
+    },
+    {
+      "group": "J3",
+      "configuration": "FSDR替换PLAM＋完整RACE（含绑定修复辅助监督）",
+      "seed": 2027,
+      "best_epoch": 78,
+      "val_iou": 0.7323509805487002,
+      "val_dice": 0.8286866164700581,
+      "test_iou": 0.7625624802705974,
+      "test_dice": 0.8474675585924,
+      "source_git_commit": "38b54196d4bfc6e44d4977dd7a87f07fad3a5d86",
+      "experiment_tag": "experiment-stage1-j3-80e-seed2027-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j3s2027/Covid19/BetterLViT/p8_r2_binding/P8B2_Test_session_09.15_20h32/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "fdebeb0ce795dc669f286a8414c5cf59253210b4868c6caa9f4c4f8c542b3daf",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s2027\\test.json",
+      "origin": "new"
+    },
+    {
+      "group": "J3",
+      "configuration": "FSDR替换PLAM＋完整RACE（含绑定修复辅助监督）",
+      "seed": 3407,
+      "best_epoch": 70,
+      "val_iou": 0.7290282858636302,
+      "val_dice": 0.8265651991278234,
+      "test_iou": 0.7617376560968515,
+      "test_dice": 0.8467727945897684,
+      "source_git_commit": "2661423767a6d92b2daaed8a12f8049d7430fee2",
+      "experiment_tag": "experiment-stage1-j3-80e-seed3407-20260915",
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-stage1-j3s3407/Covid19/BetterLViT/p8_r2_binding/P8B2_Test_session_09.16_07h29/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "2fb835f6254db93f0630163c8d6b99f491c75359995a635ac37777cddeb4eed5",
+      "validation_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s3407\\test.json",
+      "origin": "new"
+    }
+  ],
+  "group_statistics": {
+    "J0": {
+      "val_iou": {
+        "mean": 0.723228351694687,
+        "sample_sd": 0.000550211379260715
+      },
+      "val_dice": {
+        "mean": 0.8203242673792263,
+        "sample_sd": 0.00097583965834091
+      },
+      "test_iou": {
+        "mean": 0.754775179608894,
+        "sample_sd": 0.0008512314488311616
+      },
+      "test_dice": {
+        "mean": 0.8402511263420385,
+        "sample_sd": 0.0007600506660339607
+      }
+    },
+    "J1": {
+      "val_iou": {
+        "mean": 0.7278729605149481,
+        "sample_sd": 0.002260375365774742
+      },
+      "val_dice": {
+        "mean": 0.8248496710952674,
+        "sample_sd": 0.0019672949805141175
+      },
+      "test_iou": {
+        "mean": 0.7598334602342858,
+        "sample_sd": 0.001510918744930458
+      },
+      "test_dice": {
+        "mean": 0.8450307027463952,
+        "sample_sd": 0.0007553132738593009
+      }
+    },
+    "J2": {
+      "val_iou": {
+        "mean": 0.7254429112072992,
+        "sample_sd": 0.0006943526674370002
+      },
+      "val_dice": {
+        "mean": 0.8218886812602371,
+        "sample_sd": 0.0007677825990088916
+      },
+      "test_iou": {
+        "mean": 0.7569622258909253,
+        "sample_sd": 0.001068271655655506
+      },
+      "test_dice": {
+        "mean": 0.8419282762562774,
+        "sample_sd": 0.0006876687935582758
+      }
+    },
+    "J3": {
+      "val_iou": {
+        "mean": 0.7298315518987736,
+        "sample_sd": 0.0022291221552065716
+      },
+      "val_dice": {
+        "mean": 0.8267924711789563,
+        "sample_sd": 0.001791354985360818
+      },
+      "test_iou": {
+        "mean": 0.7622618573452735,
+        "sample_sd": 0.0004556030940615105
+      },
+      "test_dice": {
+        "mean": 0.8471123572504393,
+        "sample_sd": 0.00034764591339828116
+      }
+    }
+  },
+  "paired_contrasts": {
+    "FSDR_on_PLAM": {
+      "pairs": [
+        {
+          "seed": 1219,
+          "iou_delta_pp": 0.242325584582459,
+          "dice_delta_pp": 0.3632048421966849
+        },
+        {
+          "seed": 2027,
+          "iou_delta_pp": 0.6190864568116461,
+          "dice_delta_pp": 0.496803500495846
+        },
+        {
+          "seed": 3407,
+          "iou_delta_pp": 0.656072146223452,
+          "dice_delta_pp": 0.5738645786144914
+        }
+      ],
+      "mean_iou_delta_pp": 0.5058280625391857,
+      "mean_dice_delta_pp": 0.47795764043567407
+    },
+    "RACE_on_PLAM": {
+      "pairs": [
+        {
+          "seed": 1219,
+          "iou_delta_pp": 0.25142349261808583,
+          "dice_delta_pp": 0.21080536856892262
+        },
+        {
+          "seed": 2027,
+          "iou_delta_pp": 0.17903016988083387,
+          "dice_delta_pp": 0.08774916051955683
+        },
+        {
+          "seed": 3407,
+          "iou_delta_pp": 0.22566022211047976,
+          "dice_delta_pp": 0.2045904451832059
+        }
+      ],
+      "mean_iou_delta_pp": 0.21870462820313316,
+      "mean_dice_delta_pp": 0.16771499142389512
+    },
+    "RACE_on_FSDR": {
+      "pairs": [
+        {
+          "seed": 1219,
+          "iou_delta_pp": 0.43871275888759387,
+          "dice_delta_pp": 0.28609627133893145
+        },
+        {
+          "seed": 2027,
+          "iou_delta_pp": 0.1703929821208927,
+          "dice_delta_pp": 0.17286691527071962
+        },
+        {
+          "seed": 3407,
+          "iou_delta_pp": 0.11941339228782599,
+          "dice_delta_pp": 0.1655331646035707
+        }
+      ],
+      "mean_iou_delta_pp": 0.24283971109877087,
+      "mean_dice_delta_pp": 0.20816545040440726
+    },
+    "FSDR_with_RACE": {
+      "pairs": [
+        {
+          "seed": 1219,
+          "iou_delta_pp": 0.42961485085196705,
+          "dice_delta_pp": 0.43849574496669375
+        },
+        {
+          "seed": 2027,
+          "iou_delta_pp": 0.6104492690517049,
+          "dice_delta_pp": 0.5819212552470088
+        },
+        {
+          "seed": 3407,
+          "iou_delta_pp": 0.5498253164007982,
+          "dice_delta_pp": 0.5348072980348562
+        }
+      ],
+      "mean_iou_delta_pp": 0.5299631454348234,
+      "mean_dice_delta_pp": 0.5184080994161863
+    },
+    "full_vs_PLAM": {
+      "pairs": [
+        {
+          "seed": 1219,
+          "iou_delta_pp": 0.6810383434700529,
+          "dice_delta_pp": 0.6493011135356164
+        },
+        {
+          "seed": 2027,
+          "iou_delta_pp": 0.7894794389325388,
+          "dice_delta_pp": 0.6696704157665656
+        },
+        {
+          "seed": 3407,
+          "iou_delta_pp": 0.775485538511278,
+          "dice_delta_pp": 0.7393977432180621
+        }
+      ],
+      "mean_iou_delta_pp": 0.7486677736379566,
+      "mean_dice_delta_pp": 0.6861230908400814
+    }
+  },
+  "verification": {
+    "all_record_macro_metrics_recomputed": true,
+    "identical_sample_sets": true,
+    "source_artifact_hashes_verified": true
+  },
+  "source_artifact_sha256": {
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s1219\\validation.json": "0d387658c44527ba78ab5f7c000f978862970419596204cf2d497e11600ec256",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s1219\\test.json": "67eee4f0a9a341343849aeb395759a248d8c5dbaedfb60f65b4e6625d8d2ef7b",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s2027\\validation.json": "ab4429fc66f620c0aaac9a6ebb0606424e44370d8ce3767518586059d89147b5",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s2027\\test.json": "58f9ec57488b00cdd8815db644e7b6f97a7bbe366d824f973a7a122b6befcaa0",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s3407\\validation.json": "7c0dd86255e8e8297df3838b4f39944399cbde930df01780a9e5695f6b8ac9b4",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j0s3407\\test.json": "f53da8fe849d53c8622171a09ecd3c381dd11a65ec23a82064144a98df57c6d0",
+    "D:\\BetterLViT\\outputs\\recipe_20260908\\r2_validation.json": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b",
+    "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s1219_test.json": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792",
+    "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s2027_validation.json": "1365d3f39d71edb9385ec9a10bfd1b4968cbd9443ec7ee9aeadf7747b0cdf751",
+    "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s2027_test.json": "d474f54ba2797eec687c34e731c2eb0808d832fc33e0713a8b356d2621777bd2",
+    "D:\\BetterLViT\\outputs\\recipe_replication_20260909\\r2s3407_validation.json": "7b1d2494ddd0bf9e3eaecece160fb851bd93c494727bc0590c898b15e3e507ce",
+    "D:\\BetterLViT\\outputs\\recipe_test_20260910\\r2s3407_test.json": "7e5490c37e60a8997894d121cf9231f9b353591f008ce57e64e30260069faaf6",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s1219\\validation.json": "f6df0396d1610cdd2df96251afc2988f869935edd48f9fdd58b65bff05c3741b",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s1219\\test.json": "720c0eacdc307347e548242732bb0d58d7932a4d57263d3059c5aab262bfab13",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s2027\\validation.json": "cc681f3bc6553250daaa38b807042907880d15761b6c867eefec5c0be9623e4f",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s2027\\test.json": "64d082307d5757d67a23ca091d8b62d0fb408003eb15c099d79084ba52b91864",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s3407\\validation.json": "996fe7334bc731f78dc944afa9d6e1c7948fa9abf61f9c9945854273bb7558fd",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j2s3407\\test.json": "9286cb119528d16e8adb029eabd8164fcf165e8e72aaa24d9f08dd5ccbabbedf",
+    "D:\\BetterLViT\\outputs\\p8_research_20260914\\p8_r2_binding_validation.json": "ffdc01c7b82f79dc48f514bd0bba74d66db55c4fd87a229b7746084baf063284",
+    "D:\\BetterLViT\\outputs\\p8_research_20260914\\test_20260915\\p8_r2_binding_test.json": "a90374bbf8f653bc7efb0a71c1d582b0de19130d3abdaa6a9d70f66e45f7a6e8",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s2027\\validation.json": "b9832c5c3b560859e10935e4bd3eb3774e9fa29d6ccebf9a47b40d45026a7ddf",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s2027\\test.json": "cd731415de2d3548011575a326e22aa8979fec7081a479202d463b6c9cd3d57e",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s3407\\validation.json": "a36dd3f0d7b17b799468b3e846a58d4f479cb9133a0735820b633a6a644cf71c",
+    "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\completed\\j3s3407\\test.json": "78ff04aef1ed511fcc3a3c13281c413fc3c96269938b6e4f30023c366c9e2672"
+  },
+  "scope_limit": "No internal mechanism experiments; no statistical significance claim; no extra inference"
+}

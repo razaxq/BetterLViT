@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import torch.optim
+import math
 import os
 import time
 from utils import *
 import Config as config
 import warnings
 from torchinfo import summary
-from sklearn.metrics.pairwise import cosine_similarity
 warnings.filterwarnings("ignore")
 
 
@@ -43,10 +43,15 @@ def print_summary(epoch, i, nb_batch, loss, loss_name, batch_time,
 ##################################################################################
 def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_scheduler, model_type, logger):
     logging_mode = 'Train' if model.training else 'Val'
-    end = time.time()
-    time_sum, loss_sum = 0, 0
-    dice_sum, iou_sum, acc_sum = 0.0, 0.0, 0.0
-    dices = []
+    epoch_start = time.time()
+    # Windows ROCm 7.2 corrupted long-lived device scalar accumulators during
+    # sustained training. Keep epoch aggregates as ordinary host numbers and
+    # transfer one compact scalar snapshot per batch.
+    loss_sum = 0.0
+    dice_sum = 0.0
+    iou_sum = 0.0
+    sample_count = 0
+    component_sums = {}
     for i, (sampled_batch, names) in enumerate(loader, 1):
 
         try:
@@ -55,78 +60,162 @@ def train_one_epoch(loader, model, criterion, optimizer, writer, epoch, lr_sched
             loss_name = criterion.__name__
 
         # Take variable and put them to GPU
-        images, masks, text = sampled_batch['image'], sampled_batch['label'], sampled_batch['text']
-        if text.shape[1] > 10:
-            text = text[ :, :10, :]
-        
-        images, masks, text = images.cuda(), masks.cuda(), text.cuda()
+        images, masks = sampled_batch['image'], sampled_batch['label']
+        input_ids = sampled_batch['input_ids']
+        attention_mask = sampled_batch['attention_mask']
+
+        images = images.cuda(non_blocking=True)
+        masks = masks.cuda(non_blocking=True)
+        input_ids = input_ids.cuda(non_blocking=True)
+        attention_mask = attention_mask.cuda(non_blocking=True)
 
 
         # ====================================================
         #             Compute loss
         # ====================================================
 
-        preds = model(images, text)
-        out_loss = criterion(preds, masks.float())  # Loss
-        # print(model.training)
+        if (
+            getattr(config, 'bcdh_enabled', False)
+            or getattr(config, 'cdrr_enabled', False)
+            or getattr(config, 'race_enabled', False)
+        ):
+            race_slot_targets = sampled_batch.get('race_slot_targets')
+            race_zone_basis = sampled_batch.get('race_zone_basis')
+            if getattr(config, 'race_enabled', False):
+                race_slot_targets = race_slot_targets.cuda(non_blocking=True)
+                race_zone_basis = race_zone_basis.cuda(non_blocking=True)
+            outputs = model(
+                images,
+                input_ids,
+                attention_mask,
+                return_aux=True,
+                race_slot_targets=race_slot_targets,
+                race_zone_basis=race_zone_basis,
+            )
+            preds = outputs['final']
+            out_loss = criterion(outputs, masks.float())
+        else:
+            preds = model(images, input_ids, attention_mask)
+            out_loss = criterion(preds, masks.float())  # Loss
+        with torch.no_grad():
+            train_dice = criterion._show_dice(
+                preds.detach(),
+                masks.float(),
+            )
+            train_iou = iou_on_batch_gpu(masks, preds.detach())
+            component_names = list(
+                getattr(criterion, 'last_components', {}).keys()
+            )
+            component_values = [
+                getattr(criterion, 'last_components', {})[name]
+                for name in component_names
+            ]
+            snapshot = torch.stack([
+                out_loss.detach(),
+                train_iou,
+                train_dice,
+                *component_values,
+            ]).float().cpu().tolist()
+            (
+                loss_value,
+                iou_value,
+                dice_value,
+                *component_values,
+            ) = snapshot
+            component_snapshot = dict(
+                zip(component_names, component_values)
+            )
 
+        if not math.isfinite(loss_value) or not 0.0 <= loss_value <= 100.0:
+            raise FloatingPointError(
+                'Invalid loss at epoch {} batch {}: {}'.format(
+                    epoch + 1,
+                    i,
+                    loss_value,
+                )
+            )
 
         if model.training:
             optimizer.zero_grad()
             out_loss.backward()
             optimizer.step()
 
-        train_dice = criterion._show_dice(preds, masks.float())
-        train_iou = iou_on_batch(masks,preds)
-
-        batch_time = time.time() - end
-        if epoch % config.vis_frequency == 0 and logging_mode is 'Val':
+        if epoch % config.vis_frequency == 0 and logging_mode == 'Val':
             vis_path = config.visualize_path+str(epoch)+'/'
             if not os.path.isdir(vis_path):
                 os.makedirs(vis_path)
             save_on_batch(images,masks,preds,names,vis_path)
-        dices.append(train_dice)
+        batch_size = len(images)
+        sample_count += batch_size
+        loss_sum += batch_size * loss_value
+        iou_sum += batch_size * iou_value
+        dice_sum += batch_size * dice_value
+        for name, value in component_snapshot.items():
+            component_sums[name] = (
+                component_sums.get(name, 0.0)
+                + batch_size * value
+            )
 
-        time_sum += len(images) * batch_time
-        loss_sum += len(images) * out_loss
-        iou_sum += len(images) * train_iou
-        # acc_sum += len(images) * train_acc
-        dice_sum += len(images) * train_dice
+        average_loss = loss_sum / sample_count
+        train_iou_average = iou_sum / sample_count
+        train_dice_avg = dice_sum / sample_count
 
-        if i == len(loader):
-            average_loss = loss_sum / (config.batch_size*(i-1) + len(images))
-            average_time = time_sum / (config.batch_size*(i-1) + len(images))
-            train_iou_average = iou_sum / (config.batch_size*(i-1) + len(images))
-            # train_acc_average = acc_sum / (config.batch_size*(i-1) + len(images))
-            train_dice_avg = dice_sum / (config.batch_size*(i-1) + len(images))
-        else:
-            average_loss = loss_sum / (i * config.batch_size)
-            average_time = time_sum / (i * config.batch_size)
-            train_iou_average = iou_sum / (i * config.batch_size)
-            # train_acc_average = acc_sum / (i * config.batch_size)
-            train_dice_avg = dice_sum / (i * config.batch_size)
+        should_print = i % config.print_frequency == 0 or i == len(loader)
+        should_write = (
+            config.tensorboard
+            and (
+                i % config.tensorboard_frequency == 0
+                or i == len(loader)
+            )
+        )
+        if should_print or should_write:
+            torch.cuda.synchronize()
+            average_time = (time.time() - epoch_start) / i
+            average_loss_value = average_loss
+            average_iou_value = train_iou_average
+            average_dice_value = train_dice_avg
+        if should_print:
+            print_summary(epoch + 1, i, len(loader), loss_value, loss_name, average_time,
+                          average_loss_value, average_time, iou_value, average_iou_value,
+                          dice_value, average_dice_value, 0, 0, logging_mode,
+                          lr=min(g["lr"] for g in optimizer.param_groups), logger=logger)
 
-        end = time.time()
-        torch.cuda.empty_cache()
-
-        if i % config.print_frequency == 0:
-            print_summary(epoch + 1, i, len(loader), out_loss, loss_name, batch_time,
-                          average_loss, average_time, train_iou, train_iou_average,
-                          train_dice, train_dice_avg, 0, 0,  logging_mode,
-                          lr=min(g["lr"] for g in optimizer.param_groups),logger=logger)
-
-        if config.tensorboard:
+        if should_write:
             step = epoch * len(loader) + i
-            writer.add_scalar(logging_mode + '_' + loss_name, out_loss.item(), step)
+            writer.add_scalar(logging_mode + '_' + loss_name, loss_value, step)
 
             # plot metrics in tensorboard
-            writer.add_scalar(logging_mode + '_iou', train_iou, step)
+            writer.add_scalar(logging_mode + '_iou', iou_value, step)
             # writer.add_scalar(logging_mode + '_acc', train_acc, step)
-            writer.add_scalar(logging_mode + '_dice', train_dice, step)
-
-        torch.cuda.empty_cache()
+            writer.add_scalar(logging_mode + '_dice', dice_value, step)
+            for name, value in component_snapshot.items():
+                writer.add_scalar(
+                    f"{logging_mode}_loss_{name}",
+                    value,
+                    step,
+                )
 
     if lr_scheduler is not None:
         lr_scheduler.step()
 
-    return average_loss, train_dice_avg
+    torch.cuda.synchronize()
+    average_loss = loss_sum / sample_count
+    train_dice_avg = dice_sum / sample_count
+    train_iou_average = iou_sum / sample_count
+    criterion.last_epoch_components = {
+        name: value / sample_count
+        for name, value in component_sums.items()
+    }
+    if criterion.last_epoch_components:
+        logger.info(
+            '   [{}] Loss components: {}'.format(
+                logging_mode,
+                ', '.join(
+                    '{}={:.6f}'.format(name, value)
+                    for name, value
+                    in criterion.last_epoch_components.items()
+                ),
+            )
+        )
+
+    return average_loss, train_dice_avg, train_iou_average

@@ -1,0 +1,110 @@
+{
+  "scope": "stage1_whole_module_only",
+  "common_implementation_commit": "014f42cf084dab01ab4e771a511efcec84276261",
+  "runs": [
+    {
+      "run_id": "j0s1219",
+      "configuration": "J0",
+      "profile": "j0_plam_r2",
+      "seed": 1219,
+      "source_git_commit": "a8a63d7d992d455f1e0d640a8dca9ccca72a491e",
+      "experiment_tag": "experiment-stage1-j0-80e-seed1219-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j0s1219_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j0s1219",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j0s1219",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j0s1219.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j0s1219.bundle"
+    },
+    {
+      "run_id": "j2s1219",
+      "configuration": "J2",
+      "profile": "j2_plam_race_binding",
+      "seed": 1219,
+      "source_git_commit": "e2096e14f6b95e4f41e9164d211f9d44582bea24",
+      "experiment_tag": "experiment-stage1-j2-80e-seed1219-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j2s1219_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j2s1219",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j2s1219",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j2s1219.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j2s1219.bundle"
+    },
+    {
+      "run_id": "j3s2027",
+      "configuration": "J3",
+      "profile": "p8_r2_binding",
+      "seed": 2027,
+      "source_git_commit": "38b54196d4bfc6e44d4977dd7a87f07fad3a5d86",
+      "experiment_tag": "experiment-stage1-j3-80e-seed2027-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j3s2027_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j3s2027",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j3s2027",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j3s2027.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j3s2027.bundle"
+    },
+    {
+      "run_id": "j0s2027",
+      "configuration": "J0",
+      "profile": "j0_plam_r2",
+      "seed": 2027,
+      "source_git_commit": "099bb07e09bb6711acff263311ba5e7d39fdc81c",
+      "experiment_tag": "experiment-stage1-j0-80e-seed2027-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j0s2027_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j0s2027",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j0s2027",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j0s2027.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j0s2027.bundle"
+    },
+    {
+      "run_id": "j2s2027",
+      "configuration": "J2",
+      "profile": "j2_plam_race_binding",
+      "seed": 2027,
+      "source_git_commit": "1c3a6baa1cf80239b1ec9cb99b2625ef5ecc35f4",
+      "experiment_tag": "experiment-stage1-j2-80e-seed2027-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j2s2027_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j2s2027",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j2s2027",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j2s2027.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j2s2027.bundle"
+    },
+    {
+      "run_id": "j3s3407",
+      "configuration": "J3",
+      "profile": "p8_r2_binding",
+      "seed": 3407,
+      "source_git_commit": "2661423767a6d92b2daaed8a12f8049d7430fee2",
+      "experiment_tag": "experiment-stage1-j3-80e-seed3407-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j3s3407_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j3s3407",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j3s3407",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j3s3407.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j3s3407.bundle"
+    },
+    {
+      "run_id": "j0s3407",
+      "configuration": "J0",
+      "profile": "j0_plam_r2",
+      "seed": 3407,
+      "source_git_commit": "fb11f009ea2dd1b286c9ea71dcc2dfb67d026a42",
+      "experiment_tag": "experiment-stage1-j0-80e-seed3407-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j0s3407_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j0s3407",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j0s3407",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j0s3407.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j0s3407.bundle"
+    },
+    {
+      "run_id": "j2s3407",
+      "configuration": "J2",
+      "profile": "j2_plam_race_binding",
+      "seed": 3407,
+      "source_git_commit": "46e311b9ad721be41a516f43e11a92f5a8207682",
+      "experiment_tag": "experiment-stage1-j2-80e-seed3407-20260915",
+      "local_repository": "D:\\BetterLViT\\stage1_j2s3407_work",
+      "repository": "/root/autodl-tmp/BetterLViT-stage1-j2s3407",
+      "run": "/root/autodl-tmp/stage1_overall_20260915/runs/j2s3407",
+      "preflight": "/root/autodl-tmp/stage1_overall_20260915/preflights/j2s3407.json",
+      "bundle": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\j2s3407.bundle"
+    }
+  ]
+}

@@ -1,7 +1,28 @@
-# LViT
+# BetterLViT: FSDR + RACE
+
+## Final model and paper results
+
+The final model (`ours` in comparison figures) combines **FSDR** (Frequency-aware
+Semantic–Detail Refinement) with **complete RACE-Fuse**: routing and binding-repaired
+auxiliary supervision form one module. See [FSDR](docs/FSDR.md),
+[whole-module protocol](docs/STAGE1_OVERALL.md), and [paper results](docs/PAPER_RESULTS.md).
+Historical experiment names and checkpoint keys are retained for compatibility.
+
+Use the explicit `p8_r2_binding` profile for the single-cycle-cosine full model;
+`r2_single_cosine`, `j0_plam_r2`, and `j2_plam_race_binding` are its ablation controls.
+Consult the protocol and archived per-run manifests before training; the legacy
+`Config.py` default is not the final paper configuration. Formal launchers require
+an isolated clean checkout and a matching run-specific source tag. Historical
+results remain attributed to their original training commits, not this merge.
+
+The primary four-group, three-seed comparison uses 80 epochs, frozen CXR-BERT,
+no LoRA, and single-cycle cosine. Warm-restart results are reported separately.
+The original LViT instructions below are retained as historical documentation;
+current server dependencies are in `requirements.server-cu128.txt`.
 
 
-This repo is the official implementation of "**LViT: Language meets Vision Transformer in Medical Image Segmentation**" 
+
+This research project extends the original implementation of "**LViT: Language meets Vision Transformer in Medical Image Segmentation**"
 [Arxiv](https://arxiv.org/abs/2206.14718), [ResearchGate](https://www.researchgate.net/publication/371833348_LViT_Language_meets_Vision_Transformer_in_Medical_Image_Segmentation), [IEEEXplore](https://ieeexplore.ieee.org/document/10172039)
 
 ![image](https://github.com/HUANGLIZI/LViT/blob/main/IMG/LViT.png)

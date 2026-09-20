@@ -30,11 +30,87 @@ class WeightedBCE(nn.Module):
         loss = F.binary_cross_entropy(logit, truth, reduction='none')
         pos = (truth > 0.5).float()
         neg = (truth < 0.5).float()
-        pos_weight = pos.sum().item() + 1e-12
-        neg_weight = neg.sum().item() + 1e-12
+        # Keep class counts on the active device. The former ``.item()`` calls
+        # synchronized every batch and made the Windows ROCm path less stable.
+        pos_weight = pos.sum().clamp_min(1.0)
+        neg_weight = neg.sum().clamp_min(1.0)
         loss = (self.weights[0] * pos * loss / pos_weight + self.weights[1] * neg * loss / neg_weight).sum()
 
         return loss
+
+
+class BalancedBinaryFocalLoss(nn.Module):
+    """Binary focal loss with independent foreground/background averaging."""
+
+    def __init__(
+        self,
+        gamma=2.0,
+        positive_weight=0.5,
+        negative_weight=0.5,
+        eps=1e-6,
+    ):
+        super().__init__()
+        if gamma < 0.0:
+            raise ValueError("focal gamma must be non-negative")
+        if positive_weight < 0.0 or negative_weight < 0.0:
+            raise ValueError("focal class weights must be non-negative")
+        if positive_weight + negative_weight <= 0.0:
+            raise ValueError("at least one focal class weight is required")
+        self.gamma = float(gamma)
+        self.positive_weight = float(positive_weight)
+        self.negative_weight = float(negative_weight)
+        self.eps = float(eps)
+
+    def forward(self, inputs, targets):
+        if targets.ndim == inputs.ndim - 1:
+            targets = targets.unsqueeze(1)
+        if inputs.shape != targets.shape:
+            raise ValueError(
+                "focal loss shape mismatch: "
+                f"{tuple(inputs.shape)} != {tuple(targets.shape)}"
+            )
+        probabilities = inputs.clamp(
+            min=self.eps,
+            max=1.0 - self.eps,
+        )
+        targets = targets.float()
+        cross_entropy = F.binary_cross_entropy(
+            probabilities,
+            targets,
+            reduction="none",
+        )
+        correct_class_probability = (
+            probabilities * targets
+            + (1.0 - probabilities) * (1.0 - targets)
+        )
+        focal = (
+            (1.0 - correct_class_probability).pow(self.gamma)
+            * cross_entropy
+        )
+
+        positive_mask = targets > 0.5
+        negative_mask = ~positive_mask
+        positive_count = positive_mask.sum()
+        negative_count = negative_mask.sum()
+        positive_mean = (
+            (focal * positive_mask).sum()
+            / positive_count.clamp_min(1)
+        )
+        negative_mean = (
+            (focal * negative_mask).sum()
+            / negative_count.clamp_min(1)
+        )
+        positive_active = (positive_count > 0).to(focal.dtype)
+        negative_active = (negative_count > 0).to(focal.dtype)
+        weighted_loss = (
+            self.positive_weight * positive_active * positive_mean
+            + self.negative_weight * negative_active * negative_mean
+        )
+        active_weight = (
+            self.positive_weight * positive_active
+            + self.negative_weight * negative_active
+        )
+        return weighted_loss / active_weight.clamp_min(self.eps)
 
 
 class WeightedDiceLoss(nn.Module):
@@ -186,15 +262,277 @@ class WeightedDiceBCE_unsup(nn.Module):
         return dice_BCE_loss
 
 
+class WeightedDiceFocal(nn.Module):
+    """Dice overlap plus focal hard-pixel supervision; no boundary term."""
+
+    def __init__(
+        self,
+        dice_weight=0.5,
+        focal_weight=0.5,
+        focal_gamma=2.0,
+        focal_positive_weight=0.5,
+        focal_negative_weight=0.5,
+    ):
+        super().__init__()
+        if dice_weight < 0.0 or focal_weight < 0.0:
+            raise ValueError("loss weights must be non-negative")
+        if dice_weight + focal_weight <= 0.0:
+            raise ValueError("at least one loss term is required")
+        weight_sum = dice_weight + focal_weight
+        self.dice_weight = float(dice_weight / weight_sum)
+        self.focal_weight = float(focal_weight / weight_sum)
+        self.dice_loss = WeightedDiceLoss(weights=[0.5, 0.5])
+        self.focal_loss = BalancedBinaryFocalLoss(
+            gamma=focal_gamma,
+            positive_weight=focal_positive_weight,
+            negative_weight=focal_negative_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        predictions = (inputs >= 0.5).float()
+        binary_targets = (targets > 0.0).float()
+        return 1.0 - self.dice_loss(
+            predictions,
+            binary_targets,
+        )
+
+    def forward(self, inputs, targets):
+        dice = self.dice_loss(inputs, targets)
+        focal = self.focal_loss(inputs, targets)
+        total = (
+            self.dice_weight * dice
+            + self.focal_weight * focal
+        )
+        self.last_components = {
+            "dice": dice.detach(),
+            "focal": focal.detach(),
+            "total": total.detach(),
+        }
+        return total
+
+
+class BCDHObjective(nn.Module):
+    """Full-mask Dice/Focal for final and coarse BCDH predictions."""
+
+    def __init__(
+        self,
+        aux_weight=0.2,
+        dice_weight=0.5,
+        focal_weight=0.5,
+        focal_gamma=2.0,
+        focal_positive_weight=0.5,
+        focal_negative_weight=0.5,
+    ):
+        super().__init__()
+        if not 0.0 < aux_weight < 1.0:
+            raise ValueError("BCDH aux_weight must be in (0, 1)")
+        self.aux_weight = float(aux_weight)
+        self.segmentation = WeightedDiceFocal(
+            dice_weight=dice_weight,
+            focal_weight=focal_weight,
+            focal_gamma=focal_gamma,
+            focal_positive_weight=focal_positive_weight,
+            focal_negative_weight=focal_negative_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        return self.segmentation._show_dice(inputs, targets)
+
+    def forward(self, outputs, targets):
+        if not isinstance(outputs, dict):
+            raise TypeError("BCDH objective requires an output dictionary")
+        final = outputs.get("final")
+        coarse = outputs.get("coarse")
+        if final is None or coarse is None:
+            raise ValueError("BCDH outputs require final and coarse predictions")
+        main = self.segmentation(final, targets)
+        main_components = dict(self.segmentation.last_components)
+        auxiliary = self.segmentation(coarse, targets)
+        auxiliary_components = dict(self.segmentation.last_components)
+        total = main + self.aux_weight * auxiliary
+        self.last_components = {
+            "main_dice": main_components["dice"],
+            "main_focal": main_components["focal"],
+            "aux_dice": auxiliary_components["dice"],
+            "aux_focal": auxiliary_components["focal"],
+            "aux_weighted": (self.aux_weight * auxiliary).detach(),
+            "total": total.detach(),
+        }
+        return total
+
+
+class DualHeadMaskObjective(BCDHObjective):
+    """Architecture-neutral alias for full-mask dual-head supervision."""
+
+    pass
+
+
+class RACEObjective(nn.Module):
+    """Dice/Focal segmentation plus lightweight report/anatomy supervision."""
+
+    def __init__(
+        self,
+        aux_weight=0.05,
+        dice_weight=0.5,
+        focal_weight=0.5,
+        focal_gamma=2.0,
+        focal_positive_weight=0.5,
+        focal_negative_weight=0.5,
+    ):
+        super().__init__()
+        if not 0.0 < aux_weight < 1.0:
+            raise ValueError("RACE aux_weight must be in (0, 1)")
+        self.aux_weight = float(aux_weight)
+        self.segmentation = WeightedDiceFocal(
+            dice_weight=dice_weight,
+            focal_weight=focal_weight,
+            focal_gamma=focal_gamma,
+            focal_positive_weight=focal_positive_weight,
+            focal_negative_weight=focal_negative_weight,
+        )
+        self.last_components = {}
+
+    def _show_dice(self, inputs, targets):
+        return self.segmentation._show_dice(inputs, targets)
+
+    def forward(self, outputs, targets):
+        if not isinstance(outputs, dict):
+            raise TypeError("RACE objective requires an output dictionary")
+        final = outputs.get("final")
+        slot_logits = outputs.get("slot_logits")
+        slot_targets = outputs.get("race_slot_targets")
+        zone_basis = outputs.get("race_zone_basis")
+        visual_zones = outputs.get("visual_zone_probabilities")
+        if any(value is None for value in (
+            final, slot_logits, slot_targets, zone_basis, visual_zones
+        )):
+            raise ValueError("Incomplete RACE outputs")
+
+        main = self.segmentation(final, targets)
+        main_components = dict(self.segmentation.last_components)
+        slot_targets = slot_targets.float()
+        text_zone = F.binary_cross_entropy_with_logits(
+            slot_logits[:, :6], slot_targets[:, :6]
+        )
+        count_target = slot_targets[:, 6:].argmax(dim=1)
+        text_count = F.cross_entropy(slot_logits[:, 6:], count_target)
+        slot_loss = 0.75 * text_zone + 0.25 * text_count
+
+        basis = zone_basis.float()
+        mask = targets.float()
+        if mask.ndim == 3:
+            mask = mask.unsqueeze(1)
+        if mask.ndim != 4 or mask.shape[1] != 1:
+            raise ValueError(
+                "RACE targets must have shape [B,H,W] or [B,1,H,W]"
+            )
+        zone_fraction = (mask * basis).sum(dim=(2, 3)) / basis.sum(
+            dim=(2, 3)
+        ).clamp_min(1.0)
+        visual_target = (zone_fraction >= 0.005).float()
+        visual_loss = torch.stack([
+            F.binary_cross_entropy(probabilities, visual_target)
+            for probabilities in visual_zones
+        ]).mean()
+
+        mentioned = slot_targets[:, :6]
+        pu_terms = []
+        for probabilities in visual_zones:
+            positive = -torch.log(probabilities.clamp_min(1e-6)) * mentioned
+            pu_terms.append(
+                positive.sum() / mentioned.sum().clamp_min(1.0)
+            )
+        pu_consistency = torch.stack(pu_terms).mean()
+        auxiliary = 0.4 * slot_loss + 0.4 * visual_loss + 0.2 * pu_consistency
+        total = main + self.aux_weight * auxiliary
+        self.last_components = {
+            "main_dice": main_components["dice"],
+            "main_focal": main_components["focal"],
+            "race_text_slot": slot_loss.detach(),
+            "race_visual_zone": visual_loss.detach(),
+            "race_positive_consistency": pu_consistency.detach(),
+            "race_aux_weighted": (self.aux_weight * auxiliary).detach(),
+            "total": total.detach(),
+        }
+        return total
+
+
+class BoundaryDiceLoss(nn.Module):
+    """Dice loss on differentiable morphological boundary maps."""
+
+    def __init__(self, kernel_size=3):
+        super().__init__()
+        if kernel_size < 3 or kernel_size % 2 == 0:
+            raise ValueError("boundary kernel_size must be an odd value >= 3")
+        self.kernel_size = kernel_size
+
+    def _boundary_map(self, tensor):
+        padding = self.kernel_size // 2
+        dilated = F.max_pool2d(
+            tensor,
+            kernel_size=self.kernel_size,
+            stride=1,
+            padding=padding,
+        )
+        eroded = -F.max_pool2d(
+            -tensor,
+            kernel_size=self.kernel_size,
+            stride=1,
+            padding=padding,
+        )
+        return (dilated - eroded).clamp(0.0, 1.0)
+
+    def forward(self, inputs, targets, smooth=1e-5):
+        if targets.ndim == inputs.ndim - 1:
+            targets = targets.unsqueeze(1)
+        if inputs.shape != targets.shape:
+            raise ValueError(
+                "boundary loss shape mismatch: "
+                f"{tuple(inputs.shape)} != {tuple(targets.shape)}"
+            )
+        predicted_boundary = self._boundary_map(inputs)
+        target_boundary = self._boundary_map(targets)
+        predicted_boundary = predicted_boundary.flatten(1)
+        target_boundary = target_boundary.flatten(1)
+        intersection = (
+            predicted_boundary * target_boundary
+        ).sum(dim=1)
+        denominator = (
+            predicted_boundary.sum(dim=1)
+            + target_boundary.sum(dim=1)
+        )
+        boundary_dice = (
+            2.0 * intersection + smooth
+        ) / (denominator + smooth)
+        return 1.0 - boundary_dice.mean()
+
+
 class WeightedDiceBCE(nn.Module):
-    def __init__(self, dice_weight=1, BCE_weight=1):
+    def __init__(
+        self,
+        dice_weight=1,
+        BCE_weight=1,
+        boundary_weight=0.0,
+        boundary_kernel_size=3,
+    ):
         super(WeightedDiceBCE, self).__init__()
         self.BCE_loss = WeightedBCE(weights=[0.5, 0.5])
         self.dice_loss = WeightedDiceLoss(weights=[0.5, 0.5])
+        self.boundary_loss = BoundaryDiceLoss(boundary_kernel_size)
         self.BCE_weight = BCE_weight
         self.dice_weight = dice_weight
+        if not 0.0 <= boundary_weight < 1.0:
+            raise ValueError("boundary_weight must be in [0, 1)")
+        self.boundary_weight = boundary_weight
+        self.last_components = {}
 
     def _show_dice(self, inputs, targets):
+        # ``detach()`` still aliases model output storage; clone before
+        # thresholding so metric reporting cannot corrupt later diagnostics.
+        inputs = inputs.clone()
+        targets = targets.clone()
         inputs[inputs >= 0.5] = 1
         inputs[inputs < 0.5] = 0
         targets[targets > 0] = 1
@@ -205,7 +543,21 @@ class WeightedDiceBCE(nn.Module):
     def forward(self, inputs, targets):
         dice = self.dice_loss(inputs, targets)
         BCE = self.BCE_loss(inputs, targets)
-        dice_BCE_loss = self.dice_weight * dice + self.BCE_weight * BCE
+        region_loss = self.dice_weight * dice + self.BCE_weight * BCE
+        if self.boundary_weight > 0.0:
+            boundary = self.boundary_loss(inputs, targets)
+            dice_BCE_loss = (
+                (1.0 - self.boundary_weight) * region_loss
+                + self.boundary_weight * boundary
+            )
+        else:
+            boundary = inputs.new_zeros(())
+            dice_BCE_loss = region_loss
+        self.last_components = {
+            'region': region_loss.detach(),
+            'boundary': boundary.detach(),
+            'total': dice_BCE_loss.detach(),
+        }
 
         return dice_BCE_loss
 
@@ -235,6 +587,33 @@ def iou_on_batch(masks, pred):
         mask_tmp[mask_tmp <= 0] = 0
         ious.append(jaccard_score(mask_tmp.reshape(-1), pred_tmp.reshape(-1)))
     return np.mean(ious)
+
+
+@torch.no_grad()
+def iou_on_batch_gpu(masks, pred):
+    """Compute the legacy per-image mean IoU without leaving the GPU."""
+    if masks.ndim == pred.ndim - 1:
+        masks = masks.unsqueeze(1)
+    if masks.shape != pred.shape:
+        raise ValueError(
+            'IoU shape mismatch: {} != {}'.format(
+                tuple(masks.shape),
+                tuple(pred.shape),
+            )
+        )
+
+    predicted = pred >= 0.5
+    targets = masks > 0
+    predicted = predicted.flatten(1)
+    targets = targets.flatten(1)
+    intersection = (predicted & targets).sum(dim=1).float()
+    union = (predicted | targets).sum(dim=1).float()
+    per_image_iou = torch.where(
+        union > 0,
+        intersection / union.clamp_min(1.0),
+        torch.zeros_like(union),
+    )
+    return per_image_iou.mean()
 
 
 def dice_coef(y_true, y_pred):
@@ -526,14 +905,14 @@ class CosineAnnealingWarmRestarts(_LRScheduler):
 
 
 def read_text(filename):
+    # Padding is handled downstream by the HF tokenizer ([PAD] + attention_mask=0).
+    # The legacy ' EOF XXX' word-padding existed only because bert-embedding had
+    # no PAD token; with subword tokenizers it would burn real seq_len slots.
     df = pd.read_excel(filename)
     text = {}
-    for i in df.index.values:  # Gets the index of the row number and traverses it
-        count = len(df.Description[i].split())
-        if count < 9:
-            df.Description[i] = df.Description[i] + ' EOF XXX' * (9 - count)
+    for i in df.index.values:
         text[df.Image[i]] = df.Description[i]
-    return text  # return dict (key: values)
+    return text
 
 
 def read_text_LV(filename):

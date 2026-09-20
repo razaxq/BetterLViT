@@ -1,22 +1,49 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
-import numpy as np
 import os
 import random
 import time
+
+import numpy as np
+import requests
 import torch.nn as nn
 import torch.optim
 from tensorboardX import SummaryWriter
-from thop import profile
 from torch.backends import cudnn
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
 import Config as config
+from training_recipe import SingleCosineSchedule, recipe_metadata
 from Load_Dataset import RandomGenerator, ValGenerator, ImageToImage2D
 from Train_one_epoch import train_one_epoch
-from nets.LViT import LViT
-from utils import CosineAnnealingWarmRestarts, WeightedDiceBCE, read_text
+from nets.BetterLViT import BetterLViT
+from utils import (
+    BCDHObjective,
+    CosineAnnealingWarmRestarts,
+    DualHeadMaskObjective,
+    RACEObjective,
+    WeightedDiceBCE,
+    WeightedDiceFocal,
+    read_text,
+)
+
+
+def bark_notify(body, title="训练通知"):
+    """极简版：只发送标题和文字内容"""
+    if not getattr(config, 'enable_bark_notifications', False):
+        return
+    bark_key = "uAnJRvt7pxbzE9KK6bCVva"
+    url = f"https://api.day.app/{bark_key}/{title}/{body}"
+    try:
+        # 短 timeout: 网络不可达时直接放过，避免训练脚本被 Bark 阻塞
+        requests.get(url, timeout=3)
+    except Exception as e:
+        print(f"推送失败: {e}")
+
+from race_pe_objective import RACEPEObjective
+from checkpoint_selection import is_improvement
 
 
 def logger_config(log_path):
@@ -33,31 +60,223 @@ def logger_config(log_path):
     return loggerr
 
 
-def save_checkpoint(state, save_path):
+def save_checkpoint(state, save_path, verbose=True):
     '''
-        Save the current model.
-        If the model is the best model since beginning of the training
-        it will be copy
+        Save model checkpoint. best_model=True writes best_model-{model}.pth.tar;
+        otherwise writes last_model-{model}.pth.tar (rolling, overwrites each call).
     '''
-    logger.info('\t Saving to {}'.format(save_path))
     if not os.path.isdir(save_path):
         os.makedirs(save_path)
 
-    epoch = state['epoch']  # epoch no
     best_model = state['best_model']  # bool
     model = state['model']  # model type
 
     if best_model:
-        filename = save_path + '/' + \
-                   'best_model-{}.pth.tar'.format(model)
+        filename = save_path + '/' + 'best_model-{}.pth.tar'.format(model)
     else:
-        filename = save_path + '/' + \
-                   'model-{}-{:02d}.pth.tar'.format(model, epoch)
-    torch.save(state, filename)
+        filename = save_path + '/' + 'last_model-{}.pth.tar'.format(model)
+    if verbose:
+        logger.info('\t Saving to {}'.format(filename))
+    temporary = filename + '.tmp'
+    torch.save(state, temporary)
+    os.replace(temporary, filename)
+
+
+def build_checkpoint_state(model, optimizer, lr_scheduler, model_type, epoch,
+                           val_loss, max_dice, best_epoch, epoch_history, is_best,
+                           train_generator, val_generator):
+    numpy_state = np.random.get_state()
+    return {
+        'epoch': epoch,
+        'best_model': is_best,
+        'model': model_type,
+        'state_dict': model.state_dict(),
+        'val_loss': val_loss,
+        'optimizer': optimizer.state_dict(),
+        'lr_scheduler': lr_scheduler.state_dict() if lr_scheduler is not None else None,
+        'max_dice': float(max_dice),
+        'best_epoch': int(best_epoch),
+        'epoch_history': epoch_history,
+        'architecture': getattr(
+            config,
+            'experiment_architecture',
+            None,
+        ),
+        'architecture_version': getattr(
+            config,
+            'experiment_architecture_version',
+            None,
+        ),
+        'experiment_name': getattr(config, 'experiment_name', None),
+        'experiment_paper_id': getattr(config, 'experiment_paper_id', None),
+        'decoder_fusion_mode': getattr(config, 'decoder_fusion_mode', None),
+        'loss_name': getattr(config, 'loss_name', None),
+        'boundary_loss_weight': float(
+            getattr(config, 'boundary_loss_weight', 0.0)
+        ),
+        'text_use_lora': bool(getattr(config, 'text_use_lora', False)),
+        'stage1_match_fsdr_initialization': bool(config.paper_experiment.get('stage1_match_fsdr_initialization', False)),
+        'bcdh_enabled': bool(getattr(config, 'bcdh_enabled', False)),
+        'bcdh_config': {
+            'aux_weight': float(getattr(config, 'bcdh_aux_weight', 0.0)),
+            'hidden_channels': int(
+                getattr(config, 'bcdh_hidden_channels', 0)
+            ),
+            'delta_max': float(getattr(config, 'bcdh_delta_max', 0.0)),
+            'detach_cues': bool(
+                getattr(config, 'bcdh_detach_cues', False)
+            ),
+        },
+        'bcdh_stats': compute_bcdh_stats(model),
+        'cdrr_enabled': bool(getattr(config, 'cdrr_enabled', False)),
+        'cdrr_config': {
+            'aux_weight': float(getattr(config, 'cdrr_aux_weight', 0.0)),
+            'hidden_channels': int(
+                getattr(config, 'cdrr_hidden_channels', 0)
+            ),
+            'delta_max': float(getattr(config, 'cdrr_delta_max', 0.0)),
+            'active_fraction': float(
+                getattr(config, 'cdrr_active_fraction', 0.0)
+            ),
+        },
+        'cdrr_stats': compute_cdrr_stats(model),
+        'selection_metric': config.selection_metric,
+        'selection_value': next((h['val_' + config.selection_metric] for h in epoch_history if h['epoch'] == best_epoch), None),
+        'race_pe_enabled': config.race_pe_enabled,
+        'race_pe_pixel_only': config.race_pe_pixel_only,
+        'race_pe_route_enabled': config.race_pe_route_enabled,
+        'race_enabled': bool(getattr(config, 'race_enabled', False)),
+        'race_route_enabled': bool(getattr(config, 'race_route_enabled', True)),
+        'race_binding_repair': bool(getattr(config, 'race_binding_repair', False)),
+        'race_config': {
+            'aux_weight': float(getattr(config, 'race_aux_weight', 0.0)),
+            'hidden_channels': int(
+                getattr(config, 'race_hidden_channels', 0)
+            ),
+            'max_strength': float(
+                getattr(config, 'race_max_strength', 0.0)
+            ),
+        },
+        'race_stats': compute_race_stats(model),
+        'seed': int(config.seed),
+        'source_git_commit': config.source_git_commit,
+        'training_recipe': recipe_metadata(config),
+        'visual_prior': (
+            model.visual_prior.provenance if getattr(model, 'visual_prior', None) is not None else None
+        ),
+        'batch_size': int(config.batch_size),
+        'epochs': int(config.epochs),
+        'train_drop_last': bool(config.train_drop_last),
+        'deterministic_training': bool(config.deterministic_training),
+        'cudnn_enabled': bool(config.cudnn_enabled),
+        'rng_state': {
+            'python': random.getstate(),
+            'numpy': {
+                'bit_generator': numpy_state[0],
+                'state': torch.from_numpy(numpy_state[1].copy()),
+                'pos': int(numpy_state[2]),
+                'has_gauss': int(numpy_state[3]),
+                'cached_gaussian': float(numpy_state[4]),
+            },
+            'torch_cpu': torch.get_rng_state(),
+            'torch_cuda': torch.cuda.get_rng_state_all(),
+            'train_generator': train_generator.get_state(),
+            'val_generator': val_generator.get_state(),
+        },
+        'prediction_threshold_protocol': {
+            'primary': 0.5,
+            'secondary': 'selected_on_validation_only',
+        },
+    }
+
+
+def compute_decoder_fusion_stats(model):
+    """Snapshot validation-time EPPA or FMISeg-adapter diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    stats = {}
+    for stage in ('up4', 'up3', 'up2', 'up1'):
+        block = getattr(target, stage, None)
+        if block is None:
+            continue
+        fusion = getattr(block, 'eppa', None)
+        if fusion is None:
+            fusion = getattr(block, 'fmiseg', None)
+        if fusion is None:
+            continue
+        stage_stats = getattr(fusion, '_last_stats', None)
+        if not stage_stats:
+            continue
+        stats[stage] = dict(stage_stats)
+    return stats
+
+
+def compute_bcdh_stats(model):
+    """Snapshot validation-time BCDH output-correction diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    module = getattr(target, 'bcdh', None)
+    if module is None:
+        return {}
+    return dict(getattr(module, '_last_stats', {}) or {})
+
+
+def compute_cdrr_stats(model):
+    """Snapshot validation-time CDRR reliability diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    module = getattr(target, 'cdrr', None)
+    if module is None:
+        return {}
+    return dict(getattr(module, '_last_stats', {}) or {})
+
+
+def compute_race_stats(model):
+    """Snapshot validation-time RACE route diagnostics."""
+    target = model.module if isinstance(model, nn.DataParallel) else model
+    module = getattr(target, 'race', None)
+    if module is None:
+        return {}
+    return dict(getattr(module, '_last_stats', {}) or {})
+
+
+def build_optimizer_parameter_groups(model, weight_decay):
+    """Keep residual gates and normalization parameters free of L2 decay."""
+    decay_parameters = []
+    no_decay_parameters = []
+    decay_names = []
+    no_decay_names = []
+    for name, parameter in model.named_parameters():
+        if not parameter.requires_grad:
+            continue
+        normalized_name = name.lower()
+        use_no_decay = (
+            parameter.ndim <= 1
+            or name.endswith('.bias')
+            or 'strength_logit' in normalized_name
+            or 'norm' in normalized_name
+        )
+        if use_no_decay:
+            no_decay_parameters.append(parameter)
+            no_decay_names.append(name)
+        else:
+            decay_parameters.append(parameter)
+            decay_names.append(name)
+    parameter_groups = []
+    if decay_parameters:
+        parameter_groups.append({
+            'params': decay_parameters,
+            'weight_decay': weight_decay,
+        })
+    if no_decay_parameters:
+        parameter_groups.append({
+            'params': no_decay_parameters,
+            'weight_decay': 0.0,
+        })
+    return parameter_groups, decay_names, no_decay_names
 
 
 def worker_init_fn(worker_id):
-    random.seed(config.seed + worker_id)
+    worker_seed = torch.initial_seed() % (2 ** 32)
+    random.seed(worker_seed)
+    np.random.seed(worker_seed)
 
 
 ##################################################################################
@@ -82,36 +301,103 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
         val_dataset = ImageToImage2D(config.val_dataset, config.task_name, text, val_tf, image_size=config.img_size)
 
 
+    train_generator = torch.Generator()
+    train_generator.manual_seed(config.seed + 1001)
+    val_generator = torch.Generator()
+    val_generator.manual_seed(config.seed + 2001)
+
     train_loader = DataLoader(train_dataset,
                               batch_size=config.batch_size,
                               shuffle=True,
+                              drop_last=config.train_drop_last,
                               worker_init_fn=worker_init_fn,
-                              num_workers=8,
-                              pin_memory=True)
+                              num_workers=config.num_workers,
+                              pin_memory=True,
+                              generator=train_generator,
+                              persistent_workers=(
+                                  config.persistent_workers
+                                  and config.num_workers > 0
+                              ))
 
     val_loader = DataLoader(val_dataset,
                             batch_size=config.batch_size,
-                            shuffle=True,
+                            shuffle=False,
                             worker_init_fn=worker_init_fn,
-                            num_workers=8,
-                            pin_memory=True)
-                             
+                            num_workers=config.num_workers,
+                            pin_memory=True,
+                            generator=val_generator,
+                            persistent_workers=(
+                                config.persistent_workers
+                                and config.num_workers > 0
+                            ))
+
     lr = config.learning_rate
     logger.info(model_type)
+    logger.info(
+        'Paper experiment {} / {}: {}'.format(
+            getattr(config, 'experiment_paper_id', '?'),
+            getattr(config, 'experiment_name', '?'),
+            getattr(config, 'experiment_architecture', '?'),
+        )
+    )
+    logger.info(
+        'Controlled factors: decoder_fusion={}, RACE={}, LoRA={}, loss={}, seed={}'
+        .format(
+            getattr(config, 'decoder_fusion_mode', '?'),
+            getattr(config, 'race_enabled', False),
+            getattr(config, 'text_use_lora', False),
+            getattr(config, 'loss_name', '?'),
+            config.seed,
+        )
+    )
+    logger.info(
+        'Local runtime: batch_size={}, train_drop_last={}, '
+        'deterministic={}, MIOpen={}, MIOPEN_FIND_MODE={}'.format(
+            batch_size,
+            config.train_drop_last,
+            config.deterministic_training,
+            config.miopen_enabled,
+            os.environ.get('MIOPEN_FIND_MODE', 'unset'),
+        )
+    )
 
     if model_type in ('LViT', 'BetterLViT'):
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
         logger.info('transformer expand ratio: {}'.format(config_vit.expand_ratio))
-        model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
+        # 'LViT' = frozen CXR-BERT baseline, 'BetterLViT' = LoRA-tuned CXR-BERT
+        use_lora = config.text_use_lora and (model_type == 'BetterLViT')
+        model = BetterLViT(
+            config_vit,
+            n_channels=config.n_channels,
+            n_classes=config.n_labels,
+            text_encoder_name=config.text_encoder_name,
+            text_seq_len=config.text_max_len,
+            use_lora=use_lora,
+            lora_r=config.text_lora_r,
+            lora_alpha=config.text_lora_alpha,
+            lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
+        )
 
     elif model_type == 'LViT_pretrain':
         config_vit = config.get_CTranS_config()
         logger.info('transformer head num: {}'.format(config_vit.transformer.num_heads))
         logger.info('transformer layers num: {}'.format(config_vit.transformer.num_layers))
         logger.info('transformer expand ratio: {}'.format(config_vit.expand_ratio))
-        model = LViT(config_vit, n_channels=config.n_channels, n_classes=config.n_labels)
+        model = BetterLViT(
+            config_vit,
+            n_channels=config.n_channels,
+            n_classes=config.n_labels,
+            text_encoder_name=config.text_encoder_name,
+            text_seq_len=config.text_max_len,
+            use_lora=config.text_use_lora,
+            lora_r=config.text_lora_r,
+            lora_alpha=config.text_lora_alpha,
+            lora_dropout=config.text_lora_dropout,
+            lora_target_modules=config.text_lora_target_modules,
+        )
         pretrained_UNet_model_path = "MoNuSeg/LViT/Test_session_05.23_10h55/models/best_model-LViT.pth.tar"
         pretrained_UNet = torch.load(pretrained_UNet_model_path, map_location='cuda')
         pretrained_UNet = pretrained_UNet['state_dict']
@@ -124,19 +410,111 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
     else:
         raise TypeError('Please enter a valid name for the model type')
-    input = torch.randn(2, 3, 224, 224)
-    text = torch.randn(2, 10, 768)
-    flops, params = profile(model, inputs=(input, text, ))
-    print('flops:{}'.format(flops))
-    print('params:{}'.format(params))
+    # thop is incompatible with PEFT-wrapped modules (double-registration
+    # leaves stale CPU hooks that break training after .cuda()). Report
+    # parameter counts directly — FLOPs aren't needed for the LoRA setup.
+    total = sum(p.numel() for p in model.parameters())
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print('total params: {} ({:.2f}M)'.format(total, total / 1e6))
+    print('trainable params: {} ({:.2f}M, {:.2%})'.format(
+        trainable, trainable / 1e6, trainable / max(total, 1)))
     model = model.cuda()
     if torch.cuda.device_count() > 1:
         print("Let's use {0} GPUs!".format(torch.cuda.device_count()))
         model = nn.DataParallel(model)
-    criterion = WeightedDiceBCE(dice_weight=0.5, BCE_weight=0.5)
-    optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), lr=lr)  # Choose optimize
+    configured_loss = getattr(config, 'loss_name', 'dice_bce')
+    if getattr(config, 'bcdh_enabled', False):
+        if configured_loss != 'dice_focal':
+            raise ValueError('BCDH-R V1 requires dice_focal')
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError('BCDH-R V1 prohibits boundary supervision')
+        criterion = BCDHObjective(
+            aux_weight=config.bcdh_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif getattr(config, 'cdrr_enabled', False):
+        if configured_loss != 'dice_focal':
+            raise ValueError('CDRR V1 requires dice_focal')
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError('CDRR V1 prohibits boundary supervision')
+        criterion = DualHeadMaskObjective(
+            aux_weight=config.cdrr_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif getattr(config, 'race_enabled', False):
+        if configured_loss != 'dice_focal':
+            raise ValueError('RACE-Fuse V1 requires dice_focal')
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError('RACE-Fuse V1 prohibits boundary supervision')
+        objective_class = RACEPEObjective if config.race_pe_enabled else RACEObjective
+        pe_kwargs = {"pixel_only": config.race_pe_pixel_only} if config.race_pe_enabled else {}
+        criterion = objective_class(
+            **pe_kwargs,
+            aux_weight=config.race_aux_weight,
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif configured_loss == 'dice_focal':
+        if config.boundary_loss_weight != 0.0:
+            raise ValueError(
+                'dice_focal requires boundary_loss_weight=0.0'
+            )
+        criterion = WeightedDiceFocal(
+            dice_weight=config.dice_loss_weight,
+            focal_weight=config.focal_loss_weight,
+            focal_gamma=config.focal_gamma,
+            focal_positive_weight=config.focal_positive_weight,
+            focal_negative_weight=config.focal_negative_weight,
+        )
+    elif configured_loss == 'dice_bce':
+        criterion = WeightedDiceBCE(
+            dice_weight=0.5,
+            BCE_weight=0.5,
+            boundary_weight=config.boundary_loss_weight,
+            boundary_kernel_size=config.boundary_kernel_size,
+        )
+    else:
+        raise ValueError(
+            'Unsupported loss_name: {}'.format(configured_loss)
+        )
+    logger.info(
+        'Objective: {} (boundary_weight={:.1f})'.format(
+            configured_loss,
+            config.boundary_loss_weight,
+        )
+    )
+    optimizer_groups, decay_names, no_decay_names = (
+        build_optimizer_parameter_groups(
+            model,
+            getattr(config, 'weight_decay', 0.0),
+        )
+    )
+    optimizer = torch.optim.Adam(optimizer_groups, lr=lr)
+    logger.info(
+        'Optimizer groups: decay={} tensors, no_decay={} tensors; '
+        'EPPA residual gates are protected from L2 decay'.format(
+            len(decay_names),
+            len(no_decay_names),
+        )
+    )
     if config.cosineLR is True:
-        lr_scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4)
+        if config.lr_schedule == 'single_cosine':
+            lr_scheduler = SingleCosineSchedule(optimizer, epochs=config.epochs, eta_min=1e-6)
+        elif config.lr_schedule == 'warm_restarts':
+            lr_scheduler = CosineAnnealingWarmRestarts(optimizer, T_0=10, T_mult=1, eta_min=1e-4)
+        else:
+            raise ValueError('Unknown learning rate schedule')
     else:
         lr_scheduler = None
     if tensorboard:
@@ -151,56 +529,407 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
     max_dice = 0.0
     best_epoch = 1
     epoch_history = []
-    for epoch in range(config.epochs):  # loop over the dataset multiple times
-        logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs + 1))
+    start_epoch = 0
+
+    # ------------------------- Resume from checkpoint -------------------------
+    if config.resume_path:
+        if os.path.isfile(config.resume_path):
+            logger.info('Resuming from {}'.format(config.resume_path))
+            ckpt = torch.load(config.resume_path, map_location='cuda')
+            if ckpt.get('selection_metric', 'dice') != config.selection_metric:
+                raise ValueError('Cannot resume with a different selection metric')
+
+            expected_architecture = getattr(
+                config,
+                'experiment_architecture_version',
+                None,
+            )
+            checkpoint_architecture = ckpt.get('architecture_version')
+            if (
+                getattr(
+                    config,
+                    'require_checkpoint_architecture_match',
+                    False,
+                )
+                and checkpoint_architecture != expected_architecture
+            ):
+                raise RuntimeError(
+                    'Checkpoint architecture mismatch: expected {!r}, '
+                    'found {!r}. This experiment must train from scratch or '
+                    'resume from an architecture-matched checkpoint.'.format(
+                        expected_architecture,
+                        checkpoint_architecture,
+                    )
+                )
+
+            target = model.module if isinstance(model, nn.DataParallel) else model
+            target.load_state_dict(ckpt['state_dict'], strict=True)
+            optimizer.load_state_dict(ckpt['optimizer'])
+
+            start_epoch = ckpt['epoch'] + 1
+
+            if lr_scheduler is not None:
+                if ckpt.get('lr_scheduler') is not None:
+                    lr_scheduler.load_state_dict(ckpt['lr_scheduler'])
+                else:
+                    # Old-format ckpt: fast-forward scheduler. In our codebase scheduler.step()
+                    # runs inside the val pass, so by the time we save with epoch=N, the
+                    # scheduler has already stepped to last_epoch=N+1 (== start_epoch).
+                    lr_scheduler.step(start_epoch)
+
+            max_dice = float(ckpt.get('max_dice', config.resume_max_dice))
+            best_epoch = int(ckpt.get('best_epoch', start_epoch))
+            epoch_history = ckpt.get('epoch_history', []) or []
+            rng_state = ckpt.get('rng_state')
+            if rng_state:
+                random.setstate(rng_state['python'])
+                numpy_state = rng_state['numpy']
+                np.random.set_state((
+                    numpy_state['bit_generator'],
+                    numpy_state['state'].cpu().numpy(),
+                    numpy_state['pos'],
+                    numpy_state['has_gauss'],
+                    numpy_state['cached_gaussian'],
+                ))
+                torch.set_rng_state(rng_state['torch_cpu'])
+                torch.cuda.set_rng_state_all(rng_state['torch_cuda'])
+                train_generator.set_state(rng_state['train_generator'])
+                val_generator.set_state(rng_state['val_generator'])
+                logger.info('Restored global, CUDA, sampler and worker RNG state')
+
+            logger.info('Resumed at epoch {}, max_dice={:.4f}, best_epoch={}, history rows={}'.format(
+                start_epoch + 1, max_dice, best_epoch, len(epoch_history)))
+        else:
+            logger.info('resume_path set but file not found: {}; training from scratch'.format(
+                config.resume_path))
+    # --------------------------------------------------------------------------
+
+    for epoch in range(start_epoch, config.epochs):  # loop over the dataset multiple times
+        epoch_started_unix = time.time()
+        epoch_started_monotonic = time.monotonic()
+        logger.info('\n========= Epoch [{}/{}] ========='.format(epoch + 1, config.epochs))
         logger.info(config.session_name)
+        # Capture LR used for this epoch (scheduler steps inside the val call, so
+        # snapshotting before train gives the actual learning rate this epoch ran on)
+        epoch_lr = min(g["lr"] for g in optimizer.param_groups)
         # train for one epoch
         model.train(True)
         logger.info('Training with batch size : {}'.format(batch_size))
-        train_loss, train_dice = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
-                                                 model_type, logger)  # sup
+        train_loss, train_dice, train_iou = train_one_epoch(train_loader, model, criterion, optimizer, writer, epoch, None,
+                                                            model_type, logger)  # sup
+        train_loss_components = dict(
+            getattr(criterion, 'last_epoch_components', {})
+        )
 
         # evaluate on validation set
         logger.info('Validation')
         with torch.no_grad():
             model.eval()
-            val_loss, val_dice = train_one_epoch(val_loader, model, criterion,
-                                                 optimizer, writer, epoch, lr_scheduler, model_type, logger)
-        # =============================================================
-        #       Save best model
-        # =============================================================
-        if val_dice > max_dice:
-            if epoch + 1 > 5:
-                logger.info(
-                    '\t Saving best model, mean dice increased from: {:.4f} to {:.4f}'.format(max_dice, val_dice))
-                max_dice = val_dice
-                best_epoch = epoch + 1
-                save_checkpoint({'epoch': epoch,
-                                 'best_model': True,
-                                 'model': model_type,
-                                 'state_dict': model.state_dict(),
-                                 'val_loss': val_loss,
-                                 'optimizer': optimizer.state_dict()}, config.model_path)
-        else:
-            logger.info('\t Mean dice:{:.4f} does not increase, '
-                        'the best is still: {:.4f} in epoch {}'.format(val_dice, max_dice, best_epoch))
-        early_stopping_count = epoch - best_epoch + 1
-        logger.info('\t early_stopping_count: {}/{}'.format(early_stopping_count, config.early_stopping_patience))
-
+            val_loss, val_dice, val_iou = train_one_epoch(val_loader, model, criterion,
+                                                          optimizer, writer, epoch, lr_scheduler, model_type, logger)
+        val_loss_components = dict(
+            getattr(criterion, 'last_epoch_components', {})
+        )
+        # Append current epoch to history BEFORE saving any checkpoint, so that
+        # both best_model and last_model serialise an epoch_history that
+        # includes the just-finished epoch (the best_model path used to drop
+        # its own row otherwise).
         epoch_history.append({
             'epoch': epoch + 1,
             'train_loss': float(train_loss),
             'train_dice': float(train_dice),
+            'train_iou': float(train_iou),
             'val_loss': float(val_loss),
             'val_dice': float(val_dice),
+            'val_iou': float(val_iou),
+            'lr': float(epoch_lr),
+            'train_loss_components': train_loss_components,
+            'val_loss_components': val_loss_components,
+            'eppa_stats': compute_decoder_fusion_stats(model),
+            'bcdh_stats': compute_bcdh_stats(model),
+            'cdrr_stats': compute_cdrr_stats(model),
+            'race_stats': compute_race_stats(model),
         })
+
+        # =============================================================
+        #       Save best model
+        # =============================================================
+        if is_improvement(epoch_history, config.selection_metric):
+            if epoch + 1 > 5:
+                logger.info(
+                    '\t Saving best model by {}: {:.6f}'.format(config.selection_metric, epoch_history[-1]['val_' + config.selection_metric]))
+                max_dice = val_dice
+                best_epoch = epoch + 1
+                best_state = build_checkpoint_state(
+                    model, optimizer, lr_scheduler, model_type, epoch,
+                    val_loss, max_dice, best_epoch, epoch_history, is_best=True,
+                    train_generator=train_generator, val_generator=val_generator)
+                save_checkpoint(best_state, config.model_path)
+                bark_notify(f"Best {config.selection_metric} checkpoint updated", title="BetterLViT")
+        else:
+            logger.info('\t No {} improvement; selected epoch {}'.format(config.selection_metric, best_epoch))
+        early_stopping_count = epoch - best_epoch + 1
+        logger.info('\t early_stopping_count: {}/{}'.format(early_stopping_count, config.early_stopping_patience))
+
+        # Always save last_model (rolling) so future runs can resume from any
+        # interruption point, not just from the best.
+        last_state = build_checkpoint_state(
+            model, optimizer, lr_scheduler, model_type, epoch,
+            val_loss, max_dice, best_epoch, epoch_history, is_best=False,
+            train_generator=train_generator, val_generator=val_generator)
+        save_checkpoint(last_state, config.model_path, verbose=False)
         logger.info('--- Epoch History (1..{}) ---'.format(epoch + 1))
-        logger.info('{:>5} | {:>10} | {:>10} | {:>10} | {:>10} | {:>4}'.format(
-            'Epoch', 'TrainLoss', 'TrainDice', 'ValLoss', 'ValDice', 'Best'))
+        logger.info('{:>5} | {:>10} | {:>10} | {:>9} | {:>10} | {:>10} | {:>9} | {:>10} | {:>4}'.format(
+            'Epoch', 'TrainLoss', 'TrainDice', 'TrainIoU', 'ValLoss', 'ValDice', 'ValIoU', 'LR', 'Best'))
         for h in epoch_history:
             marker = '*' if h['epoch'] == best_epoch else ''
-            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>10.4f} | {:>10.4f} | {:>4}'.format(
-                h['epoch'], h['train_loss'], h['train_dice'], h['val_loss'], h['val_dice'], marker))
+            logger.info('{:>5d} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.4f} | {:>10.4f} | {:>9.4f} | {:>10.2e} | {:>4}'.format(
+                h['epoch'], h['train_loss'], h['train_dice'], h['train_iou'],
+                h['val_loss'], h['val_dice'], h['val_iou'], h['lr'], marker))
+
+        # Current validation snapshot is persisted in epoch_history while the
+        # log stays compact instead of reprinting an O(epoch^2) stats table.
+        current_eppa_stats = epoch_history[-1].get('eppa_stats') or {}
+        if current_eppa_stats:
+            logger.info(
+                '--- {} validation statistics ---'.format(
+                    getattr(
+                        config,
+                        'experiment_architecture',
+                        'EPPA',
+                    )
+                )
+            )
+            for stage in ('up4', 'up3', 'up2', 'up1'):
+                stage_stats = current_eppa_stats.get(stage)
+                if not stage_stats:
+                    continue
+                if (
+                    stage_stats.get('architecture_version')
+                    == 'fmiseg_adapter_v1'
+                ):
+                    logger.info(
+                        '{} fmiseg: strength={:.4f}, haar_error={:.3e}, '
+                        'low_gain={:.4f}+/-{:.4f}, '
+                        'high_gain={:.4f}+/-{:.4f}, correction_std={:.4f}'
+                        .format(
+                            stage,
+                            stage_stats['strength'],
+                            stage_stats['haar_reconstruction_error'],
+                            stage_stats['low_gain_mean'],
+                            stage_stats['low_gain_std'],
+                            stage_stats['high_gain_mean'],
+                            stage_stats['high_gain_std'],
+                            stage_stats['correction_std'],
+                        )
+                    )
+                    continue
+                logger.info(
+                    '{}: ca={:.4f}+/-{:.4f}, sa={:.4f}+/-{:.4f}, '
+                    'amp={:.4f}, suppress={:.4f}, guide_abs={:.4f}'.format(
+                        stage,
+                        stage_stats['channel_mean'],
+                        stage_stats['channel_std'],
+                        stage_stats['spatial_mean'],
+                        stage_stats['spatial_std'],
+                        stage_stats['spatial_amplify_ratio'],
+                        stage_stats['spatial_suppress_ratio'],
+                        stage_stats['guide_abs_mean'],
+                    )
+                )
+                logger.info(
+                    '{} residuals: local_mean={:.3e}, global_mean={:.4f}, '
+                    'local_strength={:.4f}, global_strength={:.4f}, '
+                    'gain=[{:.4f},{:.4f}], saturation={:.4f}, '
+                    'text_film={:.4f}'.format(
+                        stage,
+                        stage_stats['spatial_local_mean'],
+                        stage_stats['spatial_global_mean'],
+                        stage_stats['local_strength_mean'],
+                        stage_stats['global_strength_mean'],
+                        stage_stats['spatial_min'],
+                        stage_stats['spatial_max'],
+                        stage_stats['spatial_saturation_ratio'],
+                        stage_stats['text_film_abs_mean'],
+                    )
+                )
+                if (
+                    stage_stats.get('architecture_version')
+                    in ('fam_eppa_v4a', 'fam_eppa_v4b')
+                ):
+                    logger.info(
+                        '{} haar: reconstruction_error={:.3e}, '
+                        'skip_low/high={:.4f}/{:.4f}, '
+                        'plam_low/high={:.4f}/{:.4f}'.format(
+                            stage,
+                            stage_stats['haar_reconstruction_error'],
+                            stage_stats['skip_low_energy_ratio'],
+                            stage_stats['skip_high_energy_ratio'],
+                            stage_stats['plam_low_energy_ratio'],
+                            stage_stats['plam_high_energy_ratio'],
+                        )
+                    )
+                    logger.info(
+                        '{} strengths: plam={:.4f}, region={:.4f}, '
+                        'detail={:.4f}; residual_std region/detail/refine='
+                        '{:.4f}/{:.4f}/{:.4f}'.format(
+                            stage,
+                            stage_stats['plam_strength_mean'],
+                            stage_stats['region_strength_mean'],
+                            stage_stats['detail_strength_mean'],
+                            stage_stats['region_residual_std'],
+                            stage_stats['detail_residual_std'],
+                            stage_stats['detail_refinement_std'],
+                        )
+                    )
+                    logger.info(
+                        '{} guide_mix: entropy={:.4f}, raw_low={:.4f}, '
+                        'plam_low={:.4f}, decoder_low={:.4f}, detail={:.4f}; '
+                        'agreement plam/decoder={:.4f}/{:.4f}, '
+                        'support={:.4f}+/-{:.4f}'.format(
+                            stage,
+                            stage_stats['guide_branch_entropy'],
+                            stage_stats['guide_skip_weight'],
+                            stage_stats['guide_plam_weight'],
+                            stage_stats['guide_decoder_weight'],
+                            stage_stats['guide_detail_weight'],
+                            stage_stats['plam_skip_agreement'],
+                            stage_stats['decoder_skip_agreement'],
+                            stage_stats['semantic_support_mean'],
+                            stage_stats['semantic_support_std'],
+                        )
+                    )
+                    if stage_stats.get('adaptive_frequency_enabled'):
+                        logger.info(
+                            '{} adaptive_frequency: ALPF strength={:.4f}, '
+                            'weights={:.4f}/{:.4f}/{:.4f}, '
+                            'sum={:.4f}, entropy={:.4f}, delta_std={:.4f}; '
+                            'AHPF strength={:.4f}, '
+                            'weights={:.4f}/{:.4f}/{:.4f}, '
+                            'sum={:.4f}, entropy={:.4f}, residual_std={:.4f}, '
+                            'scaled_std={:.4f}'.format(
+                                stage,
+                                stage_stats['alpf_strength_mean'],
+                                stage_stats['alpf_identity_weight'],
+                                stage_stats['alpf_blur3_weight'],
+                                stage_stats['alpf_blur5_weight'],
+                                stage_stats['alpf_kernel_sum'],
+                                stage_stats['alpf_kernel_entropy'],
+                                stage_stats['alpf_delta_std'],
+                                stage_stats['ahpf_strength_mean'],
+                                stage_stats['ahpf_identity_weight'],
+                                stage_stats['ahpf_blur3_weight'],
+                                stage_stats['ahpf_blur5_weight'],
+                                stage_stats['ahpf_kernel_sum'],
+                                stage_stats['ahpf_kernel_entropy'],
+                                stage_stats['ahpf_residual_std'],
+                                stage_stats['adaptive_skip_residual_std'],
+                            )
+                        )
+                    continue
+                logger.info(
+                    '{} guide_mix: entropy={:.4f}, skip={:.4f}, '
+                    'decoder={:.4f}, local_edge={:.4f}, '
+                    'context_edge={:.4f}'.format(
+                        stage,
+                        stage_stats['guide_branch_entropy'],
+                        stage_stats['guide_skip_weight'],
+                        stage_stats['guide_decoder_weight'],
+                        stage_stats['guide_local_edge_weight'],
+                        stage_stats['guide_context_edge_weight'],
+                    )
+                )
+                if 'low_pass_kernel_sum' in stage_stats:
+                    logger.info(
+                        '{} plam_frequency: pixel_std={:.4f}, '
+                        'edge_std={:.4f}, support={:.4f}, '
+                        'kernel_sum={:.4f}, kernel_entropy={:.4f}, '
+                        'kernel_center={:.4f}, kernel_delta={:.4e}'.format(
+                            stage,
+                            stage_stats['pixel_residual_std'],
+                            stage_stats['edge_residual_std'],
+                            stage_stats['semantic_support_mean'],
+                            stage_stats['low_pass_kernel_sum'],
+                            stage_stats['low_pass_kernel_entropy'],
+                            stage_stats['low_pass_kernel_center'],
+                            stage_stats['low_pass_kernel_delta_abs'],
+                        )
+                    )
+
+        current_bcdh_stats = epoch_history[-1].get('bcdh_stats') or {}
+        if current_bcdh_stats:
+            logger.info(
+                'BCDH: uncertainty={:.4f}, fine/coarse-only={:.4f}/{:.4f}, '
+                '|delta| mean/max={:.5f}/{:.5f}, positive/negative={:.4f}/{:.4f}, '
+                'top20/rest={:.5f}/{:.5f}'.format(
+                    current_bcdh_stats['uncertainty_mean'],
+                    current_bcdh_stats['fine_only_mean'],
+                    current_bcdh_stats['coarse_only_mean'],
+                    current_bcdh_stats['delta_abs_mean'],
+                    current_bcdh_stats['delta_abs_max'],
+                    current_bcdh_stats['delta_positive_fraction'],
+                    current_bcdh_stats['delta_negative_fraction'],
+                    current_bcdh_stats['uncertainty_top20_delta_abs_mean'],
+                    current_bcdh_stats['uncertainty_rest_delta_abs_mean'],
+                )
+            )
+
+        current_cdrr_stats = epoch_history[-1].get('cdrr_stats') or {}
+        if current_cdrr_stats:
+            logger.info(
+                'CDRR: support={:.4f}, reliability={:.4f}, '
+                'agreement={:.4f}, uncertainty/disagreement={:.4f}/{:.4f}, '
+                '|delta| mean/active/max={:.6f}/{:.6f}/{:.6f}, '
+                'positive/negative(active)={:.4f}/{:.4f}, inactive_max={:.3e}'
+                .format(
+                    current_cdrr_stats['support_fraction'],
+                    current_cdrr_stats['reliability_mean'],
+                    current_cdrr_stats['agreement_mean'],
+                    current_cdrr_stats['uncertainty_mean'],
+                    current_cdrr_stats['disagreement_mean'],
+                    current_cdrr_stats['delta_abs_mean'],
+                    current_cdrr_stats['delta_abs_active_mean'],
+                    current_cdrr_stats['delta_abs_max'],
+                    current_cdrr_stats['delta_positive_active_fraction'],
+                    current_cdrr_stats['delta_negative_active_fraction'],
+                    current_cdrr_stats['delta_inactive_abs_max'],
+                )
+            )
+
+        current_race_stats = epoch_history[-1].get('race_stats') or {}
+        if current_race_stats:
+            logger.info(
+                'RACE: slot_mean={:.4f}, strengths={}, gates={}, '
+                'evidence={}, agreement={}'.format(
+                    current_race_stats['slot_probability_mean'],
+                    [round(value, 5) for value in current_race_stats[
+                        'route_strengths'
+                    ]],
+                    [round(value, 4) for value in current_race_stats[
+                        'route_gate_means'
+                    ]],
+                    [round(value, 4) for value in current_race_stats[
+                        'route_evidence_means'
+                    ]],
+                    [round(value, 4) for value in current_race_stats[
+                        'route_agreement_means'
+                    ]],
+                )
+            )
+
+        # Local epoch telemetry permits a single early completion forecast. It
+        # observes normal training boundaries without changing RNG or tensors.
+        timing_path = os.environ.get('BETTERLVIT_EPOCH_TIMING_PATH')
+        if timing_path:
+            timing = {
+                'epoch': epoch + 1, 'epochs': config.epochs,
+                'started_unix': epoch_started_unix, 'ended_unix': time.time(),
+                'duration_seconds': time.monotonic() - epoch_started_monotonic,
+                'source_git_commit': config.source_git_commit,
+                'best_epoch': best_epoch,
+            }
+            with open(timing_path, 'a', encoding='utf-8') as timing_file:
+                timing_file.write(json.dumps(timing) + '\n')
 
         if early_stopping_count > config.early_stopping_patience:
             logger.info('\t early_stopping!')
@@ -210,13 +939,18 @@ def main_loop(batch_size=config.batch_size, model_type='', tensorboard=True):
 
 
 if __name__ == '__main__':
-    deterministic = True
-    if not deterministic:
-        cudnn.benchmark = True
-        cudnn.deterministic = False
-    else:
-        cudnn.benchmark = False
-        cudnn.deterministic = True
+    print("[boot] entered __main__, sending Bark start notification...", flush=True)
+    bark_notify("模型开始训练了，请耐心等待！", title="🚀 训练开始")
+    print("[boot] Bark call returned, continuing setup...", flush=True)
+    os.environ.setdefault('CUBLAS_WORKSPACE_CONFIG', ':4096:8')
+    # Keep benchmark and TF32 disabled and make unsupported nondeterministic
+    # operations fail loudly instead of silently invalidating the paper run.
+    cudnn.enabled = config.miopen_enabled
+    cudnn.benchmark = False
+    cudnn.deterministic = config.deterministic_training
+    cudnn.allow_tf32 = False
+    torch.backends.cuda.matmul.allow_tf32 = False
+    torch.use_deterministic_algorithms(config.deterministic_training)
     random.seed(config.seed)
     np.random.seed(config.seed)
     torch.manual_seed(config.seed)
@@ -227,3 +961,7 @@ if __name__ == '__main__':
 
     logger = logger_config(log_path=config.logger_path)
     model = main_loop(model_type=config.model_name, tensorboard=True)
+    bark_notify("训练完成！", title="✅ 训练结束")
+    if getattr(config, 'shutdown_after_training', False):
+        print("Training complete. Shutting down in 60 seconds...")
+        os.system("shutdown /s /t 60")

@@ -1,0 +1,73 @@
+{
+  "retrained": {
+    "guide": {
+      "best_checkpoint": "/root/autodl-fs/text_guided_baselines_20260920/guide/Best.pt",
+      "last_checkpoint": "/root/autodl-fs/text_guided_baselines_20260920/guide/Last.pt",
+      "config": {
+        "repo": "vendor/guide",
+        "upstream_sha": "acfd134cf51067a145904d7031b631a6119dbc3f",
+        "text": "cxr",
+        "batch": 16,
+        "lr": 0.0003,
+        "epochs": 100
+      },
+      "seed": 1219,
+      "validation": {
+        "macro_iou": 0.7209851517673762,
+        "macro_dice": 0.8185299106614835,
+        "count": 1429,
+        "threshold": 0.5,
+        "operator": ">",
+        "best_epoch": 26
+      },
+      "test": {
+        "macro_iou": 0.7529358667997186,
+        "macro_dice": 0.8388356339218165,
+        "count": 2113,
+        "threshold": 0.5,
+        "operator": ">",
+        "best_epoch": 26,
+        "checkpoint_sha256": "856f8dda44743ad8a6fdfdae180e333db1b079fdfb52ed64d17b0ee7b025f75e",
+        "experiment_commit": "c682c6a974d4a2c60ff57a5963e1413154862c42"
+      }
+    },
+    "ddcmd": {
+      "best_checkpoint": "/root/autodl-fs/text_guided_baselines_20260920/ddcmd/Best.pt",
+      "last_checkpoint": "/root/autodl-fs/text_guided_baselines_20260920/ddcmd/Last.pt",
+      "config": {
+        "repo": "vendor/ddcmd",
+        "upstream_sha": "27387c47163971448f8fcdf5e37f310509dbd948",
+        "text": "biomed",
+        "batch": 8,
+        "lr": 5e-05,
+        "epochs": 160
+      },
+      "seed": 1219,
+      "validation": {
+        "macro_iou": 0.7356721461744702,
+        "macro_dice": 0.8305355669256688,
+        "count": 1429,
+        "threshold": 0.5,
+        "operator": ">",
+        "best_epoch": 115
+      },
+      "test": {
+        "macro_iou": 0.762994497959741,
+        "macro_dice": 0.8475325391723713,
+        "count": 2113,
+        "threshold": 0.5,
+        "operator": ">",
+        "best_epoch": 115,
+        "checkpoint_sha256": "442805ba52323e1d61304fb26c64250ff1cc7f10674a6f71a3663387bce0b665",
+        "experiment_commit": "c682c6a974d4a2c60ff57a5963e1413154862c42"
+      }
+    }
+  },
+  "MMI": {
+    "checkpoint": "D:/BetterLViT/outputs/external_methods_20260920/mmiunet_cov19.ckpt",
+    "scope": "Official checkpoint full Test2113 inference; exact author training filenames unverified",
+    "test_iou": 0.7547829611612585,
+    "test_dice": 0.8397065303230069,
+    "test_results": "D:\\BetterLViT\\outputs\\external_methods_20260920\\full_test\\TEST_RESULTS.json"
+  }
+}

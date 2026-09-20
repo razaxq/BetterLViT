@@ -1,0 +1,53 @@
+{
+  "paper_id": "P6",
+  "experiment": "p6_bcdh_r_v1",
+  "description": "Frozen CXR-BERT + FAM-EPPA V4-B + BCDH-R V1 + Dice/Focal",
+  "parent_commit": "106aeab700ee98653b5ec27994a0aa15b60dac07",
+  "git_tag": "pilot-p6-bcdh-r-v1-frozen-b16-seed1219-20260902",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 40,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": false,
+    "trainable": false
+  },
+  "decoder_fusion_mode": "fam_eppa_v4b",
+  "bcdh": {
+    "enabled": true,
+    "version": "bcdh_r_v1",
+    "aux_weight": 0.2,
+    "hidden_channels": 32,
+    "delta_max": 1.0,
+    "detach_prediction_cues": true,
+    "uses_boundary_target": false
+  },
+  "loss": {
+    "name": "dice_focal",
+    "dice_weight": 0.5,
+    "focal_weight": 0.5,
+    "focal_gamma": 2.0,
+    "boundary_weight": 0.0
+  },
+  "evaluation": {
+    "split": "validation",
+    "threshold": 0.5,
+    "automatic_test_evaluation": false,
+    "test_split_access_allowed": false
+  },
+  "paired_reference": {
+    "paper_id": "C1",
+    "experiment": "c1_bcdh_control",
+    "git_commit": "106aeab700ee98653b5ec27994a0aa15b60dac07",
+    "only_intended_change": "bcdh_enabled false to true with auxiliary complete-mask supervision"
+  },
+  "provenance": "The full immutable Git commit is recorded at launch and inside every checkpoint."
+}

@@ -1,0 +1,40 @@
+{
+  "paper_id": "C1",
+  "experiment": "c1_bcdh_control",
+  "description": "Frozen CXR-BERT + FAM-EPPA V4-B + Dice/Focal; BCDH disabled",
+  "parent_commit": "8a0fe9b41bc0a5d515a353d52693cb06afeb3096",
+  "git_tag": "pilot-c1-bcdh-control-frozen-b16-seed1219-20260902",
+  "dataset": "QaTa-COV19-v2",
+  "split": {
+    "train": 5716,
+    "validation": 1429,
+    "test": 2113
+  },
+  "seed": 1219,
+  "epochs": 40,
+  "batch_size": 16,
+  "train_drop_last": true,
+  "deterministic": true,
+  "text_encoder": {
+    "model": "CXR-BERT",
+    "use_lora": false,
+    "trainable": false
+  },
+  "decoder_fusion_mode": "fam_eppa_v4b",
+  "bcdh_enabled": false,
+  "loss": {
+    "name": "dice_focal",
+    "dice_weight": 0.5,
+    "focal_weight": 0.5,
+    "focal_gamma": 2.0,
+    "boundary_weight": 0.0
+  },
+  "evaluation": {
+    "split": "validation",
+    "threshold": 0.5,
+    "automatic_test_evaluation": false,
+    "test_split_access_allowed": false
+  },
+  "ablation_question": "Paired control for the isolated contribution of BCDH-R V1.",
+  "provenance": "The full immutable Git commit is recorded at launch and inside every checkpoint."
+}

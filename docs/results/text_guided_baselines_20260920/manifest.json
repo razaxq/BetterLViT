@@ -1,0 +1,56 @@
+{
+  "storage": "/root/autodl-fs/text_guided_baselines_20260920",
+  "selected": [
+    "sub-S09454_ses-E25547_run-1_bp-chest_vp-ap_dx.png",
+    "sub-S09979_ses-E21899_run-1_bp-chest_vp-ap_cr.png",
+    "sub-S09452_ses-E17189_run-1_bp-chest_cr.png",
+    "sub-S09822_ses-E16846_run-1_bp-chest_vp-ap_cr.png",
+    "sub-S09831_ses-E19721_run-1_bp-chest_vp-ap_dx.png",
+    "sub-S09799_ses-E24017_run-1_bp-chest_cr.png",
+    "sub-S09524_ses-E19142_run-1_bp-chest_vp-ap_cr.png",
+    "sub-S09395_ses-E22364_run-1_bp-chest_vp-ap_cr.png"
+  ],
+  "backbones": {
+    "vision": "/root/autodl-fs/betterlvit_5090_migration/root_cache/huggingface/hub/models--facebook--convnext-tiny-224/snapshots/6166b7613034066690a621d8bf25ffdf181a34f0",
+    "cxr": "/root/autodl-fs/betterlvit_5090_migration/root_cache/huggingface/hub/models--microsoft--BiomedVLP-CXR-BERT-specialized/snapshots/5157bdba1437a3aed316dacb1a5b68edf96b9902",
+    "biomed": "/root/autodl-tmp/text_guided_baselines_20260920/backbones/biomedbert_pinned"
+  },
+  "runs": {
+    "guide": {
+      "repo": "vendor/guide",
+      "upstream_sha": "acfd134cf51067a145904d7031b631a6119dbc3f",
+      "text": "cxr",
+      "batch": 16,
+      "lr": 0.0003,
+      "epochs": 100
+    },
+    "ddcmd": {
+      "repo": "vendor/ddcmd",
+      "upstream_sha": "27387c47163971448f8fcdf5e37f310509dbd948",
+      "text": "biomed",
+      "batch": 8,
+      "lr": 5e-05,
+      "epochs": 160
+    }
+  },
+  "source_hashes": {
+    "prepare_remote.py": "427a1664e808642a556bdbad4dd5ccaa63df18d1365b017816266503ba81a973",
+    "run.py": "9b16ad7f34b4c9af178ea60725d68ca19f0debcc2b37a0da4321da77f2c3737d",
+    "vendor/guide/utils/config.py": "63e3ce6262fcc5a9b14b1681eccd92f11f80046fa16ae91c9d6389d5f965d87b",
+    "vendor/guide/utils/dataset.py": "54bd307119e87a022ee20890527253e86423f7144d1c5e8c2755db28f75dd0d3",
+    "vendor/guide/utils/layers.py": "b4fda793b0a8fe5528af14641d90ec31a760adf0ec3b96586f07375fc75de338",
+    "vendor/guide/utils/model.py": "29f52b6bb14236ee3fa4ededf132dff9742891403d6e5ecf43490a4cc09a611d",
+    "vendor/guide/lib/BiomedVLP-CXR-BERT-specialized/configuration_cxrbert.py": "2cdde2c6a5a234e0a3e62d453d975689521633e1bc433cc87237b9365858f1f9",
+    "vendor/guide/lib/BiomedVLP-CXR-BERT-specialized/modeling_cxrbert.py": "bfc34d27e68301fbe612a12e9239bbf577aca6f2635de84998881b8017b27e48",
+    "vendor/ddcmd/net/creratemodel.py": "5a973d9a534cb34823d8afba7ee1baeae623bbcf188389881ec03a7ec871b008",
+    "vendor/ddcmd/net/decoder.py": "7893ac89e4718b9d9bf962f58c587d672390c216c4f27b5652bd995504b329f9",
+    "vendor/ddcmd/net/model.py": "c658e286c0c39b00a75a9c57a2c115e98e0169555c360d4dd2cf17842b3407ac",
+    "vendor/ddcmd/net/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "vendor/ddcmd/utils/config.py": "e2a7246cff0ae31ff6745fa43f0912f1cc86628f0f68633849a8dd27613dd09a",
+    "vendor/ddcmd/utils/dataset.py": "cf77fb4208f9c7dcc9952019c1c2a234f0c6082526aa17eba9857e644f02b0ec",
+    "vendor/ddcmd/utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dispatch.py": "77cd8f8adb8d60231a1eeaca5ba58ef3e8ea062e49193816b589b3f69c7064e2"
+  },
+  "experiment_tag": "experiment-text-guided-guide-ddcmd-seed1219-20260920-v4",
+  "experiment_commit": "c682c6a974d4a2c60ff57a5963e1413154862c42"
+}

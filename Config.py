@@ -1,25 +1,37 @@
 # -*- coding: utf-8 -*-
-import ml_collections
 import os
 import time
+
+import ml_collections
 import torch
+
+from paper_experiments import get_paper_experiment
+
+
+paper_experiment = get_paper_experiment(
+    os.environ.get('BETTERLVIT_EXPERIMENT', 'b0_baseline')
+)
 
 ## PARAMETERS OF THE MODEL
 save_model = True
 tensorboard = True
 os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 use_cuda = torch.cuda.is_available()
-seed = 1219
+seed = int(os.environ.get('BETTERLVIT_SEED', '1219'))
 os.environ['PYTHONHASHSEED'] = str(seed)
 
 cosineLR = True  # Use cosineLR or not
 n_channels = 3
 n_labels = 1  # MoNuSeg & Covid19
-epochs = 1000
+epochs = int(os.environ.get('BETTERLVIT_EPOCHS', '150'))
 img_size = 224
-print_frequency = 1
+print_frequency = 20
+tensorboard_frequency = 20
 save_frequency = 5000
-vis_frequency = 10
+# Validation previews are optional training artifacts. Long remote runs can
+# disable them without changing optimization or metrics, which also avoids a
+# failed image write interrupting checkpoint progress.
+vis_frequency = int(os.environ.get('BETTERLVIT_VIS_FREQUENCY', '10'))
 early_stopping_patience = 80
 print_loss_components = False  # Toggle to print individual loss components
 
@@ -27,17 +39,143 @@ pretrain = False
 # task_name = 'MoNuSeg'
 task_name = 'Covid19'
 learning_rate = 3e-4  # MoNuSeg: 1e-3, Covid19: 3e-4
-batch_size = 16  # For LViT-T, 2 is better than 4
+weight_decay = 1e-4  # L2 regularization on Adam; 0 disables
+# The 4090D paper protocol uses one locked physical batch size for B0--A3.
+# Every launcher records an explicit override; 16 is the tested server default.
+batch_size = int(os.environ.get('BETTERLVIT_BATCH_SIZE', '16'))
+train_drop_last = bool(int(os.environ.get('BETTERLVIT_TRAIN_DROP_LAST', '1')))
+num_workers = int(os.environ.get('BETTERLVIT_NUM_WORKERS', '4'))
+# Recreate workers at every epoch boundary so checkpoint resume can restore the
+# exact sampler and augmentation RNG streams.
+persistent_workers = False
+# Deterministic execution is mandatory for the server paper protocol.
+deterministic_training = bool(
+    int(os.environ.get('BETTERLVIT_DETERMINISTIC', '1'))
+)
+cudnn_enabled = bool(int(os.environ.get('BETTERLVIT_CUDNN_ENABLED', '1')))
+# Backward-compatible alias used by the existing training entry point.
+miopen_enabled = cudnn_enabled
+
+# Pre-registered paper ablation. Boundary supervision is prohibited in every
+# profile; only LoRA, objective and decoder fusion are allowed to differ.
+boundary_loss_weight = 0.0
+boundary_kernel_size = 3
+loss_name = paper_experiment['loss_name']
+dice_loss_weight = 0.5
+focal_loss_weight = 0.5
+focal_gamma = 2.0
+focal_positive_weight = 0.5
+focal_negative_weight = 0.5
+experiment_name = paper_experiment['name']
+experiment_paper_id = paper_experiment['paper_id']
+decoder_fusion_mode = paper_experiment['decoder_fusion_mode']
+experiment_architecture = paper_experiment['description']
+experiment_architecture_version = paper_experiment['architecture_version']
+experiment_output_name = experiment_name + '_evaluation.json'
+source_git_commit = os.environ.get('BETTERLVIT_GIT_COMMIT', '').strip()
+visual_prior_enabled = bool(paper_experiment.get('visual_prior_enabled', False))
+training_recipe_enabled = bool(paper_experiment.get('training_recipe_enabled', False))
+augmentation_policy = paper_experiment.get('augmentation_policy', 'legacy')
+lr_schedule = paper_experiment.get('lr_schedule', 'warm_restarts')
+visual_random_init = bool(paper_experiment.get('visual_random_init', False))
+visual_encoder_kind = paper_experiment.get('visual_encoder_kind', 'cxformer')
+visual_model_root = os.environ.get('BETTERLVIT_VISUAL_MODEL_ROOT', '/root/visual_prior_models')
+bcdh_enabled = bool(paper_experiment.get('bcdh_enabled', False))
+bcdh_aux_weight = float(paper_experiment.get('bcdh_aux_weight', 0.0))
+bcdh_hidden_channels = int(
+    paper_experiment.get('bcdh_hidden_channels', 32)
+)
+bcdh_delta_max = float(paper_experiment.get('bcdh_delta_max', 1.0))
+bcdh_detach_cues = bool(paper_experiment.get('bcdh_detach_cues', True))
+cdrr_enabled = bool(paper_experiment.get('cdrr_enabled', False))
+cdrr_aux_weight = float(paper_experiment.get('cdrr_aux_weight', 0.0))
+cdrr_hidden_channels = int(
+    paper_experiment.get('cdrr_hidden_channels', 32)
+)
+cdrr_delta_max = float(paper_experiment.get('cdrr_delta_max', 0.5))
+cdrr_active_fraction = float(
+    paper_experiment.get('cdrr_active_fraction', 0.15)
+)
+race_pe_enabled = bool(paper_experiment.get('race_pe_enabled', False))
+race_pe_route_enabled = bool(paper_experiment.get('race_pe_route_enabled', True))
+race_pe_pixel_only = bool(paper_experiment.get('race_pe_pixel_only', False))
+selection_metric = paper_experiment.get('selection_metric', 'dice')
+race_binding_repair = bool(paper_experiment.get('race_binding_repair', False))
+race_route_enabled = bool(paper_experiment.get('race_route_enabled', True))
+race_enabled = bool(paper_experiment.get('race_enabled', False))
+race_aux_weight = float(paper_experiment.get('race_aux_weight', 0.0))
+race_hidden_channels = int(
+    paper_experiment.get('race_hidden_channels', 32)
+)
+race_max_strength = float(
+    paper_experiment.get('race_max_strength', 0.15)
+)
+if boundary_loss_weight != 0.0:
+    raise ValueError('Every paper profile requires boundary_loss_weight=0.0')
+if bcdh_enabled and cdrr_enabled:
+    raise ValueError('BCDH and CDRR cannot be enabled together')
+if bcdh_enabled and loss_name != 'dice_focal':
+    raise ValueError('BCDH-R V1 is preregistered only with Dice/Focal')
+if bcdh_enabled and not 0.0 < bcdh_aux_weight < 1.0:
+    raise ValueError('BCDH auxiliary weight must be in (0, 1)')
+if cdrr_enabled and loss_name != 'dice_focal':
+    raise ValueError('CDRR V1 is preregistered only with Dice/Focal')
+if cdrr_enabled and not 0.0 < cdrr_aux_weight < 1.0:
+    raise ValueError('CDRR auxiliary weight must be in (0, 1)')
+if race_enabled and (bcdh_enabled or cdrr_enabled):
+    raise ValueError('RACE-Fuse cannot be combined with BCDH or CDRR')
+if race_enabled and loss_name != 'dice_focal':
+    raise ValueError('RACE-Fuse V1 is preregistered only with Dice/Focal')
+if race_enabled and not 0.0 < race_aux_weight < 1.0:
+    raise ValueError('RACE auxiliary weight must be in (0, 1)')
 
 model_name = 'BetterLViT'
 # model_name = 'LViT_pretrain'
+
+# Local workstation safety.
+enable_bark_notifications = False
+shutdown_after_training = False
+
+# Resume training
+# Set resume_path to a .pth.tar checkpoint to continue from there. New session
+# (and its log / checkpoint folder) is still created on each run, so the
+# original best_model is not overwritten in the source session.
+# resume_max_dice is only used as a fallback when the loaded checkpoint
+# predates this resume infrastructure (no 'max_dice' field).
+resume_path = os.environ.get('BETTERLVIT_RESUME_PATH', '').strip()
+resume_max_dice = 0.0
+require_checkpoint_architecture_match = True
+
+# Text encoder (replaces legacy bert-embedding / bert-base-uncased)
+text_encoder_name = 'microsoft/BiomedVLP-CXR-BERT-specialized'
+text_max_len = 32  # threaded into Vit.CTBN3.in_channels via LViT __init__
+text_use_lora = paper_experiment['text_use_lora']
+text_lora_r = 16
+text_lora_alpha = 32
+text_lora_dropout = 0.1
+# LoRA target modules. PEFT does suffix matching, so 'output.dense' matches
+# BOTH attention.output.dense (attention "o" projection) AND the FFN
+# output.dense (3072->768). Default below covers all 6 linears per BERT
+# block: query, key, value, attention.output.dense, intermediate.dense
+# (FFN up 768->3072), output.dense (FFN down). Reduce to ('query', 'value')
+# for the legacy q+v-only ablation comparison.
+text_lora_target_modules = (
+    'query', 'key', 'value',
+    'intermediate.dense', 'output.dense',
+)
 
 train_dataset = './datasets/' + task_name + '/Train_Folder/'
 val_dataset = './datasets/' + task_name + '/Val_Folder/'
 test_dataset = './datasets/' + task_name + '/Test_Folder/'
 task_dataset = './datasets/' + task_name + '/Train_Folder/'
-session_name = 'Test_session' + '_' + time.strftime('%m.%d_%Hh%M')
-save_path = task_name + '/' + model_name + '/' + session_name + '/'
+session_name = (
+    experiment_paper_id + '_Test_session' + '_'
+    + time.strftime('%m.%d_%Hh%M')
+)
+save_path = (
+    task_name + '/' + model_name + '/' + experiment_name + '/'
+    + session_name + '/'
+)
 model_path = save_path + 'models/'
 tensorboard_folder = save_path + 'tensorboard_logs/'
 logger_path = save_path + session_name + ".log"
@@ -60,6 +198,50 @@ def get_CTranS_config():
     config.patch_sizes = [16, 8, 4, 2]
     config.base_channel = 64  # base channel of U-Net
     config.n_classes = 1
+    config.decoder_fusion_mode = decoder_fusion_mode
+    config.visual_prior_enabled = visual_prior_enabled
+    config.visual_random_init = visual_random_init
+    config.visual_encoder_kind = visual_encoder_kind
+    config.visual_model_root = visual_model_root
+    config.bcdh_enabled = bcdh_enabled
+    config.bcdh_hidden_channels = bcdh_hidden_channels
+    config.bcdh_delta_max = bcdh_delta_max
+    config.bcdh_detach_cues = bcdh_detach_cues
+    config.cdrr_enabled = cdrr_enabled
+    config.cdrr_hidden_channels = cdrr_hidden_channels
+    config.cdrr_delta_max = cdrr_delta_max
+    config.cdrr_active_fraction = cdrr_active_fraction
+    config.race_enabled = race_enabled
+    config.stage1_match_fsdr_initialization = bool(
+        paper_experiment.get('stage1_match_fsdr_initialization', False))
+    config.race_route_enabled = race_route_enabled
+    config.race_pe_enabled = race_pe_enabled
+    config.race_pe_route_enabled = race_pe_route_enabled
+    config.race_hidden_channels = race_hidden_channels
+    config.race_max_strength = race_max_strength
+    # FAM-EPPA V4-B structural switches and residual bounds.
+    config.eppa_use_decoder_guide = True
+    config.eppa_use_dilated_edge = True
+    config.eppa_use_text_pixel_film = True
+    config.eppa_use_plam_guide = True
+    config.eppa_normalize_channel_descriptors = True
+    config.eppa_channel_strength_max = 0.5
+    config.eppa_pixel_strength_max = 0.35
+    config.eppa_edge_strength_max = 0.30
+    config.eppa_plam_strength_max = 1.25
+    config.eppa_plam_strength_init = 1.0
+    config.eppa_plam_strength_floor = 0.25
+    config.eppa_detail_strength_floor = 0.02
+    # Keep the ablation localized: only the two lowest-resolution decoder
+    # stages receive adaptive frequency filtering.
+    config.eppa_adaptive_frequency_stages = ('up4', 'up3')
+    config.eppa_frequency_groups = 8
+    config.eppa_frequency_context_channels = 32
+    config.eppa_alpf_strength_max = 0.50
+    config.eppa_alpf_strength_init = 0.20
+    config.eppa_ahpf_strength_max = 0.30
+    config.eppa_ahpf_strength_init = 0.08
+    config.eppa_ahpf_strength_floor = 0.02
     return config
 
 
