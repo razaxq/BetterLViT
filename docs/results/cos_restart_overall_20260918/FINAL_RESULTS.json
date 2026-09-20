@@ -1,0 +1,514 @@
+{
+  "status": "complete",
+  "scope": "cos_restart_overall_missing_cells",
+  "new_runs": 6,
+  "reused_runs": 6,
+  "seeds": [
+    1219,
+    2027,
+    3407
+  ],
+  "rows": [
+    {
+      "configuration": "CR0",
+      "seed": 1219,
+      "run_id": "cr0s1219",
+      "best_epoch": 80,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr0s1219/Covid19/BetterLViT/cr0_plam/CR0_Test_session_09.16_20h41/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "1dde74d4507a9a3e20f474469d5a358149f2b3b6ee70b9e62f0f6b41b9aad0fb",
+      "source_git_commit": "9c0e51749a8f19b122a2888081abaf68a52f3a6c",
+      "experiment_tag": "experiment-cos-restart-cr0-80e-seed1219-20260916",
+      "val_iou": 0.7184282944424379,
+      "val_dice": 0.8157117273602746,
+      "test_iou": 0.7509085136524356,
+      "test_dice": 0.8368816081066325,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr0s1219\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr0s1219\\test.json",
+      "origin": "reused"
+    },
+    {
+      "configuration": "CR1",
+      "seed": 1219,
+      "run_id": "cr1s1219",
+      "best_epoch": 80,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr1s1219/Covid19/BetterLViT/cr1_fsdr/CR1_Test_session_09.18_04h10/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "a2e90e4a2d5dbc0b91455ad6df9a54760775f1845a209b73afad98484e499d8a",
+      "source_git_commit": "736fc717daf3a4ba1fa9645516efa80bba22909f",
+      "experiment_tag": "experiment-cos-restart-cr1-80e-seed1219-20260918",
+      "val_iou": 0.7227963241858801,
+      "val_dice": 0.8212136349344947,
+      "test_iou": 0.7563962019429644,
+      "test_dice": 0.8429885535534682,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s1219\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s1219\\test.json",
+      "origin": "new"
+    },
+    {
+      "configuration": "CR2",
+      "seed": 1219,
+      "run_id": "cr2s1219",
+      "best_epoch": 80,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr2s1219/Covid19/BetterLViT/cr2_plam_race_binding/CR2_Test_session_09.18_09h22/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "f31a948181a154424c657cfe76dcdd74ac15603d301c9282b316b43bfccda67c",
+      "source_git_commit": "ceaf626c775d309ca6af8ecd2c80a0dc75bd0f33",
+      "experiment_tag": "experiment-cos-restart-cr2-80e-seed1219-20260918",
+      "val_iou": 0.723056461086013,
+      "val_dice": 0.8193982365127128,
+      "test_iou": 0.7538299813214191,
+      "test_dice": 0.8386904689143085,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s1219\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s1219\\test.json",
+      "origin": "new"
+    },
+    {
+      "configuration": "CR3",
+      "seed": 1219,
+      "run_id": "cr3s1219",
+      "best_epoch": 80,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr3s1219/Covid19/BetterLViT/cr3_fsdr_race_binding/CR3_Test_session_09.16_23h22/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "ba8434616a272870ef533a607335be40a7b370191ff61066d003586fbb27edfb",
+      "source_git_commit": "a2c895b4d1c29ff965496aaa7f40ab17ca945902",
+      "experiment_tag": "experiment-cos-restart-cr3-80e-seed1219-20260916",
+      "val_iou": 0.7273156931485634,
+      "val_dice": 0.8244979806463217,
+      "test_iou": 0.7563559408659714,
+      "test_dice": 0.842339002969588,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr3s1219\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr3s1219\\test.json",
+      "origin": "reused"
+    },
+    {
+      "configuration": "CR0",
+      "seed": 2027,
+      "run_id": "cr0s2027",
+      "best_epoch": 79,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr0s2027/Covid19/BetterLViT/cr0_plam/CR0_Test_session_09.17_11h56/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "4942cad6a1cb95ed8ec9bc23e43c9d97e6a97d7079ed20279e01f9710fdb32ec",
+      "source_git_commit": "cde34bf2f1ac8829109b844b6710cbf950b72323",
+      "experiment_tag": "experiment-cos-restart-cr0-80e-seed2027-20260917",
+      "val_iou": 0.7195443601407079,
+      "val_dice": 0.8179262961691663,
+      "test_iou": 0.75318939452687,
+      "test_dice": 0.8394686775287628,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s2027\\test.json",
+      "origin": "reused"
+    },
+    {
+      "configuration": "CR1",
+      "seed": 2027,
+      "run_id": "cr1s2027",
+      "best_epoch": 70,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr1s2027/Covid19/BetterLViT/cr1_fsdr/CR1_Test_session_09.18_12h41/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "52ebd182a3a0a83de73a8563870c42da94a017ab0c0cacd587235340f0ddebd3",
+      "source_git_commit": "7babb7a59e77d35c9e8221da5c552841dd584ea4",
+      "experiment_tag": "experiment-cos-restart-cr1-80e-seed2027-20260918",
+      "val_iou": 0.7241900931393273,
+      "val_dice": 0.822864453695739,
+      "test_iou": 0.7512417248786555,
+      "test_dice": 0.839096096563319,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s2027\\test.json",
+      "origin": "new"
+    },
+    {
+      "configuration": "CR2",
+      "seed": 2027,
+      "run_id": "cr2s2027",
+      "best_epoch": 67,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr2s2027/Covid19/BetterLViT/cr2_plam_race_binding/CR2_Test_session_09.18_17h50/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "5ba9719315b6875215a50c2ebd48ce4bfcdd2267917beae2551c542bbff0818c",
+      "source_git_commit": "a2f439337bc5249de2e98d9e5f471af5e551795e",
+      "experiment_tag": "experiment-cos-restart-cr2-80e-seed2027-20260918",
+      "val_iou": 0.7228443283330999,
+      "val_dice": 0.8194859458644457,
+      "test_iou": 0.7530452108866535,
+      "test_dice": 0.8386580178782752,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s2027\\test.json",
+      "origin": "new"
+    },
+    {
+      "configuration": "CR3",
+      "seed": 2027,
+      "run_id": "cr3s2027",
+      "best_epoch": 80,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr3s2027/Covid19/BetterLViT/cr3_fsdr_race_binding/CR3_Test_session_09.17_14h40/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "6a6566138f7cbcc4de0c33eade04d4aa297b4dde0dfb7813a48ea124c3f2f90c",
+      "source_git_commit": "93f86494b06606cceff3e667d8041813d72ae265",
+      "experiment_tag": "experiment-cos-restart-cr3-80e-seed2027-20260917",
+      "val_iou": 0.7251419262188,
+      "val_dice": 0.823905206037596,
+      "test_iou": 0.7536802680200163,
+      "test_dice": 0.841224993908329,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s2027\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s2027\\test.json",
+      "origin": "reused"
+    },
+    {
+      "configuration": "CR0",
+      "seed": 3407,
+      "run_id": "cr0s3407",
+      "best_epoch": 60,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr0s3407/Covid19/BetterLViT/cr0_plam/CR0_Test_session_09.17_20h05/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "465c4a36ce8eab82fcde55da6f151bc623aed5103749c0465e06fe3a0a77b313",
+      "source_git_commit": "9fec4ab9a7e2e98a51ead8d7824cf212cb55676f",
+      "experiment_tag": "experiment-cos-restart-cr0-80e-seed3407-20260917",
+      "val_iou": 0.7169208932581604,
+      "val_dice": 0.8152882587747765,
+      "test_iou": 0.7467386957464903,
+      "test_dice": 0.8350986064252421,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s3407\\test.json",
+      "origin": "reused"
+    },
+    {
+      "configuration": "CR1",
+      "seed": 3407,
+      "run_id": "cr1s3407",
+      "best_epoch": 79,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr1s3407/Covid19/BetterLViT/cr1_fsdr/CR1_Test_session_09.18_21h09/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "1f6d5ebf5442c9aabdbaca9be51b91256f4fee8cf624cb1e4c6f69416ef9a01a",
+      "source_git_commit": "512fe59bfe3dd23e8441da8b43ead972e647f3f7",
+      "experiment_tag": "experiment-cos-restart-cr1-80e-seed3407-20260918",
+      "val_iou": 0.7203136633310239,
+      "val_dice": 0.8188524577438588,
+      "test_iou": 0.7545778507714352,
+      "test_dice": 0.8416555322359476,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s3407\\test.json",
+      "origin": "new"
+    },
+    {
+      "configuration": "CR2",
+      "seed": 3407,
+      "run_id": "cr2s3407",
+      "best_epoch": 79,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr2s3407/Covid19/BetterLViT/cr2_plam_race_binding/CR2_Test_session_09.19_02h17/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "3cc8edcf77731daa57432166540957beca0869243f9e3d6b70ff9d8eb5fff706",
+      "source_git_commit": "3edb21f6c81e9e3248d8a3429e937c77850cce0c",
+      "experiment_tag": "experiment-cos-restart-cr2-80e-seed3407-20260918",
+      "val_iou": 0.717761013434421,
+      "val_dice": 0.8156780395879497,
+      "test_iou": 0.7501412669559696,
+      "test_dice": 0.8372663468955379,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s3407\\test.json",
+      "origin": "new"
+    },
+    {
+      "configuration": "CR3",
+      "seed": 3407,
+      "run_id": "cr3s3407",
+      "best_epoch": 69,
+      "best_checkpoint": "/root/autodl-tmp/BetterLViT-cos-restart-cr3s3407/Covid19/BetterLViT/cr3_fsdr_race_binding/CR3_Test_session_09.17_22h46/models/best_model-BetterLViT.pth.tar",
+      "checkpoint_sha256": "11a302479bfaa7aeca95cdf95c8181cf8e32033be9c5209b1b04ab4aa5e26bd1",
+      "source_git_commit": "dfebd528a13bb65b93d748dbae1f0c97fc955807",
+      "experiment_tag": "experiment-cos-restart-cr3-80e-seed3407-20260917",
+      "val_iou": 0.7226685937124396,
+      "val_dice": 0.8218076365792659,
+      "test_iou": 0.7557618878368281,
+      "test_dice": 0.8434919561072223,
+      "validation_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s3407\\validation.json",
+      "test_result": "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s3407\\test.json",
+      "origin": "reused"
+    }
+  ],
+  "group_statistics": {
+    "CR0": {
+      "val_iou": {
+        "mean": 0.7182978492804354,
+        "sample_sd": 0.0013165889928801612
+      },
+      "val_dice": {
+        "mean": 0.8163087607680725,
+        "sample_sd": 0.0014167381519073383
+      },
+      "test_iou": {
+        "mean": 0.7502788679752653,
+        "sample_sd": 0.0032711189137483595
+      },
+      "test_dice": {
+        "mean": 0.8371496306868791,
+        "sample_sd": 0.0021973296157149513
+      }
+    },
+    "CR1": {
+      "val_iou": {
+        "mean": 0.7224333602187437,
+        "sample_sd": 0.0019635386794650336
+      },
+      "val_dice": {
+        "mean": 0.8209768487913642,
+        "sample_sd": 0.002016451992401432
+      },
+      "test_iou": {
+        "mean": 0.7540719258643517,
+        "sample_sd": 0.002614216605472341
+      },
+      "test_dice": {
+        "mean": 0.8412467274509116,
+        "sample_sd": 0.0019781674269994803
+      }
+    },
+    "CR2": {
+      "val_iou": {
+        "mean": 0.7212206009511779,
+        "sample_sd": 0.0029979675474877893
+      },
+      "val_dice": {
+        "mean": 0.8181874073217027,
+        "sample_sd": 0.002173618653305115
+      },
+      "test_iou": {
+        "mean": 0.7523388197213474,
+        "sample_sd": 0.0019431661731013294
+      },
+      "test_dice": {
+        "mean": 0.8382049445627072,
+        "sample_sd": 0.0008130113486579727
+      }
+    },
+    "CR3": {
+      "val_iou": {
+        "mean": 0.725042071026601,
+        "sample_sd": 0.002325158400380975
+      },
+      "val_dice": {
+        "mean": 0.8234036077543946,
+        "sample_sd": 0.0014135729298725903
+      },
+      "test_iou": {
+        "mean": 0.7552660322409386,
+        "sample_sd": 0.0014050661456410114
+      },
+      "test_dice": {
+        "mean": 0.8423519843283798,
+        "sample_sd": 0.0011335368496699855
+      }
+    }
+  },
+  "paired_contrasts": [
+    {
+      "seed": 1219,
+      "metric": "test_iou",
+      "fsdr_without_race_pp": 0.5487688290528814,
+      "race_without_fsdr_pp": 0.29214676689834906,
+      "race_with_fsdr_pp": -0.004026107699306447,
+      "fsdr_with_race_pp": 0.25259595445522587,
+      "combined_pp": 0.5447427213535749,
+      "interaction_pp": -0.2961728745976555
+    },
+    {
+      "seed": 1219,
+      "metric": "test_dice",
+      "fsdr_without_race_pp": 0.6106945446835765,
+      "race_without_fsdr_pp": 0.18088608076760604,
+      "race_with_fsdr_pp": -0.06495505838802762,
+      "fsdr_with_race_pp": 0.3648534055279429,
+      "combined_pp": 0.5457394862955489,
+      "interaction_pp": -0.24584113915563366
+    },
+    {
+      "seed": 2027,
+      "metric": "test_iou",
+      "fsdr_without_race_pp": -0.19476696482144673,
+      "race_without_fsdr_pp": -0.014418364021639984,
+      "race_with_fsdr_pp": 0.24385431413608272,
+      "fsdr_with_race_pp": 0.06350571333627597,
+      "combined_pp": 0.049087349314635986,
+      "interaction_pp": 0.2582726781577227
+    },
+    {
+      "seed": 2027,
+      "metric": "test_dice",
+      "fsdr_without_race_pp": -0.03725809654437917,
+      "race_without_fsdr_pp": -0.08106596504875441,
+      "race_with_fsdr_pp": 0.21288973450100945,
+      "fsdr_with_race_pp": 0.2566976030053847,
+      "combined_pp": 0.17563163795663028,
+      "interaction_pp": 0.29395569954976386
+    },
+    {
+      "seed": 3407,
+      "metric": "test_iou",
+      "fsdr_without_race_pp": 0.7839155024944922,
+      "race_without_fsdr_pp": 0.3402571209479288,
+      "race_with_fsdr_pp": 0.1184037065392829,
+      "fsdr_with_race_pp": 0.5620620880858462,
+      "combined_pp": 0.902319209033775,
+      "interaction_pp": -0.22185341440864592
+    },
+    {
+      "seed": 3407,
+      "metric": "test_dice",
+      "fsdr_without_race_pp": 0.6556925810705438,
+      "race_without_fsdr_pp": 0.2167740470295776,
+      "race_with_fsdr_pp": 0.1836423871274695,
+      "fsdr_with_race_pp": 0.6225609211684358,
+      "combined_pp": 0.8393349681980133,
+      "interaction_pp": -0.03313165990210809
+    }
+  ],
+  "mean_contrasts_pp": {
+    "test_iou": {
+      "fsdr_without_race_pp": 0.37930578890864225,
+      "race_without_fsdr_pp": 0.20599517460821262,
+      "race_with_fsdr_pp": 0.11941063765868638,
+      "fsdr_with_race_pp": 0.292721251959116,
+      "combined_pp": 0.4987164265673287,
+      "interaction_pp": -0.08658453694952624
+    },
+    "test_dice": {
+      "fsdr_without_race_pp": 0.40970967640324707,
+      "race_without_fsdr_pp": 0.10553138758280974,
+      "race_with_fsdr_pp": 0.1105256877468171,
+      "fsdr_with_race_pp": 0.41470397656725444,
+      "combined_pp": 0.5202353641500642,
+      "interaction_pp": 0.00499430016400737
+    }
+  },
+  "scheduler_comparisons": [
+    {
+      "configuration": "CR0",
+      "seed": 1219,
+      "warm_restart_test_iou": 0.7509085136524356,
+      "single_cosine_test_iou": 0.7556750522336712,
+      "scheduler_change_iou_delta_pp": -0.47665385812355465,
+      "single_cosine_source_git_commit": "a8a63d7d992d455f1e0d640a8dca9ccca72a491e"
+    },
+    {
+      "configuration": "CR1",
+      "seed": 1219,
+      "warm_restart_test_iou": 0.7563962019429644,
+      "single_cosine_test_iou": 0.7580983080794957,
+      "scheduler_change_iou_delta_pp": -0.17021061365313228,
+      "single_cosine_source_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662"
+    },
+    {
+      "configuration": "CR2",
+      "seed": 1219,
+      "warm_restart_test_iou": 0.7538299813214191,
+      "single_cosine_test_iou": 0.758189287159852,
+      "scheduler_change_iou_delta_pp": -0.4359305838432914,
+      "single_cosine_source_git_commit": "e2096e14f6b95e4f41e9164d211f9d44582bea24"
+    },
+    {
+      "configuration": "CR3",
+      "seed": 1219,
+      "warm_restart_test_iou": 0.7563559408659714,
+      "single_cosine_test_iou": 0.7624854356683717,
+      "scheduler_change_iou_delta_pp": -0.6129494802400326,
+      "single_cosine_source_git_commit": "c6e52a9b13576cab9e2451c550d03ad274bc09e2"
+    },
+    {
+      "configuration": "CR0",
+      "seed": 2027,
+      "warm_restart_test_iou": 0.75318939452687,
+      "single_cosine_test_iou": 0.754667685881272,
+      "scheduler_change_iou_delta_pp": -0.14782913544020282,
+      "single_cosine_source_git_commit": "099bb07e09bb6711acff263311ba5e7d39fdc81c"
+    },
+    {
+      "configuration": "CR1",
+      "seed": 2027,
+      "warm_restart_test_iou": 0.7512417248786555,
+      "single_cosine_test_iou": 0.7608585504493884,
+      "scheduler_change_iou_delta_pp": -0.9616825570732956,
+      "single_cosine_source_git_commit": "c972a152b5d152ddfa82e034596085aca85dd0ab"
+    },
+    {
+      "configuration": "CR2",
+      "seed": 2027,
+      "warm_restart_test_iou": 0.7530452108866535,
+      "single_cosine_test_iou": 0.7564579875800803,
+      "scheduler_change_iou_delta_pp": -0.34127766934267667,
+      "single_cosine_source_git_commit": "1c3a6baa1cf80239b1ec9cb99b2625ef5ecc35f4"
+    },
+    {
+      "configuration": "CR3",
+      "seed": 2027,
+      "warm_restart_test_iou": 0.7536802680200163,
+      "single_cosine_test_iou": 0.7625624802705974,
+      "scheduler_change_iou_delta_pp": -0.8882212250581056,
+      "single_cosine_source_git_commit": "38b54196d4bfc6e44d4977dd7a87f07fad3a5d86"
+    },
+    {
+      "configuration": "CR0",
+      "seed": 3407,
+      "warm_restart_test_iou": 0.7467386957464903,
+      "single_cosine_test_iou": 0.7539828007117387,
+      "scheduler_change_iou_delta_pp": -0.724410496524841,
+      "single_cosine_source_git_commit": "fb11f009ea2dd1b286c9ea71dcc2dfb67d026a42"
+    },
+    {
+      "configuration": "CR1",
+      "seed": 3407,
+      "warm_restart_test_iou": 0.7545778507714352,
+      "single_cosine_test_iou": 0.7605435221739733,
+      "scheduler_change_iou_delta_pp": -0.5965671402538009,
+      "single_cosine_source_git_commit": "7b498ba94fed230731d1daf9a5f4de042e4e71f2"
+    },
+    {
+      "configuration": "CR2",
+      "seed": 3407,
+      "warm_restart_test_iou": 0.7501412669559696,
+      "single_cosine_test_iou": 0.7562394029328435,
+      "scheduler_change_iou_delta_pp": -0.609813597687392,
+      "single_cosine_source_git_commit": "46e311b9ad721be41a516f43e11a92f5a8207682"
+    },
+    {
+      "configuration": "CR3",
+      "seed": 3407,
+      "warm_restart_test_iou": 0.7557618878368281,
+      "single_cosine_test_iou": 0.7617376560968515,
+      "scheduler_change_iou_delta_pp": -0.597576826002344,
+      "single_cosine_source_git_commit": "2661423767a6d92b2daaed8a12f8049d7430fee2"
+    }
+  ],
+  "source_artifact_sha256": {
+    "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr0s1219\\runtime.json": "35dead27bad7b59dd7e20a275f1c39b03b471f9724c64f1e31d9e349ac345992",
+    "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr0s1219\\validation.json": "69c3a4b50d48e5e94dfe544bbcb8a331664878be65081c471ff22d049f652194",
+    "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr0s1219\\test.json": "4e1440e9fefa667426e2750e4880fd1ad1f967e628b7cfc9b5b943b3164a2510",
+    "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr3s1219\\runtime.json": "874747cec9869f36a1fc4172c0ff1051e69f6569f2623161e9ac23856f45be1f",
+    "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr3s1219\\validation.json": "95c7ec0fe6bd2b5e1b85fea901c7afb99171bfbf4356bff8509fce86ab94e6cc",
+    "D:\\BetterLViT\\outputs\\cos_restart_pair_20260916\\completed\\cr3s1219\\test.json": "9771ce0a063fff7929413f30a62329b83a35e95af6b44f09d373abced8277b42",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s2027\\runtime.json": "ac0c4693966d22aafb853c19edc06e1134fa149e60bdd9488917c746941b7284",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s2027\\validation.json": "94a28f3d20d1213a0862a77b1d3023b3a64f7ff9cf6712aaf155abff759fbe57",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s2027\\test.json": "09c027ffd8a706e3fee339144bd1ade031658a27c455b1ed61b25f8adc1472be",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s2027\\runtime.json": "81277a3e3b84fd076860c30464fbf7e4b2ad14018c032f6fd0783addcc75aec3",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s2027\\validation.json": "28d68d14d7106e176a9b7183bb941225a86b0ea546e5d39d2b7f51b83e5edb61",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s2027\\test.json": "72256171a5889fe24e1b8de1d1ce37ec5fcd07030f8ea6cb440809dc7383bf0a",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s3407\\runtime.json": "4ce3c9dea0d498519d3ac3eb8903cca047d4111ea0f7c1efbc6d594cfa78b2fa",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s3407\\validation.json": "cc1e327aa08da1b6fc8d395572b9d952117ed1f85ca9a6cec428840c0a3f7dc3",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr0s3407\\test.json": "6c4b9308eeb9dad4ccc53f40176bb11ce15a0df5a4d21c909dc2ec0630ce4f42",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s3407\\runtime.json": "03fd06ec4b24605b613bac353c1c96dc81004859fde6b73edfd16d604f3c1813",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s3407\\validation.json": "67b80bb69691f30537029a2262102a741cff64c27e8c56feb8c1e92bcbae3e6d",
+    "D:\\BetterLViT\\outputs\\cos_restart_three_seeds_20260917\\completed\\cr3s3407\\test.json": "13abe05381d6df442b25968124dc063ef262fa85afe09e9804555df2b5c60d47",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s1219\\runtime.json": "2370973423c6c59aecaf2a0ebdd19133db240fba83c2d1955eb10716265a3c81",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s1219\\validation.json": "a5d5c7738bdd7d226a2854357123760e088bc75d2bf94ddd22474cb5b968f957",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s1219\\test.json": "d110438a4195593efe64f650f6f6f1603d041bd022672aa48e9b431e13baec5b",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s1219\\preflight.json": "c046d435bf6677f4b28b04f609f1b6ffc1bfe6b48cc9b77ecfc63a68a5365a6f",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s1219\\runtime.json": "1c4cd5a1136de83c691b5a5f01a83eadbdec0f4f8d7912bec8a08759ada61f29",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s1219\\validation.json": "fa60e0fbc957974ac3e2cdfa33da2a1c5f70ec4a2d94a0491a25ac36f10bbbf2",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s1219\\test.json": "5a5d4f133a20f5fc8765df26fdc6a392158e897ed6c9e9136f5bf16ff907b8cc",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s1219\\preflight.json": "8e1ec33d8860c162d6822e74195866a41653c2a2061c22a307265fc11c9380bd",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s2027\\runtime.json": "b3ab2cc0130350ce4133f48274f40eb2cc8fa6aef472e9cc1d7f8b75e88f083b",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s2027\\validation.json": "36b349b71bd1384ff05da67f130da5797739e72afe995bb3c844b16c3d214930",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s2027\\test.json": "2177f32026c89d016a7fbaea03475267ec14b775d7f30a18e02b81201a9df3f4",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s2027\\preflight.json": "a4235e7247270946a1e116a9b72192453c2390b32406856c32fd7720ca013a9d",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s2027\\runtime.json": "776a5b0592db187c9e552887a5e251d43ca055c17956be49285008b88ff28684",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s2027\\validation.json": "59535d0caee0f29b888ae2dad3870dccf853696cf93fb6ce285b61881a675f6c",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s2027\\test.json": "834a41be5a477ac00bafe2d67025b38078154b74b706b06d99be319d25017c13",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s2027\\preflight.json": "3b45e4f829274151caf4787c8ca54435fdba871fdff038f7c6410376d1425c45",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s3407\\runtime.json": "54d7070cd40b75a668c5510254b2b92b792fb71949c241c92f1e42ded7b34010",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s3407\\validation.json": "1e81b482fbc6de91d0ee6cc4a317b296b4a33b9dbe1bc6be92fed593ad058ed9",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s3407\\test.json": "e362626981fdbc6dfbbad5df7ba386e93f49d54b63396e65f4ba547e8a55131c",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr1s3407\\preflight.json": "0be6f9265b718b81d482edf869382ff09737faf615768d4deecac952aaf132fc",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s3407\\runtime.json": "cb93433f989f1088902e65f0793baf70ef12eecf4e491b77d922d19623db7ca0",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s3407\\validation.json": "78430b5f5d44a0d91dcd9f16ff0dbe9bf76cb4f0789dc90d50583c0ef3c59f77",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s3407\\test.json": "aa43911cb7e0bf0f414061b592c1a48be38d1a76e61eecee797e46f09ab1e002",
+    "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\completed\\cr2s3407\\preflight.json": "e7466f88a67cf0aac34fb740b26ed5de73b09daf24e6f8e516ea7e5ea42da8e0"
+  },
+  "verification": "Twelve fixed-Best exports: source, file hashes, per-image means, identical sample sets, recipe and full-module flags verified"
+}

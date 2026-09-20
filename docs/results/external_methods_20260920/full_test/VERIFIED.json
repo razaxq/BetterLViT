@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "sample_count": 2113,
+  "local_server_all_image_and_gt_hashes_match": true,
+  "macro_means_verified": true,
+  "eight_previous_probability_arrays_exact_match": true,
+  "checkpoint_sha256": "3aa0e90851ed496035a5fb4b9d576fcb27ad088d1d5fe6a228d98cbc51804a4f",
+  "test_result_sha256": "c11b732667568a1c02cbd4497a6394eea22e0d668def8ef3caabe71ef3bacd19"
+}

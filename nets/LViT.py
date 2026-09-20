@@ -5,7 +5,7 @@ import torch.nn as nn
 from .bcdh import BCDHRefiner
 from .cdrr import CDRRRefiner
 from .Vit import VisionTransformer, Reconstruct
-from .eppa import EPPA
+from .fsdr import FSDR
 from .fmiseg_adapter import FMISegDecoderAdapter
 from .pixlevel import PixLevelModule
 from .race_fuse import RACEFuse
@@ -123,7 +123,7 @@ class UpblockAttention(nn.Module):
         self.up = nn.Upsample(scale_factor=2)
         # DG-EPPA uses the upsampled decoder feature as a top-down semantic
         # guide for frequency-routed skip refinement.
-        self.eppa = EPPA(
+        self.eppa = FSDR(
             in_channels // 2,
             text_dim=text_dim,
             reduction=8,

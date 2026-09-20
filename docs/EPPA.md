@@ -1,5 +1,9 @@
 # EPPA — Edge-Preserving Pixel Attention 详解
 
+> **历史文档提示（2026-09-14）**：当前 FAM-EPPA V4-B 已正式更名为
+> **FSDR — Frequency-aware Semantic–Detail Refinement（频率感知的语义—细节精炼模块）**。
+> 当前命名与结构请见 [FSDR.md](FSDR.md)。下文保留早期 EPPA 设计，不代表当前 FSDR 实现。
+
 > 文件位置: `nets/eppa.py`
 > 用途: 在 LViT 解码器跳跃连接上，替换原版 `PixLevelModule (PLAM)`,
 > 用更轻量、文本条件化、且对边缘友好的注意力门控 skip 特征。

@@ -1,0 +1,86 @@
+{
+  "implementation_parent": "561b8fa9489b71d9c3c222b7f4e70971c8556116",
+  "note": "Result files are archival snapshots. Runtime SHAs and machine paths identify original experiments; merging does not retrain models.",
+  "files": [
+    {
+      "source": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\FINAL_REPORT.md",
+      "repository_path": "docs/results/stage1_overall_20260915/FINAL_REPORT.md",
+      "sha256": "0c71e5370cc1ad20951ee7fba6d6609f72e1e4fd3cbe8f23b2fc376c9ba415a4"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\FINAL_RESULTS.json",
+      "repository_path": "docs/results/stage1_overall_20260915/FINAL_RESULTS.json",
+      "sha256": "4644aa6a662c042ea5365b73638b9e7ff719f09e1c51464e7dd1fc6dc94533f5"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\FINAL_RESULTS.csv",
+      "repository_path": "docs/results/stage1_overall_20260915/FINAL_RESULTS.csv",
+      "sha256": "9862c6e577658e0d047e9f03671fdc744d9c22bc74dd93d48347ba571b1861c2"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\PAPER_MODEL_INDEX.json",
+      "repository_path": "docs/results/stage1_overall_20260915/PAPER_MODEL_INDEX.json",
+      "sha256": "ecb6262b6e36c7e990405b1f5c47097da34ee406faa8a1b56754777c4737cc27"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\stage1_overall_20260915\\queue_manifest.json",
+      "repository_path": "docs/results/stage1_overall_20260915/queue_manifest.json",
+      "sha256": "a091206cf8e33536613045d51c58ac58e7cd9fc33383adaee7c913079e959fcd"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\FINAL_REPORT.md",
+      "repository_path": "docs/results/cos_restart_overall_20260918/FINAL_REPORT.md",
+      "sha256": "3bcfab233c098af99aa2a017f6cc9f623e40eaea4deae0f044099b43c929f280"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\FINAL_RESULTS.json",
+      "repository_path": "docs/results/cos_restart_overall_20260918/FINAL_RESULTS.json",
+      "sha256": "87db8e4409c0cd7954cbbb02323862b379d1eaf79f9594cb1732334ad8e9b393"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\FINAL_RESULTS.csv",
+      "repository_path": "docs/results/cos_restart_overall_20260918/FINAL_RESULTS.csv",
+      "sha256": "a12472b36214b11a65754088ea05334ea83905b1feaa9098ea6fa912d849f916"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\PAPER_MODEL_INDEX.json",
+      "repository_path": "docs/results/cos_restart_overall_20260918/PAPER_MODEL_INDEX.json",
+      "sha256": "f3b05d3e64513a9ededb3729e8575162e3e135a6207d7172b562b2cdfc16386a"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\PLAN.md",
+      "repository_path": "docs/results/cos_restart_overall_20260918/PLAN.md",
+      "sha256": "0852dde131476243c865770d2b9b1ee7e3d59c1bbc82b93145459f0463a3055b"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\cos_restart_overall_20260918\\queue_manifest.json",
+      "repository_path": "docs/results/cos_restart_overall_20260918/queue_manifest.json",
+      "sha256": "ac9936dfc5ddf0f5397a69e2b4b8d11a565f347cd8577d945ef7249f3686082e"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\text_guided_baselines_20260920\\FINAL_REPORT.md",
+      "repository_path": "docs/results/text_guided_baselines_20260920/FINAL_REPORT.md",
+      "sha256": "ad7c351bd8828fbb5bb0ecc4da0bd270dcee0111a347fdb460cc175bb5206d17"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\text_guided_baselines_20260920\\FINAL_RESULTS.json",
+      "repository_path": "docs/results/text_guided_baselines_20260920/FINAL_RESULTS.json",
+      "sha256": "809c948022fc699c4101197c14fbbb60b1d0d89d5f765c97038d68f024e1a5b9"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\text_guided_baselines_20260920\\PAPER_MODEL_INDEX.json",
+      "repository_path": "docs/results/text_guided_baselines_20260920/PAPER_MODEL_INDEX.json",
+      "sha256": "c09902e062517ca600779dbdd7bc94a2c1e6a09cacbf7a0c0e09c245612677a8"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\text_guided_baselines_20260920\\PLAN.md",
+      "repository_path": "docs/results/text_guided_baselines_20260920/PLAN.md",
+      "sha256": "d3220750847bcbe44109ef9460c2371c2f8ffa55747950adc8cecb1aa05c40d7"
+    },
+    {
+      "source": "D:\\BetterLViT\\outputs\\text_guided_baselines_20260920\\manifest.json",
+      "repository_path": "docs/results/text_guided_baselines_20260920/manifest.json",
+      "sha256": "cf9539d2514b71b7f3ea46c2b8e11da373a09be06c4c99c48c51d2cb41e680e4"
+    }
+  ]
+}

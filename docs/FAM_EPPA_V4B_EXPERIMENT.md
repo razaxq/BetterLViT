@@ -1,4 +1,8 @@
-# FAM-EPPA V4-B Experiment
+# FSDR — historical FAM-EPPA V4-B experiment
+
+> Naming update (2026-09-14): FAM-EPPA V4-B is now formally called
+> **Frequency-aware Semantic–Detail Refinement (FSDR)**. See [FSDR.md](FSDR.md).
+> The original protocol and technical identifiers below are retained for provenance.
 
 ## Objective
 
