@@ -1,0 +1,187 @@
+{
+  "status": "complete",
+  "split": "test",
+  "samples": 2113,
+  "seed": 1219,
+  "threshold": 0.5,
+  "summary": {
+    "R2": {
+      "macro_iou": 0.7580983080794957,
+      "macro_dice": 0.8442357558557602,
+      "macro_precision": 0.826084159202458,
+      "macro_recall": 0.8916214076819452,
+      "macro_brier": 0.016699489254147614,
+      "checkpoint_best_epoch": 67,
+      "checkpoint_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662"
+    },
+    "P8R2": {
+      "macro_iou": 0.7595049092809151,
+      "macro_dice": 0.8452371589479675,
+      "macro_precision": 0.8278302819924322,
+      "macro_recall": 0.8924388109787446,
+      "macro_brier": 0.016548281447108674,
+      "checkpoint_best_epoch": 75,
+      "checkpoint_git_commit": "2a4adcfd7eff8cc832da355a5c7935039a14a1df"
+    },
+    "P8B2": {
+      "macro_iou": 0.7624854356683717,
+      "macro_dice": 0.8470967185691495,
+      "macro_precision": 0.8307099690397217,
+      "macro_recall": 0.8932420571189263,
+      "macro_brier": 0.01631096561069532,
+      "checkpoint_best_epoch": 75,
+      "checkpoint_git_commit": "c6e52a9b13576cab9e2451c550d03ad274bc09e2"
+    }
+  },
+  "contrasts": {
+    "P8R2 minus R2": {
+      "metrics": {
+        "iou": {
+          "delta": 0.0014066012014193145,
+          "delta_pp": 0.14066012014193147,
+          "image_bootstrap_95_ci_pp": [
+            -0.1656852874418852,
+            0.4440127970636025
+          ]
+        },
+        "dice": {
+          "delta": 0.0010014030922072946,
+          "delta_pp": 0.10014030922072946,
+          "image_bootstrap_95_ci_pp": [
+            -0.17801576229920685,
+            0.37173146521311307
+          ]
+        },
+        "precision": {
+          "delta": 0.0017461227899743328,
+          "delta_pp": 0.17461227899743328,
+          "image_bootstrap_95_ci_pp": [
+            -0.12792453240911944,
+            0.46959537410160124
+          ]
+        },
+        "recall": {
+          "delta": 0.0008174032967994335,
+          "delta_pp": 0.08174032967994335,
+          "image_bootstrap_95_ci_pp": [
+            -0.27227205280564926,
+            0.4305388985839319
+          ]
+        },
+        "brier": {
+          "delta": -0.0001512078070389415,
+          "delta_pp": -0.01512078070389415,
+          "image_bootstrap_95_ci_pp": [
+            -0.034268482167564084,
+            0.0038432781082393323
+          ]
+        }
+      },
+      "fp_delta": -17850,
+      "fn_delta": -5578
+    },
+    "P8B2 minus P8R2": {
+      "metrics": {
+        "iou": {
+          "delta": 0.0029805263874564648,
+          "delta_pp": 0.29805263874564647,
+          "image_bootstrap_95_ci_pp": [
+            0.05383598316905621,
+            0.5404255892500354
+          ]
+        },
+        "dice": {
+          "delta": 0.0018595596211820134,
+          "delta_pp": 0.18595596211820134,
+          "image_bootstrap_95_ci_pp": [
+            -0.03357338417524613,
+            0.3998383612720105
+          ]
+        },
+        "precision": {
+          "delta": 0.002879687047289327,
+          "delta_pp": 0.2879687047289327,
+          "image_bootstrap_95_ci_pp": [
+            0.05509295487482374,
+            0.5166498656565843
+          ]
+        },
+        "recall": {
+          "delta": 0.0008032461401817344,
+          "delta_pp": 0.08032461401817344,
+          "image_bootstrap_95_ci_pp": [
+            -0.218817111214183,
+            0.38233269709526796
+          ]
+        },
+        "brier": {
+          "delta": -0.00023731583641335184,
+          "delta_pp": -0.023731583641335183,
+          "image_bootstrap_95_ci_pp": [
+            -0.03955514538647842,
+            -0.007772311872578989
+          ]
+        }
+      },
+      "fp_delta": -34211,
+      "fn_delta": -6091
+    },
+    "P8B2 minus R2": {
+      "metrics": {
+        "iou": {
+          "delta": 0.00438712758887578,
+          "delta_pp": 0.438712758887578,
+          "image_bootstrap_95_ci_pp": [
+            0.14047426545524624,
+            0.7275654178540505
+          ]
+        },
+        "dice": {
+          "delta": 0.002860962713389308,
+          "delta_pp": 0.2860962713389308,
+          "image_bootstrap_95_ci_pp": [
+            0.02053609992549843,
+            0.5449679341371874
+          ]
+        },
+        "precision": {
+          "delta": 0.004625809837263659,
+          "delta_pp": 0.4625809837263659,
+          "image_bootstrap_95_ci_pp": [
+            0.1637410944377544,
+            0.7550831326841282
+          ]
+        },
+        "recall": {
+          "delta": 0.0016206494369811687,
+          "delta_pp": 0.1620649436981169,
+          "image_bootstrap_95_ci_pp": [
+            -0.18668868059808857,
+            0.504319037075249
+          ]
+        },
+        "brier": {
+          "delta": -0.0003885236434522934,
+          "delta_pp": -0.03885236434522934,
+          "image_bootstrap_95_ci_pp": [
+            -0.05834808709060548,
+            -0.019344155972152225
+          ]
+        }
+      },
+      "fp_delta": -52061,
+      "fn_delta": -11669
+    }
+  },
+  "source_file_sha256": {
+    "R2": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792",
+    "P8R2": "64cd9f221a53ba481db6096b05759814dafac6692b7eb75daed60999a23d9808",
+    "P8B2": "a90374bbf8f653bc7efb0a71c1d582b0de19130d3abdaa6a9d70f66e45f7a6e8"
+  },
+  "limitations": [
+    "Single-seed Test, not across-seed stability evidence.",
+    "Image bootstrap is descriptive, not patient-cluster uncertainty.",
+    "Best checkpoints were selected on Val before the explicit Test request.",
+    "This project Test split has historical access. No threshold or checkpoint tuning on these Test results."
+  ]
+}

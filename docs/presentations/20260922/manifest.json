@@ -1,0 +1,50 @@
+{
+  "date": "2026-09-22",
+  "slide_count": 21,
+  "source_snapshot_commit": "b71218b52240c60b2e47c25d584448f0dde2f73d",
+  "artifact_tool_version": "2.8.59",
+  "presentation_skill_version": "26.904.11930",
+  "primary_protocol": "single-cycle cosine, 80 epochs, seeds 1219/2027/3407",
+  "result_sources": {
+    "docs/PAPER_RESULTS.md": "80925e585485d8575d56a22cfd3fbe3b745590e5ccdd2c62f5a17123a68d1a06",
+    "docs/FSDR.md": "4b03160266cb5fe21ac478ecab656cc476b5d63ebf0add74ef999620243e61bc",
+    "docs/results/stage1_overall_20260915/FINAL_RESULTS.json": "4644aa6a662c042ea5365b73638b9e7ff719f09e1c51464e7dd1fc6dc94533f5",
+    "docs/results/text_guided_baselines_20260920/FINAL_RESULTS.json": "809c948022fc699c4101197c14fbbb60b1d0d89d5f765c97038d68f024e1a5b9",
+    "docs/results/external_methods_20260920/full_test/TEST_RESULTS.json": "c11b732667568a1c02cbd4497a6394eea22e0d668def8ef3caabe71ef3bacd19",
+    "docs/results/plam_baseline_audit_20260916/AUDIT.md": "38c200c2c68958321bf98316e08a0bfd6a0e2e5828aa91cfa11c90423e04e865"
+  },
+  "files": {
+    ".gitignore": {
+      "bytes": 31,
+      "sha256": "3c8f0633e94d7c1a91f872744931d184102f3b0bd024e8c38549350b0429d96c"
+    },
+    "FSDR_RACE_20260922.pptx": {
+      "bytes": 98499,
+      "sha256": "87e1a57802991841ae2750ca800ed1554192649ca1ca297ace88e4f822c6ed17"
+    },
+    "FSDR_RACE_Defense_Speaker_Notes_20260922.md": {
+      "bytes": 20240,
+      "sha256": "efe36558494f4ffaf5ec49186e9b6080e256a4b520dfcbe3bd8afce56d799142"
+    },
+    "source_20260915.pptx": {
+      "bytes": 204946,
+      "sha256": "b26f218a260abab238d2aaaff17d19ab1f868a2fa980c250678381d2baa9f96e"
+    },
+    "update.mjs": {
+      "bytes": 43532,
+      "sha256": "a3f419b939ea963539c53342637c793930eecf1fb29a8b724d5c4b0a13085129"
+    },
+    "evidence/single_cycle_auxiliary_results.json": {
+      "bytes": 10246,
+      "sha256": "03f6a515b5543d650373551445777b5adf8a42029e340cd942613e7d3ba732d2"
+    },
+    "evidence/single_cycle_binding_pair_report.md": {
+      "bytes": 1532,
+      "sha256": "50d2c804edeaba33f0660edca6c715408a321137339a496a1584f3a85a8686a2"
+    },
+    "evidence/single_cycle_binding_test_results.json": {
+      "bytes": 5765,
+      "sha256": "ba0ddfaf12b622359d3902d7b46866a70213de6595196addb86680b7a48e24d6"
+    }
+  }
+}

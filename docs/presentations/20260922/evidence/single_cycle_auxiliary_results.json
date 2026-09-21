@@ -1,0 +1,315 @@
+{
+  "status": "complete",
+  "checked_utc": "2026-09-15T03:09:48.352627+00:00",
+  "seed": 1219,
+  "threshold": 0.5,
+  "experiment_tag": "experiment-p8-binding-aux-only-80e-seed1219-20260915",
+  "completed_utc": "2026-09-15T03:06:21.275127+00:00",
+  "results": {
+    "validation": {
+      "samples": 1429,
+      "summary": {
+        "R2": {
+          "macro_iou": 0.7266535938268995,
+          "macro_dice": 0.8240342867846576,
+          "macro_precision": 0.8050860181894107,
+          "macro_recall": 0.8805021187884409,
+          "macro_brier": 0.02116154295342556,
+          "checkpoint_best_epoch": 67,
+          "checkpoint_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662"
+        },
+        "P8BA": {
+          "macro_iou": 0.7275061731563934,
+          "macro_dice": 0.8245865854924642,
+          "macro_precision": 0.8101921477505915,
+          "macro_recall": 0.8770663873560269,
+          "macro_brier": 0.02095026424694493,
+          "checkpoint_best_epoch": 75,
+          "checkpoint_git_commit": "ec9f3590d535ee29c02484e3c4babc6fb0c099d0"
+        },
+        "P8B2": {
+          "macro_iou": 0.7281153892839903,
+          "macro_dice": 0.8251255979389873,
+          "macro_precision": 0.8078074791485036,
+          "macro_recall": 0.8818507034707296,
+          "macro_brier": 0.020978684992500902,
+          "checkpoint_best_epoch": 75,
+          "checkpoint_git_commit": "c6e52a9b13576cab9e2451c550d03ad274bc09e2"
+        }
+      },
+      "contrasts": {
+        "P8BA minus R2": {
+          "iou": {
+            "delta_pp": 0.08525793294937802,
+            "image_bootstrap_95_ci_pp": [
+              -0.19496727689383023,
+              0.3677869695932951
+            ]
+          },
+          "dice": {
+            "delta_pp": 0.05522987078064244,
+            "image_bootstrap_95_ci_pp": [
+              -0.19106410133820467,
+              0.30678705438616105
+            ]
+          },
+          "precision": {
+            "delta_pp": 0.5106129561180571,
+            "image_bootstrap_95_ci_pp": [
+              0.26186207039430454,
+              0.773904057086031
+            ]
+          },
+          "recall": {
+            "delta_pp": -0.3435731432413865,
+            "image_bootstrap_95_ci_pp": [
+              -0.6734257928776781,
+              -0.015859527725885246
+            ]
+          },
+          "brier": {
+            "delta_pp": -0.021127870648063356,
+            "image_bootstrap_95_ci_pp": [
+              -0.039509218965329884,
+              -0.00271662271686362
+            ]
+          }
+        },
+        "P8B2 minus P8BA": {
+          "iou": {
+            "delta_pp": 0.06092161275969639,
+            "image_bootstrap_95_ci_pp": [
+              -0.29647925399033687,
+              0.41976284172041195
+            ]
+          },
+          "dice": {
+            "delta_pp": 0.05390124465231928,
+            "image_bootstrap_95_ci_pp": [
+              -0.2782088606492076,
+              0.3899922860615773
+            ]
+          },
+          "precision": {
+            "delta_pp": -0.2384668602087794,
+            "image_bootstrap_95_ci_pp": [
+              -0.5521587256566748,
+              0.07438857409170778
+            ]
+          },
+          "recall": {
+            "delta_pp": 0.4784316114702527,
+            "image_bootstrap_95_ci_pp": [
+              0.0649597694296759,
+              0.8981367941279964
+            ]
+          },
+          "brier": {
+            "delta_pp": 0.0028420745555974005,
+            "image_bootstrap_95_ci_pp": [
+              -0.022461245569229585,
+              0.02878837739345151
+            ]
+          }
+        },
+        "P8B2 minus R2": {
+          "iou": {
+            "delta_pp": 0.14617954570907438,
+            "image_bootstrap_95_ci_pp": [
+              -0.22038302999916817,
+              0.5164789705617855
+            ]
+          },
+          "dice": {
+            "delta_pp": 0.10913111543296176,
+            "image_bootstrap_95_ci_pp": [
+              -0.23242540101592934,
+              0.45973748918781093
+            ]
+          },
+          "precision": {
+            "delta_pp": 0.27214609590927774,
+            "image_bootstrap_95_ci_pp": [
+              -0.05077406128538386,
+              0.6009055783015214
+            ]
+          },
+          "recall": {
+            "delta_pp": 0.1348584682288662,
+            "image_bootstrap_95_ci_pp": [
+              -0.31749278109650314,
+              0.5922118152058345
+            ]
+          },
+          "brier": {
+            "delta_pp": -0.018285796092465948,
+            "image_bootstrap_95_ci_pp": [
+              -0.04505897814343266,
+              0.008254190100375801
+            ]
+          }
+        }
+      },
+      "source_file_sha256": {
+        "R2": "aa2d93ab540cdd7589ce2aefdcfd29989c16aeaf9e0ff16057131e0cfe70463b",
+        "P8BA": "e130c781c4458cdef6841dcb36142a50c200454dca1e2d51346eb21280570199",
+        "P8B2": "ffdc01c7b82f79dc48f514bd0bba74d66db55c4fd87a229b7746084baf063284"
+      }
+    },
+    "test": {
+      "samples": 2113,
+      "summary": {
+        "R2": {
+          "macro_iou": 0.7580983080794957,
+          "macro_dice": 0.8442357558557602,
+          "macro_precision": 0.826084159202458,
+          "macro_recall": 0.8916214076819452,
+          "macro_brier": 0.016699489254147614,
+          "checkpoint_best_epoch": 67,
+          "checkpoint_git_commit": "9eca26de5b301099805530edbf5a1a8718bea662"
+        },
+        "P8BA": {
+          "macro_iou": 0.7600133207633171,
+          "macro_dice": 0.8454525320404367,
+          "macro_precision": 0.8318225954358759,
+          "macro_recall": 0.8879530929360865,
+          "macro_brier": 0.01650946412565453,
+          "checkpoint_best_epoch": 75,
+          "checkpoint_git_commit": "ec9f3590d535ee29c02484e3c4babc6fb0c099d0"
+        },
+        "P8B2": {
+          "macro_iou": 0.7624854356683717,
+          "macro_dice": 0.8470967185691495,
+          "macro_precision": 0.8307099690397217,
+          "macro_recall": 0.8932420571189263,
+          "macro_brier": 0.01631096561069532,
+          "checkpoint_best_epoch": 75,
+          "checkpoint_git_commit": "c6e52a9b13576cab9e2451c550d03ad274bc09e2"
+        }
+      },
+      "contrasts": {
+        "P8BA minus R2": {
+          "iou": {
+            "delta_pp": 0.19150126838213175,
+            "image_bootstrap_95_ci_pp": [
+              -0.04981251530216541,
+              0.4340069680954028
+            ]
+          },
+          "dice": {
+            "delta_pp": 0.12167761846765426,
+            "image_bootstrap_95_ci_pp": [
+              -0.10305686849533804,
+              0.34549991896902194
+            ]
+          },
+          "precision": {
+            "delta_pp": 0.5738436233417863,
+            "image_bootstrap_95_ci_pp": [
+              0.3279166319973821,
+              0.8174347704968292
+            ]
+          },
+          "recall": {
+            "delta_pp": -0.36683147458588133,
+            "image_bootstrap_95_ci_pp": [
+              -0.6728556996890575,
+              -0.06334392174318765
+            ]
+          },
+          "brier": {
+            "delta_pp": -0.019002512849308345,
+            "image_bootstrap_95_ci_pp": [
+              -0.03422112330872563,
+              -0.00381097448294944
+            ]
+          }
+        },
+        "P8B2 minus P8BA": {
+          "iou": {
+            "delta_pp": 0.2472114905054462,
+            "image_bootstrap_95_ci_pp": [
+              -0.03476166653502254,
+              0.5211171634916263
+            ]
+          },
+          "dice": {
+            "delta_pp": 0.1644186528712765,
+            "image_bootstrap_95_ci_pp": [
+              -0.0831155830167317,
+              0.4027117329708942
+            ]
+          },
+          "precision": {
+            "delta_pp": -0.11126263961542035,
+            "image_bootstrap_95_ci_pp": [
+              -0.37813486469493185,
+              0.14828855410175124
+            ]
+          },
+          "recall": {
+            "delta_pp": 0.5288964182839982,
+            "image_bootstrap_95_ci_pp": [
+              0.17267776916333877,
+              0.8848469342335584
+            ]
+          },
+          "brier": {
+            "delta_pp": -0.019849851495920993,
+            "image_bootstrap_95_ci_pp": [
+              -0.03909030862179895,
+              -0.0007161869830210138
+            ]
+          }
+        },
+        "P8B2 minus R2": {
+          "iou": {
+            "delta_pp": 0.438712758887578,
+            "image_bootstrap_95_ci_pp": [
+              0.14047426545524624,
+              0.7275654178540505
+            ]
+          },
+          "dice": {
+            "delta_pp": 0.2860962713389308,
+            "image_bootstrap_95_ci_pp": [
+              0.02053609992549843,
+              0.5449679341371874
+            ]
+          },
+          "precision": {
+            "delta_pp": 0.4625809837263659,
+            "image_bootstrap_95_ci_pp": [
+              0.1637410944377544,
+              0.7550831326841282
+            ]
+          },
+          "recall": {
+            "delta_pp": 0.1620649436981169,
+            "image_bootstrap_95_ci_pp": [
+              -0.18668868059808857,
+              0.504319037075249
+            ]
+          },
+          "brier": {
+            "delta_pp": -0.03885236434522934,
+            "image_bootstrap_95_ci_pp": [
+              -0.05834808709060548,
+              -0.019344155972152225
+            ]
+          }
+        }
+      },
+      "source_file_sha256": {
+        "R2": "f588afb61b2cad07a6b0995f6caf0be7e66798945fdc793fc70b6b691d127792",
+        "P8BA": "06e794a770c34b5b74afeaf6db64ffcf9c95ad02b9ce544097b544e9e280161c",
+        "P8B2": "a90374bbf8f653bc7efb0a71c1d582b0de19130d3abdaa6a9d70f66e45f7a6e8"
+      }
+    }
+  },
+  "limitations": [
+    "Single training seed; image bootstrap is not patient-cluster or across-seed uncertainty.",
+    "Best selected on Val; fixed threshold 0.5. Test has historical access.",
+    "Earlier P8R2/P8B2 validation discovery gate failures remain unchanged."
+  ]
+}
