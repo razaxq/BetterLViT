@@ -1,19 +1,46 @@
 {
-  "pages": [
+  "versions": [
     {
-      "page": "01 \u00b7 LViT integration",
-      "vertices": 69,
-      "edges": 60
+      "file": "FSDR_RACE_architecture_20260922.drawio",
+      "pages": [
+        {
+          "page": "01 \u00b7 LViT integration",
+          "vertices": 69,
+          "edges": 60
+        },
+        {
+          "page": "02 \u00b7 FSDR",
+          "vertices": 41,
+          "edges": 30
+        },
+        {
+          "page": "03 \u00b7 RACE",
+          "vertices": 33,
+          "edges": 21
+        }
+      ],
+      "visible_characters": 3812
     },
     {
-      "page": "02 \u00b7 FSDR",
-      "vertices": 41,
-      "edges": 30
-    },
-    {
-      "page": "03 \u00b7 RACE",
-      "vertices": 33,
-      "edges": 21
+      "file": "FSDR_RACE_architecture_concise.drawio",
+      "pages": [
+        {
+          "page": "01 \u00b7 LViT integration",
+          "vertices": 65,
+          "edges": 60
+        },
+        {
+          "page": "02 \u00b7 FSDR",
+          "vertices": 36,
+          "edges": 30
+        },
+        {
+          "page": "03 \u00b7 RACE",
+          "vertices": 29,
+          "edges": 21
+        }
+      ],
+      "visible_characters": 1325
     }
   ],
   "native_editable": true,

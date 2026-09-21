@@ -4,6 +4,14 @@ Open `FSDR_RACE_architecture_20260922.drawio` in draw.io / diagrams.net.
 All blocks, labels, ports and arrows are native editable objects. There are no
 embedded screenshots, generated raster images, external fonts or remote assets.
 
+For presentation use, open **`FSDR_RACE_architecture_concise.drawio`**. This
+version keeps the same feature-flow connections, replaces verbose labels with
+short operation/signal names, and removes explanatory paragraphs. Visible text
+is reduced from 3,812 to 1,325 characters (65%). The original detailed file is
+retained for the full equations and implementation notes. Normalization and
+activation steps abbreviated in the concise labels remain as documented below;
+the underlying model is unchanged. The builder generates both versions.
+
 ## Pages
 
 1. **LViT integration** — the two U-shaped branches; four original CNN features,

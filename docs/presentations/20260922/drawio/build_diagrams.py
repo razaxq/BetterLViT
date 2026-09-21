@@ -257,19 +257,87 @@ def race():
     return p
 
 
-def main():
-    pages=[overview(),fsdr(),race()]
+def concise(p):
+    """Presentation labels: operations and signals, with prose kept in the notes."""
+    labels = {
+        '01': {
+            'subtitle': '', 'vit_title': 'ViT branch', 'cnn_title': 'CNN branch',
+            'report': 'Report', 'bert': 'CXR-BERT', 'text_note': '',
+            'mask': 'Mask', 'head': 'Conv 1×1 → σ', 'vit_note': '',
+            'detail_title': 'Decoder stage', 'prev': 'Decoder input',
+            'concat': 'Concat', 'conv': 'Conv 3×3 ×2',
+            'legend': 'T: text     B: anatomy     Dashed: matching ports',
+            'footer': '',
+            **{f'c{i}':f'C{i}' for i in range(1,5)},
+            **{f'up{i}':f'up{i}\nFSDR stage' for i in range(1,5)},
+        },
+        '02': {
+            'title':'FSDR', 'subtitle':'', 'main_title':'A. Semantic–detail fusion',
+            'c':'C*', 'haar':'Haar split', 'channel':'Channel gate',
+            'region':'Text FiLM\nSpatial support', 'rsem':'Semantic fusion',
+            'channel_formula':'', 'refine':'Local + dilated\nConv',
+            'detail':'Detail fusion', 'support_label':'S', 'main_note':'',
+            'yformula':'', 'adapt_title':'B. Adaptive filters · up4 / up3',
+            'context':'C_low, V_low, D_low\nContext fusion',
+            'wl':'Conv → Softmax\nw_low', 'wh':'Conv → Softmax\nw_high',
+            'dfilter':'Filter bank\nLP_low(D)', 'cfilter':'Filter bank\nLP_high(C*)',
+            'dp':'Decoder smoothing\nD′', 'ra':'Detail residual\nR_adaptive',
+            'dpnote':'D′ → Haar → D′_low', 'ranote':'',
+            'adapt_note':'Filter bank: Identity · Blur3 · Blur5',
+            'cat':'Concat', 'outconv':'Conv 3×3 ×2',
+        },
+        '03': {
+            'title':'RACE', 'subtitle':'', 'report_title':'A. Report prior',
+            't':'T', 'slot':'Slot MLP', 'z':'σ → z', 'prior':'Spatial prior\nP',
+            'basis':'Anatomical basis B', 'count':'Count\n(train only)',
+            'prior_note':'', 'route_title':'B. Skip routing · C1–C4',
+            'c':'C', 'evidence':'Conv ×2 → σ\nE', 'zonepool':'Zone pooling',
+            'agreement':'Agreement\nA', 'gate':'P × E × A',
+            'residual':'DWConv → PWConv\nR(C)', 'strength':'Scale s',
+            'routed':'C′', 'agreement_formula':'', 'gate_note':'',
+            'training_title':'Training only',
+            'training_text':'Slot / count · visual evidence · agreement',
+        },
+    }[p.name[:2]]
+    for id,label in labels.items():
+        cell=p.root.find(f"mxCell[@id='{id}']")
+        if label:
+            cell.set('value',label)
+        else:
+            assert not any(id in e for e in p.edges), id
+            p.root.remove(cell); p.ids.remove(id); del p.boxes[id]
+    # Short labels remain large enough to read on a presentation slide.
+    for cell in p.root.findall('mxCell'):
+        if cell.get('edge')=='1':
+            if cell.get('value','').startswith('Original '): cell.set('value','Identity')
+        elif cell.get('vertex')=='1':
+            style=cell.get('style','')
+            if 'rounded=1;arcSize=12;' in style:
+                import re
+                cell.set('style',re.sub(r'fontSize=\d+;', 'fontSize=26;',style))
+    return p
+
+
+def export(pages, filename):
     root=ET.Element('mxfile',host='app.diagrams.net',agent='Native editable architecture builder',version='26.0.0',type='device')
     checks=[]
     for i,p in enumerate(pages,1):
         checks.append(p.validate())
         diagram=ET.SubElement(root,'diagram',id=f'lvit-fsdr-race-{i}',name=p.name)
         diagram.append(p.model)
-    target=OUT/'FSDR_RACE_architecture_20260922.drawio'
+    target=OUT/filename
     ET.indent(root)
     ET.ElementTree(root).write(target,encoding='utf-8',xml_declaration=True)
-    (OUT/'validation.json').write_text(json.dumps({'pages':checks,'native_editable':True,'embedded_images':0,'source_commit':'b71218b52240c60b2e47c25d584448f0dde2f73d'},indent=2)+'\n',encoding='utf-8')
+    chars=sum(len(cell.get('value','')) for p in pages for cell in p.root.findall('mxCell'))
     print(target)
-    print(json.dumps(checks))
+    return {'file':filename,'pages':checks,'visible_characters':chars}
+
+
+def main():
+    full=export([overview(),fsdr(),race()],'FSDR_RACE_architecture_20260922.drawio')
+    short=export([concise(p) for p in [overview(),fsdr(),race()]],'FSDR_RACE_architecture_concise.drawio')
+    result={'versions':[full,short],'native_editable':True,'embedded_images':0,'source_commit':'b71218b52240c60b2e47c25d584448f0dde2f73d'}
+    (OUT/'validation.json').write_text(json.dumps(result,indent=2)+'\n',encoding='utf-8')
+    print(json.dumps(result))
 
 if __name__=='__main__': main()
