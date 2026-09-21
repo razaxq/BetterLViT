@@ -1,0 +1,22 @@
+{
+  "pages": [
+    {
+      "page": "01 \u00b7 LViT integration",
+      "vertices": 69,
+      "edges": 60
+    },
+    {
+      "page": "02 \u00b7 FSDR",
+      "vertices": 41,
+      "edges": 30
+    },
+    {
+      "page": "03 \u00b7 RACE",
+      "vertices": 33,
+      "edges": 21
+    }
+  ],
+  "native_editable": true,
+  "embedded_images": 0,
+  "source_commit": "b71218b52240c60b2e47c25d584448f0dde2f73d"
+}
